@@ -73,15 +73,18 @@ namespace :banter_scan do
       end
 
       begin
+        song = entry["song_id"] ? Song.find_by(id: entry["song_id"]) : nil
+        next failures << [ label, "song #{entry['song_id']} not found" ] if entry["song_id"] && song.nil?
         result = BanterInsertService.call(
           after_track,
           before_track:,
           source_path:,
           title: entry["title"].presence || "Banter",
+          **(song ? { song: } : {}),
           dry_run:
         )
         status = result[:applied] ? "INSERTED" : "RENDERED"
-        puts "#{status} #{progress}  #{label}  as ##{result[:position]} #{result[:title]}"
+        puts "#{status} #{progress}  #{label}  as ##{result[:position]} #{result[:title]} (#{result[:song]})"
         puts "  output: #{result[:output_path]}"
         puts "  track:  #{result[:url]}" if result[:applied]
       rescue BanterInsertService::Error, RuntimeError => e

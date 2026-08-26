@@ -67,6 +67,20 @@ RSpec.describe BanterInsertService do
     end
   end
 
+  context "with another song" do
+    subject(:result) do
+      described_class.call(after_track, source_path:, before_track:, title: "Fee", song:)
+    end
+
+    let(:song) { create(:song, title: "Fee") }
+
+    it "uses that song and title but still tags as Banter" do
+      track = Track.find(result[:track_id])
+      expect([ track.title, track.songs.map(&:title), track.tags.map(&:name) ])
+        .to eq([ "Fee", [ "Fee" ], [ "Banter", "SBD" ] ])
+    end
+  end
+
   context "with dry_run" do
     let(:dry_run) { true }
 

@@ -786,14 +786,33 @@ def candidate_row(c):
             "source_item": c.source_item, "source_file": c.source_file,
         })) + '"'
         decide = ('<div class="decide"><label><input type="checkbox" class="approve"> Approve</label>'
-                  '<input class="title" value="Banter" placeholder="title"></div>')
+                  '<label class="field"><span>Title</span><input class="title" value="Banter"></label>'
+                  '<label class="field"><span>Song</span><select class="song"></select></label></div>')
     cls = "row " + ("cand" if c.status == "candidate" else c.status)
     return (f'<div class="{cls}"{payload}>{head}{source_block(c)}'
             f'<div class="meta small">{" · ".join(meta)}</div>{joints}{decide}</div>')
 
 
+def fetch_songs():
+    try:
+        resp = requests.get(f"{API_BASE}/songs", timeout=60,
+                            params={"per_page": 2000, "sort": "title:asc"})
+        resp.raise_for_status()
+        songs = [(sg["id"], sg["title"]) for sg in resp.json()["songs"]]
+    except requests.RequestException as e:
+        print(f"song list unavailable ({e}); dropdown will only offer Banter", file=sys.stderr)
+        songs = []
+    if not any(t == "Banter" for _, t in songs):
+        songs.append((886, "Banter"))
+    return songs
+
+
 def write_review(out_dir, reports):
     reports = sorted(reports, key=lambda r: r.date)
+    songs = fetch_songs()
+    song_options = "".join(
+        f'<option value="{sid}"{" selected" if title == "Banter" else ""}>{esc(title)}</option>'
+        for sid, title in songs)
     sections = []
     n_cand = 0
     for r in reports:
@@ -803,7 +822,8 @@ def write_review(out_dir, reports):
         notes = f'<details class="notes"><summary>Taper notes entries ({len(r.note_hits)})</summary><ul>{hits}</ul></details>' if r.note_hits else ""
         head = (f'<div class="setsep" id="{r.date}"><span class="setsep-name">{r.date}</span>'
                 f'<span class="venue">{esc(r.venue)}</span>'
-                f'<a class="pnet" href="{r.url}" target="_blank" title="phish.in">&#127925;</a>')
+                f'<a class="ext" href="{r.url}" target="_blank">phish.in</a>'
+                f'<a class="ext" href="https://phish.net/setlists/?d={r.date}" target="_blank">phish.net</a>')
         if r.error:
             tried = "".join(
                 f"<li><a href='{ARCHIVE}/details/{esc(t['identifier'])}' target='_blank'>"
@@ -835,8 +855,6 @@ def write_review(out_dir, reports):
         body = "".join(rows) or '<p class="meta">Every source file matches a phish.in track.</p>'
         sections.append(f"<section>{head}</div>{src}{notes}{body}</section>")
 
-    toc = "".join(f'<a href="#{r.date}" class="{"unres" if r.error else ""}">{r.date}</a>'
-                  for r in reports)
     (out_dir / "review.html").write_text(f"""<!doctype html>
 <meta charset="utf-8">
 <title>Banter placement review</title>
@@ -887,9 +905,6 @@ def write_review(out_dir, reports):
   #export {{ padding: .4rem 1rem; font: inherit; font-weight: 600; cursor: pointer; background: var(--btn);
              color: var(--fg); border: 1px solid var(--btn-line); border-radius: 7px; }}
   #export:hover {{ background: var(--btn-hover); border-color: var(--muted); }}
-  #toc {{ display: flex; flex-wrap: wrap; gap: .25rem .6rem; font-size: 12px;
-          font-variant-numeric: tabular-nums; margin-bottom: 1rem; }}
-  #toc a.unres {{ color: var(--muted); }}
   .key {{ display: flex; gap: 1rem; font-size: 12px; color: var(--muted); margin-bottom: 1.5rem; }}
   .key i {{ display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: .3rem;
             vertical-align: -1px; }}
@@ -898,8 +913,9 @@ def write_review(out_dir, reports):
   .setsep-name {{ font-family: "Open Sans Condensed", -apple-system, sans-serif; font-size: 22px;
                   font-weight: 700; letter-spacing: .01em; font-variant-numeric: tabular-nums; }}
   .venue {{ color: var(--muted); font-size: 14px; }}
-  .pnet {{ text-decoration: none; font-size: 15px; line-height: 1; opacity: .75; }}
-  .pnet:hover {{ opacity: 1; }}
+  .ext {{ font-size: 12px; text-decoration: none; border: 1px solid var(--line); border-radius: 999px;
+          padding: .05rem .55rem; }}
+  .ext:hover {{ border-color: var(--link); }}
   .source {{ color: var(--muted); font-size: 13px; padding: .35rem 1rem 0; }}
   details.notes {{ padding: .2rem 1rem; font-size: 13px; color: var(--muted); }}
   details.notes ul {{ margin: .3rem 0 .5rem; }}
@@ -947,7 +963,13 @@ def write_review(out_dir, reports):
   input[type="checkbox"] {{ width: 1.15rem; height: 1.15rem; cursor: pointer; accent-color: var(--link); }}
   .decide input[type="text"], .decide input:not([type]) {{ font: inherit; font-size: 13px; padding: .3rem .5rem;
       background: var(--bg); color: var(--fg); border: 1px solid var(--btn-line); border-radius: 6px; }}
-  .decide .title {{ width: 11rem; }}
+  .decide .field {{ font-weight: 400; gap: .4rem; }}
+  .decide .field span {{ color: var(--muted); font-size: 11px; text-transform: uppercase;
+                         letter-spacing: .04em; }}
+  .decide .title {{ width: 14rem; }}
+  .decide select {{ font: inherit; font-size: 13px; padding: .3rem .4rem; max-width: 18rem;
+                    background: var(--bg); color: var(--fg); border: 1px solid var(--btn-line);
+                    border-radius: 6px; }}
 </style>
 <div id="topbar"><div class="row1">
   <h1>Banter placement review <span class="count">{len(reports)} shows · {n_cand} candidates</span></h1>
@@ -956,7 +978,7 @@ def write_review(out_dir, reports):
     <span><span class="k">of</span><span class="v">{n_cand}</span></span></div>
   <button id="export">Export approved.json</button>
 </div><div class="bar"><i id="fill" style="width:0"></i></div></div>
-<div id="toc">{toc}</div>
+<template id="songs">{song_options}</template>
 <div class="key"><span><i style="background:var(--ok)"></i>continuous</span>
   <span><i style="background:var(--warn)"></i>suspect</span>
   <span><i style="background:var(--err)"></i>broken</span>
@@ -966,12 +988,15 @@ def write_review(out_dir, reports):
 const KEY = "banter_scan_progress";
 const rows = () => [...document.querySelectorAll(".row.cand")];
 const payloadOf = r => JSON.parse(r.dataset.payload);
+const songOptions = document.getElementById("songs").content;
+rows().forEach(r => r.querySelector("select.song").appendChild(songOptions.cloneNode(true)));
 function save() {{
   const state = {{}};
   rows().forEach(r => {{
     state[payloadOf(r).key] = {{
       approved: r.querySelector("input.approve").checked,
       title: r.querySelector("input.title").value,
+      song_id: r.querySelector("select.song").value,
     }};
   }});
   try {{ localStorage.setItem(KEY, JSON.stringify(state)); }} catch (e) {{}}
@@ -984,6 +1009,7 @@ function restore() {{
     if (!s) return;
     r.querySelector("input.approve").checked = !!s.approved;
     if (s.title) r.querySelector("input.title").value = s.title;
+    if (s.song_id) r.querySelector("select.song").value = s.song_id;
   }});
 }}
 function refresh() {{
@@ -1004,6 +1030,8 @@ document.getElementById("export").onclick = () => {{
     .filter(r => r.querySelector("input.approve").checked)
     .map(r => Object.assign(payloadOf(r), {{
       title: r.querySelector("input.title").value || "Banter",
+      song_id: Number(r.querySelector("select.song").value),
+      song_title: r.querySelector("select.song").selectedOptions[0]?.textContent,
     }}));
   const blob = new Blob([JSON.stringify(approved, null, 2)], {{type: "application/json"}});
   const a = Object.assign(document.createElement("a"),

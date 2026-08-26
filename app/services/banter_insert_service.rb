@@ -10,6 +10,7 @@ class BanterInsertService < ApplicationService
   option :source_path
   option :before_track, default: -> { nil }
   option :title, default: -> { "Banter" }
+  option :song, default: -> { Song.find_by!(title: "Banter") }
   option :notes, default: -> { nil }
   option :dry_run, default: -> { false }
 
@@ -53,7 +54,7 @@ class BanterInsertService < ApplicationService
       position:,
       file: output_path.to_s,
       title:,
-      song_id: Song.find_by!(title: "Banter").id,
+      song_id: song.id,
       set: after_track.set
     ).call
   end
@@ -98,6 +99,7 @@ class BanterInsertService < ApplicationService
       applied: applied?,
       date: show.date.to_s,
       title:,
+      song: song.title,
       position:,
       set: after_track.set,
       after_title: after_track.title,
