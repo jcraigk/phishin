@@ -541,6 +541,7 @@ class ShowReport:
     candidates: list
     error: str | None = None
     spreadsheet: dict | None = None
+    filler_skipped: list = field(default_factory=list)
 
 
 def analyze_show(date, out_dir):
@@ -567,6 +568,16 @@ def analyze_show(date, out_dir):
     f2t = best["file_to_tracks"]
     report.source_item = meta["identifier"]
     report.matched, report.total = best["matched"], best["total"]
+    # Filler is bonus material tacked onto the end of an item (a demo, another
+    # show), not part of this performance. When the item or the notes call it
+    # out, the trailing run of unmatched files is it.
+    filler_text = f"{meta.get('description', '')}\n{show.get('taper_notes') or ''}"
+    report.filler_skipped = []
+    if re.search(r"\b(filler|bonus)\b", filler_text, re.I) and f2t:
+        last_matched = max(f2t)
+        trailing = [i for i in range(last_matched + 1, len(files))]
+        report.filler_skipped = [files[i]["title"] for i in trailing]
+        files = files[:last_matched + 1]
     report.unmatched_files = [
         {"name": f["name"], "title": f["title"], "length": f["length"],
          "banter": bool(BANTER_RE.search(f["title"]) and not NOT_BANTER_RE.search(f["title"]))}
@@ -755,6 +766,9 @@ def write_review(out_dir, reports):
         link = (esc(r.source_item) if r.source_item.startswith("local:") else
                 f"<a href='{ARCHIVE}/details/{esc(r.source_item)}' target='_blank'>{esc(r.source_item)}</a>")
         src = f"<p>Source: {link} - {r.matched}/{r.total} phish.in tracks matched by duration."
+        if r.filler_skipped:
+            src += (f" Skipped {len(r.filler_skipped)} trailing filler file(s): "
+                    + ", ".join(esc(t) for t in r.filler_skipped) + ".")
         src += "</p>"
         rows = []
         for c in r.candidates:
