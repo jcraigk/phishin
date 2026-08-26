@@ -1,0 +1,95 @@
+require "rails_helper"
+
+RSpec.describe BanterInsertService do
+  subject(:result) do
+    described_class.call(after_track, source_path:, before_track:, notes:, dry_run:)
+  end
+
+  let(:show) { create(:show, date: "1991-05-17") }
+  let(:sbd) { create(:tag, name: "SBD") }
+  let!(:after_track) do
+    create(:track, show:, title: "Cavern", position: 2, set: "2", tags: [ sbd ])
+  end
+  let!(:before_track) { create(:track, show:, title: "Harry Hood", position: 3, set: "2") }
+  let(:notes) { "Trey sends off Carl Gerhard" }
+  let(:dry_run) { false }
+  let(:source_path) { Rails.root.join("tmp/spec/banter_source.flac") }
+
+  before do
+    create(:tag, name: "Banter")
+    create(:song, title: "Banter")
+    create(:track, show:, title: "Magilla", position: 1, set: "2")
+    fixture = Rails.root.join("tmp/spec/banter_source.flac")
+    FileUtils.mkdir_p(fixture.dirname)
+    unless File.exist?(fixture)
+      system(
+        "ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i",
+        "sine=frequency=440:duration=3", fixture.to_s, exception: true
+      )
+    end
+    allow(WaveformImageService).to receive(:call)
+    allow(Id3TagService).to receive(:call)
+    allow(Rails.cache).to receive(:clear)
+  end
+
+  it "inserts a Banter track right after the anchor and shifts the rest" do
+    result
+    titles = show.tracks.order(:position).pluck(:position, :title)
+    expect(titles).to eq(
+      [ [ 1, "Magilla" ], [ 2, "Cavern" ], [ 3, "Banter" ], [ 4, "Harry Hood" ] ]
+    )
+  end
+
+  it "attaches the rendered mp3 and measures its duration" do
+    track = Track.find(result[:track_id])
+    expect(track.mp3_audio).to be_attached
+    expect(track.duration).to be_within(200).of(3000)
+  end
+
+  it "tags the track as Banter with the notes and copies the anchor's SBD tag" do
+    track = Track.find(result[:track_id])
+    expect(track.track_tags.map { |tt| [ tt.tag.name, tt.notes ] })
+      .to contain_exactly([ "Banter", notes ], [ "SBD", nil ])
+  end
+
+  it "reports the placement" do
+    expect(result).to include(
+      applied: true, date: "1991-05-17", title: "Banter", position: 3, set: "2",
+      after_title: "Cavern"
+    )
+  end
+
+  context "when the anchor has no SBD tag" do
+    let!(:after_track) { create(:track, show:, title: "Cavern", position: 2, set: "2") }
+
+    it "does not add one" do
+      expect(Track.find(result[:track_id]).tags.map(&:name)).to eq([ "Banter" ])
+    end
+  end
+
+  context "with dry_run" do
+    let(:dry_run) { true }
+
+    it "renders the mp3 without inserting anything" do
+      expect { result }.not_to change(Track, :count)
+      expect(File).to exist(result[:output_path])
+      expect(result).to include(applied: false, track_id: nil)
+    end
+  end
+
+  context "when the before-track is not right after the anchor" do
+    let!(:before_track) { create(:track, show:, title: "Harry Hood", position: 5, set: "2") }
+
+    it "refuses" do
+      expect { result }.to raise_error(described_class::Error, /expected Harry Hood right after Cavern/)
+    end
+  end
+
+  context "when the source file is missing" do
+    let(:source_path) { Pathname.new("/nonexistent/banter.flac") }
+
+    it "refuses" do
+      expect { result }.to raise_error(described_class::Error, /No source file/)
+    end
+  end
+end
