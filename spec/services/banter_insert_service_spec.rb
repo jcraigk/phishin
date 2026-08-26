@@ -137,6 +137,22 @@ RSpec.describe BanterInsertService do
     end
   end
 
+  context "when the insert fails partway" do
+    it "leaves the other tracks' positions untouched" do
+      allow(TrackInserter).to receive(:new).and_wrap_original do |m, *args, **kw|
+        inserter = m.call(*args, **kw)
+        allow(inserter).to receive(:call) do
+          inserter.send(:shift_track_positions)
+          raise ActiveRecord::RecordNotUnique, "slug taken"
+        end
+        inserter
+      end
+      expect { result }.to raise_error(ActiveRecord::RecordNotUnique)
+      expect(show.tracks.order(:position).pluck(:position, :title))
+        .to eq([ [ 1, "Magilla" ], [ 2, "Cavern" ], [ 3, "Harry Hood" ] ])
+    end
+  end
+
   context "with dry_run" do
     let(:dry_run) { true }
 

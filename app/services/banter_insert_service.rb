@@ -76,6 +76,10 @@ class BanterInsertService < ApplicationService
     render_via_lame(output_path, [ "-i", source_path.to_s ])
   end
 
+  # TrackInserter shifts the later positions before it saves the new row, so a
+  # failure there (a slug collision, say) would otherwise leave a gap behind.
+  # Not a transaction: Active Storage defers the upload until commit, and the
+  # inserter analyzes the file straight after attaching it.
   def insert_track
     TrackInserter.new(
       date: show.date.to_s,
@@ -85,6 +89,15 @@ class BanterInsertService < ApplicationService
       song_id: song.id,
       set: set.presence || anchor.set
     ).call
+  rescue StandardError
+    unshift_positions unless show.tracks.reload.exists?(position:)
+    raise
+  end
+
+  def unshift_positions
+    show.tracks.where("position > ?", position).order(:position).each do |t|
+      t.update_column(:position, t.position - 1)
+    end
   end
 
   def tag_track
