@@ -751,9 +751,11 @@ def track_link(date, track_id, title):
 
 def placement_text(c):
     if c.after_id is None and c.before_id is not None:
-        return f"Start of {esc(c.before_set)}"
+        return (f"Start of {esc(c.before_set)} <span class='k'>Before</span> "
+                f"{track_link(c.date, c.before_id, c.before_title)}")
     if c.before_id is None and c.after_id is not None:
-        return f"End of {esc(c.after_set)}"
+        return (f"End of {esc(c.after_set)} <span class='k'>After</span> "
+                f"{track_link(c.date, c.after_id, c.after_title)}")
     return (f'<span class="k">Before</span> {track_link(c.date, c.after_id, c.after_title)}'
             f' <span class="k">After</span> {track_link(c.date, c.before_id, c.before_title)}')
 
@@ -776,6 +778,7 @@ def candidate_row(c):
     title = (f"{len(c.members)} consecutive files not on phish.in" if len(c.members) > 1
              else c.source_title)
     chips = [f'<span class="chip place">{placement_text(c)}</span>',
+             f'<a class="ext" href="{SITE_BASE}/{c.date}" target="_blank">phish.in</a>',
              f'<a class="ext" href="https://phish.net/setlists/?d={c.date}" target="_blank">phish.net</a>']
     if c.notes_line:
         chips.append(f'<span class="chip notes" title="taper notes">{esc(c.notes_line)}</span>')
