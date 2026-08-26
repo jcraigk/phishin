@@ -1078,6 +1078,7 @@ document.addEventListener("click", e => {{
 // The most recently played player is what the arrow keys scrub.
 document.querySelectorAll("audio").forEach(a => {{
   a.addEventListener("play", () => {{
+    document.querySelectorAll("audio").forEach(o => {{ if (o !== a && !o.paused) o.pause(); }});
     window._playing = a;
     const r = a.closest(".row.cand");
     if (r) selectRow(r);
