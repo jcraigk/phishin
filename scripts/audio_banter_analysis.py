@@ -936,7 +936,8 @@ def source_block(c):
             parts.append(
                 f'<div class="member" data-n="{n}"><div class="srcname">{esc(m["title"])}'
                 f' <span class="meta">{fmt_len(m["length"])}</span></div>{player(m.get("preview"))}'
-                f'<div class="decide sub"><label class="field"><span>Title</span>'
+                f'<div class="decide sub"><label><input type="checkbox" class="include" checked> Include</label>'
+                f'<label class="field"><span>Title</span>'
                 f'<input class="title" value="{esc(m["title"])}"></label>'
                 f'<label class="field"><span>Song</span><select class="song" data-default="{esc(m["title"])}">'
                 f'</select></label></div></div>')
@@ -1230,6 +1231,7 @@ const chosenSet = r => {{
 }};
 const fieldsOf = r => [...r.querySelectorAll(".decide")].map(d => ({{
   title: d.querySelector("input.title")?.value, song_id: d.querySelector("select.song")?.value,
+  include: d.querySelector("input.include") ? d.querySelector("input.include").checked : true,
 }})).filter(f => f.title !== undefined);
 const isApproved = r => r.querySelector("input.approve").checked;
 const isSkipped = r => r.querySelector("input.skip").checked;
@@ -1257,6 +1259,8 @@ function restore() {{
       if (!decides[i]) return;
       if (f.title) decides[i].querySelector("input.title").value = f.title;
       if (f.song_id) decides[i].querySelector("select.song").value = f.song_id;
+      const inc = decides[i].querySelector("input.include");
+      if (inc && f.include === false) inc.checked = false;
     }});
   }});
 }}
@@ -1368,12 +1372,14 @@ document.getElementById("export").onclick = () => {{
         title: fields[i]?.title || "Banter",
         song_id: Number(fields[i]?.song_id),
         song_title: sels[i]?.selectedOptions[0]?.textContent,
-      }}));
+        include: fields[i]?.include !== false,
+      }})).filter(m => m.include);
+      if (!p.members.length) return null;
       Object.assign(p, {{title: p.members[0].title, song_id: p.members[0].song_id,
                          song_title: p.members[0].song_title,
                          set: r.querySelector("select.set")?.value}});
       return p;
-    }});
+    }}).filter(Boolean);
   const blob = new Blob([JSON.stringify(approved, null, 2)], {{type: "application/json"}});
   const a = Object.assign(document.createElement("a"),
     {{href: URL.createObjectURL(blob), download: "approved.json"}});
