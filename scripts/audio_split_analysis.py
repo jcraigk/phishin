@@ -1735,6 +1735,13 @@ def combine_dir(root, ignore_urls):
         catalog = catalog or found_songs
         candidates.extend(found)
         multi.extend(found_multi)
+    # The song list moves independently of the scans: a song added since a year
+    # was scanned would otherwise be missing from the dropdown, and the part it
+    # names would keep reporting as unmatched. Fall back to the stored catalog
+    # only when the API cannot be reached.
+    fresh = fetch_song_catalog()
+    if fresh:
+        catalog = fresh
     kept = [c for c in candidates if c.share_url.rstrip("/") not in ignore_urls]
     kept.sort(key=lambda c: (-len(c.part_titles), c.date, c.position))
     multi.sort(key=lambda m: m["label"])
