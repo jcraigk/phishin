@@ -733,13 +733,29 @@ def joint_block(label, j):
             f'<span class="jlabel">{label}</span>{player(j["clip"], "jaudio")}</div>')
 
 
+_slugs = {}
+
+
+def track_link(date, track_id, title):
+    """Title linked to its phish.in page; slugs come from the show API once per date."""
+    if date not in _slugs:
+        try:
+            _slugs[date] = {t["id"]: t.get("slug") for t in fetch_show(date)["tracks"]}
+        except requests.RequestException:
+            _slugs[date] = {}
+    slug = _slugs[date].get(track_id)
+    if not slug:
+        return esc(title)
+    return f'<a href="{SITE_BASE}/{date}/{slug}" target="_blank">{esc(title)}</a>'
+
+
 def placement_text(c):
     if c.after_id is None and c.before_id is not None:
         return f"Start of {esc(c.before_set)}"
     if c.before_id is None and c.after_id is not None:
         return f"End of {esc(c.after_set)}"
-    return (f'<span class="k">Before</span> {esc(c.after_title)}'
-            f' <span class="k">After</span> {esc(c.before_title)}')
+    return (f'<span class="k">Before</span> {track_link(c.date, c.after_id, c.after_title)}'
+            f' <span class="k">After</span> {track_link(c.date, c.before_id, c.before_title)}')
 
 
 def source_block(c):
@@ -928,6 +944,8 @@ def write_review(out_dir, reports):
            padding: .05rem .55rem; white-space: nowrap; max-width: 34rem; overflow: hidden;
            text-overflow: ellipsis; }}
   .chip.place {{ color: var(--fg); }}
+  .chip.place a {{ color: var(--fg); text-decoration-color: color-mix(in srgb, var(--fg) 30%, transparent); }}
+  .chip.place a:hover {{ color: var(--link); }}
   .chip .k {{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em;
               margin: 0 .15rem 0 .35rem; }}
   .chip .k:first-child {{ margin-left: 0; }}
