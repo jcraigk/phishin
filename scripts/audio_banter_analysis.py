@@ -141,6 +141,12 @@ def notes_line_for(file_name, hits):
     return None
 
 
+def same_title(a, b):
+    norm = lambda t: re.sub(r"[^a-z0-9]+", " ", t.lower()).strip()
+    a, b = norm(a), norm(b)
+    return bool(a) and bool(b) and (a == b or a in b.split(" > ") or a in b or b in a)
+
+
 def notes_line_by_neighbors(hits, after, before):
     """A notes entry sitting between lines that name the anchor tracks."""
     def names(track):
@@ -665,10 +671,12 @@ def analyze_show(date, out_dir):
         elif before["position"] != after["position"] + 1:
             between = [t for t in tracks if after["position"] < t["position"] < before["position"]]
             same = [t for t in between
-                    if abs(t["duration"] / 1000.0 - (f["length"] or -1)) <= DURATION_TOL_S]
+                    if abs(t["duration"] / 1000.0 - (f["length"] or -1)) <= DURATION_TOL_S
+                    or same_title(t["title"], f["title"])]
             if same and len(members) == 1:
                 cand.status = "already_present"
-                cand.note = f"phish.in has {same[0]['title']} ({same[0]['duration'] / 1000:.1f}s) here"
+                cand.note = (f"{f['title']} is on phish.in as {same[0]['title']} "
+                             f"({same[0]['duration'] / 1000:.0f}s vs {f['length'] or 0:.0f}s in the source)")
             else:
                 cand.note = "phish.in already has " + \
                     ", ".join(t["title"] for t in between) + " between these"
@@ -888,8 +896,12 @@ def write_review(out_dir, reports):
         if r.filler_skipped:
             src += (f' <span class="chip" title="{esc(", ".join(r.filler_skipped))}">'
                     f'{len(r.filler_skipped)} trailing filler files skipped</span>')
+        already = [c for c in r.candidates if c.status == "already_present"]
+        if already:
+            src += (f' <span class="chip" title="{esc("; ".join(c.note for c in already))}">'
+                    f'{len(already)} file(s) already on phish.in</span>')
         src += "</div>"
-        rows = [candidate_row(c) for c in r.candidates]
+        rows = [candidate_row(c) for c in r.candidates if c.status != "already_present"]
         n_cand += sum(1 for c in r.candidates if c.status in ("candidate", "unanchored"))
         body = "".join(rows) or '<p class="meta">Every source file matches a phish.in track.</p>'
         sections.append(f"<section>{head}</div>{src}{notes}{body}</section>")
