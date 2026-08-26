@@ -853,6 +853,22 @@ def track_link(date, track_id, title):
     return f'<a href="{SITE_BASE}/{date}/{slug}" target="_blank">{esc(title)}</a>'
 
 
+SET_CODES = {"Soundcheck": "S", "Set 1": "1", "Set 2": "2", "Set 3": "3", "Set 4": "4",
+             "Encore": "E", "Encore 2": "E2", "Encore 3": "E3"}
+
+
+def set_options(c):
+    """Sets the file could belong to: the preceding track's (default) and, when
+    it differs, the following track's - an encore break sits on that boundary."""
+    names = [n for n in (c.after_set, c.before_set) if n]
+    seen = []
+    for n in names:
+        if n not in seen:
+            seen.append(n)
+    return "".join(f'<option value="{SET_CODES.get(n, n)}"{" selected" if i == 0 else ""}>{esc(n)}</option>'
+                   for i, n in enumerate(seen))
+
+
 def placement_text(c):
     if c.after_id is None and c.before_id is not None:
         return (f"Start of {esc(c.before_set)} <span class='k'>Before</span> "
@@ -917,6 +933,7 @@ def candidate_row(c):
         fields = ("" if c.status == "run" else
                   '<label class="field"><span>Title</span><input class="title" value="Banter"></label>'
                   '<label class="field"><span>Song</span><select class="song"></select></label>')
+        fields += f'<label class="field"><span>Set</span><select class="set">{set_options(c)}</select></label>'
         decide = ('<div class="decide main"><label><input type="checkbox" class="approve"> Approve</label>'
                   f'<label><input type="checkbox" class="skip"> Skip</label>{fields}</div>')
     cls = "row cand" + (" run" if c.status == "run" else "")
@@ -1164,6 +1181,7 @@ function save() {{
   rows().forEach(r => {{
     state[payloadOf(r).key] = {{
       approved: isApproved(r), skipped: isSkipped(r), fields: fieldsOf(r),
+      set: r.querySelector("select.set")?.value,
     }};
   }});
   try {{ localStorage.setItem(KEY, JSON.stringify(state)); }} catch (e) {{}}
@@ -1176,6 +1194,7 @@ function restore() {{
     if (!s) return;
     r.querySelector("input.approve").checked = !!s.approved;
     r.querySelector("input.skip").checked = !!s.skipped;
+    if (s.set && r.querySelector("select.set")) r.querySelector("select.set").value = s.set;
     const decides = [...r.querySelectorAll(".decide")].filter(d => d.querySelector("input.title"));
     (s.fields || []).forEach((f, i) => {{
       if (!decides[i]) return;
@@ -1294,7 +1313,8 @@ document.getElementById("export").onclick = () => {{
         song_title: sels[i]?.selectedOptions[0]?.textContent,
       }}));
       Object.assign(p, {{title: p.members[0].title, song_id: p.members[0].song_id,
-                         song_title: p.members[0].song_title}});
+                         song_title: p.members[0].song_title,
+                         set: r.querySelector("select.set")?.value}});
       return p;
     }});
   const blob = new Blob([JSON.stringify(approved, null, 2)], {{type: "application/json"}});
