@@ -8,12 +8,15 @@ import { adminPost, fetchJobAudio } from "./adminApi";
 // so the allowed range shown here is the same one the API enforces.
 const MIN_PART_S = 1.0;
 
-// Mirrors TrackSlugGenerator#abbreviate_long_slug. Five fixed substitutions, so
-// mirroring them costs less than showing a slug preview that quietly disagrees
-// with the one the server writes for a Hold Your Head Up.
+// Mirrors TrackSlugGenerator#abbreviate_long_slug, in the same order and with
+// the same entries, so mirroring them costs less than showing a slug preview
+// that quietly disagrees with the one the server writes for a Hold Your Head Up.
+// spec/javascript/track_slug_generator_parity_spec.rb reads this list off disk
+// and fails if it ever falls behind the Ruby.
 const SLUG_ABBREVIATIONS = [
   ["hold-your-head-up", "hyhu"],
   ["the-man-who-stepped-into-yesterday", "tmwsiy"],
+  ["you-enjoy-myself", "yem"],
   ["she-caught-the-katy-and-left-me-a-mule-to-ride", "she-caught-the-katy"],
   ["mcgrupp-and-the-watchful-hosemasters", "mcgrupp"],
   ["big-black-furry-creature-from-mars", "bbfcfm"],
