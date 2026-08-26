@@ -111,6 +111,14 @@ RSpec.describe BanterInsertService do
     end
   end
 
+  context "with an explicit set" do
+    subject(:result) { described_class.call(after_track, source_path:, before_track:, set: "E") }
+
+    it "uses it instead of the anchor's set" do
+      expect(Track.find(result[:track_id]).set).to eq("E")
+    end
+  end
+
   context "with dry_run" do
     let(:dry_run) { true }
 

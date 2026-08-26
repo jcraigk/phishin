@@ -84,6 +84,7 @@ namespace :banter_scan do
           source_path:,
           title: entry["title"].presence || "Banter",
           **(song ? { song: } : {}),
+          set: entry["set"].presence,
           dry_run:
         )
         status = result[:applied] ? "INSERTED" : "RENDERED"
