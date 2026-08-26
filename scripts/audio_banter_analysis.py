@@ -787,11 +787,12 @@ def candidate_row(c):
             "source_file": c.source_file,
         })) + '"'
         decide = ('<div class="decide"><label><input type="checkbox" class="approve"> Approve</label>'
+                  '<label><input type="checkbox" class="skip"> Skip</label>'
                   '<label class="field"><span>Title</span><input class="title" value="Banter"></label>'
                   '<label class="field"><span>Song</span><select class="song"></select></label></div>')
     cls = "row " + ("cand" if c.status in ("candidate", "unanchored") else c.status)
-    return (f'<div class="{cls}"{payload}>{head}{source_block(c)}'
-            f'<div class="meta small">{" · ".join(meta)}</div>{joints}{decide}</div>')
+    return (f'<div class="{cls}"{payload}>{head}<div class="body">{source_block(c)}'
+            f'<div class="meta small">{" · ".join(meta)}</div>{joints}</div>{decide}</div>')
 
 
 def fetch_songs():
@@ -902,7 +903,9 @@ def write_review(out_dir, reports):
   #legend .v {{ font-weight: 600; }}
   #topbar .bar {{ height: 4px; border-radius: 2px; background: var(--line); margin: .45rem auto 0;
                   max-width: 1300px; overflow: hidden; font-size: 0; }}
-  #topbar .bar i {{ display: inline-block; height: 100%; vertical-align: top; background: var(--ok); }}
+  #topbar .bar i {{ display: inline-block; height: 100%; vertical-align: top; }}
+  #topbar .bar .fill-ok {{ background: var(--ok); }}
+  #topbar .bar .fill-skip {{ background: var(--accent); opacity: .55; }}
   #export {{ padding: .4rem 1rem; font: inherit; font-weight: 600; cursor: pointer; background: var(--btn);
              color: var(--fg); border: 1px solid var(--btn-line); border-radius: 7px; }}
   #export:hover {{ background: var(--btn-hover); border-color: var(--muted); }}
@@ -932,8 +935,18 @@ def write_review(out_dir, reports):
   .row {{ border: 1px solid transparent; border-bottom-color: var(--line); border-radius: 10px;
           padding: .85rem 1rem; transition: background .12s ease; }}
   .row:hover {{ background: var(--card); }}
-  .row.approved {{ background: var(--sel); border-color: var(--sel-line);
-                   box-shadow: inset 3px 0 0 var(--link); }}
+  .row.sel {{ background: var(--sel); border-color: var(--sel-line);
+              box-shadow: inset 3px 0 0 var(--link); }}
+  .row.done:not(.sel) .body, .row.done:not(.sel) .decide .field {{ display: none; }}
+  .row.done:not(.sel) .head {{ margin-bottom: 0; }}
+  .row.done:not(.sel) .decide {{ margin-top: .2rem; }}
+  .row.skipped:not(.sel) {{ opacity: .55; }}
+  .row.skipped:not(.sel) .head strong {{ text-decoration: line-through; }}
+  .row.approved:not(.sel) .head strong {{ color: var(--ok); }}
+  .head {{ cursor: pointer; }}
+  .skip {{ accent-color: var(--muted); }}
+  kbd {{ font: 11px/1 -apple-system, sans-serif; border: 1px solid var(--line); border-radius: 4px;
+         padding: .1rem .3rem; color: var(--muted); }}
   .row.already {{ opacity: .55; }}
   .row.run {{ opacity: .85; }}
   .head {{ display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-bottom: .5rem; }}
@@ -976,14 +989,17 @@ def write_review(out_dir, reports):
   <h1>Banter placement review <span class="count">{len(reports)} shows · {n_cand} candidates</span></h1>
   <div id="legend"><span class="pct">0%</span>
     <span><span class="k">approved</span><span class="v" id="n-approved">0</span></span>
+    <span><span class="k">skipped</span><span class="v" id="n-skipped">0</span></span>
     <span><span class="k">of</span><span class="v">{n_cand}</span></span></div>
   <button id="export">Export approved.json</button>
-</div><div class="bar"><i id="fill" style="width:0"></i></div></div>
+</div><div class="bar"><i class="fill-ok" style="width:0"></i><i class="fill-skip" style="width:0"></i></div></div>
 <template id="songs">{song_options}</template>
 <div class="key"><span><i style="background:var(--ok)"></i>continuous</span>
   <span><i style="background:var(--warn)"></i>suspect</span>
   <span><i style="background:var(--err)"></i>broken</span>
-  <span>Joint in: track before &gt; file. Joint out: file &gt; track after. Direct: what phish.in has now.</span></div>
+  <span>Joint in: track before &gt; file. Joint out: file &gt; track after. Direct: what phish.in has now.</span>
+  <span><kbd>&larr;</kbd><kbd>&rarr;</kbd> 1s on the last player (<kbd>shift</kbd> 5s) · <kbd>space</kbd> play/pause ·
+  <kbd>w</kbd> approve · <kbd>k</kbd> skip · <kbd>&uarr;</kbd><kbd>&darr;</kbd> rows</span></div>
 {''.join(sections)}
 <script>
 const KEY = "banter_scan_progress";
@@ -991,11 +1007,13 @@ const rows = () => [...document.querySelectorAll(".row.cand")];
 const payloadOf = r => JSON.parse(r.dataset.payload);
 const songOptions = document.getElementById("songs").content;
 rows().forEach(r => r.querySelector("select.song").appendChild(songOptions.cloneNode(true)));
+const isApproved = r => r.querySelector("input.approve").checked;
+const isSkipped = r => r.querySelector("input.skip").checked;
 function save() {{
   const state = {{}};
   rows().forEach(r => {{
     state[payloadOf(r).key] = {{
-      approved: r.querySelector("input.approve").checked,
+      approved: isApproved(r), skipped: isSkipped(r),
       title: r.querySelector("input.title").value,
       song_id: r.querySelector("select.song").value,
     }};
@@ -1009,21 +1027,105 @@ function restore() {{
     const s = state[payloadOf(r).key];
     if (!s) return;
     r.querySelector("input.approve").checked = !!s.approved;
+    r.querySelector("input.skip").checked = !!s.skipped;
     if (s.title) r.querySelector("input.title").value = s.title;
     if (s.song_id) r.querySelector("select.song").value = s.song_id;
   }});
 }}
 function refresh() {{
   const all = rows();
-  const approved = all.filter(r => r.querySelector("input.approve").checked);
-  all.forEach(r => r.classList.toggle("approved", r.querySelector("input.approve").checked));
-  document.getElementById("n-approved").textContent = approved.length;
-  const pct = all.length ? Math.round(approved.length / all.length * 100) : 0;
+  all.forEach(r => {{
+    r.classList.toggle("approved", isApproved(r));
+    r.classList.toggle("skipped", isSkipped(r));
+    r.classList.toggle("done", isApproved(r) || isSkipped(r));
+  }});
+  const approved = all.filter(isApproved).length, skipped = all.filter(isSkipped).length;
+  document.getElementById("n-approved").textContent = approved;
+  document.getElementById("n-skipped").textContent = skipped;
+  const pct = all.length ? Math.round((approved + skipped) / all.length * 100) : 0;
   document.querySelector("#legend .pct").textContent = pct + "%";
-  document.getElementById("fill").style.width = pct + "%";
+  document.querySelector("#topbar .fill-ok").style.width = (all.length ? approved / all.length * 100 : 0) + "%";
+  document.querySelector("#topbar .fill-skip").style.width = (all.length ? skipped / all.length * 100 : 0) + "%";
 }}
-document.addEventListener("change", () => {{ save(); refresh(); }});
+function selectRow(r) {{
+  rows().forEach(x => x.classList.toggle("sel", x === r));
+  window._sel = r;
+}}
+function answer(r, which) {{
+  const box = r.querySelector("input." + which);
+  const other = r.querySelector("input." + (which === "approve" ? "skip" : "approve"));
+  box.checked = !box.checked;
+  if (box.checked) other.checked = false;
+  save(); refresh();
+}}
+document.addEventListener("change", e => {{
+  const r = e.target.closest(".row.cand");
+  if (r && e.target.matches("input.approve, input.skip") && e.target.checked) {{
+    const other = r.querySelector("input." + (e.target.classList.contains("approve") ? "skip" : "approve"));
+    other.checked = false;
+    // Answering a row moves on: deselect so it collapses, like the split report.
+    if (window._sel === r) selectRow(null);
+  }}
+  save(); refresh();
+}});
 document.addEventListener("input", save);
+document.addEventListener("click", e => {{
+  const r = e.target.closest(".row.cand");
+  if (!r) return;
+  if (e.target.closest(".head")) selectRow(r);
+  else if (!r.classList.contains("sel")) selectRow(r);
+}});
+// The most recently played player is what the arrow keys scrub.
+document.querySelectorAll("audio").forEach(a => {{
+  a.addEventListener("play", () => {{
+    window._playing = a;
+    const r = a.closest(".row.cand");
+    if (r) selectRow(r);
+  }});
+}});
+document.addEventListener("keydown", e => {{
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const t = e.target && e.target.tagName;
+  const editing = t === "SELECT" || t === "TEXTAREA"
+    || (t === "INPUT" && e.target.type === "text") || (e.target && e.target.isContentEditable);
+  if (editing) return;
+  const all = rows();
+  const cur = window._sel;
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {{
+    e.preventDefault();
+    const i = cur ? all.indexOf(cur) : -1;
+    const next = all[Math.min(all.length - 1, Math.max(0, i < 0 ? 0 : i + (e.key === "ArrowDown" ? 1 : -1)))];
+    if (!next) return;
+    selectRow(next);
+    next.scrollIntoView({{block: "center"}});
+    return;
+  }}
+  if (e.key === "ArrowLeft" || e.key === "ArrowRight") {{
+    const a = window._playing;
+    if (!a) return;
+    e.preventDefault();
+    const step = (e.shiftKey ? 5 : 1) * (e.key === "ArrowRight" ? 1 : -1);
+    const d = a.duration || Infinity;
+    a.currentTime = Math.min(d, Math.max(0, a.currentTime + step));
+    return;
+  }}
+  if (e.key === " ") {{
+    const a = window._playing;
+    if (!a) return;
+    e.preventDefault();
+    if (e.target && e.target.blur) e.target.blur();
+    return a.paused ? a.play().catch(() => {{}}) : a.pause();
+  }}
+  const k = e.key.toLowerCase();
+  if ((k === "w" || k === "k" || k === "x") && cur) {{
+    e.preventDefault();
+    answer(cur, k === "w" ? "approve" : "skip");
+    const i = all.indexOf(cur);
+    const next = all[Math.min(all.length - 1, i + 1)];
+    if (next && next !== cur) {{ selectRow(next); next.scrollIntoView({{block: "center"}}); }}
+    else selectRow(null);
+  }}
+}});
 restore();
 refresh();
 document.getElementById("export").onclick = () => {{
