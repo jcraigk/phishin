@@ -58,6 +58,7 @@ SPREADSHEET_URL = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}"
 FIRST_YEAR, LAST_YEAR = 1983, 2026
 
 DURATION_TOL_S = 0.15    # source file vs phish.in track, same transfer
+JOINT_CLIP_S = 2.5       # audio on each side of a joint in the rendered clips
 MIN_MATCH_RATIO = 0.5    # tracks matched / tracks with audio to accept an item
 FETCH_WORKERS = 8
 
@@ -485,7 +486,7 @@ def render_preview(src, out_path):
 
 def joint(tail_edge, head_edge, clip_path):
     j = aja.score_junction(tail_edge.tail, head_edge.head)
-    n = int(aja.CLIP_S * aja.SAMPLE_RATE)
+    n = int(JOINT_CLIP_S * aja.SAMPLE_RATE)
     spliced = np.concatenate([tail_edge.tail[-n:], head_edge.head[:n]]).astype(np.float32)
     import tempfile
     with tempfile.NamedTemporaryFile(suffix=".f32") as tmp:
