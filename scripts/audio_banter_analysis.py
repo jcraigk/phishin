@@ -524,6 +524,7 @@ class Candidate:
     after_set: str | None = None
     before_set: str | None = None
     preview: str | None = None       # rendered mp3 of the whole source file, in clips/
+    members: list = field(default_factory=list)  # every file in the run (1 for a lone file)
 
 
 @dataclass
@@ -583,17 +584,38 @@ def analyze_show(date, out_dir):
             edge_cache[tid] = load_track_edges(by_id[tid]["mp3_url"])
         return edge_cache[tid]
 
-    for i, f in enumerate(files):
+    def fetch(f):
+        return (Path(f["path"]) if meta.get("local")
+                else download_source_file(meta["identifier"], f["name"], show_dir))
+
+    def checksums():
+        nonlocal md5s
+        if md5s is None:
+            md5s = (expected_md5s(meta["identifier"], meta["checksum_files"])
+                    if not meta.get("local") else {"ffp": {}, "file": {}})
+        return md5s
+
+    # Consecutive unmatched files form one run: a lone banter file, or a whole
+    # stretch (even a set) phish.in never got. Joints are only meaningful at a
+    # run's ends, so only its first and last files are fetched.
+    runs, i = [], 0
+    while i < len(files):
         if i in f2t:
+            i += 1
             continue
-        # Every unmatched file is shown; the taper's label (or the notes line
-        # for its track number, when the file carries no title) says what it is.
-        label_line = notes_line_for(f["name"], hits)
-        # Nearest matched files on each side give the phish.in anchors.
-        prev_idx = next((j for j in range(i - 1, -1, -1) if j in f2t), None)
-        next_idx = next((j for j in range(i + 1, len(files)) if j in f2t), None)
+        j = i
+        while j + 1 < len(files) and (j + 1) not in f2t:
+            j += 1
+        runs.append((i, j))
+        i = j + 1
+
+    for first, last in runs:
+        prev_idx = next((j for j in range(first - 1, -1, -1) if j in f2t), None)
+        next_idx = next((j for j in range(last + 1, len(files)) if j in f2t), None)
         after = by_id[f2t[prev_idx][-1]] if prev_idx is not None else None
         before = by_id[f2t[next_idx][0]] if next_idx is not None else None
+        members = files[first:last + 1]
+        f = members[0]
         key = f"{date}:{Path(f['name']).stem}"
         cand = Candidate(
             date=date, key=key, source_item=meta["identifier"], source_file=f["name"],
@@ -605,52 +627,45 @@ def analyze_show(date, out_dir):
             before_position=before and before["position"],
             after_set=after and after.get("set_name"),
             before_set=before and before.get("set_name"),
-            status="candidate",
+            status="candidate" if len(members) == 1 else "run",
+            members=[{"name": m["name"], "title": m["title"], "length": m["length"]}
+                     for m in members],
         )
-        skipped = [files[j]["title"] for j in range(i - 1, prev_idx if prev_idx is not None else -1, -1)
-                   if j != i and j not in f2t]
-        skipped += [files[j]["title"] for j in range(i + 1, next_idx if next_idx is not None else len(files))
-                    if j not in f2t]
-        if skipped:
-            cand.note = "other unmatched files between anchors: " + ", ".join(skipped)
-        cand.notes_line = label_line or notes_line_by_neighbors(hits, after, before)
-
+        cand.notes_line = (notes_line_for(f["name"], hits)
+                           or notes_line_by_neighbors(hits, after, before))
         if after is None or before is None:
-            cand.status = "unanchored"
-            cand.note = (cand.note + "; " if cand.note else "") + \
-                "no matched track on one side (set edge or unmatched neighbors)"
+            if cand.status == "candidate":
+                cand.status = "unanchored"
         elif before["position"] != after["position"] + 1:
             between = [t for t in tracks if after["position"] < t["position"] < before["position"]]
             same = [t for t in between
                     if abs(t["duration"] / 1000.0 - (f["length"] or -1)) <= DURATION_TOL_S]
-            if same:
+            if same and len(members) == 1:
                 cand.status = "already_present"
-                cand.note = f"phish.in already has #{same[0]['position']} {same[0]['title']} " \
-                            f"({same[0]['duration'] / 1000:.1f}s) here"
+                cand.note = f"phish.in has {same[0]['title']} ({same[0]['duration'] / 1000:.1f}s) here"
             else:
-                cand.note = (cand.note + "; " if cand.note else "") + \
-                    "tracks already between anchors: " + \
-                    ", ".join(f"#{t['position']} {t['title']}" for t in between)
+                cand.note = "phish.in already has " + \
+                    ", ".join(t["title"] for t in between) + " between these"
         if cand.status == "already_present":
             report.candidates.append(cand)
             continue
 
-        path = (Path(f["path"]) if meta.get("local")
-                else download_source_file(meta["identifier"], f["name"], show_dir))
-        cand.source_path = str(path)
-        if md5s is None:
-            md5s = (expected_md5s(meta["identifier"], meta["checksum_files"])
-                    if not meta.get("local") else {"ffp": {}, "file": {}})
-        cand.md5_verified = verify_download(path, md5s)
-
-        banter = load_file_edges(path)
+        head_path = fetch(members[0])
+        tail_path = head_path if len(members) == 1 else fetch(members[-1])
+        cand.source_path = str(head_path)
+        cand.md5_verified = verify_download(head_path, checksums())
         stem = re.sub(r"[^a-z0-9]+", "-", key.lower())
-        cand.preview = render_preview(path, clip_dir / f"{stem}-full.mp3")
+        cand.preview = render_preview(head_path, clip_dir / f"{stem}-full.mp3")
+        if len(members) > 1:
+            cand.members[-1]["preview"] = render_preview(
+                tail_path, clip_dir / f"{stem}-last-full.mp3")
+        head_edge = load_file_edges(head_path)
+        tail_edge = head_edge if len(members) == 1 else load_file_edges(tail_path)
         cand.joints = {}
         if after:
-            cand.joints["in"] = joint(track_edges(after["id"]), banter, clip_dir / f"{stem}-in.mp3")
+            cand.joints["in"] = joint(track_edges(after["id"]), head_edge, clip_dir / f"{stem}-in.mp3")
         if before:
-            cand.joints["out"] = joint(banter, track_edges(before["id"]), clip_dir / f"{stem}-out.mp3")
+            cand.joints["out"] = joint(tail_edge, track_edges(before["id"]), clip_dir / f"{stem}-out.mp3")
         if after and before:
             cand.joints["direct"] = joint(track_edges(after["id"]), track_edges(before["id"]),
                                           clip_dir / f"{stem}-direct.mp3")
@@ -688,8 +703,17 @@ def placement_text(c):
 
 
 def source_cell(c, md5=None):
-    player = (f'<audio controls preload="none" src="clips/{esc(c.preview)}"></audio><br>'
-              if c.preview else "")
+    def player(name):
+        return f'<audio controls preload="none" src="clips/{esc(name)}"></audio>'
+    if len(c.members) > 1:
+        first, last = c.members[0], c.members[-1]
+        middle = ", ".join(esc(m["title"]) for m in c.members[1:-1])
+        body = (f"<b>{len(c.members)} consecutive files not on phish.in</b><br>"
+                f"{player(c.preview)}<br>{esc(first['title'])}"
+                f"{'<br><small>' + middle + '</small>' if middle else ''}"
+                f"<br>{player(last.get('preview'))}<br>{esc(last['title'])}")
+    else:
+        body = f"{player(c.preview) if c.preview else ''}<br>{esc(c.source_title)}"
     small = [esc(c.source_file)]
     if md5:
         small.append(md5)
@@ -697,7 +721,7 @@ def source_cell(c, md5=None):
         small.append(f"notes: <code>{esc(c.notes_line)}</code>")
     if c.note:
         small.append(esc(c.note))
-    return f"<td>{player}{esc(c.source_title)}<br><small>{' - '.join(small)}</small></td>"
+    return f"<td>{body}<br><small>{' - '.join(small)}</small></td>"
 
 
 def write_review(out_dir, reports):
@@ -739,10 +763,10 @@ def write_review(out_dir, reports):
                 rows.append(f'<tr class="{c.status}">{source_cell(c)}<td>{placement}</td>'
                             f'<td colspan="4">already on phish.in</td></tr>')
                 continue
-            if c.status == "unanchored":
+            if c.status in ("unanchored", "run"):
                 rows.append(f'<tr class="{c.status}">{source_cell(c)}<td>{placement}</td>'
                             f"{joint_cell(c.joints.get('in'))}{joint_cell(c.joints.get('out'))}"
-                            f"<td></td><td></td></tr>")
+                            f"{joint_cell(c.joints.get('direct'))}<td></td></tr>")
                 continue
             n_cand += 1
             md5 = {True: "md5 ok", False: "MD5 MISMATCH", None: "no checksum file"}[c.md5_verified]
@@ -777,7 +801,7 @@ def write_review(out_dir, reports):
   td.suspect {{ background: #fff3cd; }}
   td.broken {{ background: #f8d7da; }}
   tr.already_present {{ color: #777; }}
-  tr.unanchored {{ background: #f6f6f6; }}
+  tr.unanchored, tr.run {{ background: #f6f6f6; }}
   section.unresolved {{ background: #fdf5f5; padding: 0 1rem; }}
   audio {{ height: 28px; width: 220px; }}
   code {{ font-size: 12px; }}
