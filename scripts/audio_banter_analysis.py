@@ -217,10 +217,16 @@ def parse_length(value):
     return None
 
 
-def archive_items(date):
+def archive_items(date, days=0):
+    """Item identifiers for the date, or for a window around it: a show that
+    phish.in re-dated (5/21/88 filed as 5/22/88) is on archive.org under the
+    taper's date, and the duration match still decides whether it's the same tape."""
+    import datetime
+    d = datetime.date.fromisoformat(date)
+    lo, hi = d - datetime.timedelta(days=days), d + datetime.timedelta(days=days)
     resp = requests.get(f"{ARCHIVE}/advancedsearch.php", timeout=60, params={
-        "q": f"phish AND date:[{date} TO {date}]",
-        "fl[]": ["identifier", "title"], "rows": 50, "output": "json",
+        "q": f"phish AND date:[{lo} TO {hi}]",
+        "fl[]": ["identifier", "title"], "rows": 100, "output": "json",
     })
     resp.raise_for_status()
     return [d["identifier"] for d in resp.json()["response"]["docs"]]
@@ -339,19 +345,26 @@ def resolve_source(date, tracks, out_dir):
         if total and matched / total >= MIN_MATCH_RATIO:
             return {"meta": local, "file_to_tracks": f2t, "track_to_files": t2f,
                     "matched": matched, "total": total}, tried
-    for identifier in archive_items(date):
-        try:
-            meta = archive_metadata(identifier)
-        except requests.RequestException as e:
-            tried.append({"identifier": identifier, "error": str(e)})
-            continue
-        f2t, t2f, matched, total = match_item(meta["files"], tracks)
-        ratio = matched / total if total else 0.0
-        tried.append({"identifier": identifier, "matched": matched, "total": total,
-                      "files": len(meta["files"])})
-        if ratio >= MIN_MATCH_RATIO and (best is None or matched > best["matched"]):
-            best = {"meta": meta, "file_to_tracks": f2t, "track_to_files": t2f,
-                    "matched": matched, "total": total}
+    seen = set()
+    for days in (0, 3):
+        for identifier in archive_items(date, days):
+            if identifier in seen:
+                continue
+            seen.add(identifier)
+            try:
+                meta = archive_metadata(identifier)
+            except requests.RequestException as e:
+                tried.append({"identifier": identifier, "error": str(e)})
+                continue
+            f2t, t2f, matched, total = match_item(meta["files"], tracks)
+            ratio = matched / total if total else 0.0
+            tried.append({"identifier": identifier, "matched": matched, "total": total,
+                          "files": len(meta["files"])})
+            if ratio >= MIN_MATCH_RATIO and (best is None or matched > best["matched"]):
+                best = {"meta": meta, "file_to_tracks": f2t, "track_to_files": t2f,
+                        "matched": matched, "total": total}
+        if best:
+            break
     return best, tried
 
 
@@ -854,8 +867,12 @@ def write_review(out_dir, reports):
             if r.spreadsheet:
                 link = (f"<a href='{esc(r.spreadsheet['link'])}' target='_blank'>download</a>"
                         if r.spreadsheet.get("link") else "no download link")
-                sheet = (f"<p>Phish Spreadsheet: {link}; source <code>{esc(r.spreadsheet.get('source'))}"
-                         f"</code> {esc(r.spreadsheet.get('notes'))}. Extract it into "
+                bits = [f"Phish Spreadsheet: {link}"]
+                if r.spreadsheet.get("source"):
+                    bits.append(f"source <code>{esc(r.spreadsheet['source'])}</code>")
+                if r.spreadsheet.get("notes"):
+                    bits.append(esc(r.spreadsheet["notes"]))
+                sheet = (f"<p>{'; '.join(bits)}. To use a copy you have, extract it into "
                          f"<code>data/banter_scan/{r.date}/source/</code> and re-run "
                          f"<code>rake banter_scan:run[{r.date}]</code>.</p>")
             elif not [t for t in r.tried if not t["identifier"].startswith("local:")]:
