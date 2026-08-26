@@ -20,6 +20,7 @@ class BanterInsertService < ApplicationService
   OUTPUT_DIR = Rails.root.join("tmp/banter_scan/renders")
 
   class Error < StandardError; end
+  class AlreadyInserted < Error; end
 
   def call
     validate!
@@ -36,6 +37,7 @@ class BanterInsertService < ApplicationService
   def validate!
     raise Error, "No source file at #{source_path}" unless File.exist?(source_path.to_s)
     raise Error, "Need a track on at least one side" if after_track.nil? && before_track.nil?
+    check_already_inserted!
     return if before_track.nil? || after_track.nil?
 
     unless before_track.show_id == after_track.show_id
@@ -45,6 +47,24 @@ class BanterInsertService < ApplicationService
 
     raise Error, "#{label}: expected #{before_track.title} right after " \
                  "#{after_track.title}, found position #{before_track.position}"
+  end
+
+  # Re-running an export must not double up: the slot already holding a track
+  # with this title and the source file's length is this file, inserted earlier.
+  def check_already_inserted!
+    existing = show.tracks.find_by(position:)
+    return unless existing && existing.title == title
+    return unless (existing.duration - source_duration_ms).abs <= 500
+
+    raise AlreadyInserted, "#{label}: already inserted as #{existing.url}"
+  end
+
+  def source_duration_ms
+    out, _err, status = Open3.capture3(
+      "ffprobe", "-v", "error", "-show_entries", "format=duration",
+      "-of", "default=noprint_wrappers=1:nokey=1", source_path.to_s
+    )
+    status.success? ? (out.to_f * 1000).round : 0
   end
 
   def render_mp3

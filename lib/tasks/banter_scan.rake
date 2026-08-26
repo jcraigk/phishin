@@ -122,6 +122,8 @@ namespace :banter_scan do
           puts "  output: #{result[:output_path]}"
           puts "  track:  #{result[:url]}" if result[:applied]
           before_track = Track.find(result[:track_id]) if result[:applied] && members.size > 1
+        rescue BanterInsertService::AlreadyInserted => e
+          puts "SKIPPED #{progress}  #{e.message}"
         rescue BanterInsertService::Error, RuntimeError => e
           failures << [ label, e.message ]
         end

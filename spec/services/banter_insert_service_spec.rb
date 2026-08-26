@@ -119,6 +119,23 @@ RSpec.describe BanterInsertService do
     end
   end
 
+  context "when run twice" do
+    it "inserts once and reports the second run as already inserted" do
+      first = described_class.call(after_track, source_path:, before_track:)
+      expect { described_class.call(after_track, source_path:, before_track:) }
+        .to raise_error(described_class::AlreadyInserted, /already inserted/)
+      expect(show.tracks.where(title: "Banter").pluck(:id)).to eq([ first[:track_id] ])
+    end
+
+    it "does not double up a start-of-set insert either" do
+      magilla = show.tracks.find_by!(title: "Magilla")
+      described_class.call(nil, source_path:, before_track: magilla)
+      expect { described_class.call(nil, source_path:, before_track: magilla) }
+        .to raise_error(described_class::AlreadyInserted)
+      expect(show.tracks.where(title: "Banter").count).to eq(1)
+    end
+  end
+
   context "with dry_run" do
     let(:dry_run) { true }
 
