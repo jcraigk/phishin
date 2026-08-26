@@ -915,6 +915,9 @@ def set_options(c):
     default = seen[0] if seen else None
     if len(seen) == 2 and c.joints.get("in") and c.joints.get("out"):
         default = c.before_set if c.joints["out"]["score"] < c.joints["in"]["score"] else c.after_set
+    # Files ahead of the first song may be soundcheck material; always offer it.
+    if "Soundcheck" not in seen:
+        seen.append("Soundcheck")
     return "".join(f'<option value="{SET_CODES.get(n, n)}"{" selected" if n == default else ""}>{esc(n)}</option>'
                    for n in seen)
 
