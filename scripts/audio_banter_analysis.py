@@ -594,11 +594,23 @@ def analyze_show(date, out_dir):
     # out, the trailing run of unmatched files is it.
     filler_text = f"{meta.get('description', '')}\n{show.get('taper_notes') or ''}"
     report.filler_skipped = []
+    drop = set()
     if re.search(r"\b(filler|bonus)\b", filler_text, re.I) and f2t:
-        last_matched = max(f2t)
-        trailing = [i for i in range(last_matched + 1, len(files))]
-        report.filler_skipped = [files[i]["title"] for i in trailing]
-        files = files[:last_matched + 1]
+        drop.update(range(max(f2t) + 1, len(files)))
+    # A file named for another date is from another show, wherever it sits.
+    own = date.replace("-", "")
+    for i, f in enumerate(files):
+        if i in f2t:
+            continue
+        m = re.search(r"(\d{4})-?(\d{2})-?(\d{2})", Path(f["name"]).name)
+        if m and "".join(m.groups()) != own:
+            drop.add(i)
+    if drop:
+        report.filler_skipped = [files[i]["title"] for i in sorted(drop)]
+        keep = [i for i in range(len(files)) if i not in drop]
+        remap = {old: new for new, old in enumerate(keep)}
+        files = [files[i] for i in keep]
+        f2t = {remap[i]: v for i, v in f2t.items() if i in remap}
     report.unmatched_files = [
         {"name": f["name"], "title": f["title"], "length": f["length"],
          "banter": bool(BANTER_RE.search(f["title"]) and not NOT_BANTER_RE.search(f["title"]))}
@@ -684,15 +696,15 @@ def analyze_show(date, out_dir):
             report.candidates.append(cand)
             continue
 
-        head_path = fetch(members[0])
-        tail_path = head_path if len(members) == 1 else fetch(members[-1])
+        paths = [fetch(m) for m in members]
+        head_path, tail_path = paths[0], paths[-1]
         cand.source_path = str(head_path)
-        cand.md5_verified = verify_download(head_path, checksums())
+        cand.md5_verified = all(verify_download(pth, checksums()) is not False for pth in paths)
         stem = re.sub(r"[^a-z0-9]+", "-", key.lower())
-        cand.preview = render_preview(head_path, clip_dir / f"{stem}-full.mp3")
-        if len(members) > 1:
-            cand.members[-1]["preview"] = render_preview(
-                tail_path, clip_dir / f"{stem}-last-full.mp3")
+        for n, (m, pth) in enumerate(zip(cand.members, paths)):
+            m["source_path"] = str(pth)
+            m["preview"] = render_preview(pth, clip_dir / (f"{stem}-full.mp3" if n == 0 else f"{stem}-{n}-full.mp3"))
+        cand.preview = cand.members[0]["preview"]
         head_edge = load_file_edges(head_path)
         tail_edge = head_edge if len(members) == 1 else load_file_edges(tail_path)
         cand.joints = {}
@@ -783,14 +795,16 @@ def placement_text(c):
 
 def source_block(c):
     if len(c.members) > 1:
-        first, last = c.members[0], c.members[-1]
-        middle = ", ".join(esc(m["title"]) for m in c.members[1:-1])
-        return (f'<div class="src"><div class="srcname">{esc(first["title"])}'
-                f' <span class="meta">{fmt_len(first["length"])}</span></div>{player(c.preview)}'
-                f'{"<div class=middle>" + middle + "</div>" if middle else ""}'
-                f'<div class="srcname">{esc(last["title"])}'
-                f' <span class="meta">{fmt_len(last["length"])}</span></div>'
-                f'{player(last.get("preview"))}</div>')
+        parts = []
+        for n, m in enumerate(c.members):
+            parts.append(
+                f'<div class="member" data-n="{n}"><div class="srcname">{esc(m["title"])}'
+                f' <span class="meta">{fmt_len(m["length"])}</span></div>{player(m.get("preview"))}'
+                f'<div class="decide sub"><label class="field"><span>Title</span>'
+                f'<input class="title" value="{esc(m["title"])}"></label>'
+                f'<label class="field"><span>Song</span><select class="song" data-default="{esc(m["title"])}">'
+                f'</select></label></div></div>')
+        return f'<div class="src">{"".join(parts)}</div>'
     return f'<div class="src">{player(c.preview)}</div>'
 
 
@@ -819,19 +833,22 @@ def candidate_row(c):
               f'{joint_block("Direct", c.joints.get("direct"))}</div>')
     decide = ""
     payload = ""
-    if c.status in ("candidate", "unanchored"):
+    if c.status in ("candidate", "unanchored", "run"):
         payload = ' data-payload="' + esc(json.dumps({
             "date": c.date, "key": c.key, "after_id": c.after_id, "after_title": c.after_title,
             "after_position": c.after_position, "before_id": c.before_id,
             "before_title": c.before_title, "before_position": c.before_position,
             "source_path": c.source_path, "source_item": c.source_item,
             "source_file": c.source_file,
+            "members": [{"source_path": m.get("source_path"), "source_file": m["name"],
+                         "source_title": m["title"]} for m in c.members],
         })) + '"'
-        decide = ('<div class="decide"><label><input type="checkbox" class="approve"> Approve</label>'
-                  '<label><input type="checkbox" class="skip"> Skip</label>'
+        fields = ("" if c.status == "run" else
                   '<label class="field"><span>Title</span><input class="title" value="Banter"></label>'
-                  '<label class="field"><span>Song</span><select class="song"></select></label></div>')
-    cls = "row " + ("cand" if c.status in ("candidate", "unanchored") else c.status)
+                  '<label class="field"><span>Song</span><select class="song"></select></label>')
+        decide = ('<div class="decide main"><label><input type="checkbox" class="approve"> Approve</label>'
+                  f'<label><input type="checkbox" class="skip"> Skip</label>{fields}</div>')
+    cls = "row cand" + (" run" if c.status == "run" else "")
     return (f'<div class="{cls}"{payload}>{head}<div class="body">{source_block(c)}'
             f'<div class="meta small">{" · ".join(meta)}</div>{joints}</div>{decide}</div>')
 
@@ -902,7 +919,7 @@ def write_review(out_dir, reports):
                     f'{len(already)} file(s) already on phish.in</span>')
         src += "</div>"
         rows = [candidate_row(c) for c in r.candidates if c.status != "already_present"]
-        n_cand += sum(1 for c in r.candidates if c.status in ("candidate", "unanchored"))
+        n_cand += sum(1 for c in r.candidates if c.status in ("candidate", "unanchored", "run"))
         body = "".join(rows) or '<p class="meta">Every source file matches a phish.in track.</p>'
         sections.append(f"<section>{head}</div>{src}{notes}{body}</section>")
 
@@ -999,7 +1016,9 @@ def write_review(out_dir, reports):
   kbd {{ font: 11px/1 -apple-system, sans-serif; border: 1px solid var(--line); border-radius: 4px;
          padding: .1rem .3rem; color: var(--muted); }}
   .row.already {{ opacity: .55; }}
-  .row.run {{ opacity: .85; }}
+  .member {{ padding: .3rem 0 .5rem; border-bottom: 1px dashed var(--line); }}
+  .member:last-child {{ border-bottom: none; }}
+  .decide.sub {{ margin-top: .4rem; }}
   .head {{ display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-bottom: .5rem; }}
   .head strong {{ font-family: "Open Sans Condensed", -apple-system, sans-serif; font-size: 21px;
                   font-weight: 700; }}
@@ -1057,16 +1076,23 @@ const KEY = "banter_scan_progress";
 const rows = () => [...document.querySelectorAll(".row.cand")];
 const payloadOf = r => JSON.parse(r.dataset.payload);
 const songOptions = document.getElementById("songs").content;
-rows().forEach(r => r.querySelector("select.song").appendChild(songOptions.cloneNode(true)));
+document.querySelectorAll("select.song").forEach(sel => {{
+  sel.appendChild(songOptions.cloneNode(true));
+  const want = (sel.dataset.default || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  if (!want) return;
+  const hit = [...sel.options].find(o => o.textContent.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() === want);
+  if (hit) sel.value = hit.value;
+}});
+const fieldsOf = r => [...r.querySelectorAll(".decide")].map(d => ({{
+  title: d.querySelector("input.title")?.value, song_id: d.querySelector("select.song")?.value,
+}})).filter(f => f.title !== undefined);
 const isApproved = r => r.querySelector("input.approve").checked;
 const isSkipped = r => r.querySelector("input.skip").checked;
 function save() {{
   const state = {{}};
   rows().forEach(r => {{
     state[payloadOf(r).key] = {{
-      approved: isApproved(r), skipped: isSkipped(r),
-      title: r.querySelector("input.title").value,
-      song_id: r.querySelector("select.song").value,
+      approved: isApproved(r), skipped: isSkipped(r), fields: fieldsOf(r),
     }};
   }});
   try {{ localStorage.setItem(KEY, JSON.stringify(state)); }} catch (e) {{}}
@@ -1079,8 +1105,12 @@ function restore() {{
     if (!s) return;
     r.querySelector("input.approve").checked = !!s.approved;
     r.querySelector("input.skip").checked = !!s.skipped;
-    if (s.title) r.querySelector("input.title").value = s.title;
-    if (s.song_id) r.querySelector("select.song").value = s.song_id;
+    const decides = [...r.querySelectorAll(".decide")].filter(d => d.querySelector("input.title"));
+    (s.fields || []).forEach((f, i) => {{
+      if (!decides[i]) return;
+      if (f.title) decides[i].querySelector("input.title").value = f.title;
+      if (f.song_id) decides[i].querySelector("select.song").value = f.song_id;
+    }});
   }});
 }}
 function refresh() {{
@@ -1183,11 +1213,19 @@ refresh();
 document.getElementById("export").onclick = () => {{
   const approved = rows()
     .filter(r => r.querySelector("input.approve").checked)
-    .map(r => Object.assign(payloadOf(r), {{
-      title: r.querySelector("input.title").value || "Banter",
-      song_id: Number(r.querySelector("select.song").value),
-      song_title: r.querySelector("select.song").selectedOptions[0]?.textContent,
-    }}));
+    .map(r => {{
+      const p = payloadOf(r);
+      const fields = fieldsOf(r);
+      const sels = [...r.querySelectorAll("select.song")];
+      p.members = p.members.map((m, i) => Object.assign(m, {{
+        title: fields[i]?.title || "Banter",
+        song_id: Number(fields[i]?.song_id),
+        song_title: sels[i]?.selectedOptions[0]?.textContent,
+      }}));
+      Object.assign(p, {{title: p.members[0].title, song_id: p.members[0].song_id,
+                         song_title: p.members[0].song_title}});
+      return p;
+    }});
   const blob = new Blob([JSON.stringify(approved, null, 2)], {{type: "application/json"}});
   const a = Object.assign(document.createElement("a"),
     {{href: URL.createObjectURL(blob), download: "approved.json"}});
