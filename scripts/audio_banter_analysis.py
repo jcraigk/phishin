@@ -775,7 +775,8 @@ def candidate_row(c):
     md5 = {True: "md5 ok", False: "MD5 MISMATCH", None: "no checksum"}[c.md5_verified]
     title = (f"{len(c.members)} consecutive files not on phish.in" if len(c.members) > 1
              else c.source_title)
-    chips = [f'<span class="chip place">{placement_text(c)}</span>']
+    chips = [f'<span class="chip place">{placement_text(c)}</span>',
+             f'<a class="ext" href="https://phish.net/setlists/?d={c.date}" target="_blank">phish.net</a>']
     if c.notes_line:
         chips.append(f'<span class="chip notes" title="taper notes">{esc(c.notes_line)}</span>')
     if c.note:
