@@ -27,6 +27,27 @@ module BanterScan
     ok
   end
 
+  # Tracks sharing a title get numbered slugs in creation order, and apply
+  # creates later positions first, so renumber by position when a show is done.
+  # Only the titles that were just inserted are touched: other duplicate-title
+  # pairs in the show have live URLs in whatever order they were created.
+  def self.reslug_duplicates(show, titles = [ "Banter" ])
+    changed = []
+    show.tracks.reload.where(title: titles).group_by(&:title).each_value do |group|
+      next if group.size < 2
+
+      group = group.sort_by(&:position)
+      old = group.to_h { |t| [ t.id, t.slug ] }
+      group.each_with_index { |t, i| t.update_column(:slug, "reslug-tmp-#{t.id}-#{i}") }
+      group.each do |t|
+        t.reload.generate_slug(force: true)
+        t.save!
+        changed << [ t.position, old[t.id], t.slug ] if old[t.id] != t.slug
+      end
+    end
+    changed
+  end
+
   # The review export names the archive.org item and file for every entry, so
   # apply can pull the FLAC itself instead of needing it uploaded alongside.
   def self.fetch_source(item, file, dest)
@@ -58,6 +79,20 @@ namespace :banter_scan do
   desc "Regenerate the review page from the existing report.json"
   task rebuild: :environment do
     exit 1 unless BanterScan.run([ "--rebuild" ])
+  end
+
+  desc "Renumber duplicate-title slugs by position (rake banter_scan:reslug[1988-05-15,1988-06-19])"
+  task :reslug, [ :dates ] => :environment do |_t, args|
+    abort "Usage: rake banter_scan:reslug[YYYY-MM-DD,...]" unless args[:dates]
+    args[:dates].split(",").map(&:strip).each do |date|
+      show = Show.find_by(date:)
+      next puts "#{date}: no such show" unless show
+
+      changed = BanterScan.reslug_duplicates(show)
+      puts "#{date}: #{changed.empty? ? 'already in order' : ''}"
+      changed.each { |position, old, slug| puts "  ##{position} #{old} -> #{slug}" }
+    end
+    Rails.cache.clear
   end
 
   desc "Insert approved banter tracks (rake banter_scan:apply[path/to/approved.json]); " \
@@ -126,6 +161,19 @@ namespace :banter_scan do
           puts "SKIPPED #{progress}  #{e.message}"
         rescue BanterInsertService::Error, RuntimeError => e
           failures << [ label, e.message ]
+        end
+      end
+    end
+
+    unless dry_run
+      entries.map { it["date"] }.uniq.each do |date|
+        show = Show.find_by(date:)
+        next unless show
+
+        titles = entries.select { it["date"] == date }
+                        .flat_map { |e| (e["members"].presence || [ e ]).map { |m| m["title"].presence || "Banter" } }
+        BanterScan.reslug_duplicates(show, titles.uniq).each do |position, old, slug|
+          puts "  reslug: #{date} ##{position} #{old} -> #{slug}"
         end
       end
     end
