@@ -1195,7 +1195,7 @@ function save() {{
   rows().forEach(r => {{
     state[payloadOf(r).key] = {{
       approved: isApproved(r), skipped: isSkipped(r), fields: fieldsOf(r),
-      set: chosenSet(r),
+      set_choice: chosenSet(r),
     }};
   }});
   try {{ localStorage.setItem(KEY, JSON.stringify(state)); }} catch (e) {{}}
@@ -1208,7 +1208,7 @@ function restore() {{
     if (!s) return;
     r.querySelector("input.approve").checked = !!s.approved;
     r.querySelector("input.skip").checked = !!s.skipped;
-    if (s.set && r.querySelector("select.set")) r.querySelector("select.set").value = s.set;
+    if (s.set_choice && r.querySelector("select.set")) r.querySelector("select.set").value = s.set_choice;
     const decides = [...r.querySelectorAll(".decide")].filter(d => d.querySelector("input.title"));
     (s.fields || []).forEach((f, i) => {{
       if (!decides[i]) return;
