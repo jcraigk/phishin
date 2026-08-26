@@ -22,6 +22,7 @@ RUN apt-get update -qq && \
       libjpeg-dev \
       libyaml-dev \
       lame \
+      libarchive-tools \
     && apt-get clean
 
 # ffmpeg 8.1 rather than Debian's 7.x. The two differ in ways that change

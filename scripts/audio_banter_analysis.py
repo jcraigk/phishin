@@ -353,6 +353,35 @@ def local_item(date, out_dir):
             "description": "", "local": True}
 
 
+def fetch_spreadsheet_source(date, out_dir):
+    """Download the Phish Spreadsheet's archive for a show and unpack it into
+    <out-dir>/<date>/source/. Mediafire serves the file straight from the
+    sheet's link; bsdtar (libarchive) reads the rar/zip. Returns the link."""
+    row = spreadsheet_row(date, out_dir)
+    if not row or not row.get("link"):
+        return None
+    src_dir = out_dir / date / "source"
+    if src_dir.is_dir() and any(src_dir.rglob("*")):
+        return row["link"]
+    archive = out_dir / date / "source-archive"
+    archive.parent.mkdir(parents=True, exist_ok=True)
+    if not archive.exists():
+        print(f"  downloading {row['link']}", file=sys.stderr)
+        with requests.get(row["link"], stream=True, timeout=600,
+                          headers={"User-Agent": "Mozilla/5.0"}) as resp:
+            resp.raise_for_status()
+            if "text/html" in resp.headers.get("content-type", ""):
+                raise RuntimeError("mediafire returned a page, not the file")
+            tmp = archive.with_suffix(".part")
+            with open(tmp, "wb") as fh:
+                for chunk in resp.iter_content(1 << 20):
+                    fh.write(chunk)
+            tmp.rename(archive)
+    src_dir.mkdir(parents=True, exist_ok=True)
+    aja.run(["bsdtar", "-xf", str(archive), "-C", str(src_dir)])
+    return row["link"]
+
+
 def resolve_source(date, tracks, out_dir):
     """Best source for the show - a local drop-in, else the archive.org item
     whose file lengths match phish.in - or None with the candidates tried."""
@@ -592,13 +621,28 @@ def analyze_show(date, out_dir):
     best, tried = resolve_source(date, tracks, out_dir)
     report.tried = tried
     if best is None:
+        # Fall back to the Phish Spreadsheet's copy, which for post-2000 shows
+        # is the very set of V0 files phish.in was imported from.
+        try:
+            link = fetch_spreadsheet_source(date, out_dir)
+            if link:
+                best, more = resolve_source(date, tracks, out_dir)
+                tried += [t for t in more if t not in tried]
+        except Exception as e:
+            print(f"  spreadsheet source failed: {e}", file=sys.stderr)
+    if best is None:
         report.error = ("no archive.org item for this date" if not tried
-                        else "no archive.org item matches phish.in's track durations")
+                        else "no source matches phish.in's track durations")
         try:
             report.spreadsheet = spreadsheet_row(date, out_dir)
         except Exception as e:
             report.spreadsheet = {"link": None, "source": "", "notes": f"lookup failed: {e}"}
         return report
+    if best["meta"].get("local"):
+        try:
+            report.spreadsheet = spreadsheet_row(date, out_dir)
+        except Exception:
+            report.spreadsheet = None
 
     meta = best["meta"]
     files = meta["files"]
@@ -900,7 +944,7 @@ def source_block(c):
     return f'<div class="src">{player(c.preview)}</div>'
 
 
-def candidate_row(c):
+def candidate_row(c, source_url=None):
     md5 = {True: "md5 ok", False: "MD5 MISMATCH", None: "no checksum"}[c.md5_verified]
     title = (f"{len(c.members)} consecutive files not on phish.in" if len(c.members) > 1
              else c.source_title)
@@ -931,7 +975,7 @@ def candidate_row(c):
             "after_position": c.after_position, "before_id": c.before_id,
             "before_title": c.before_title, "before_position": c.before_position,
             "source_path": c.source_path, "source_item": c.source_item,
-            "source_file": c.source_file,
+            "source_file": c.source_file, "source_url": source_url,
             "members": [{"source_path": m.get("source_path"), "source_file": m["name"],
                          "source_title": m["title"]} for m in c.members],
         })) + '"'
@@ -1011,7 +1055,8 @@ def write_review(out_dir, reports):
             src += (f' <span class="chip" title="{esc("; ".join(c.note for c in already))}">'
                     f'{len(already)} file(s) already on phish.in</span>')
         src += "</div>"
-        rows = [candidate_row(c) for c in r.candidates if c.status != "already_present"]
+        url = (r.spreadsheet or {}).get("link") if r.source_item.startswith("local:") else None
+        rows = [candidate_row(c, url) for c in r.candidates if c.status != "already_present"]
         n_cand += sum(1 for c in r.candidates if c.status in ("candidate", "unanchored", "run"))
         body = "".join(rows) or '<p class="meta">Every source file matches a phish.in track.</p>'
         sections.append(f"<section>{head}</div>{src}{notes}{body}</section>")

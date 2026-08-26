@@ -71,9 +71,20 @@ class BanterInsertService < ApplicationService
     status.success? ? (out.to_f * 1000).round : 0
   end
 
+  # A FLAC is encoded to the catalog's LAME settings; an MP3 source (the
+  # Phish Spreadsheet's V0 files, which the catalog itself was imported from)
+  # is used as it is, since re-encoding it would only lose quality.
   def render_mp3
     FileUtils.mkdir_p(OUTPUT_DIR)
-    render_via_lame(output_path, [ "-i", source_path.to_s ])
+    if mp3_source?
+      FileUtils.cp(source_path.to_s, output_path)
+    else
+      render_via_lame(output_path, [ "-i", source_path.to_s ])
+    end
+  end
+
+  def mp3_source?
+    File.extname(source_path.to_s).casecmp?(".mp3")
   end
 
   # TrackInserter shifts the later positions before it saves the new row, so a

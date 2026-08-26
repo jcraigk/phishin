@@ -50,9 +50,9 @@ module BanterScan
 
   # The review export names the archive.org item and file for every entry, so
   # apply can pull the FLAC itself instead of needing it uploaded alongside.
-  def self.fetch_source(item, file, dest)
-    raise "no archive.org item in the export" if item.blank? || file.blank?
-    raise "local sources (#{item}) must be uploaded" if item.start_with?("local:")
+  def self.fetch_source(item, file, dest, archive_url: nil)
+    raise "no source in the export" if item.blank? || file.blank?
+    return fetch_from_archive_file(archive_url, file, dest) if item.start_with?("local:")
 
     url = "https://archive.org/download/#{item}/#{file}"
     puts "  fetching #{url}"
@@ -64,6 +64,30 @@ module BanterScan
       raise "download failed after 3 attempts" if attempt == 2
     end
     File.rename(tmp, dest)
+    dest
+  end
+
+  # A Phish Spreadsheet source: one rar/zip of the whole show. Fetch it once
+  # per show, unpack it beside the destination (bsdtar reads both formats), and
+  # the wanted file is in there under its original name.
+  def self.fetch_from_archive_file(archive_url, file, dest)
+    raise "local source without a download link; upload #{file} by hand" if archive_url.blank?
+
+    dir = File.dirname(dest)
+    FileUtils.mkdir_p(dir)
+    archive = File.join(dir, "source-archive")
+    unless File.exist?(archive)
+      puts "  fetching #{archive_url}"
+      tmp = "#{archive}.part"
+      system("curl", "-sfL", "-A", "Mozilla/5.0", "--retry", "2", "-o", tmp, archive_url) or
+        raise("download failed")
+      File.rename(tmp, archive)
+    end
+    system("bsdtar", "-xf", archive, "-C", dir) or raise("bsdtar failed to unpack the archive")
+    found = Dir.glob(File.join(dir, "**", File.basename(file))).first
+    raise "#{file} not found in the archive" unless found
+
+    FileUtils.mv(found, dest) unless found == dest
     dest
   end
 end
@@ -136,7 +160,8 @@ namespace :banter_scan do
         end
         unless File.exist?(member_path)
           begin
-            BanterScan.fetch_source(entry["source_item"], member["source_file"], member_path)
+            BanterScan.fetch_source(entry["source_item"], member["source_file"], member_path,
+                                    archive_url: entry["source_url"])
           rescue StandardError => e
             next failures << [ label, "could not fetch #{member['source_file']}: #{e.message}" ]
           end

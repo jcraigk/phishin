@@ -153,6 +153,22 @@ RSpec.describe BanterInsertService do
     end
   end
 
+  context "with an mp3 source" do
+    let(:source_path) { Rails.root.join("tmp/spec/banter_source.mp3") }
+
+    before do
+      unless File.exist?(source_path)
+        system("ffmpeg", "-y", "-v", "error", "-i", Rails.root.join("tmp/spec/banter_source.flac").to_s,
+               "-b:a", "128k", source_path.to_s, exception: true)
+      end
+    end
+
+    it "attaches it as is instead of re-encoding" do
+      result
+      expect(FileUtils.compare_file(source_path, result[:output_path])).to be(true)
+    end
+  end
+
   context "with dry_run" do
     let(:dry_run) { true }
 
