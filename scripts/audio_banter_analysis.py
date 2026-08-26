@@ -882,8 +882,8 @@ def placement_text(c):
     if c.before_id is None and c.after_id is not None:
         return (f"End of {esc(c.after_set)} <span class='k'>After</span> "
                 f"{track_link(c.date, c.after_id, c.after_title)}")
-    return (f'<span class="k">Before</span> {track_link(c.date, c.after_id, c.after_title)}'
-            f' <span class="k">After</span> {track_link(c.date, c.before_id, c.before_title)}')
+    return (f'<span class="k">After</span> {track_link(c.date, c.after_id, c.after_title)}'
+            f' <span class="k">Before</span> {track_link(c.date, c.before_id, c.before_title)}')
 
 
 def source_block(c):
