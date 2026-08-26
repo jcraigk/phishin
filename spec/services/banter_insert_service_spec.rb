@@ -130,7 +130,8 @@ RSpec.describe BanterInsertService do
     it "does not double up a start-of-set insert either" do
       magilla = show.tracks.find_by!(title: "Magilla")
       described_class.call(nil, source_path:, before_track: magilla)
-      expect { described_class.call(nil, source_path:, before_track: magilla) }
+      # The anchor has moved down one slot, as it will have on a real re-run.
+      expect { described_class.call(nil, source_path:, before_track: magilla.reload) }
         .to raise_error(described_class::AlreadyInserted)
       expect(show.tracks.where(title: "Banter").count).to eq(1)
     end

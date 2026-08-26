@@ -52,9 +52,13 @@ class BanterInsertService < ApplicationService
   # Re-running an export must not double up: the slot already holding a track
   # with this title and the source file's length is this file, inserted earlier.
   def check_already_inserted!
-    existing = show.tracks.find_by(position:)
-    return unless existing && existing.title == title
-    return unless (existing.duration - source_duration_ms).abs <= 500
+    # The earlier copy sits at the target slot, or - when only a before-track
+    # anchors it - just ahead of that track (the insert pushed it down by one).
+    slots = after_track ? [ position ] : [ position, position - 1 ]
+    existing = show.tracks.where(position: slots, title:).find do |t|
+      (t.duration - source_duration_ms).abs <= 500
+    end
+    return unless existing
 
     raise AlreadyInserted, "#{label}: already inserted as #{existing.url}"
   end

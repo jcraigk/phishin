@@ -72,7 +72,9 @@ namespace :banter_scan do
   desc "Scan taper notes for missing banter and audit source joints " \
        "(rake banter_scan:run, or banter_scan:run[1991-05-17,1992-11-20] for given shows)"
   task :run, [ :dates ] => :environment do |_t, args|
-    extra = args[:dates] ? [ "--dates", args[:dates] ] : [ "--from-notes" ]
+    # rake splits task[a,b] on commas: the rest of the list arrives as extras.
+    dates = [ args[:dates], *args.extras ].compact
+    extra = dates.any? ? [ "--dates", dates.join(",") ] : [ "--from-notes" ]
     exit 1 unless BanterScan.run(extra)
   end
 
@@ -84,7 +86,7 @@ namespace :banter_scan do
   desc "Renumber duplicate-title slugs by position (rake banter_scan:reslug[1988-05-15,1988-06-19])"
   task :reslug, [ :dates ] => :environment do |_t, args|
     abort "Usage: rake banter_scan:reslug[YYYY-MM-DD,...]" unless args[:dates]
-    args[:dates].split(",").map(&:strip).each do |date|
+    [ args[:dates], *args.extras ].map(&:strip).each do |date|
       show = Show.find_by(date:)
       next puts "#{date}: no such show" unless show
 
