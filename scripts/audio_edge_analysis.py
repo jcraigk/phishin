@@ -1764,6 +1764,17 @@ def analyze_edge(yamnet, banter_finder, path, duration_s, edge, args, label, son
         banter = banter_finder.find(
             waveform[int(t0 * SAMPLE_RATE):int(t1 * SAMPLE_RATE)], offset_s + t0)
 
+    # A banter track has no music to bound the lead-in, so the run swallows
+    # the whole file and the trim would delete it. With --speech-onset the
+    # first on-mic words are the boundary instead: what precedes them is the
+    # crowd noise a lead trim is meant to remove.
+    if args.speech_onset and edge == "leading" and banter:
+        onset = min(seg["start"] for seg in banter)
+        if onset < boundary:
+            boundary = onset
+            region = [offset_s, onset]
+            run_s = onset - offset_s
+
     result = EdgeResult(
         label=label,
         edge=edge,
@@ -2058,6 +2069,9 @@ def main():
                         "before the fade-out starts (default: 2.0)")
     p.add_argument("--fade-out", type=float, default=6.0,
                    help="Fade-out seconds on a trimmed trailing edge (default: 6.0)")
+    p.add_argument("--speech-onset", action="store_true",
+                   help="on an all-speech track (banter), bound the lead-in at the first "
+                        "transcribed words instead of at music that never comes")
     p.add_argument("--no-transcribe", action="store_true",
                    help="Skip Whisper banter detection on flagged regions")
     p.add_argument("--banter-gap", type=float, default=25,
@@ -2095,8 +2109,29 @@ def main():
         except Exception as e:
             print(f"  ERROR fetching {date}: {e}", file=sys.stderr)
             failures.append(f"{date}: {e}")
+    waveforms = {}  # share url -> waveform png, for tracks given as urls
     for inp in args.inputs:
         edges = ["leading", "trailing"] if args.edges == "both" else [args.edges]
+        # A phish.in track page stands in for its mp3, with the same label,
+        # songs and share url a --show job gets, so its row applies like one.
+        m = re.match(rf"{re.escape(SITE_BASE)}/(\d{{4}}-\d{{2}}-\d{{2}})/([^/?#]+)/?$", inp)
+        if m:
+            date, slug = m.groups()
+            try:
+                resp = requests.get(f"{API_BASE}/shows/{date}", timeout=30)
+                resp.raise_for_status()
+                track = next((t for t in resp.json()["tracks"] if t.get("slug") == slug), None)
+            except Exception as e:  # noqa: BLE001 - reported with the other fetch failures
+                track = None
+                failures.append(f"{inp}: {e}")
+            if not track or not track.get("mp3_url"):
+                print(f"  skipping {inp} (no such track or no audio)", file=sys.stderr)
+                continue
+            label = f"{date} {track['set_name']} t{track['position']:02d} {track['title']}"
+            waveforms[inp] = track.get("waveform_image_url") or ""
+            jobs.append((label, track["mp3_url"], edges,
+                         [s["title"] for s in track.get("songs", [])], inp))
+            continue
         jobs.append((Path(inp).name, inp, edges, [], ""))
 
     if not jobs:
@@ -2127,6 +2162,8 @@ def main():
                 track_results.append(analyze_edge(yamnet, banter_finder, path, duration, edge, args,
                                                   label, songs, src if re.match(r"https?://", src) else "",
                                                   share))
+            for r in track_results:
+                r.waveform_url = r.waveform_url or waveforms.get(share, "")
             results.extend(track_results)
             if args.trim_dir:
                 info = trim_track(path, duration, track_results, args, label)

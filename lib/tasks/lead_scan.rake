@@ -173,6 +173,16 @@ namespace :lead_scan do
     exit 1 unless LeadScan.run([ "--show", args[:date] ], out_dir)
   end
 
+  desc "Scan the tracks listed in a file, one phish.in track url per line " \
+       "(rake \"lead_scan:list[chess-1995,data/chess_scan/chess_tracks.txt]\")"
+  task :list, [ :name, :path ] => :environment do |_t, args|
+    abort "Usage: rake lead_scan:list[name,path/to/urls.txt]" unless args[:name] && args[:path]
+    urls = File.readlines(args[:path], chomp: true).map(&:strip).reject { it.empty? || it.start_with?("#") }
+    abort "No urls in #{args[:path]}" if urls.empty?
+    out_dir = "#{LeadScan::SCAN_ROOT}/shows/#{args[:name]}"
+    exit 1 unless LeadScan.run(urls, out_dir)
+  end
+
   desc "Scan one year of shows (rake lead_scan:year[1996])"
   task :year, [ :year ] => :environment do |_t, args|
     abort "Usage: rake lead_scan:year[YYYY]" unless args[:year]
