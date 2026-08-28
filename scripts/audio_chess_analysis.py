@@ -610,6 +610,130 @@ def write_review(out_dir, reports, songs):
 
 
 # ---------------------------------------------------------------------------
+# Insert review: shows where the chess move exists as a file on archive.org
+# (in our own transfer or another taper's) but not on phish.in. Presented on
+# the banter scan's page so its export goes straight to banter_scan:apply.
+
+# (date, archive.org item, file, what was heard on it). Confirmed by
+# transcription on 2026-08-26; several dates list more than one transfer so
+# the better-sounding one can be picked.
+INSERTS = [
+    ("1995-10-27", "phish1995-10-27.163707.kalamazoo.unk.flac1648", "ph1995-10-27s2t01.flac",
+     "Zeke Kwaas of Cassopolis, Michigan"),
+    ("1995-11-11", "phish1995-11-11.110602.atlanta.bk4011.flac1644", "ph1995-11-11d2t01.flac",
+     "full announcement (Ted Chapin of Chattanooga)"),
+    ("1995-11-11", "phish1995-11-11.079701.atlanta.mk4.varnum.flac1644", "ph1995-11-11d2t01.flac",
+     "cuts in mid-sentence"),
+    ("1995-11-11", "phish1995-11-11.143703.atlanta.cmc6.mk4.flac1648", "ph1995-11-11s2t01.flac",
+     "cuts in mid-sentence"),
+    ("1995-11-14", "phish1995-11-14.029252.orlando.mk4v.flac1644", "ph1995-11-14d2t01.flac",
+     "our transfer; crowd only, no announcement heard"),
+    ("1995-11-21", "phish1995-11-21.163708.winstonsalem.at4031.flac1648", "ph1995-11-21s2t01.flac",
+     "Daniel Strickler of Winston-Salem"),
+    ("1995-11-22", "ph-951122MVBAKG", "ph951122_11. Chess Move.flac",
+     "Rudy Shepard of Springfield, Virginia"),
+    ("1995-11-22", "phish1995-11-22.016627.landover.mk4.flac1644", "ph1995-11-22d2t01.flac",
+     "our transfer; crowd only, no announcement heard"),
+    ("1995-11-25", "ph-951125MVB", "ph951125_10. Chess Move.flac",
+     "Manesh Al-Nasani of Vienna, Virginia"),
+    ("1995-11-29", "phish1995-11-29.124363.nashville.at4031.flac1648", "ph1995-11-29s2t01.flac",
+     "Pat Heffley of Florence, Alabama"),
+    ("1995-11-29", "phish1995-11-29.008148.nashville.at4031.flac1644", "ph1995-11-29d2t02.flac",
+     "Pat Heffley of Florence, Alabama (other transfer)"),
+    ("1995-11-30", "phish1995-11-30.122994.dayton.akg460.ck61.flac1644", "ph1995-11-30 akg461s2t01.flac",
+     "Jeff Stilman of Cincinnati; cuts in mid-sentence, only transfer"),
+    ("1995-12-05", "phish-1995-12-05-mullins-center-university-of-massachusetts-amherst-ma", "ph1995-12-05d2t01.flac",
+     "our transfer; Christo Wallhagen of Guilford, Connecticut"),
+    ("1995-12-08", "phish1995-12-08.163317.cleveland.vp88.flac1648", "Phish_1995-12-08_S2T01.flac",
+     "Brian Eiler of Akron"),
+    ("1995-12-29", "phish1995-12-29.124403.worcester.ck61.akg460.flaschner.flac1648", "ph1995-12-29s2t01.flac",
+     "Eric Nelson of Northampton (formerly known as Prince)"),
+    ("1995-12-29", "phish1995-12-29.020748.worcester.cmc64.ural.flac1644", "ph1995-12-29d2t01.flac",
+     "Eric Nelson of Northampton (other transfer)"),
+    ("1995-12-29", "phish1995-12-29.086696.worcester.ck61.akg460.clark.flac1644", "phish1995-12-29d2t01.flac",
+     "our transfer; crowd only, no announcement heard"),
+    ("1995-12-31", "phish1995-12-31.111286.newyork.km184.flac1644", "ph1995-12-31d2t01.flac",
+     "full: band resigns, score band 1 audience 1"),
+    ("1995-12-31", "phish1995-12-31.004523.newyork.nak300.flac1644", "ph95-12-31d2t01.flac",
+     "full: band resigns (other transfer)"),
+    ("1995-12-31", "phish1995-12-31.006825.newyork.mk4.cmc6.byron.flac1644", "ph1995-12-31d2t01.flac",
+     "our transfer; cuts in at the final score"),
+]
+
+
+def archive_description(meta):
+    """The item's description as plain text: what tapers put in the info file."""
+    text = re.sub(r"<br\s*/?>", "\n", meta.get("description") or "", flags=re.I)
+    text = re.sub(r"</?p[^>]*>", "\n", text, flags=re.I)
+    text = re.sub(r"<[^>]+>", "", text)
+    import html
+    text = html.unescape(text).replace("\xa0", " ")
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
+
+
+def insert_reports(out_dir):
+    out_dir.mkdir(parents=True, exist_ok=True)
+    clip_dir = out_dir / "clips"
+    clip_dir.mkdir(exist_ok=True)
+    reports = {}
+    edge_cache = {}
+
+    def track_edges(t):
+        if t["id"] not in edge_cache:
+            edge_cache[t["id"]] = banter.load_track_edges(t["mp3_url"])
+        return edge_cache[t["id"]]
+
+    for date, item, name, heard in INSERTS:
+        if date not in reports:
+            show = fetch_show(date)
+            tracks = sorted(show["tracks"], key=lambda t: t["position"])
+            opener = next(t for t in tracks if t["set_name"] == "Set 2")
+            closer = next(t for t in reversed(tracks) if t["position"] < opener["position"])
+            reports[date] = (banter.ShowReport(
+                date=date, venue=show.get("venue_name") or "", url=f"{SITE_BASE}/{date}",
+                note_hits=[], source_item=item, matched=0, total=len(tracks), tried=[],
+                unmatched_files=[], candidates=[]), closer, opener, tracks)
+        report, closer, opener, tracks = reports[date]
+        print(f"  {date} {item}/{name}", file=sys.stderr)
+        try:
+            meta = banter.archive_metadata(item)
+            f = next((x for x in meta["files"] if x["name"] == name), None)
+            _, _, matched, total = banter.match_item(meta["files"], tracks)
+            if report.source_item == item:
+                report.matched, report.total = matched, total
+            alternate = not total or matched / total < 0.5
+            heard = f"{heard} · {matched}/{total} tracks match phish.in" + (
+                " · alternate source, taper notes will say so" if alternate else "")
+            length = f["length"] if f else 0.0
+            path = banter.download_source_file(item, name, out_dir / date / re.sub(r"[^A-Za-z0-9.-]+", "_", item)[:60])
+        except Exception as e:  # noqa: BLE001 - one bad item must not sink the page
+            print(f"    failed: {e}", file=sys.stderr)
+            continue
+        stem = re.sub(r"[^a-z0-9]+", "-", f"{date}-{item}-{Path(name).stem}".lower())[:120]
+        cand = banter.Candidate(
+            date=date, key=f"{date}:{item}:{Path(name).stem}", source_item=item, source_file=name,
+            source_title=f"{(f or {}).get('title') or Path(name).stem} ({item})",
+            length_s=length or 0.0, source_path=str(path), md5_verified=None,
+            after_id=closer["id"], after_title=closer["title"], after_position=closer["position"],
+            before_id=opener["id"], before_title=opener["title"], before_position=opener["position"],
+            # The audience move always opens set 2, so the set dropdown starts
+            # there rather than following the joint heuristic.
+            after_set=None, before_set=opener.get("set_name"),
+            status="candidate", note=heard, default_title=CHESS_SONG_TITLE,
+            alternate_source=alternate, source_info=archive_description(meta),
+            members=[{"name": name, "title": (f or {}).get("title") or Path(name).stem, "length": length}],
+        )
+        cand.members[0]["source_path"] = str(path)
+        cand.preview = banter.render_preview(path, clip_dir / f"{stem}-full.mp3")
+        cand.members[0]["preview"] = cand.preview
+        edge = banter.load_file_edges(path)
+        # The file opens set 2; only its seam into the opener is a real joint.
+        cand.joints = {"out": banter.joint(edge, track_edges(opener), clip_dir / f"{stem}-out.mp3")}
+        report.candidates.append(cand)
+    return [r for r, *_ in reports.values()]
+
+
+# ---------------------------------------------------------------------------
 # Main
 
 
@@ -639,8 +763,16 @@ def main():
     p.add_argument("--rebuild", action="store_true", help="rewrite review.html from report.json")
     p.add_argument("--merge", type=Path, nargs="*", default=None,
                    help="fold these workers' report.json files into --out-dir and rebuild")
+    p.add_argument("--inserts", action="store_true",
+                   help="build the insert review (archive.org chess files phish.in lacks) under <out-dir>/inserts")
     args = p.parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
+
+    if args.inserts:
+        ins_dir = args.out_dir / "inserts"
+        banter.write_review(ins_dir, insert_reports(ins_dir))
+        print(f"Insert review: {ins_dir / 'review.html'}")
+        return
 
     reports = load_reports(args.out_dir)
     if args.merge is not None:

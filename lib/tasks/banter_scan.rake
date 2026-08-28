@@ -48,6 +48,34 @@ module BanterScan
     changed
   end
 
+  # A track spliced in from a different recording gets its source written into
+  # the show's taper notes, in the form the hand-merged shows already use:
+  #
+  #   =============================
+  #   Cavern FROM ALTERNATE SOURCE:
+  #   =============================
+  #
+  #   <that source's info file>
+  #
+  # Returns the note appended, or nil when the show already carries one for
+  # this title and source (a re-run must not stack them up).
+  def self.alternate_source_note(title, info, item: nil)
+    header = "#{title} FROM ALTERNATE SOURCE:"
+    rule = "=" * header.length
+    body = info.to_s.strip
+    body = "https://archive.org/details/#{item}\n\n#{body}".strip if item.present?
+    "#{rule}\n#{header}\n#{rule}\n\n#{body}".strip
+  end
+
+  def self.append_alternate_source_note(show, title, info, item: nil)
+    note = alternate_source_note(title, info, item:)
+    marker = note.lines[1].strip
+    return nil if show.taper_notes.to_s.include?(marker) && (item.blank? || show.taper_notes.include?(item))
+
+    show.update!(taper_notes: [ show.taper_notes.to_s.rstrip, note ].reject(&:empty?).join("\n\n"))
+    note
+  end
+
   # The review export names the archive.org item and file for every entry, so
   # apply can pull the FLAC itself instead of needing it uploaded alongside.
   def self.fetch_source(item, file, dest, archive_url: nil)
@@ -183,6 +211,13 @@ namespace :banter_scan do
           puts "#{status} #{progress}  #{label}  as ##{result[:position]} #{result[:title]} (#{result[:song]})"
           puts "  output: #{result[:output_path]}"
           puts "  track:  #{result[:url]}" if result[:applied]
+          if result[:applied] && entry["alternate_source"]
+            show = Show.find_by!(date: entry["date"])
+            item = entry["source_item"].to_s.start_with?("local:") ? nil : entry["source_item"]
+            if BanterScan.append_alternate_source_note(show, result[:title], entry["source_info"], item:)
+              puts "  notes:  appended '#{result[:title]} FROM ALTERNATE SOURCE' to the taper notes"
+            end
+          end
           before_track = Track.find(result[:track_id]) if result[:applied] && members.size > 1
         rescue BanterInsertService::AlreadyInserted => e
           puts "SKIPPED #{progress}  #{e.message}"

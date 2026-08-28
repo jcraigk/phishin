@@ -591,6 +591,12 @@ class Candidate:
     before_set: str | None = None
     preview: str | None = None       # rendered mp3 of the whole source file, in clips/
     members: list = field(default_factory=list)  # every file in the run (1 for a lone file)
+    default_title: str | None = None  # title (and song) the row starts with; Banter if unset
+    # The file comes from a different recording than the show on phish.in.
+    # Apply then records that source's info in the taper notes, the way
+    # hand-merged shows do ("Cavern FROM ALTERNATE SOURCE:").
+    alternate_source: bool = False
+    source_info: str = ""             # the item's description, as plain text
 
 
 @dataclass
@@ -922,12 +928,33 @@ def set_options(c):
                    for n in names)
 
 
+def set_edge(c):
+    """"start" when the file opens a set, "end" when it closes one, else None.
+    A file between two sets (a set 1 closer and a set 2 opener) belongs to the
+    set it splices into more cleanly, the same call set_options makes."""
+    if c.after_id is None and c.before_id is not None:
+        return "start"
+    if c.before_id is None and c.after_id is not None:
+        return "end"
+    if c.before_set and not c.after_set:
+        return "start"
+    if c.after_set and not c.before_set:
+        return "end"
+    if c.after_set and c.before_set and c.after_set != c.before_set:
+        j_in, j_out = c.joints.get("in"), c.joints.get("out")
+        if j_in and j_out and j_out["score"] >= j_in["score"]:
+            return "end"
+        return "start"
+    return None
+
+
 def placement_text(c):
     arrow = ' <span class="k">&rarr;</span> '
-    if c.after_id is None and c.before_id is not None:
-        return f"Start of {esc(c.before_set)}{arrow}{track_link(c.date, c.before_id, c.before_title)}"
-    if c.before_id is None and c.after_id is not None:
-        return f"{track_link(c.date, c.after_id, c.after_title)}{arrow}End of {esc(c.after_set)}"
+    edge = set_edge(c)
+    if edge == "start":
+        return f"Starts {esc(c.before_set)}: {track_link(c.date, c.before_id, c.before_title)} follows"
+    if edge == "end":
+        return f"Ends {esc(c.after_set)}: follows {track_link(c.date, c.after_id, c.after_title)}"
     return (f"{track_link(c.date, c.after_id, c.after_title)}{arrow}"
             f"{track_link(c.date, c.before_id, c.before_title)}")
 
@@ -968,9 +995,17 @@ def candidate_row(c, source_url=None):
         return (f'<div class="row already"><div class="head"><strong>{esc(title)}</strong>'
                 f'<span class="chip">already on phish.in</span>'
                 f'<span class="meta">{esc(c.note)}</span></div></div>')
-    joints = (f'<div class="joints">{joint_block("Joint in", c.joints.get("in"))}'
-              f'{joint_block("Joint out", c.joints.get("out"))}'
-              f'{joint_block("Direct", c.joints.get("direct"))}</div>')
+    # At a set edge only the joint on the file's own side means anything: the
+    # other side is the set break, and there is no direct seam to compare.
+    edge = set_edge(c)
+    if edge == "start":
+        joints = f'<div class="joints">{joint_block("Joint out", c.joints.get("out"))}</div>'
+    elif edge == "end":
+        joints = f'<div class="joints">{joint_block("Joint in", c.joints.get("in"))}</div>'
+    else:
+        joints = (f'<div class="joints">{joint_block("Joint in", c.joints.get("in"))}'
+                  f'{joint_block("Joint out", c.joints.get("out"))}'
+                  f'{joint_block("Direct", c.joints.get("direct"))}</div>')
     decide = ""
     payload = ""
     if c.status in ("candidate", "unanchored", "run"):
@@ -980,12 +1015,14 @@ def candidate_row(c, source_url=None):
             "before_title": c.before_title, "before_position": c.before_position,
             "source_path": c.source_path, "source_item": c.source_item,
             "source_file": c.source_file, "source_url": source_url,
+            "alternate_source": c.alternate_source, "source_info": c.source_info,
             "members": [{"source_path": m.get("source_path"), "source_file": m["name"],
                          "source_title": m["title"]} for m in c.members],
         })) + '"'
+        dflt = c.default_title or "Banter"
         fields = ("" if c.status == "run" else
-                  '<label class="field"><span>Title</span><input class="title" value="Banter"></label>'
-                  '<label class="field"><span>Song</span><select class="song"></select></label>')
+                  f'<label class="field"><span>Title</span><input class="title" value="{esc(dflt)}"></label>'
+                  f'<label class="field"><span>Song</span><select class="song" data-default="{esc(dflt)}"></select></label>')
         fields += f'<label class="field"><span>Set</span><select class="set">{set_options(c)}</select></label>'
         decide = ('<div class="decide main"><label><input type="checkbox" class="approve"> Approve</label>'
                   f'<label><input type="checkbox" class="skip"> Skip</label>{fields}</div>')
