@@ -1,4 +1,5 @@
 require "shellwords"
+require "uri"
 
 # Finds banter tracks the taper notes list but the show lacks, resolves the
 # archive.org source the show was cut from, and audits the joints on either
@@ -82,7 +83,9 @@ module BanterScan
     raise "no source in the export" if item.blank? || file.blank?
     return fetch_from_archive_file(archive_url, file, dest) if item.start_with?("local:")
 
-    url = "https://archive.org/download/#{item}/#{file}"
+    # File names carry spaces ("ph951122_11. Chess Move.flac"); curl sends the
+    # URL as given, so encode the path the way a browser would.
+    url = "https://archive.org/download/#{item}/#{URI::RFC2396_PARSER.escape(file)}"
     puts "  fetching #{url}"
     FileUtils.mkdir_p(File.dirname(dest))
     tmp = "#{dest}.part"

@@ -8,6 +8,20 @@ RSpec.describe "banter_scan" do # rubocop:disable RSpec/DescribeClass
     load Rails.root.join("lib/tasks/banter_scan.rake")
   end
 
+  describe ".fetch_source" do
+    it "percent-encodes spaces in the archive.org file name" do
+      dest = Rails.root.join("tmp/spec/banter_fetch/ph951122_11. Chess Move.flac").to_s
+      allow(BanterScan).to receive(:system) do |*cmd|
+        expect(cmd.last).to eq("https://archive.org/download/ph-951122MVBAKG/ph951122_11.%20Chess%20Move.flac")
+        File.write("#{dest}.part", "x")
+        true
+      end
+      expect(BanterScan.fetch_source("ph-951122MVBAKG", "ph951122_11. Chess Move.flac", dest)).to eq(dest)
+    ensure
+      FileUtils.rm_rf(Rails.root.join("tmp/spec/banter_fetch"))
+    end
+  end
+
   describe ".alternate_source_note" do
     it "frames the title the way hand-merged shows do and links the item" do
       note = BanterScan.alternate_source_note("Audience Chess Move", "Source: AKG 460\nTaper: X",
