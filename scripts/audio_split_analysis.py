@@ -83,11 +83,6 @@ class SplitCandidate:
     cut_points: list  # default cut points; the reviewer moves them
     unmatched_parts: list = field(default_factory=list)
     tags: list = field(default_factory=list)
-    # Extra markup under the row (chess_scan puts the transcript here).
-    note_html: str = ""
-    # Where a scan thinks the cut belongs. Drawn on the waveform as a hint
-    # only; the reviewer still places the cut.
-    hint_s: float = 0.0
 
 
 def fmt_ts(seconds):
@@ -300,9 +295,7 @@ def tag_picker(c, esc):
     return '<div class="tags"></div>' if c.tags else ""
 
 
-def write_review_html(html_path, candidates, multi, catalog=None, quiet=False,
-                      title="Track split review", footer_html="", store_key=None,
-                      migrate_from=None):
+def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
     catalog = catalog or []
     """Static review page: per row a cut time, nudges, an audition of each side
     of the cut, and the full-track waveform. Export writes approved.json for
@@ -329,7 +322,6 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False,
             "title_pool": list(c.part_titles),
             "song_pool": [by_title.get(t.casefold()) for t in c.part_titles],
             "tags": list(c.tags),
-            "hint_s": c.hint_s,
         }), quote=True)
         # The setlist is what settles an ambiguous segue - which song the second
         # part actually is, and whether the show even ran the way the title says.
@@ -354,10 +346,7 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False,
                 f'</div>'
                 f'<div class="wave">'
                 f'<img src="{esc(c.waveform_image_url, quote=True)}" loading="lazy">'
-                + (f'<span class="hint" title="suggested cut {fmt_ts(c.hint_s)}" '
-                   f'style="left:{100 * c.hint_s / c.duration_s:.2f}%"></span>'
-                   if c.hint_s and c.duration_s else "")
-                + f'<span class="pos"></span></div></div>')
+                f'<span class="pos"></span></div></div>')
         rows.append(f"""
 <div class="row">
   <div class="head">
@@ -366,7 +355,6 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False,
     <input type="checkbox" class="skip" title="do not split this track (x or k)">
     <strong>{link}</strong>
     <span class="dur">{fmt_ts(c.duration_s)}</span>
-    {f'<span class="meta hint-t">suggested cut {fmt_ts(c.hint_s)}</span>' if c.hint_s else ''}
     {setlist}
     <span class="chosen"></span>
     {warn}
@@ -379,7 +367,6 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False,
     </div>
     {track_player}
   </div>
-  {f'<div class="note">{c.note_html}</div>' if c.note_html else ''}
 </div>""")
 
 
@@ -399,7 +386,7 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False,
     html_path.parent.mkdir(parents=True, exist_ok=True)
     html_path.write_text(f"""<!doctype html>
 <meta charset="utf-8">
-<title>{esc(title)}</title>
+<title>Track split review</title>
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">&#x2702;&#xFE0F;</text></svg>'>
 <style>
   {embedded_fonts()}
@@ -436,17 +423,7 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False,
   .row {{ border: 1px solid transparent; border-bottom-color: var(--line);
           border-radius: 10px; padding: .85rem 1rem; transition: background .12s ease; }}
   .row:hover {{ background: var(--card); }}
-  .row.done:not(.sel) .body, .row.done:not(.sel) .note {{ display: none; }}
-  .note {{ margin-top: .5rem; }}
-  .note summary {{ cursor: pointer; color: var(--muted); }}
-  .note .run {{ margin: .3rem 0 .3rem 1rem; }}
-  .note .run.hit .text {{ background: color-mix(in srgb, var(--ok) 12%, transparent); }}
-  .note .text {{ white-space: pre-wrap; padding: .15rem .4rem; border-radius: 4px; }}
-  .note .hits {{ color: var(--ok); margin-left: .5rem; }}
-  .note .evidence {{ color: var(--accent); }}
-  .footer table {{ border-collapse: collapse; margin: 1rem 0; }}
-  .footer td, .footer th {{ border: 1px solid var(--line); padding: .2rem .6rem;
-                            text-align: left; vertical-align: top; }}
+  .row.done:not(.sel) .body {{ display: none; }}
   .row.done:not(.sel) .head {{ margin-bottom: 0; }}
   .dur {{ color: var(--muted); font-variant-numeric: tabular-nums; font-size: 14px; }}
   .chosen {{ display: none; font-variant-numeric: tabular-nums; font-weight: 600;
@@ -620,10 +597,6 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False,
   .track .pos {{ position: absolute; top: 0; bottom: 0; width: 1px;
                  background: color-mix(in srgb, var(--ok) 65%, transparent);
                  pointer-events: none; display: none; }}
-  /* A scan's suggestion: dashed so it never reads as a cut the reviewer set. */
-  .track .hint {{ position: absolute; top: 0; bottom: 0; width: 0;
-                  border-left: 2px dashed color-mix(in srgb, var(--link) 70%, transparent);
-                  pointer-events: none; }}
   .track .tt {{ font: inherit; font-size: 17px; font-variant-numeric: tabular-nums;
                 min-width: 4rem; cursor: pointer; padding: .15rem .4rem; }}
   .track .tplay.loading {{ color: transparent; position: relative; }}
@@ -642,7 +615,7 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False,
 </style>
 <header id="topbar">
   <div class="row1">
-    <h1>{esc(title)} <span class="count">{len(rows)} candidates</span></h1>
+    <h1>Track split review <span class="count">{len(rows)} candidates</span></h1>
     <div id="legend">
       <span class="pct">0%</span>
       <span class="stat"><span class="k">Approved</span><span class="v" id="n-approved">0</span></span>
@@ -655,7 +628,6 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False,
 </header>
 {"".join(rows)}
 {footnote}
-{footer_html}
 <script>
 const YEAR = {json.dumps("" if html_path.resolve().parent.name == "split_scan"
                           else html_path.resolve().parent.name)};
@@ -1042,7 +1014,7 @@ function updateLegend() {{
 // Progress survives a reload, keyed by share url so it follows the track even
 // if the page is rebuilt and the rows reorder. Approved rows also store their
 // chosen cut, so a reload does not throw away the timing work.
-const STORE_KEY = {json.dumps(store_key) if store_key else '"splitscan:progress:" + (YEAR || "all")'};
+const STORE_KEY = "splitscan:progress:" + (YEAR || "all");
 function rowKey(row) {{
   const b = row.querySelector("input.approve");
   if (!b) return null;
@@ -1666,34 +1638,6 @@ document.querySelectorAll(".row").forEach(row => {{
   renderCuts();
 }});
 
-// Progress saved under an earlier key carries over, minus rows that were only
-// ever auto-saved with the scan's suggested cut in place.
-const MIGRATE_FROM = {json.dumps(migrate_from)};
-if (MIGRATE_FROM) {{
-  try {{
-    const cur = localStorage.getItem(STORE_KEY);
-    const curEmpty = !cur || Object.keys(JSON.parse(cur) || {{}}).length === 0;
-    if (curEmpty && localStorage.getItem(MIGRATE_FROM)) {{
-      const old = JSON.parse(localStorage.getItem(MIGRATE_FROM));
-      const hints = {{}};
-      document.querySelectorAll(".row").forEach(row => {{
-        const cb = row.querySelector("input.approve");
-        if (!cb) return;
-        const p = JSON.parse(cb.dataset.payload);
-        hints[p.share_url] = p.hint_s || 0;
-      }});
-      const kept = {{}};
-      Object.keys(old).forEach(k => {{
-        const st = old[k];
-        const cuts = st.cut_points || [];
-        const untouched = !st.mark && cuts.length === 1 &&
-          Math.abs(cuts[0] - (hints[k] || 0)) < 0.001;
-        if (!untouched) kept[k] = st;
-      }});
-      localStorage.setItem(STORE_KEY, JSON.stringify(kept));
-    }}
-  }} catch (e) {{ /* nothing to migrate */ }}
-}}
 restoreProgress();
 updateLegend();
 

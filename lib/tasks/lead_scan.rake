@@ -174,7 +174,7 @@ namespace :lead_scan do
   end
 
   desc "Scan the tracks listed in a file, one phish.in track url per line " \
-       "(rake \"lead_scan:list[chess-1995,data/chess_scan/chess_tracks.txt]\")"
+       "(rake \"lead_scan:list[banter-1995,tmp/banter_tracks.txt]\")"
   task :list, [ :name, :path ] => :environment do |_t, args|
     abort "Usage: rake lead_scan:list[name,path/to/urls.txt]" unless args[:name] && args[:path]
     urls = File.readlines(args[:path], chomp: true).map(&:strip).reject { it.empty? || it.start_with?("#") }
