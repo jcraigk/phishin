@@ -207,7 +207,7 @@ def build(report_path, out_dir, seconds):
              f"{tail_total} track ending(s). Everything plays before and after "
              f"the cut.</div>"
              f"<table><thead><tr><th>Date</th><th>Joints</th><th>Endings</th>"
-             f"<th>Flagged tracks</th></tr></thead><tbody>"
+             f"<th>Tracks in report</th></tr></thead><tbody>"
              f"{''.join(rows)}</tbody></table>")
     (out / "index.html").write_text(page("Gapless review", index))
     print(f"{len(rows)} show page(s), {total} joint(s), {tail_total} ending(s) "

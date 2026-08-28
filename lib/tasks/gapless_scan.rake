@@ -414,12 +414,16 @@ namespace :gapless_scan do
   desc "Find tracks whose mp3 carries undeclared encoder padding " \
        "(rake gapless_scan:run); DECODE=1 also measures each edge, " \
        "FROM/TO=YYYY-MM-DD scope by show date, LIMIT=n stops early, " \
+       "SOUNDCHECK=1 includes soundcheck tracks, " \
        "SHEET_ID=<id> appends the report to a Google Sheet"
   task run: :environment do
     decode = ENV["DECODE"] == "1"
     limit = ENV["LIMIT"].presence&.to_i
     scope = Track.where.not(audio_status: "missing")
                  .includes(:show, mp3_audio_attachment: :blob)
+    # Soundchecks are loose recordings whose seams nobody expects to be
+    # continuous, so they only add noise to the report unless asked for.
+    scope = scope.where.not(set: "S") unless ENV["SOUNDCHECK"] == "1"
     if ENV["FROM"].present? || ENV["TO"].present?
       from = ENV["FROM"].presence || "1900-01-01"
       to = ENV["TO"].presence || "2999-12-31"

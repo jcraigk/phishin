@@ -579,6 +579,13 @@ def render_preview(mp3_url, trim_start, trim_end, fade_in, fade_out, storage_dir
 class Handler(SimpleHTTPRequestHandler):
     storage_dirs = []
 
+    # The pages are rebuilt in place after every scan. Without this the browser
+    # caches them off Last-Modified and a plain reload keeps showing joints that
+    # no longer exist.
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
     def log_message(self, fmt, *args):
         sys.stderr.write(f"  {fmt % args}\n")
 
