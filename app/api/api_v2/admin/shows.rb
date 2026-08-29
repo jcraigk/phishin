@@ -8,10 +8,12 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
       desc "List shows for admin", hidden: true
       params do
         optional :published, type: Boolean, desc: "Filter by published state"
+        optional :year, type: Integer, values: 1983..2100, desc: "Only shows in this year"
       end
       get do
         shows = Show.order(date: :desc)
         shows = shows.where(published: params[:published]) unless params[:published].nil?
+        shows = shows.during_year(params[:year]) if params[:year]
         {
           shows: shows.limit(500).map { |show| show_summary(show) }
         }

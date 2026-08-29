@@ -214,6 +214,13 @@ const routes = (props) => [
             },
           },
           {
+            path: "shows",
+            lazy: async () => {
+              const { default: Component } = await import("../admin/AdminImport");
+              return { Component };
+            },
+          },
+          {
             path: "import",
             lazy: async () => {
               const { default: Component } = await import("../admin/AdminImport");

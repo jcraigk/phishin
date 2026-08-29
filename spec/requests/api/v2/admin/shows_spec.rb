@@ -28,6 +28,12 @@ RSpec.describe "API v2 Admin Shows" do
       create(:show, date: "2024-06-02")
     end
 
+    it "filters by year" do
+      create(:show, date: "1997-11-22")
+      get "/api/v2/admin/shows", params: { year: 1997 }, headers: admin_headers
+      expect(JSON.parse(response.body)["shows"].map { it["date"] }).to eq([ "1997-11-22" ])
+    end
+
     it "returns 401 without a token" do
       get "/api/v2/admin/shows"
       expect(response).to have_http_status(:unauthorized)

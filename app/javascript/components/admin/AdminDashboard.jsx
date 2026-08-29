@@ -149,7 +149,7 @@ const AdminDashboard = () => {
           {drafts === null ? (
             <Empty>Loading</Empty>
           ) : drafts.length === 0 ? (
-            <Empty>No drafts. Import a show to start one.</Empty>
+            <Empty>No drafts. Pick a new date on the Shows page to import one.</Empty>
           ) : (
             <ul className="admin-draft-list">
               {drafts.map((show) => <DraftRow key={show.id} show={show} />)}

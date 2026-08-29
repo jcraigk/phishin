@@ -1,18 +1,28 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, Link } from "react-router";
-import { adminPost, adminPatch, pollJob, isPollAbort } from "./adminApi";
+import { useNavigate, useSearchParams, Link } from "react-router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCloudArrowUp, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { adminGet, adminPost, adminPatch, pollJob, isPollAbort } from "./adminApi";
 import { uploadFile, collectFiles, isStagingSource } from "./DirectUploader";
 
 let nextFileId = 0;
 
-// Two ways in: an archive.org identifier the server fetches itself, or files
-// dropped here (a zip, a folder of flacs or mp3s, notes). Either lands in
-// lossless staging; the editor takes over from there.
+const FIRST_YEAR = 1983;
+const YEARS = [];
+for (let y = new Date().getFullYear(); y >= FIRST_YEAR; y -= 1) YEARS.push(y);
+
+// One page for every show, existing or not. A date that already has tracks
+// opens the editor; a date with none (new, or a draft that never got audio)
+// goes through staging first, and lands in the same editor when that finishes.
+// Import is not a separate mode, just the step a show without audio starts on.
 const AdminImport = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState("date");
-  const [date, setDate] = useState("");
-  const [dateExists, setDateExists] = useState(false);
+  const [params, setParams] = useSearchParams();
+  const [date, setDate] = useState(params.get("date") || "");
+  const [lookup, setLookup] = useState(null);
+  const [year, setYear] = useState(String(params.get("year") || YEARS[0]));
+  const [shows, setShows] = useState(null);
+  const [step, setStep] = useState("pick");
   const [archiveItem, setArchiveItem] = useState("");
   const [files, setFiles] = useState([]);
   const [dragging, setDragging] = useState(false);
@@ -22,6 +32,42 @@ const AdminImport = () => {
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Whether the typed date already exists, and whether it has audio yet.
+  useEffect(() => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      setLookup(null);
+      return undefined;
+    }
+    let cancelled = false;
+    adminGet(`/shows/${date}`)
+      .then((show) => {
+        if (!cancelled) setLookup({ exists: true, show });
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        if (e.status === 404) setLookup({ exists: false });
+        else setError(e.message);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [date]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setShows(null);
+    adminGet(`/shows?year=${year}`)
+      .then((data) => {
+        if (!cancelled) setShows(data.shows);
+      })
+      .catch((e) => {
+        if (!cancelled) setError(e.message);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [year]);
 
   useEffect(() => {
     if (!jobId) return undefined;
@@ -36,15 +82,29 @@ const AdminImport = () => {
     return () => controller.abort();
   }, [jobId, date, navigate]);
 
-  const createDraft = async () => {
+  const chooseYear = (value) => {
+    setYear(value);
+    setParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("year", value);
+      return next;
+    });
+  };
+
+  const hasAudio = lookup?.exists && lookup.show.tracks_count > 0;
+  const needsStaging = lookup && (!lookup.exists || lookup.show.tracks_count === 0);
+
+  const proceedToShow = async () => {
     setError(null);
-    setDateExists(false);
+    if (hasAudio) {
+      navigate(`/admin/shows/${date}`);
+      return;
+    }
     try {
-      await adminPost("/shows", { date });
+      if (!lookup.exists) await adminPost("/shows", { date });
       setStep("upload");
     } catch (e) {
-      if (e.status === 409) setDateExists(true);
-      else setError(e.message);
+      setError(e.message);
     }
   };
 
@@ -84,9 +144,9 @@ const AdminImport = () => {
   const uploaded = files.filter((f) => f.signedId);
   const pending = files.some((f) => !f.signedId && !f.failed);
   const item = archiveItem.trim();
-  const canProceed = (uploaded.length > 0 || item !== "") && !pending && !starting;
+  const canStage = (uploaded.length > 0 || item !== "") && !pending && !starting;
 
-  const proceed = async () => {
+  const stage = async () => {
     setError(null);
     setStarting(true);
     try {
@@ -112,110 +172,160 @@ const AdminImport = () => {
     return `${f.progress}%`;
   };
 
+  const lookupNote = () => {
+    if (!lookup) return null;
+    if (!lookup.exists) return "New date. Audio is staged before the show exists.";
+    if (lookup.show.tracks_count === 0) return "Exists without audio. Stage audio to continue.";
+    return `${lookup.show.venue_name || "Venue not set"}, ${lookup.show.tracks_count} tracks${lookup.show.published ? "" : ", draft"}.`;
+  };
+
   return (
     <div className="admin-import">
-      <h1>Import Show</h1>
       {error && <p className="admin-error">{error}</p>}
 
-      {step === "date" && (
-        <div className="admin-import-step">
-          <label htmlFor="admin-import-date">Show date</label>
-          <input
-            id="admin-import-date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-          <button type="button" onClick={createDraft} disabled={!date}>
-            Start Import
-          </button>
-          {dateExists && (
-            <p>
-              A show already exists for {date}.{" "}
-              <Link to={`/admin/shows/${date}`}>Open it in the editor</Link>.
-            </p>
-          )}
-        </div>
+      {step === "pick" && (
+        <>
+          <section className="admin-card">
+            <header className="admin-card-header">
+              <h2>Open or Import a Show</h2>
+            </header>
+            <div className="admin-card-body">
+              <div className="admin-pick-row">
+                <label htmlFor="admin-import-date">Show date</label>
+                <input
+                  id="admin-import-date"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+                <button type="button" onClick={proceedToShow} disabled={!lookup}>
+                  <FontAwesomeIcon icon={hasAudio ? faPenToSquare : faCloudArrowUp} />{" "}
+                  {hasAudio ? "Edit Show" : "Import Audio"}
+                </button>
+                <span className="admin-pick-note">{lookupNote()}</span>
+              </div>
+            </div>
+          </section>
+
+          <section className="admin-card">
+            <header className="admin-card-header">
+              <h2>Browse</h2>
+              <select value={year} onChange={(e) => chooseYear(e.target.value)}>
+                {YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </header>
+            <div className="admin-card-body">
+              {shows === null ? (
+                <p className="admin-empty">Loading</p>
+              ) : shows.length === 0 ? (
+                <p className="admin-empty">No shows in {year}.</p>
+              ) : (
+                <ul className="admin-draft-list">
+                  {shows.map((show) => (
+                    <li key={show.id} className="admin-draft-row">
+                      <Link className="admin-draft-date" to={`/admin/shows/${show.date}`}>{show.date}</Link>
+                      <span className="admin-draft-venue">{show.venue_name || "Venue not set"}</span>
+                      {!show.published && <span className="admin-pill">draft</span>}
+                      <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
+                      <span className="admin-draft-tracks">
+                        {show.tracks_count} {show.tracks_count === 1 ? "track" : "tracks"}
+                      </span>
+                      <Link className="admin-draft-open" to={`/admin/shows/${show.date}`}>Open</Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </section>
+        </>
       )}
 
-      {step === "upload" && (
-        <div className="admin-import-step">
-          <h2>{date}</h2>
-
-          <label htmlFor="admin-import-archive">archive.org item</label>
-          <input
-            id="admin-import-archive"
-            type="text"
-            placeholder="ph2024-07-19.flac16"
-            value={archiveItem}
-            onChange={(e) => setArchiveItem(e.target.value)}
-          />
-          <p className="admin-import-or">or</p>
-
-          <div
-            className={`admin-dropzone${dragging ? " is-dragging" : ""}`}
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDragging(true);
-            }}
-            onDragLeave={() => setDragging(false)}
-            onDrop={(e) => {
-              e.preventDefault();
-              setDragging(false);
-              // The entries the collector reads are cleared once this handler
-              // returns, so capture the transfer before the first await.
-              const { dataTransfer } = e;
-              collectFiles(dataTransfer, isStagingSource)
-                .then(addFiles)
-                .catch((err) => setError(err.message));
-            }}
-          >
-            <p>Drop a zip, a show folder, or audio files (flac, shn, wav, mp3) and notes here, or</p>
+      {step === "upload" && needsStaging && (
+        <section className="admin-card">
+          <header className="admin-card-header">
+            <h2>Stage audio for {date}</h2>
+            <button type="button" onClick={() => setStep("pick")}>Back</button>
+          </header>
+          <div className="admin-card-body admin-import-step">
+            <label htmlFor="admin-import-archive">archive.org item</label>
             <input
-              ref={fileInputRef}
-              type="file"
-              accept=".zip,.rar,.7z,.flac,.shn,.wav,.aiff,.mp3,.txt"
-              multiple
-              onChange={(e) => {
-                addFiles(e.target.files);
-                // Allow re-selecting the same filename after a failed upload
-                if (fileInputRef.current) fileInputRef.current.value = "";
-              }}
+              id="admin-import-archive"
+              type="text"
+              placeholder="ph2024-07-19.flac16"
+              value={archiveItem}
+              onChange={(e) => setArchiveItem(e.target.value)}
             />
+            <p className="admin-import-or">or</p>
+
+            <div
+              className={`admin-dropzone${dragging ? " is-dragging" : ""}`}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragging(true);
+              }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDragging(false);
+                // The entries the collector reads are cleared once this handler
+                // returns, so capture the transfer before the first await.
+                const { dataTransfer } = e;
+                collectFiles(dataTransfer, isStagingSource)
+                  .then(addFiles)
+                  .catch((err) => setError(err.message));
+              }}
+            >
+              <p>Drop a zip, a show folder, or audio files (flac, shn, wav, mp3) and notes here, or</p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".zip,.rar,.7z,.tar,.tgz,.flac,.shn,.wav,.aiff,.mp3,.txt"
+                multiple
+                onChange={(e) => {
+                  addFiles(e.target.files);
+                  // Allow re-selecting the same filename after a failed upload
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }}
+              />
+            </div>
+
+            {files.length > 0 && (
+              <ul className="admin-file-list">
+                {files.map((f) => (
+                  <li key={f.id} className={f.failed ? "admin-error" : undefined}>
+                    <span className="admin-file-name">{f.name}</span>
+                    <span className="admin-file-status">{fileLabel(f)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <label htmlFor="admin-import-notes">Taper notes</label>
+            <textarea
+              id="admin-import-notes"
+              rows={6}
+              placeholder="Left blank, notes come from the upload's text file or the archive.org description."
+              value={taperNotes}
+              onChange={(e) => setTaperNotes(e.target.value)}
+            />
+
+            <button type="button" onClick={stage} disabled={!canStage}>
+              <FontAwesomeIcon icon={faCloudArrowUp} /> Stage Audio
+            </button>
           </div>
-
-          {files.length > 0 && (
-            <ul className="admin-file-list">
-              {files.map((f) => (
-                <li key={f.id} className={f.failed ? "admin-error" : undefined}>
-                  <span className="admin-file-name">{f.name}</span>
-                  <span className="admin-file-status">{fileLabel(f)}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <label htmlFor="admin-import-notes">Taper notes</label>
-          <textarea
-            id="admin-import-notes"
-            rows={6}
-            placeholder="Left blank, notes come from the upload's text file or the archive.org description."
-            value={taperNotes}
-            onChange={(e) => setTaperNotes(e.target.value)}
-          />
-
-          <button type="button" onClick={proceed} disabled={!canProceed}>
-            Stage Show
-          </button>
-        </div>
+        </section>
       )}
 
       {step === "ingesting" && (
-        <div className="admin-import-step">
-          <h2>Staging {date}</h2>
-          <progress max="100" value={jobStatus?.progress ?? 0} />
-          <p>{jobStatus?.message}</p>
-        </div>
+        <section className="admin-card">
+          <header className="admin-card-header">
+            <h2>Staging {date}</h2>
+          </header>
+          <div className="admin-card-body admin-import-step">
+            <progress max="100" value={jobStatus?.progress ?? 0} />
+            <p>{jobStatus?.message}</p>
+          </div>
+        </section>
       )}
     </div>
   );

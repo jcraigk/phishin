@@ -1625,3 +1625,38 @@
   gap: 0.75rem;
   margin: 1.5rem 0;
 }
+
+.admin-import .admin-card {
+  margin-bottom: 1.25rem;
+}
+
+.admin-pick-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+
+  label {
+    font-weight: 600;
+  }
+
+  input[type="date"] {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border-gray);
+    border-radius: $radius;
+    background-color: var(--control-gray);
+    color: var(--list-item-link-color);
+  }
+}
+
+.admin-pick-note {
+  color: var(--text-gray);
+}
+
+.admin-card-header select {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--border-gray);
+  border-radius: $radius;
+  background-color: var(--control-gray);
+  color: var(--list-item-link-color);
+}

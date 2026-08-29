@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCloudArrowUp,
+  faCompactDisc,
   faExternalLinkAlt,
   faGauge,
 } from "@fortawesome/free-solid-svg-icons";
@@ -28,8 +28,8 @@ const AdminLayout = () => {
         <NavLink to="/admin" end className={linkClass}>
           <FontAwesomeIcon icon={faGauge} fixedWidth /> Dashboard
         </NavLink>
-        <NavLink to="/admin/import" className={linkClass}>
-          <FontAwesomeIcon icon={faCloudArrowUp} fixedWidth /> Import Show
+        <NavLink to="/admin/shows" className={linkClass}>
+          <FontAwesomeIcon icon={faCompactDisc} fixedWidth /> Shows
         </NavLink>
         <div className="admin-nav-footer">
           <a href="/" target="_blank" rel="noreferrer">
