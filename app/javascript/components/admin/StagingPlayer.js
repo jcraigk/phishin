@@ -18,6 +18,7 @@ export class StagingPlayer {
     this.onStop = onStop || (() => {});
     this.ctx = null;
     this.elements = new Map();
+    this.loaded = new Map();
     this.gains = new Map();
     this.urls = new Map();
     this.track = null;
@@ -36,19 +37,26 @@ export class StagingPlayer {
   }
 
   async element(source) {
+    // Cache in-flight promises by source ID so concurrent plays await the
+    // same fetch and element construction instead of racing.
     if (this.elements.has(source.id)) return this.elements.get(source.id);
-    const url = await fetchAdminAudio(source.audio_url);
-    this.urls.set(source.id, url);
-    const audio = new Audio(url);
-    audio.preload = "auto";
-    const ctx = this.context();
-    const gain = ctx.createGain();
-    ctx.createMediaElementSource(audio).connect(gain);
-    gain.connect(ctx.destination);
-    this.elements.set(source.id, audio);
-    this.gains.set(source.id, gain);
-    audio.addEventListener("ended", () => this.advance(source));
-    return audio;
+    const promise = (async () => {
+      const url = await fetchAdminAudio(source.audio_url);
+      this.urls.set(source.id, url);
+      const audio = new Audio(url);
+      audio.preload = "auto";
+      const ctx = this.context();
+      const gain = ctx.createGain();
+      ctx.createMediaElementSource(audio).connect(gain);
+      gain.connect(ctx.destination);
+      this.loaded.set(source.id, audio);
+      this.gains.set(source.id, gain);
+      audio.addEventListener("ended", () => this.advance(source));
+      return audio;
+    })();
+    this.elements.set(source.id, promise);
+    promise.catch(() => this.elements.delete(source.id));
+    return promise;
   }
 
   async play(track, fromS, toS) {
@@ -89,7 +97,7 @@ export class StagingPlayer {
   tick(token) {
     const step = () => {
       if (token !== this.token || !this.active) return;
-      const audio = this.elements.get(this.active.id);
+      const audio = this.loaded.get(this.active.id);
       const t = this.active.offset_s + audio.currentTime;
       if (t >= this.stopAt) {
         this.stop();
@@ -118,7 +126,7 @@ export class StagingPlayer {
   pauseActive() {
     if (this.frame) cancelAnimationFrame(this.frame);
     this.frame = null;
-    if (this.active) this.elements.get(this.active.id)?.pause();
+    if (this.active) this.loaded.get(this.active.id)?.pause();
     this.active = null;
   }
 
@@ -136,6 +144,7 @@ export class StagingPlayer {
     this.urls.forEach((url) => URL.revokeObjectURL(url));
     this.urls.clear();
     this.elements.clear();
+    this.loaded.clear();
     this.gains.clear();
     if (this.ctx) this.ctx.close();
     this.ctx = null;
