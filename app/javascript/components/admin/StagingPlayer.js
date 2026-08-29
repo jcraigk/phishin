@@ -147,11 +147,14 @@ export class StagingPlayer {
 
   stop() {
     const wasPlaying = Boolean(this.track);
+    const element = this.active ? this.loaded.get(this.active.id) : null;
     // Clear active before bumping the token, so an "ended" listener racing
     // this stop sees no active source once it checks the bumped token.
     this.active = null;
     this.token += 1;
-    this.pauseActive();
+    if (this.frame) cancelAnimationFrame(this.frame);
+    this.frame = null;
+    element?.pause();
     this.track = null;
     this.stopAt = null;
     if (wasPlaying) this.onStop();
