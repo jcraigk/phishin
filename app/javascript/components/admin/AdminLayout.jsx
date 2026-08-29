@@ -5,7 +5,6 @@ import {
   faCloudArrowUp,
   faExternalLinkAlt,
   faGauge,
-  faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 
 const AdminLayout = () => {
@@ -24,10 +23,7 @@ const AdminLayout = () => {
     <div className="admin-layout">
       <nav className="admin-nav">
         <div className="admin-nav-brand">
-          <span className="admin-nav-title">
-            <FontAwesomeIcon icon={faUserShield} /> Admin
-          </span>
-          <span className="admin-nav-site">phish.in</span>
+          <span className="admin-nav-title">Admin</span>
         </div>
         <NavLink to="/admin" end className={linkClass}>
           <FontAwesomeIcon icon={faGauge} fixedWidth /> Dashboard
