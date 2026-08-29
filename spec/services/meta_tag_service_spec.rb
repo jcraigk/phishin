@@ -5,6 +5,15 @@ RSpec.describe MetaTagService do
 
   let(:title_suffix) { " - #{App.app_name}" }
 
+  context "when the path is an admin page" do
+    let(:path) { "/admin/shows/2024-07-19" }
+
+    it "titles it Admin with an ok status rather than a 404" do
+      expect(service[:title]).to eq("Admin#{title_suffix}")
+      expect(service[:status]).to eq(:ok)
+    end
+  end
+
   context "when the path is root" do
     let(:path) { "/" }
 
