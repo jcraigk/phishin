@@ -8,6 +8,7 @@ import TagsTab from "./TagsTab";
 import HistoryTab from "./HistoryTab";
 import ShowPanel from "./ShowPanel";
 import PublishPanel from "./PublishPanel";
+import StagingEditor from "./StagingEditor";
 
 export const EditorContext = createContext(null);
 
@@ -81,25 +82,31 @@ const AdminShowEditor = () => {
           </a>
         </header>
         {error && <p className="admin-error">{error}</p>}
-        <ShowPanel />
-        <PublishPanel />
-        <nav className="admin-tabs">
-          {TABS.map((t) => (
-            <button
-              key={t}
-              type="button"
-              className={t === tab ? "active" : ""}
-              onClick={() => setTab(t)}
-            >
-              {t}
-            </button>
-          ))}
-        </nav>
-        {tab === "Tracks" && <TracksTab />}
-        {tab === "Audio" && <AudioTab />}
-        {tab === "Art" && <ArtTab />}
-        {tab === "Tags" && <TagsTab />}
-        {tab === "History" && <HistoryTab />}
+        {show.staging && show.tracks.length === 0 ? (
+          <StagingEditor />
+        ) : (
+          <>
+            <ShowPanel />
+            <PublishPanel />
+            <nav className="admin-tabs">
+              {TABS.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  className={t === tab ? "active" : ""}
+                  onClick={() => setTab(t)}
+                >
+                  {t}
+                </button>
+              ))}
+            </nav>
+            {tab === "Tracks" && <TracksTab />}
+            {tab === "Audio" && <AudioTab />}
+            {tab === "Art" && <ArtTab />}
+            {tab === "Tags" && <TagsTab />}
+            {tab === "History" && <HistoryTab />}
+          </>
+        )}
       </div>
     </EditorContext.Provider>
   );

@@ -31,5 +31,12 @@ export const gainAt = (track, t) => {
   const length = end - start;
   const fadeOut = Math.min(Number(track.fade_out_s) || 0, length);
   if (fadeOut > 0 && t > end - fadeOut) gain = Math.min(gain, (end - t) / fadeOut);
+  // A seam audition: the first track's fade-out runs up to the boundary and
+  // the second's fade-in runs from it.
+  if (track.seam) {
+    const { at, out, in: fadeIn2 } = track.seam;
+    if (out > 0 && t <= at && t > at - out) gain = Math.min(gain, (at - t) / out);
+    if (fadeIn2 > 0 && t >= at && t < at + fadeIn2) gain = Math.min(gain, (t - at) / fadeIn2);
+  }
   return Math.max(0, Math.min(1, gain));
 };

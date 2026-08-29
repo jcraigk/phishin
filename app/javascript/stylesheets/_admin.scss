@@ -1213,3 +1213,79 @@
   text-align: center;
   color: var(--text-muted);
 }
+
+.admin-staging-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 1rem 0 0.5rem;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.admin-staging-transport {
+  margin-bottom: 1rem;
+}
+
+.admin-staging-tracks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-staging-track {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-gray);
+  border-radius: $radius;
+  margin-bottom: 0.5rem;
+  background-color: var(--card-bg);
+  cursor: pointer;
+
+  &.is-selected {
+    border-color: var(--list-item-link-color);
+  }
+}
+
+.admin-staging-track-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  select {
+    width: 4rem;
+  }
+}
+
+.admin-staging-title {
+  flex: 1;
+  min-width: 12rem;
+}
+
+.admin-staging-track-body {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-gray);
+  cursor: default;
+}
+
+.admin-staging-boundary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+
+  input {
+    width: 6rem;
+  }
+}
+
+.admin-staging-commit {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
