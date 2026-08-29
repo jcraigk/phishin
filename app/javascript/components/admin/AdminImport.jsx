@@ -1,15 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { adminPost, adminPatch, pollJob, isPollAbort } from "./adminApi";
-import { uploadFile, collectFiles } from "./DirectUploader";
+import { uploadFile, collectFiles, isStagingSource } from "./DirectUploader";
 
 let nextFileId = 0;
 
+// Two ways in: an archive.org identifier the server fetches itself, or files
+// dropped here (a zip, a folder of flacs or mp3s, notes). Either lands in
+// lossless staging; the editor takes over from there.
 const AdminImport = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState("date");
   const [date, setDate] = useState("");
   const [dateExists, setDateExists] = useState(false);
+  const [archiveItem, setArchiveItem] = useState("");
   const [files, setFiles] = useState([]);
   const [dragging, setDragging] = useState(false);
   const [taperNotes, setTaperNotes] = useState("");
@@ -46,7 +50,7 @@ const AdminImport = () => {
 
   const addFiles = (fileList) => {
     const additions = Array.from(fileList)
-      .filter((f) => f.name.toLowerCase().endsWith(".mp3"))
+      .filter(isStagingSource)
       .map((f) => ({
         id: ++nextFileId,
         file: f,
@@ -69,9 +73,6 @@ const AdminImport = () => {
         const signedId = await uploadFile(entry.file, (progress) => {
           updateEntry(entry.id, { progress });
         });
-        await adminPost(`/shows/${date}/staged_audio`, {
-          signed_ids: [signedId],
-        });
         updateEntry(entry.id, { progress: 100, signedId });
       } catch (e) {
         updateEntry(entry.id, { failed: true });
@@ -80,6 +81,11 @@ const AdminImport = () => {
     });
   };
 
+  const uploaded = files.filter((f) => f.signedId);
+  const pending = files.some((f) => !f.signedId && !f.failed);
+  const item = archiveItem.trim();
+  const canProceed = (uploaded.length > 0 || item !== "") && !pending && !starting;
+
   const proceed = async () => {
     setError(null);
     setStarting(true);
@@ -87,8 +93,11 @@ const AdminImport = () => {
       if (taperNotes.trim() !== "") {
         await adminPatch(`/shows/${date}`, { taper_notes: taperNotes });
       }
-      const { job_id: id } = await adminPost(`/shows/${date}/import`);
-      setStep("matching");
+      const { job_id: id } = await adminPost(`/shows/${date}/ingest`, {
+        signed_ids: uploaded.map((f) => f.signedId),
+        archive_item: item || undefined,
+      });
+      setStep("ingesting");
       setJobId(id);
     } catch (e) {
       setError(e.message);
@@ -96,9 +105,6 @@ const AdminImport = () => {
       setStarting(false);
     }
   };
-
-  const uploaded = files.filter((f) => f.signedId);
-  const pending = files.some((f) => !f.signedId && !f.failed);
 
   const fileLabel = (f) => {
     if (f.failed) return "failed";
@@ -135,6 +141,17 @@ const AdminImport = () => {
       {step === "upload" && (
         <div className="admin-import-step">
           <h2>{date}</h2>
+
+          <label htmlFor="admin-import-archive">archive.org item</label>
+          <input
+            id="admin-import-archive"
+            type="text"
+            placeholder="ph2024-07-19.flac16"
+            value={archiveItem}
+            onChange={(e) => setArchiveItem(e.target.value)}
+          />
+          <p className="admin-import-or">or</p>
+
           <div
             className={`admin-dropzone${dragging ? " is-dragging" : ""}`}
             onDragOver={(e) => {
@@ -148,16 +165,16 @@ const AdminImport = () => {
               // The entries the collector reads are cleared once this handler
               // returns, so capture the transfer before the first await.
               const { dataTransfer } = e;
-              collectFiles(dataTransfer)
+              collectFiles(dataTransfer, isStagingSource)
                 .then(addFiles)
                 .catch((err) => setError(err.message));
             }}
           >
-            <p>Drop a show folder or mp3 files here, or</p>
+            <p>Drop a zip, a show folder, or audio files (flac, shn, wav, mp3) and notes here, or</p>
             <input
               ref={fileInputRef}
               type="file"
-              accept=".mp3,audio/mpeg"
+              accept=".zip,.rar,.7z,.flac,.shn,.wav,.aiff,.mp3,.txt"
               multiple
               onChange={(e) => {
                 addFiles(e.target.files);
@@ -182,23 +199,20 @@ const AdminImport = () => {
           <textarea
             id="admin-import-notes"
             rows={6}
+            placeholder="Left blank, notes come from the upload's text file or the archive.org description."
             value={taperNotes}
             onChange={(e) => setTaperNotes(e.target.value)}
           />
 
-          <button
-            type="button"
-            onClick={proceed}
-            disabled={uploaded.length === 0 || pending || starting}
-          >
-            Proceed
+          <button type="button" onClick={proceed} disabled={!canProceed}>
+            Stage Show
           </button>
         </div>
       )}
 
-      {step === "matching" && (
+      {step === "ingesting" && (
         <div className="admin-import-step">
-          <h2>Matching {date} against Phish.net</h2>
+          <h2>Staging {date}</h2>
           <progress max="100" value={jobStatus?.progress ?? 0} />
           <p>{jobStatus?.message}</p>
         </div>

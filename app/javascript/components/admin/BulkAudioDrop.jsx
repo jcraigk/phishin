@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminPost } from "./adminApi";
-import { uploadFile, collectFiles } from "./DirectUploader";
+import { uploadFile, collectFiles, isMp3 } from "./DirectUploader";
 
 const ACTION_LABEL = { replace: "replaces existing audio", fill: "fills empty track" };
 
@@ -86,7 +86,7 @@ const BulkAudioDrop = () => {
           setDragging(false);
           // webkitGetAsEntry must run before the handler returns, which
           // collectFiles does synchronously ahead of its first await.
-          collectFiles(e.dataTransfer)
+          collectFiles(e.dataTransfer, isMp3)
             .then(stage)
             .catch((err) => setUploadError(err.message));
         }}

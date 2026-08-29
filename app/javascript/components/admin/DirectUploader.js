@@ -2,8 +2,21 @@ import { DirectUpload } from "@rails/activestorage";
 
 const DIRECT_UPLOAD_URL = "/admin/direct_uploads";
 
-const isMp3 = (file) =>
+export const isMp3 = (file) =>
   file.name.toLowerCase().endsWith(".mp3") || file.type === "audio/mpeg";
+
+// What an ingest can take: the audio formats ffmpeg decodes for the timeline,
+// the archives bsdtar unpacks, and text files that become taper notes. The
+// server applies the same list (Admin::IngestStagingJob), so this only saves a
+// pointless upload.
+const STAGING_EXTENSIONS = [
+  "flac", "shn", "wav", "aiff", "mp3", "zip", "rar", "7z", "tar", "tgz", "txt",
+];
+
+export const isStagingSource = (file) => {
+  const ext = file.name.toLowerCase().split(".").pop();
+  return STAGING_EXTENSIONS.includes(ext);
+};
 
 // Dotfiles cover .DS_Store; __MACOSX is the resource-fork folder a zip made on a
 // Mac unpacks alongside the real one, and it mirrors every filename inside it.
@@ -34,12 +47,12 @@ const readAllEntries = (reader) =>
     readBatch();
   });
 
-const collectFromEntry = async (entry, out) => {
+const collectFromEntry = async (entry, out, accept) => {
   if (!entry || isJunk(entry.name)) return;
 
   if (entry.isFile) {
     const file = await fileFromEntry(entry);
-    if (file && isMp3(file)) out.push(file);
+    if (file && accept(file)) out.push(file);
     return;
   }
 
@@ -49,7 +62,7 @@ const collectFromEntry = async (entry, out) => {
     // exhaust the browser's file handles on a deep archive, and the ordering
     // keeps the upload list in the order the admin sees in Finder.
     for (const child of children) {
-      await collectFromEntry(child, out);
+      await collectFromEntry(child, out, accept);
     }
   }
 };
@@ -57,7 +70,7 @@ const collectFromEntry = async (entry, out) => {
 // Returns a flat File[] from a drop that may contain directories. A dropped
 // folder arrives as a DataTransferItem entry, not a File, so dataTransfer.files
 // is empty for it and only webkitGetAsEntry can see inside.
-export const collectFiles = async (dataTransfer) => {
+export const collectFiles = async (dataTransfer, accept = isMp3) => {
   const items = Array.from(dataTransfer.items || []);
   const entries = items
     .filter((item) => item.kind === "file")
@@ -66,13 +79,13 @@ export const collectFiles = async (dataTransfer) => {
   if (entries.some(Boolean)) {
     const files = [];
     for (const entry of entries) {
-      await collectFromEntry(entry, files);
+      await collectFromEntry(entry, files, accept);
     }
     return files;
   }
 
   return Array.from(dataTransfer.files || []).filter(
-    (file) => !isJunk(file.name) && isMp3(file)
+    (file) => !isJunk(file.name) && accept(file)
   );
 };
 
