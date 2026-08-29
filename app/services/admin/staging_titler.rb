@@ -32,7 +32,7 @@ class Admin::StagingTitler
   def match
     @match ||= ShowImporter::Matcher.call(
       date: @show.date.to_s, filenames: @sources.map { as_mp3(it.filename) }
-    ).tap(&:tracks)
+    )
   rescue ShowImporter::ShowInfo::NotFoundError
     nil
   end

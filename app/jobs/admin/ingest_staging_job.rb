@@ -62,7 +62,7 @@ class Admin::IngestStagingJob
     progress(5, "Receiving upload")
     Array(signed_ids).each do |signed_id|
       blob = ActiveStorage::Blob.find_signed!(signed_id)
-      dest = @dir.incoming.join(Show.original_filename(blob))
+      dest = @dir.incoming.join(File.basename(Show.original_filename(blob)))
       File.open(dest, "wb") { |f| blob.download { |chunk| f.write(chunk) } }
       blob.purge
       unpack(dest) if ARCHIVE_EXTENSIONS.include?(extension(dest))

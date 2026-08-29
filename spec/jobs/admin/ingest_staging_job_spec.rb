@@ -80,6 +80,16 @@ RSpec.describe Admin::IngestStagingJob do
       described_class.new.perform(show.id, admin_job.id, ids, nil)
       expect(show.staged_sources.order(:position).map(&:filename)).to eq([ "d1t01.flac", "d1t02.flac" ])
     end
+
+    it "keeps an uploaded filename with a path component inside the incoming directory" do
+      signed = ActiveStorage::Blob.create_and_upload!(
+        io: File.open(fixtures.join("d1t01.flac")), filename: "nested/../escape.flac", content_type: "audio/flac"
+      ).signed_id
+      described_class.new.perform(show.id, admin_job.id, [ signed ], nil)
+      source = show.staged_sources.sole
+      expect(source.filename).to eq("escape.flac")
+      expect(File.exist?(dir.source_path(source))).to be(true)
+    end
   end
 
   describe "from an archive.org item" do
