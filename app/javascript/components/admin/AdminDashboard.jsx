@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleExclamation,
   faClipboardList,
-  faCloudArrowUp,
   faCompactDisc,
   faListCheck,
   faSpinner,
@@ -136,16 +135,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
-      <header className="admin-page-header">
-        <div>
-          <h1>Dashboard</h1>
-          <p className="admin-page-subtitle">Drafts, background jobs, and tags that need a decision.</p>
-        </div>
-        <Link className="admin-button-primary" to="/admin/import">
-          <FontAwesomeIcon icon={faCloudArrowUp} /> Import Show
-        </Link>
-      </header>
-
       {error && <p className="admin-error">{error}</p>}
 
       <div className="admin-stats">
