@@ -4,6 +4,14 @@
 class Admin::StagingDir
   ROOT = Rails.root.join("tmp/staging")
 
+  # Directories no staging show accounts for: a commit or discard that died
+  # between deleting rows and removing files, or a show deleted outright.
+  def self.orphaned
+    return [] unless ROOT.exist?
+    live = Show.joins(:staged_sources).distinct.pluck(:date).map(&:to_s)
+    ROOT.children.select { it.directory? && !live.include?(it.basename.to_s) }
+  end
+
   def initialize(show)
     @show = show
   end

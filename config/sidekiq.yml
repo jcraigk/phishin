@@ -13,6 +13,10 @@
       cron: "30 2 * * * America/Los_Angeles" # Nightly at 2:30 AM Pacific Time
       class: Admin::JobAudioCleanupJob
 
+    staging_cleanup:
+      cron: "45 2 * * * America/Los_Angeles" # Nightly at 2:45 AM Pacific Time
+      class: Admin::StagingCleanupJob
+
     jamcharts:
       cron: "0 4 * * 1 America/Los_Angeles" # Weekly on Monday at 4 AM Pacific Time
       class: JamchartsJob

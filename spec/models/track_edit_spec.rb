@@ -28,8 +28,9 @@ RSpec.describe TrackEdit do
   # deliberate decision about each new one.
   it "covers every audio-affecting admin job" do
     exempt = %w[
-      edit_cover_art generate_cover_art import_show ingest_staging job_audio_cleanup publish_show
-      recompute_gaps regenerate_cover_art_prompt select_cover_art tagin_drift tagin_sync
+      commit_staging edit_cover_art generate_cover_art import_show ingest_staging job_audio_cleanup
+      publish_show recompute_gaps regenerate_cover_art_prompt select_cover_art staging_cleanup
+      tagin_drift tagin_sync
     ]
     jobs = Dir[Rails.root.join("app/jobs/admin/*_job.rb")]
              .map { File.basename(it, "_job.rb") }
