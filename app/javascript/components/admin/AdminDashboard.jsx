@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleExclamation,
+  faClipboardList,
+  faCloudArrowUp,
+  faCompactDisc,
+  faListCheck,
+  faSpinner,
+  faTableList,
+  faTags,
+} from "@fortawesome/free-solid-svg-icons";
 import { adminGet } from "./adminApi";
 import TaginPanel from "./TaginPanel";
 import OrphanQueue from "./OrphanQueue";
@@ -40,11 +51,16 @@ const relativeTime = (iso) => {
 
 const kindLabel = (kind) => KIND_LABELS[kind] || kind.replace(/_/g, " ");
 
-const StatCard = ({ label, value, tone, to }) => {
+const StatCard = ({ label, value, tone, to, icon }) => {
   const body = (
     <>
-      <span className={`admin-stat-value${tone ? ` is-${tone}` : ""}`}>{value}</span>
-      <span className="admin-stat-label">{label}</span>
+      <span className={`admin-stat-icon${tone ? ` is-${tone}` : ""}`}>
+        <FontAwesomeIcon icon={icon} />
+      </span>
+      <span className="admin-stat-text">
+        <span className={`admin-stat-value${tone ? ` is-${tone}` : ""}`}>{value}</span>
+        <span className="admin-stat-label">{label}</span>
+      </span>
     </>
   );
   return to ? (
@@ -54,10 +70,11 @@ const StatCard = ({ label, value, tone, to }) => {
   );
 };
 
-const Card = ({ title, count, action, children }) => (
+const Card = ({ title, icon, count, action, children }) => (
   <section className="admin-card">
     <header className="admin-card-header">
       <h2>
+        {icon && <FontAwesomeIcon icon={icon} className="admin-card-icon" />}
         {title}
         {count != null && count > 0 && <span className="admin-count">{count}</span>}
       </h2>
@@ -124,20 +141,22 @@ const AdminDashboard = () => {
           <h1>Dashboard</h1>
           <p className="admin-page-subtitle">Drafts, background jobs, and tags that need a decision.</p>
         </div>
-        <Link className="admin-button-primary" to="/admin/import">Import Show</Link>
+        <Link className="admin-button-primary" to="/admin/import">
+          <FontAwesomeIcon icon={faCloudArrowUp} /> Import Show
+        </Link>
       </header>
 
       {error && <p className="admin-error">{error}</p>}
 
       <div className="admin-stats">
-        <StatCard label="Draft shows" value={dash(drafts?.length)} />
-        <StatCard label="Jobs in progress" value={dash(jobs && running)} tone={running ? "warm" : null} />
-        <StatCard label="Failed recently" value={dash(jobs && failed)} tone={failed ? "bad" : null} />
-        <StatCard label="Tags to review" value={dash(orphanCount)} tone={orphanCount ? "warm" : null} />
+        <StatCard icon={faCompactDisc} label="Draft shows" value={dash(drafts?.length)} />
+        <StatCard icon={faSpinner} label="Jobs in progress" value={dash(jobs && running)} tone={running ? "warm" : null} />
+        <StatCard icon={faCircleExclamation} label="Failed recently" value={dash(jobs && failed)} tone={failed ? "bad" : null} />
+        <StatCard icon={faTags} label="Tags to review" value={dash(orphanCount)} tone={orphanCount ? "warm" : null} />
       </div>
 
       <div className="admin-grid">
-        <Card title="Draft Shows" count={drafts?.length}>
+        <Card title="Draft Shows" icon={faCompactDisc} count={drafts?.length}>
           {drafts === null ? (
             <Empty>Loading</Empty>
           ) : drafts.length === 0 ? (
@@ -149,7 +168,7 @@ const AdminDashboard = () => {
           )}
         </Card>
 
-        <Card title="Recent Activity">
+        <Card title="Recent Activity" icon={faListCheck}>
           {jobs === null ? (
             <Empty>Loading</Empty>
           ) : jobs.length === 0 ? (
@@ -161,11 +180,11 @@ const AdminDashboard = () => {
           )}
         </Card>
 
-        <Card title="Tags Awaiting Review" count={orphanCount}>
+        <Card title="Tags Awaiting Review" icon={faClipboardList} count={orphanCount}>
           <OrphanQueue />
         </Card>
 
-        <Card title="Tag Sheet">
+        <Card title="Tag Sheet" icon={faTableList}>
           <TaginPanel />
         </Card>
       </div>

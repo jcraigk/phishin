@@ -108,6 +108,11 @@
 
 .admin-nav-title {
   color: var(--list-item-link-color);
+
+  svg {
+    margin-right: 0.25rem;
+    color: var(--blue);
+  }
   font-size: 1.4rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -172,13 +177,45 @@
 
 .admin-stat {
   display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+  align-items: center;
+  gap: 0.9rem;
   padding: 1rem 1.15rem;
   border: 1px solid var(--border-gray);
   border-radius: $radius;
   background-color: var(--card-bg);
   color: inherit;
+}
+
+.admin-stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background-color: var(--bg-gray);
+  color: var(--text-gray);
+  font-size: 1.1rem;
+
+  &.is-warm {
+    background-color: rgba(255, 157, 21, 0.18);
+    color: var(--highlight-orange);
+  }
+
+  &.is-bad {
+    background-color: var(--bg-red);
+    color: var(--error-red);
+  }
+}
+
+.admin-stat-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.admin-card-icon {
+  color: var(--text-gray);
 }
 
 .admin-stat-value {

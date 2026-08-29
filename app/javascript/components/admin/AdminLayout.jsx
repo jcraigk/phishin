@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCloudArrowUp,
+  faExternalLinkAlt,
+  faGauge,
+  faUserShield,
+} from "@fortawesome/free-solid-svg-icons";
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -17,13 +24,21 @@ const AdminLayout = () => {
     <div className="admin-layout">
       <nav className="admin-nav">
         <div className="admin-nav-brand">
-          <span className="admin-nav-title">Admin</span>
+          <span className="admin-nav-title">
+            <FontAwesomeIcon icon={faUserShield} /> Admin
+          </span>
           <span className="admin-nav-site">phish.in</span>
         </div>
-        <NavLink to="/admin" end className={linkClass}>Dashboard</NavLink>
-        <NavLink to="/admin/import" className={linkClass}>Import Show</NavLink>
+        <NavLink to="/admin" end className={linkClass}>
+          <FontAwesomeIcon icon={faGauge} fixedWidth /> Dashboard
+        </NavLink>
+        <NavLink to="/admin/import" className={linkClass}>
+          <FontAwesomeIcon icon={faCloudArrowUp} fixedWidth /> Import Show
+        </NavLink>
         <div className="admin-nav-footer">
-          <a href="/" target="_blank" rel="noreferrer">View site</a>
+          <a href="/" target="_blank" rel="noreferrer">
+            <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth /> View site
+          </a>
         </div>
       </nav>
       <main className="admin-content">
