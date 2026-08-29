@@ -235,21 +235,21 @@ const AdminImport = () => {
                       onClick={() => navigate(`/admin/shows/${show.date}`)}
                     >
                       <img className="admin-show-art" src={show.cover_art_url} alt="" loading="lazy" />
-                      <div className="admin-show-main">
-                        <div className="admin-show-line">
-                          <Link className="admin-draft-date" to={`/admin/shows/${show.date}`}>{show.date}</Link>
-                          <span className="admin-draft-venue">{show.venue_name || "Venue not set"}</span>
-                        </div>
-                        <div className="admin-show-line">
-                          {!show.published && <span className="admin-pill">draft</span>}
-                          <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
-                          <span className="admin-draft-tracks">
-                            {show.tracks_count} {show.tracks_count === 1 ? "track" : "tracks"}
-                            {show.duration > 0 && `, ${formatDuration(show.duration)}`}
-                          </span>
-                          {show.tags.map((tag) => <span key={tag} className="admin-tag-chip">{tag}</span>)}
-                        </div>
-                      </div>
+                      <Link className="admin-draft-date" to={`/admin/shows/${show.date}`}>{show.date}</Link>
+                      <span className="admin-draft-venue">{show.venue_name || "Venue not set"}</span>
+                      <span className="admin-show-tags">
+                        {show.tags.map((tag) => <span key={tag} className="admin-tag-chip">{tag}</span>)}
+                      </span>
+                      <span className="admin-show-status">
+                        {!show.published && <span className="admin-pill">draft</span>}
+                        <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
+                      </span>
+                      <span className="admin-show-meta">
+                        {show.tracks_count} {show.tracks_count === 1 ? "track" : "tracks"}
+                      </span>
+                      <span className="admin-show-meta">
+                        {show.duration > 0 ? formatDuration(show.duration) : ""}
+                      </span>
                     </li>
                   ))}
                 </ul>
