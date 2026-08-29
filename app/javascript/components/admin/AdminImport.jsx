@@ -237,8 +237,8 @@ const AdminImport = () => {
                       <img className="admin-show-art" src={show.cover_art_url} alt="" loading="lazy" />
                       <Link className="admin-draft-date" to={`/admin/shows/${show.date}`}>{show.date}</Link>
                       <span className="admin-draft-venue">{show.venue_name || "Venue not set"}</span>
-                      <span className="admin-show-tags">
-                        {show.tags.map((tag) => <span key={tag} className="admin-tag-chip">{tag}</span>)}
+                      <span className="tag-badges-container">
+                        {show.tags.map((tag) => <span key={tag} className="tag-badge">{tag}</span>)}
                       </span>
                       <span className="admin-show-status">
                         {!show.published && <span className="admin-pill">draft</span>}

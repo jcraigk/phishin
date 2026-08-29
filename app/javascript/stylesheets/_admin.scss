@@ -1703,13 +1703,6 @@
   background-color: var(--bg-gray);
 }
 
-.admin-show-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  min-width: 0;
-}
-
 .admin-show-status {
   display: flex;
   gap: 0.35rem;
@@ -1723,10 +1716,3 @@
   white-space: nowrap;
 }
 
-.admin-tag-chip {
-  padding: 0.05rem 0.5rem;
-  border: 1px solid var(--border-gray);
-  border-radius: 999px;
-  color: var(--text-gray);
-  font-size: 0.75rem;
-}
