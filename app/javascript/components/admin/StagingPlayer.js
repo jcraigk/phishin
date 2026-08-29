@@ -12,10 +12,11 @@ import { locate, gainAt } from "./stagingMath";
 // There is a few milliseconds of silence at that switch in the preview only;
 // the commit renders from the continuous timeline and has no seam.
 export class StagingPlayer {
-  constructor({ sources, onTime, onStop }) {
-    this.sources = sources;
+  constructor({ getSources, onTime, onStop, onError }) {
+    this.getSources = getSources;
     this.onTime = onTime || (() => {});
     this.onStop = onStop || (() => {});
+    this.onError = onError || (() => {});
     this.ctx = null;
     this.elements = new Map();
     this.loaded = new Map();
@@ -41,9 +42,11 @@ export class StagingPlayer {
     // same fetch and element construction instead of racing.
     if (this.elements.has(source.id)) return this.elements.get(source.id);
     const promise = (async () => {
-      const url = await fetchAdminAudio(source.audio_url);
-      this.urls.set(source.id, url);
-      const audio = new Audio(url);
+      // Build the element, MediaElementSource and GainNode synchronously,
+      // before the fetch resolves: Safari only allows creating audio graph
+      // nodes within the call stack of a user gesture, and the fetch below
+      // yields well past that window.
+      const audio = new Audio();
       audio.preload = "auto";
       const ctx = this.context();
       const gain = ctx.createGain();
@@ -52,6 +55,9 @@ export class StagingPlayer {
       this.loaded.set(source.id, audio);
       this.gains.set(source.id, gain);
       audio.addEventListener("ended", () => this.advance(source));
+      const url = await fetchAdminAudio(source.audio_url);
+      this.urls.set(source.id, url);
+      audio.src = url;
       return audio;
     })();
     this.elements.set(source.id, promise);
@@ -65,33 +71,42 @@ export class StagingPlayer {
     this.track = track;
     const from = fromS ?? Number(track.start_s);
     this.stopAt = toS ?? Number(track.end_s);
-    await this.context().resume();
-    if (token !== this.token) return;
+    // Resume synchronously, before any await, so Safari still counts this as
+    // within the user gesture that triggered play().
+    const ctx = this.context();
+    ctx.resume();
     await this.startAt(from, token);
   }
 
   async startAt(t, token) {
-    const hit = locate(this.sources, t);
+    const hit = locate(this.getSources(), t);
     if (!hit) return;
     const audio = await this.element(hit.source);
     if (token !== this.token) return;
     this.active = hit.source;
     audio.currentTime = hit.localS;
     this.applyGain(t);
-    await audio.play();
+    try {
+      await audio.play();
+    } catch (e) {
+      if (token === this.token) this.onError(e);
+      return;
+    }
+    if (token !== this.token) return;
     this.tick(token);
   }
 
   // Called when a source element runs out while a track still has time left.
   advance(source) {
     if (this.active?.id !== source.id || !this.track) return;
-    const next = this.sources.find((s) => s.position === source.position + 1);
+    const token = this.token;
+    const next = this.getSources().find((s) => s.position === source.position + 1);
     const at = source.offset_s + source.duration_s;
     if (!next || at >= this.stopAt) {
       this.stop();
       return;
     }
-    this.startAt(at, this.token);
+    this.startAt(at, token);
   }
 
   tick(token) {
@@ -132,6 +147,9 @@ export class StagingPlayer {
 
   stop() {
     const wasPlaying = Boolean(this.track);
+    // Clear active before bumping the token, so an "ended" listener racing
+    // this stop sees no active source once it checks the bumped token.
+    this.active = null;
     this.token += 1;
     this.pauseActive();
     this.track = null;
@@ -146,7 +164,7 @@ export class StagingPlayer {
     this.elements.clear();
     this.loaded.clear();
     this.gains.clear();
-    if (this.ctx) this.ctx.close();
+    if (this.ctx && this.ctx.state !== "closed") this.ctx.close();
     this.ctx = null;
   }
 }

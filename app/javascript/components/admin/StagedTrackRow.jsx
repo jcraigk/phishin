@@ -13,20 +13,41 @@ const formatSeconds = (s) => {
 
 // One staged track: metadata fields that PATCH as they settle, audition
 // buttons for the whole track and each edge, and the tools that reshape it.
-// Text fields commit on blur rather than keystroke so a title edit is one
-// request; numbers commit on change because each is one deliberate value.
+// Every field here (text and number) commits on blur or Enter rather than
+// keystroke, so an edit in progress is one request, not one per keystroke.
 const StagedTrackRow = ({
   track, next, selected, onSelect, onPlay, onPatch, onSplit, onCombine,
   onBoundary, onRemove, playhead, busy,
 }) => {
   const [title, setTitle] = useState(track.title);
   const [boundary, setBoundary] = useState(track.end_s);
+  const [fields, setFields] = useState({
+    start_s: track.start_s,
+    end_s: track.end_s,
+    fade_in_s: track.fade_in_s,
+    fade_out_s: track.fade_out_s,
+  });
 
   useEffect(() => setTitle(track.title), [track.title]);
   useEffect(() => setBoundary(track.end_s), [track.end_s]);
+  useEffect(() => {
+    setFields({
+      start_s: track.start_s,
+      end_s: track.end_s,
+      fade_in_s: track.fade_in_s,
+      fade_out_s: track.fade_out_s,
+    });
+  }, [track.start_s, track.end_s, track.fade_in_s, track.fade_out_s]);
 
   const length = track.end_s - track.start_s;
   const inside = playhead != null && playhead >= track.start_s && playhead <= track.end_s;
+
+  // Number fields commit on blur (or Enter) rather than per keystroke: a
+  // stray digit mid-edit should not PATCH, and disabling the input while a
+  // prior PATCH is in flight would steal focus out from under the user.
+  const commitField = (key) => {
+    if (fields[key] !== track[key]) onPatch(track, { [key]: fields[key] });
+  };
 
   const numberField = (label, key, extra = {}) => (
     <label className="admin-audio-field">
@@ -35,9 +56,10 @@ const StagedTrackRow = ({
         type="number"
         step="0.1"
         min="0"
-        value={track[key]}
-        disabled={busy}
-        onChange={(e) => onPatch(track, { [key]: Number(e.target.value) })}
+        value={fields[key]}
+        onChange={(e) => setFields((prev) => ({ ...prev, [key]: Number(e.target.value) }))}
+        onBlur={() => commitField(key)}
+        onKeyDown={(e) => { if (e.key === "Enter") commitField(key); }}
         {...extra}
       />
     </label>
@@ -113,7 +135,7 @@ const StagedTrackRow = ({
                 value={boundary}
                 disabled={busy}
                 onChange={(e) => setBoundary(Number(e.target.value))}
-                onBlur={() => { if (boundary !== track.end_s) onBoundary(track, boundary); }}
+                onBlur={() => { if (Math.abs(boundary - track.end_s) > 0.001) onBoundary(track, boundary); }}
               />
               {NUDGES.map((n) => (
                 <button key={n} type="button" disabled={busy} onClick={() => onBoundary(track, round1(track.end_s + n))}>

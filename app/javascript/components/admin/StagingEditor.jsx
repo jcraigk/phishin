@@ -22,17 +22,27 @@ const StagingEditor = () => {
   const playerRef = useRef(null);
   const { run, busy: jobBusy, status, error: jobError } = useJobRunner();
 
-  // A fresh player whenever the source list changes identity (an ingest), and
-  // its object URLs released with it.
+  // staging.sources is a new array on every mutation response (a title edit,
+  // a boundary nudge), even when the underlying source files have not
+  // changed. The player must survive those: it reads sources through a ref
+  // rather than a closed-over value, and the effect below is keyed on the
+  // sources' identity (their ids), not the array's, so a PATCH response does
+  // not tear down and rebuild the player, revoke its object URLs and close
+  // its AudioContext out from under an in-progress audition.
+  const sourcesRef = useRef(staging.sources);
+  sourcesRef.current = staging.sources;
+  const sourceKey = staging.sources.map((s) => s.id).join(",");
+
   useEffect(() => {
     const player = new StagingPlayer({
-      sources: staging.sources,
+      getSources: () => sourcesRef.current,
       onTime: setPlayhead,
       onStop: () => setPlaying(false),
+      onError: (e) => setError(e.message),
     });
     playerRef.current = player;
     return () => player.dispose();
-  }, [staging.sources]);
+  }, [sourceKey]);
 
   const tracks = staging.tracks;
   const selected = useMemo(() => tracks.find((t) => t.id === selectedId) || tracks[0] || null, [tracks, selectedId]);
@@ -60,7 +70,10 @@ const StagingEditor = () => {
   const boundary = (track, at) => apply()(() => adminPut(`${base}/tracks/${track.id}/boundary`, { at_s: at }));
   const remove = (track) => {
     if (!window.confirm(`Remove "${track.title}" from the show? Its audio will not be exported.`)) return;
-    apply((payload) => setSelectedId(payload.tracks[0]?.id ?? null))(() => adminDelete(`${base}/tracks/${track.id}`));
+    const index = tracks.indexOf(track);
+    apply((payload) => setSelectedId(payload.tracks[Math.min(index, payload.tracks.length - 1)]?.id ?? null))(
+      () => adminDelete(`${base}/tracks/${track.id}`)
+    );
   };
 
   // A seam audition spans two tracks; the fade envelope applied is the first
@@ -127,7 +140,18 @@ const StagingEditor = () => {
           }}
         />
         <div className="admin-audio-actions">
-          <button type="button" disabled={!selected} onClick={() => (playing ? stop() : play(selected))}>
+          <button
+            type="button"
+            disabled={!selected}
+            onClick={() => {
+              if (playing) {
+                stop();
+                return;
+              }
+              const scrubbed = playhead != null && playhead >= selected.start_s && playhead <= selected.end_s;
+              play(selected, scrubbed ? playhead : undefined);
+            }}
+          >
             {playing ? "Stop" : "Play"}
           </button>
           <span className="admin-audio-status">
