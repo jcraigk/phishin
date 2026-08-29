@@ -8,6 +8,13 @@ import { uploadFile, collectFiles, isStagingSource } from "./DirectUploader";
 let nextFileId = 0;
 
 const FIRST_YEAR = 1983;
+
+const formatDuration = (ms) => {
+  const total = Math.round(ms / 1000);
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+};
 const YEARS = [];
 for (let y = new Date().getFullYear(); y >= FIRST_YEAR; y -= 1) YEARS.push(y);
 
@@ -222,15 +229,27 @@ const AdminImport = () => {
               ) : (
                 <ul className="admin-draft-list">
                   {shows.map((show) => (
-                    <li key={show.id} className="admin-draft-row">
-                      <Link className="admin-draft-date" to={`/admin/shows/${show.date}`}>{show.date}</Link>
-                      <span className="admin-draft-venue">{show.venue_name || "Venue not set"}</span>
-                      {!show.published && <span className="admin-pill">draft</span>}
-                      <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
-                      <span className="admin-draft-tracks">
-                        {show.tracks_count} {show.tracks_count === 1 ? "track" : "tracks"}
-                      </span>
-                      <Link className="admin-draft-open" to={`/admin/shows/${show.date}`}>Open</Link>
+                    <li
+                      key={show.id}
+                      className="admin-show-row"
+                      onClick={() => navigate(`/admin/shows/${show.date}`)}
+                    >
+                      <img className="admin-show-art" src={show.cover_art_url} alt="" loading="lazy" />
+                      <div className="admin-show-main">
+                        <div className="admin-show-line">
+                          <Link className="admin-draft-date" to={`/admin/shows/${show.date}`}>{show.date}</Link>
+                          <span className="admin-draft-venue">{show.venue_name || "Venue not set"}</span>
+                        </div>
+                        <div className="admin-show-line">
+                          {!show.published && <span className="admin-pill">draft</span>}
+                          <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
+                          <span className="admin-draft-tracks">
+                            {show.tracks_count} {show.tracks_count === 1 ? "track" : "tracks"}
+                            {show.duration > 0 && `, ${formatDuration(show.duration)}`}
+                          </span>
+                          {show.tags.map((tag) => <span key={tag} className="admin-tag-chip">{tag}</span>)}
+                        </div>
+                      </div>
                     </li>
                   ))}
                 </ul>

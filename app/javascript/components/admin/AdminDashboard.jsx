@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleExclamation,
@@ -85,17 +85,19 @@ const Card = ({ title, icon, count, action, children }) => (
 
 const Empty = ({ children }) => <p className="admin-empty">{children}</p>;
 
-const DraftRow = ({ show }) => (
-  <li className="admin-draft-row">
-    <Link className="admin-draft-date" to={`/admin/shows/${show.date}`}>{show.date}</Link>
-    <span className="admin-draft-venue">{show.venue_name || "Venue not set"}</span>
-    <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
-    <span className="admin-draft-tracks">
-      {show.tracks_count} {show.tracks_count === 1 ? "track" : "tracks"}
-    </span>
-    <Link className="admin-draft-open" to={`/admin/shows/${show.date}`}>Open</Link>
-  </li>
-);
+const DraftRow = ({ show }) => {
+  const navigate = useNavigate();
+  return (
+    <li className="admin-draft-row" onClick={() => navigate(`/admin/shows/${show.date}`)}>
+      <Link className="admin-draft-date" to={`/admin/shows/${show.date}`}>{show.date}</Link>
+      <span className="admin-draft-venue">{show.venue_name || "Venue not set"}</span>
+      <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
+      <span className="admin-draft-tracks">
+        {show.tracks_count} {show.tracks_count === 1 ? "track" : "tracks"}
+      </span>
+    </li>
+  );
+};
 
 const ActivityRow = ({ job }) => (
   <li className="admin-activity-row">

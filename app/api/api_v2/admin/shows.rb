@@ -11,7 +11,7 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         optional :year, type: Integer, values: 1983..2100, desc: "Only shows in this year"
       end
       get do
-        shows = Show.order(date: :desc)
+        shows = Show.order(date: :desc).includes(:tags, cover_art_attachment: :blob)
         shows = shows.where(published: params[:published]) unless params[:published].nil?
         shows = shows.during_year(params[:year]) if params[:year]
         {

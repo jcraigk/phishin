@@ -149,7 +149,9 @@ module ApiV2::Helpers::AdminHelper
       published: show.published,
       audio_status: show.audio_status,
       tracks_count: show.tracks.count,
-      duration: show.duration
+      duration: show.duration,
+      cover_art_url: show.cover_art_urls[:small],
+      tags: show.tags.map(&:name).sort
     }
   end
 end
