@@ -41,6 +41,15 @@ export const fetchJobAudio = async (jobId, index = 0) => {
   return URL.createObjectURL(blob);
 };
 
+// Same reason as fetchJobAudio: an <audio> tag cannot send the auth header.
+// Takes a full API path (the staging payload carries one per source).
+export const fetchAdminAudio = async (path) => {
+  const response = await authFetch(path);
+  if (!response.ok) throw new Error(`Audio fetch failed (${response.status})`);
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
+};
+
 export const POLL_TIMEOUT_MS = 15 * 60 * 1000;
 export const POLL_INTERVAL_MS = 1500;
 const MAX_CONSECUTIVE_POLL_ERRORS = 3;
