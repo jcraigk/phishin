@@ -53,9 +53,47 @@ module ApiV2::Helpers::AdminHelper
       performance_gap_value: show.performance_gap_value,
       matches_pnet: show.matches_pnet,
       staged_audio: staged_audio_payload(show),
+      staging: staging_payload(show),
       show_tags: show_tags_payload(show),
       tracks: show.tracks.order(:position).map { |track| track_payload(track) }
     )
+  end
+
+  # Nil rather than an empty structure when nothing is staged, so the editor
+  # can branch on presence alone.
+  def staging_payload(show)
+    return nil unless show.staging?
+    sources = show.staged_sources.order(:position)
+    {
+      source_url: show.staging_source_url,
+      total_s: sources.sum(&:duration_s).to_f,
+      sources: sources.map do |source|
+        {
+          id: source.id,
+          position: source.position,
+          filename: source.filename,
+          format: source.format,
+          offset_s: source.offset_s.to_f,
+          duration_s: source.duration_s.to_f,
+          audio_url: "/api/v2/admin/shows/#{show.date}/staging/sources/#{source.id}/audio"
+        }
+      end,
+      tracks: show.staged_tracks.ordered.includes(:song).map { staged_track_payload(it) }
+    }
+  end
+
+  def staged_track_payload(track)
+    {
+      id: track.id,
+      position: track.position,
+      set: track.set,
+      title: track.title,
+      song: track.song && { id: track.song.id, title: track.song.title },
+      start_s: track.start_s.to_f,
+      end_s: track.end_s.to_f,
+      fade_in_s: track.fade_in_s.to_f,
+      fade_out_s: track.fade_out_s.to_f
+    }
   end
 
   def show_tags_payload(show)

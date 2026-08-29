@@ -4,6 +4,7 @@ class ApiV2::Api < ApiV2::Base
   mount ApiV2::Admin::CoverArt
   mount ApiV2::Admin::Jobs
   mount ApiV2::Admin::Shows
+  mount ApiV2::Admin::Staging
   mount ApiV2::Admin::Taggings
   mount ApiV2::Admin::Tagin
   mount ApiV2::Admin::Tracks
