@@ -100,6 +100,26 @@ RSpec.describe "API v2 Admin Staging" do
             headers: admin_headers.merge("Content-Type" => "application/json")
       expect(a.reload.song).to be_nil
     end
+
+    it "still refuses moving a track's start past a neighbor" do
+      patch "#{base}/staging/tracks/#{b.id}", params: { start_s: 55 }, headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(a.reload.position).to eq(1)
+      expect(b.reload.position).to eq(2)
+    end
+
+    it "leaves positions unchanged when start_s moves within its own gap" do
+      patch "#{base}/staging/tracks/#{a.id}", params: { start_s: 5 }, headers: admin_headers
+      expect(response).to have_http_status(:ok)
+      expect(a.reload.position).to eq(1)
+      expect(b.reload.position).to eq(2)
+    end
+
+    it "renumbers by start_s order after a start_s edit" do
+      patch "#{base}/staging/tracks/#{a.id}", params: { start_s: 5 }, headers: admin_headers
+      tracks = show.staged_tracks.ordered.to_a
+      expect(tracks.map { [ it.position, it.start_s.to_f ] }).to eq([ [ 1, 5.0 ], [ 2, 60.0 ] ])
+    end
   end
 
   describe "POST split" do
@@ -207,6 +227,14 @@ RSpec.describe "API v2 Admin Staging" do
       post "#{base}/staging/commit", headers: admin_headers
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    it "422s for a published show" do
+      stage!
+      show.update!(venue: create(:venue), tour: create(:tour), published: true)
+      post "#{base}/staging/commit", headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(body["message"]).to include("already published")
+    end
   end
 
   describe "DELETE staging" do
@@ -218,6 +246,15 @@ RSpec.describe "API v2 Admin Staging" do
       expect(show.reload.staging?).to be(false)
       expect(show.staged_tracks).to be_empty
       expect(Dir.exist?(dir.root)).to be(false)
+    end
+
+    it "removes tracks left by a failed commit" do
+      stage!
+      dir.reset!
+      create(:track, show:, position: 1, title: "Leftover")
+      delete "#{base}/staging", headers: admin_headers
+      expect(response).to have_http_status(:no_content)
+      expect(show.reload.tracks).to be_empty
     end
   end
 end

@@ -9,7 +9,7 @@
 #
 # Fades use ffmpeg's default curve, which is linear. The browser preview ramps
 # a GainNode linearly to match; spec/services/admin/staging_render_spec.rb and
-# spec/javascript/staging_fade_parity_spec.js hold both sides to the same
+# spec/javascript/staging_fade_parity_spec.rb hold both sides to the same
 # numbers.
 class Admin::StagingRender
   include LameEncoding

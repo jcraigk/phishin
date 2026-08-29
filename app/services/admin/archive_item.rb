@@ -10,7 +10,10 @@ class Admin::ArchiveItem
   # ingested from the flac; the mp3 list is only used when that is all there is.
   LOSSLESS = [ "Flac", "Shorten", "WAVE", "AIFF" ].freeze
   LOSSY = [ "VBR MP3", "MP3", "64Kbps MP3", "128Kbps MP3" ].freeze
-  EXTENSIONS = { "Flac" => "flac", "Shorten" => "shn", "WAVE" => "wav", "AIFF" => "aiff" }.freeze
+
+  # archive.org identifiers are always this shape; anything else is either a
+  # typo or an attempt to walk the metadata or download URL somewhere else.
+  IDENTIFIER = /\A[A-Za-z0-9._-]+\z/
 
   class NotFoundError < StandardError; end
   class NoAudioError < StandardError; end
@@ -20,6 +23,7 @@ class Admin::ArchiveItem
 
   def initialize(identifier)
     @identifier = identifier.to_s.strip
+    raise ArgumentError, "invalid archive.org identifier" unless @identifier.match?(IDENTIFIER)
   end
 
   def files
@@ -45,7 +49,7 @@ class Admin::ArchiveItem
   def download_to(dir)
     FileUtils.mkdir_p(dir)
     files.map do |file|
-      dest = File.join(dir, file["name"])
+      dest = File.join(dir, File.basename(file["name"]))
       fetch(file["name"], dest)
       dest
     end
@@ -75,7 +79,10 @@ class Admin::ArchiveItem
     tmp = "#{dest}.part"
     3.times do |attempt|
       break if system("curl", "-sfL", "--retry", "2", "-o", tmp, url)
-      raise DownloadError, "download of #{name} failed after 3 attempts" if attempt == 2
+      if attempt == 2
+        FileUtils.rm_f(tmp)
+        raise DownloadError, "download of #{name} failed after 3 attempts"
+      end
     end
     File.rename(tmp, dest)
   end

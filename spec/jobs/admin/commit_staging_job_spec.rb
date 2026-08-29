@@ -98,14 +98,30 @@ RSpec.describe Admin::CommitStagingJob do
     end
   end
 
-  it "fails when the show already has tracks" do
-    create(:track, show:, position: 1)
+  it "fails when the show is published" do
+    show.update!(venue:, tour:, published: true)
     create(:staged_track, show:)
-    expect { described_class.new.perform(show.id, admin_job.id) }.to raise_error(/already has tracks/)
+    expect { described_class.new.perform(show.id, admin_job.id) }.to raise_error(/already published/)
     expect(admin_job.reload.status).to eq("failed")
   end
 
   it "fails when nothing is staged" do
     expect { described_class.new.perform(show.id, admin_job.id) }.to raise_error(/nothing staged/)
+  end
+
+  context "with tracks left by an earlier, failed commit" do
+    before do
+      create(:track, show:, position: 1, title: "Leftover")
+      create(:staged_source, show:, position: 1, filename: "d1t01.flac", format: "flac", offset_s: 0, duration_s: 10)
+      create(:staged_track, show:, position: 1, title: "Ghost", set: "1", song:, start_s: 0, end_s: 6, fade_out_s: 1)
+      create(:staged_track, show:, position: 2, title: "Banter", set: "1", start_s: 6, end_s: 10)
+    end
+
+    it "clears the leftover tracks and commits only the staged ones" do
+      described_class.new.perform(show.id, admin_job.id)
+      expect(admin_job.reload.status).to eq("done")
+      tracks = show.reload.tracks.order(:position)
+      expect(tracks.map(&:title)).to eq([ "Ghost", "Banter" ])
+    end
   end
 end

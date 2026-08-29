@@ -17,6 +17,14 @@ RSpec.describe Admin::ArchiveItem do
 
   before { allow(Typhoeus).to receive(:get) { instance_double(Typhoeus::Response, code: 200, body: metadata.to_json) } }
 
+  it "raises on an identifier that could escape into a path or url" do
+    expect { described_class.new("../../evil") }.to raise_error(ArgumentError, /invalid archive.org identifier/)
+  end
+
+  it "accepts a valid identifier" do
+    expect { described_class.new(identifier) }.not_to raise_error
+  end
+
   it "picks the lossless files in name order and ignores everything else" do
     item = described_class.new(identifier)
     expect(item.files.map { it["name"] })
@@ -71,6 +79,28 @@ RSpec.describe Admin::ArchiveItem do
       item = described_class.new(identifier)
       allow(item).to receive(:system).and_return(false)
       expect { item.download_to(dir) }.to raise_error(described_class::DownloadError)
+    end
+
+    it "leaves no partial file behind after a failed download" do
+      item = described_class.new(identifier)
+      allow(item).to receive(:system).and_return(false)
+      expect { item.download_to(dir) }.to raise_error(described_class::DownloadError)
+      expect(Dir.glob(dir.join("*.part"))).to be_empty
+    end
+
+    it "downloads a hostile file name into the directory by its basename only" do
+      metadata[:files] = [ { name: "../../escape.flac", format: "Flac" } ]
+      item = described_class.new(identifier)
+      allow(item).to receive(:system) do |*args|
+        File.write(args[-2], "flac bytes")
+        true
+      end
+      paths = item.download_to(dir)
+      expect(paths).to eq([ dir.join("escape.flac").to_s ])
+      expect(item).to have_received(:system).with(
+        "curl", "-sfL", "--retry", "2", "-o", anything,
+        "https://archive.org/download/#{identifier}/../../escape.flac"
+      )
     end
   end
 end

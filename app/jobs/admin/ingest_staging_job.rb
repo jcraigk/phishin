@@ -72,9 +72,13 @@ class Admin::IngestStagingJob
 
   def unpack(archive)
     progress(10, "Unpacking #{File.basename(archive)}")
+    basename = File.basename(archive)
     system("bsdtar", "-xf", archive.to_s, "-C", @dir.incoming.to_s) or
-      raise Error, "could not unpack #{File.basename(archive)}"
+      raise Error, "could not unpack #{basename}"
     FileUtils.rm_f(archive)
+    if Dir.glob(@dir.incoming.join("**/*")).none? { File.file?(it) }
+      raise Error, "#{basename} unpacked nothing"
+    end
   end
 
   def extension(path)
@@ -85,7 +89,7 @@ class Admin::IngestStagingJob
   # skipping Finder's resource forks and dotfiles.
   def audio_files
     Dir.glob(@dir.incoming.join("**/*")).select do |path|
-      File.file?(path) && AUDIO_EXTENSIONS.include?(extension(path)) &&
+      File.file?(path) && !File.symlink?(path) && AUDIO_EXTENSIONS.include?(extension(path)) &&
         !path.include?("__MACOSX") && !File.basename(path).start_with?(".")
     end.sort_by { |path| path.downcase }
   end

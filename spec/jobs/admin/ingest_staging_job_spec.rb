@@ -90,6 +90,19 @@ RSpec.describe Admin::IngestStagingJob do
       expect(source.filename).to eq("escape.flac")
       expect(File.exist?(dir.source_path(source))).to be(true)
     end
+
+    it "ignores a symlink planted among the archive's audio" do
+      zip = fixtures.join("show_with_symlink.zip")
+      unless File.exist?(zip)
+        Dir.mktmpdir do |scratch|
+          FileUtils.cp(fixtures.join("d1t02.flac"), File.join(scratch, "d1t02.flac"))
+          File.symlink(fixtures.join("d1t01.flac"), File.join(scratch, "sneaky.flac"))
+          system("bsdtar", "-a", "-cf", zip.to_s, "-C", scratch, "d1t02.flac", "sneaky.flac", exception: true)
+        end
+      end
+      described_class.new.perform(show.id, admin_job.id, [ upload("show_with_symlink.zip", "application/zip") ], nil)
+      expect(show.staged_sources.pluck(:filename)).to eq([ "d1t02.flac" ])
+    end
   end
 
   describe "from an archive.org item" do
@@ -118,6 +131,16 @@ RSpec.describe Admin::IngestStagingJob do
   it "fails when nothing in the upload is audio" do
     expect { described_class.new.perform(show.id, admin_job.id, [ upload("notes.txt", "text/plain") ], nil) }
       .to raise_error(Admin::IngestStagingJob::NoAudioError)
+  end
+
+  it "fails when an uploaded archive unpacks to nothing" do
+    empty_zip = fixtures.join("empty.zip")
+    unless File.exist?(empty_zip)
+      Dir.mktmpdir { |scratch| system("bsdtar", "-a", "-cf", empty_zip.to_s, "-C", scratch, ".", exception: true) }
+    end
+    expect { described_class.new.perform(show.id, admin_job.id, [ upload("empty.zip", "application/zip") ], nil) }
+      .to raise_error(Admin::IngestStagingJob::Error, /unpacked nothing/)
+    expect(admin_job.reload.status).to eq("failed")
   end
 
   it "replaces a previous staging of the same show" do

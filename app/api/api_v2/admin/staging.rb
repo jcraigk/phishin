@@ -53,6 +53,7 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
           track.assign_attributes(updates)
           ensure_in_bounds!(track)
           save_or_422!(track)
+          StagedTrack.renumber!(track.show) if updates.key?(:start_s)
           staging_payload(track.show.reload)
         end
 
@@ -138,7 +139,7 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
         post "commit" do
           show = admin_show
           error!({ message: "Nothing staged" }, 422) unless show.staged_tracks.exists?
-          error!({ message: "Show already has tracks" }, 422) if show.tracks.exists?
+          error!({ message: "Show is already published" }, 422) if show.published?
           job = AdminJob.create!(kind: "commit_staging", show:)
           Admin::CommitStagingJob.perform_async(show.id, job.id)
           status 201
@@ -148,6 +149,7 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
         desc "Discard staging", hidden: true
         delete do
           show = admin_show
+          show.tracks.destroy_all unless show.published?
           show.staged_tracks.destroy_all
           show.staged_sources.destroy_all
           show.update!(staging_source_url: nil)

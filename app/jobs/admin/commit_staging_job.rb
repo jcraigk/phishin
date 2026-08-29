@@ -9,7 +9,9 @@
 # transaction leaves process_mp3_audio probing a file that is not there yet.
 # Tracks are created one at a time in position order, the same way
 # ImportShowJob does it, and a failure leaves the show with the tracks created
-# so far plus its staging intact for a re-run after the cause is fixed.
+# so far plus its staging intact. A failed commit is re-run by committing
+# again: any tracks a prior attempt left behind are cleared before rendering
+# resumes from the top.
 class Admin::CommitStagingJob
   include Sidekiq::Job
 
@@ -26,9 +28,14 @@ class Admin::CommitStagingJob
     @dir = Admin::StagingDir.new(@show)
 
     @admin_job.run! do
-      raise Error, "Show #{@show.date} already has tracks" if @show.tracks.exists?
+      raise Error, "Show #{@show.date} is already published" if @show.published?
       raise Error, "Show #{@show.date} has nothing staged" unless @show.staged_tracks.exists?
       raise Error, "timeline missing for #{@show.date}; ingest again" unless File.exist?(@dir.timeline)
+
+      if @show.tracks.exists?
+        @show.tracks.destroy_all
+        @admin_job.update!(message: "Removed tracks left by an earlier commit")
+      end
 
       assign_venue_and_tour
       create_tracks
