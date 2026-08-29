@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link, Outlet, useNavigate } from "react-router";
+import { NavLink, Outlet, useNavigate } from "react-router";
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -11,12 +11,20 @@ const AdminLayout = () => {
 
   if (!isAdmin) return null;
 
+  const linkClass = ({ isActive }) => (isActive ? "active" : "");
+
   return (
     <div className="admin-layout">
       <nav className="admin-nav">
-        <h2>Admin</h2>
-        <Link to="/admin">Dashboard</Link>
-        <Link to="/admin/import">Import Show</Link>
+        <div className="admin-nav-brand">
+          <span className="admin-nav-title">Admin</span>
+          <span className="admin-nav-site">phish.in</span>
+        </div>
+        <NavLink to="/admin" end className={linkClass}>Dashboard</NavLink>
+        <NavLink to="/admin/import" className={linkClass}>Import Show</NavLink>
+        <div className="admin-nav-footer">
+          <a href="/" target="_blank" rel="noreferrer">View site</a>
+        </div>
       </nav>
       <main className="admin-content">
         <Outlet />
