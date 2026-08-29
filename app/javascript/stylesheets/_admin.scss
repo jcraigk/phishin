@@ -1650,11 +1650,27 @@
 }
 
 .admin-card-header select {
-  padding: 0.3rem 1rem 0.3rem 0.75rem;
+  appearance: none;
+  padding: 0.35rem 2rem 0.35rem 0.75rem;
   border: 1px solid var(--border-gray);
-  border-radius: $radius;
+  border-radius: 6px;
   background-color: var(--control-gray);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5l5 5 5-5' fill='none' stroke='%23888888' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-position: right 0.7rem center;
+  background-repeat: no-repeat;
   color: var(--list-item-link-color);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--text-gray);
+  }
+
+  &:focus {
+    border-color: var(--blue);
+    outline: none;
+  }
 }
 
 .admin-show-row {
