@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_18_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_28_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -157,6 +157,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_18_130000) do
     t.boolean "matches_pnet", default: false
     t.integer "performance_gap_value", default: 1
     t.boolean "published", default: true, null: false
+    t.string "staging_source_url"
     t.integer "tags_count", default: 0
     t.text "taper_notes"
     t.integer "tour_id"
@@ -216,6 +217,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_18_130000) do
     t.index ["song_id"], name: "index_songs_tracks_on_song_id"
     t.index ["track_id", "song_id"], name: "index_songs_tracks_on_track_id_and_song_id", unique: true
     t.index ["track_id"], name: "index_songs_tracks_on_track_id"
+  end
+
+  create_table "staged_sources", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.decimal "duration_s", precision: 10, scale: 3, null: false
+    t.string "filename", null: false
+    t.string "format", null: false
+    t.decimal "offset_s", precision: 10, scale: 3, null: false
+    t.integer "position", null: false
+    t.integer "show_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["show_id", "position"], name: "index_staged_sources_on_show_id_and_position", unique: true
+  end
+
+  create_table "staged_tracks", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.decimal "end_s", precision: 10, scale: 3, null: false
+    t.decimal "fade_in_s", precision: 6, scale: 2, default: "0.0", null: false
+    t.decimal "fade_out_s", precision: 6, scale: 2, default: "0.0", null: false
+    t.integer "position", null: false
+    t.string "set", default: "1", null: false
+    t.integer "show_id", null: false
+    t.integer "song_id"
+    t.decimal "start_s", precision: 10, scale: 3, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["show_id", "position"], name: "index_staged_tracks_on_show_id_and_position", unique: true
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|

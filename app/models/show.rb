@@ -12,6 +12,8 @@ class Show < ApplicationRecord
   # No dependent option: TrackEdit is an append-only log that refuses to be
   # destroyed. The database cascades these away with the show itself.
   has_many :track_edits
+  has_many :staged_sources, dependent: :destroy
+  has_many :staged_tracks, dependent: :destroy
 
   has_one_attached :cover_art do |attachable|
     attachable.variant :medium,
@@ -95,6 +97,10 @@ class Show < ApplicationRecord
 
   def staged_audio_filenames
     staged_audio_attachments.includes(:blob).map { |a| self.class.original_filename(a.blob) }
+  end
+
+  def staging?
+    staged_sources.exists?
   end
 
   def save_duration
