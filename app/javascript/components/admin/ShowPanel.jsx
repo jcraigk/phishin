@@ -149,23 +149,22 @@ const ShowPanel = () => {
             )}
           </div>
 
-          <div className="admin-field">
-            <label htmlFor="admin-tour">Tour</label>
-            <FilterSelect
-              id="admin-tour"
-              value={tours.find((tour) => tour.id === show.tour_id)?.name || ""}
-              placeholder="Filter tours"
-              options={[
-                { id: null, label: "No tour set" },
-                ...tours.map((tour) => ({ id: tour.id, label: tour.name })),
-              ]}
-              disabled={busy}
-              onSelect={(option) => patchShow({ tour_id: option.id })}
-            />
-            {show.tour_id === null && (
-              <span className="admin-attention">Needs a tour</span>
-            )}
-          </div>
+          {show.tour_id === null && (
+            <div className="admin-field">
+              <label htmlFor="admin-tour">Tour</label>
+              <FilterSelect
+                id="admin-tour"
+                value=""
+                placeholder="Filter tours"
+                options={tours.map((tour) => ({ id: tour.id, label: tour.name }))}
+                disabled={busy}
+                onSelect={(option) => patchShow({ tour_id: option.id })}
+              />
+              <span className="admin-attention">
+                No tour matched this date. Publish needs one.
+              </span>
+            </div>
+          )}
 
           <div className="admin-field">
             <label htmlFor="admin-taper-notes">Taper notes</label>
