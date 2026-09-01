@@ -320,7 +320,7 @@ const TracksTab = () => {
                 {tracks.map((t, i) => (
                   <option key={t.id} value={i + 1}>
                     {i + 1}
-                    {t.id === repositioning.id ? " (current)" : ` - ${t.title}`}
+                    {t.id === repositioning.id ? ". (current)" : `. ${t.title}`}
                   </option>
                 ))}
               </select>
