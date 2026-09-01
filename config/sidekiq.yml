@@ -13,6 +13,10 @@
       cron: "30 2 * * * America/Los_Angeles" # Nightly at 2:30 AM Pacific Time
       class: Admin::JobAudioCleanupJob
 
+    unattached_blob_cleanup:
+      cron: "15 2 * * * America/Los_Angeles" # Nightly at 2:15 AM Pacific Time
+      class: UnattachedBlobCleanupJob
+
     staging_cleanup:
       cron: "45 2 * * * America/Los_Angeles" # Nightly at 2:45 AM Pacific Time
       class: Admin::StagingCleanupJob
