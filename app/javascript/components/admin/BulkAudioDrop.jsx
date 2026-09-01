@@ -152,6 +152,7 @@ const BulkAudioDrop = () => {
         <div className="admin-modal-overlay" onClick={close}>
           <div className="admin-modal admin-modal-wide" onClick={(e) => e.stopPropagation()}>
             <h3>Update audio</h3>
+            {!uploading && !preparing && (
             <div
               className={`admin-dropzone${dragging ? " is-dragging" : ""}`}
               onDragOver={(e) => {
@@ -171,9 +172,11 @@ const BulkAudioDrop = () => {
             >
               <p>
                 Drop a show folder, zip, or audio files (flac, shn, wav, mp3)
-                here to replace and fill track audio.
+                here to replace and fill track audio. Include a notes txt to
+                name the tracks.
               </p>
             </div>
+            )}
             {uploading && (
               <>
                 <p className="admin-progress-line">
