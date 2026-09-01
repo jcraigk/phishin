@@ -123,7 +123,8 @@ const TracksTab = () => {
 
   const openReposition = (track) => {
     setTargetPosition(track.position);
-    setTargetSet(track.set);
+    const choices = setChoicesFor(track, track.position);
+    setTargetSet(choices.includes(track.set) ? track.set : choices[0]);
     setRepositioning(track);
   };
 
@@ -138,10 +139,20 @@ const TracksTab = () => {
     return { above: ordered[at - 1], below: ordered[at + 1] };
   };
 
+  // Only the sets touching the slot are valid: mid-set there is exactly one,
+  // at a boundary there are two. A just-added empty set is offered only at a
+  // boundary or an edge, which is the only place it can sit.
   const setChoicesFor = (track, position) => {
     const { above, below } = slotNeighbors(track, position);
+    const atBoundary = !above || !below || above.set !== below.set;
     const choices = [
-      ...new Set([above?.set, below?.set, track.set, ...pendingSets].filter(Boolean)),
+      ...new Set(
+        [
+          above?.set,
+          below?.set,
+          ...(atBoundary ? pendingSets : []),
+        ].filter(Boolean)
+      ),
     ];
     if (choices.length === 0) return SETS;
     return SETS.filter((set) => choices.includes(set));
