@@ -542,9 +542,14 @@
   .admin-field {
     position: relative;
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 0.25rem;
     min-width: 16rem;
+
+    textarea {
+      width: 100%;
+    }
 
     label {
       font-weight: 600;
@@ -622,7 +627,7 @@
     border-radius: 0;
     background: none;
     padding: 0.25rem 0.75rem 0.3rem;
-    font-size: 1rem;
+    font-size: 1.15rem;
 
     &.active {
       border-bottom-color: var(--blue);
@@ -648,7 +653,6 @@
 
   th {
     padding: 0.35rem 0.4rem;
-    border-bottom: 1px solid var(--border-gray);
     text-align: left;
     font-size: 0.8rem;
     color: var(--text-gray);

@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faCloudArrowUp, faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
@@ -82,7 +82,7 @@ const BulkAudioDrop = () => {
   return (
     <div className="admin-bulk-audio">
       <button type="button" onClick={() => setOpen(true)}>
-        Update audio
+        <FontAwesomeIcon icon={faCloudArrowUp} /> Update audio
       </button>
 
       {open && !plan && (

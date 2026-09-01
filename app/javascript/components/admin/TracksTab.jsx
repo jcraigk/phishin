@@ -1,7 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faLayerGroup,
+  faPlus,
+  faTrashCan,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import TrackRow from "./TrackRow";
 import BulkAudioDrop from "./BulkAudioDrop";
@@ -97,6 +103,7 @@ const TracksTab = () => {
   const [targetPosition, setTargetPosition] = useState(1);
   const [targetSet, setTargetSet] = useState("1");
   const [actionsSlot, setActionsSlot] = useState(null);
+  const [addSetOpen, setAddSetOpen] = useState(false);
 
   useEffect(() => {
     setActionsSlot(document.getElementById("admin-tab-actions"));
@@ -236,31 +243,42 @@ const TracksTab = () => {
     }
   };
 
+  const addableSets = SETS.filter(
+    (set) => !tracks.some((t) => t.set === set) && !pendingSets.includes(set)
+  );
+
   const tabActions = (
     <>
       <button type="button" onClick={insertTrack} disabled={busy}>
-        Insert track
+        <FontAwesomeIcon icon={faPlus} /> Insert track
       </button>
       <BulkAudioDrop />
-      <select
-        className="admin-select"
-        value=""
-        aria-label="Add set"
-        disabled={busy}
-        onChange={(e) => {
-          if (e.target.value !== "") {
-            setPendingSets((prev) => [...prev, e.target.value]);
-          }
-        }}
-      >
-        <option value="">Add set</option>
-        {SETS.filter(
-          (set) =>
-            !tracks.some((t) => t.set === set) && !pendingSets.includes(set)
-        ).map((set) => (
-          <option key={set} value={set}>{setName(set)}</option>
-        ))}
-      </select>
+      <div className="admin-row-menu">
+        <button
+          type="button"
+          disabled={busy || addableSets.length === 0}
+          onClick={() => setAddSetOpen(!addSetOpen)}
+        >
+          <FontAwesomeIcon icon={faLayerGroup} /> Add set
+        </button>
+        {addSetOpen && (
+          <ul className="admin-row-menu-list">
+            {addableSets.map((set) => (
+              <li key={set}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAddSetOpen(false);
+                    setPendingSets((prev) => [...prev, set]);
+                  }}
+                >
+                  {setName(set)}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </>
   );
 
