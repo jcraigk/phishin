@@ -246,14 +246,19 @@ const TracksTab = () => {
             <option key={set} value={set}>{setName(set)}</option>
           ))}
         </select>
-        <span className="admin-staged-summary">
-          {show.staged_audio.length} staged file
-          {show.staged_audio.length === 1 ? "" : "s"}
-          {missingAudioCount > 0 &&
-            `, ${missingAudioCount} track${
-              missingAudioCount === 1 ? "" : "s"
-            } awaiting audio`}
-        </span>
+        {(show.staged_audio.length > 0 || missingAudioCount > 0) && (
+          <span className="admin-staged-summary">
+            {show.staged_audio.length > 0 &&
+              `${show.staged_audio.length} staged file${
+                show.staged_audio.length === 1 ? "" : "s"
+              }`}
+            {show.staged_audio.length > 0 && missingAudioCount > 0 && ", "}
+            {missingAudioCount > 0 &&
+              `${missingAudioCount} track${
+                missingAudioCount === 1 ? "" : "s"
+              } awaiting audio`}
+          </span>
+        )}
       </div>
 
       {tracks.length === 0 ? (
