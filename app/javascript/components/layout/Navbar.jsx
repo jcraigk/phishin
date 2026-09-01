@@ -278,6 +278,12 @@ const Navbar = ({ user, handleLogout }) => {
                           </Link>
                         ))}
                         <hr className="dropdown-divider" />
+                        {user.admin && (
+                          <Link to="/admin" className="dropdown-item" onClick={closeMenus}>
+                            <FontAwesomeIcon icon={faUserShield} className="icon" />
+                            Admin
+                          </Link>
+                        )}
                         <Link to="/settings" className="dropdown-item" onClick={closeMenus}>
                           <FontAwesomeIcon icon={faGear} className="icon" />
                           Settings
