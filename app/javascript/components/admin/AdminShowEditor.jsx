@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLinkAlt, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faExternalLinkAlt, faTrashAlt, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../helpers/utils";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
@@ -133,10 +133,10 @@ const AdminShowEditor = () => {
                     }
                   }}
                 >
-                  Delete Show
+                  <FontAwesomeIcon icon={faCheck} /> Delete Show
                 </button>
                 <button type="button" onClick={() => setConfirmingDelete(false)}>
-                  Cancel
+                  <FontAwesomeIcon icon={faXmark} /> Cancel
                 </button>
               </div>
             </div>

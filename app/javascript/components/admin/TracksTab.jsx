@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import TrackRow from "./TrackRow";
 import useJobRunner from "./useJobRunner";
@@ -329,10 +329,10 @@ const TracksTab = () => {
             </label>
             <div className="admin-modal-actions">
               <button type="button" disabled={busy} onClick={applyReposition}>
-                Move
+                <FontAwesomeIcon icon={faCheck} /> Move
               </button>
               <button type="button" onClick={() => setRepositioning(null)}>
-                Cancel
+                <FontAwesomeIcon icon={faXmark} /> Cancel
               </button>
             </div>
           </div>

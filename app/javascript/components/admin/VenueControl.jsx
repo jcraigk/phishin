@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useEffect, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import { adminGet, adminPost, adminPatch } from "./adminApi";
@@ -118,10 +120,10 @@ const VenueControl = () => {
                 disabled={busy || !newVenue.name || !newVenue.city}
                 onClick={createVenue}
               >
-                Save Venue
+                <FontAwesomeIcon icon={faCheck} /> Save Venue
               </button>
               <button type="button" onClick={() => setNewVenue(null)}>
-                Cancel
+                <FontAwesomeIcon icon={faXmark} /> Cancel
               </button>
             </div>
           </div>

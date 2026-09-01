@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useRef, useState } from "react";
 
 import { adminGet, adminPost } from "./adminApi";
@@ -194,9 +196,11 @@ const SongPicker = ({ value, onChange }) => {
                 }
                 onClick={createSong}
               >
-                Create Song
+                <FontAwesomeIcon icon={faCheck} /> Create Song
               </button>
-              <button type="button" onClick={() => setCreating(null)}>Cancel</button>
+              <button type="button" onClick={() => setCreating(null)}>
+                <FontAwesomeIcon icon={faXmark} /> Cancel
+              </button>
             </div>
           </div>
         </div>

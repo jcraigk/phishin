@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
@@ -147,10 +149,10 @@ const BulkAudioDrop = () => {
 
           <div className="admin-modal-actions">
             <button type="button" onClick={apply} disabled={busy || plan.matches.length === 0}>
-              Apply {plan.matches.length} files
+              <FontAwesomeIcon icon={faCheck} /> Apply {plan.matches.length} files
             </button>
             <button type="button" onClick={reset} disabled={busy}>
-              Cancel
+              <FontAwesomeIcon icon={faXmark} /> Cancel
             </button>
           </div>
           {status && <span className="admin-audio-status">{status}</span>}
