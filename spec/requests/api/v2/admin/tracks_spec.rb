@@ -530,24 +530,27 @@ RSpec.describe "API v2 Admin Tracks" do
   end
 
   describe "POST /api/v2/admin/shows/:date/tracks" do
+    def insert_params(overrides = {})
+      { position: 2, title: "Tuning", set: "1", song_ids: [ song_a.id ] }
+        .merge(overrides).to_json
+    end
+
     it "returns 401 without a token" do
       post "/api/v2/admin/shows/2025-08-01/tracks",
-           params: { position: 2, title: "Tuning", set: "1" }.to_json,
+           params: insert_params,
            headers: { "CONTENT_TYPE" => "application/json" }
       expect(response).to have_http_status(:unauthorized)
     end
 
     it "returns 403 for a non-admin user" do
       post "/api/v2/admin/shows/2025-08-01/tracks",
-           params: { position: 2, title: "Tuning", set: "1" }.to_json,
-           headers: user_headers
+           params: insert_params, headers: user_headers
       expect(response).to have_http_status(:forbidden)
     end
 
-    it "inserts an empty draft track and shifts positions" do
+    it "inserts a track and shifts positions" do
       post "/api/v2/admin/shows/2025-08-01/tracks",
-           params: { position: 2, title: "Tuning", set: "1" }.to_json,
-           headers: admin_headers
+           params: insert_params, headers: admin_headers
       expect(response).to have_http_status(:created)
       expect(show.tracks.reload.find_by(position: 2).title).to eq("Tuning")
       expect(track2.reload.position).to eq(3)
@@ -559,7 +562,7 @@ RSpec.describe "API v2 Admin Tracks" do
       create(:track, show:, position: 5, title: "Fifth", set: "1")
 
       post "/api/v2/admin/shows/2025-08-01/tracks",
-           params: { position: 1, title: "Intro", set: "1" }.to_json,
+           params: insert_params(position: 1, title: "Intro"),
            headers: admin_headers
 
       expect(response).to have_http_status(:created)
@@ -570,45 +573,66 @@ RSpec.describe "API v2 Admin Tracks" do
 
     it "appends at the end" do
       post "/api/v2/admin/shows/2025-08-01/tracks",
-           params: { position: 4, title: "Encore", set: "E" }.to_json,
+           params: insert_params(position: 4, title: "Encore", set: "E"),
            headers: admin_headers
       expect(response).to have_http_status(:created)
       expect(positions_for(show)).to eq([ 1, 2, 3, 4 ])
       expect(show.tracks.reload.find_by(position: 4).title).to eq("Encore")
     end
 
-    it "creates the track with no songs and missing audio" do
+    it "creates the track with the given songs and missing audio" do
       post "/api/v2/admin/shows/2025-08-01/tracks",
-           params: { position: 2, title: "Tuning", set: "1" }.to_json,
+           params: insert_params(song_ids: [ song_a.id, song_b.id ]),
            headers: admin_headers
       track = show.tracks.reload.find_by(position: 2)
-      expect(track.songs).to be_empty
+      expect(track.songs).to contain_exactly(song_a, song_b)
       expect(track.audio_status).to eq("missing")
     end
 
-    it "422s on a published show because a published track requires songs" do
-      show.update!(published: true)
+    it "400s without song_ids" do
       post "/api/v2/admin/shows/2025-08-01/tracks",
            params: { position: 2, title: "Tuning", set: "1" }.to_json,
            headers: admin_headers
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it "422s when song_ids matches no songs" do
+      post "/api/v2/admin/shows/2025-08-01/tracks",
+           params: insert_params(song_ids: [ 0 ]), headers: admin_headers
       expect(response).to have_http_status(:unprocessable_content)
       expect(json[:message]).to include("at least one song")
     end
 
-    it "does not leave shifted positions behind when the insert fails" do
-      show.update!(published: true)
+    it "does not shift positions when the insert is rejected" do
       post "/api/v2/admin/shows/2025-08-01/tracks",
-           params: { position: 2, title: "Tuning", set: "1" }.to_json,
-           headers: admin_headers
+           params: insert_params(song_ids: [ 0 ]), headers: admin_headers
       expect(positions_for(show)).to eq([ 1, 2, 3 ])
       expect(track2.reload.position).to eq(2)
       expect(track3.reload.position).to eq(3)
     end
 
+    it "enqueues a replace audio job when a signed id is given" do
+      blob = ActiveStorage::Blob.create_and_upload!(
+        io: StringIO.new("audio"), filename: "new.mp3", content_type: "audio/mpeg"
+      )
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/tracks",
+             params: insert_params(signed_id: blob.signed_id),
+             headers: admin_headers
+      }.to change(Admin::ReplaceAudioJob.jobs, :size).by(1)
+      expect(json[:job_id]).to be_present
+    end
+
+    it "enqueues no job without a signed id" do
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/tracks",
+             params: insert_params, headers: admin_headers
+      }.not_to change(Admin::ReplaceAudioJob.jobs, :size)
+    end
+
     it "rejects an invalid set" do
       post "/api/v2/admin/shows/2025-08-01/tracks",
-           params: { position: 2, title: "Tuning", set: "9" }.to_json,
-           headers: admin_headers
+           params: insert_params(set: "9"), headers: admin_headers
       expect(response).to have_http_status(:bad_request)
     end
   end

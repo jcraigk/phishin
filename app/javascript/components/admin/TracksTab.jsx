@@ -11,7 +11,9 @@ import { EditorContext } from "./AdminShowEditor";
 import TrackRow from "./TrackRow";
 import BulkAudioDrop from "./BulkAudioDrop";
 import useJobRunner from "./useJobRunner";
-import { adminPost, adminPut } from "./adminApi";
+import { adminPost, adminPut, pollJob } from "./adminApi";
+import { uploadFile } from "./DirectUploader";
+import SongPicker from "./SongPicker";
 import { formatDurationShow } from "../helpers/utils";
 import { GaplessEngine } from "../player/GaplessEngine";
 import { WebAudioBackend } from "../player/WebAudioBackend";
@@ -98,7 +100,7 @@ const withPendingSets = (groups, pendingSets) => {
 };
 
 const TracksTab = () => {
-  const { show, setShow, setError, gapsStale } = useContext(EditorContext);
+  const { show, setShow, setError, gapsStale, reload } = useContext(EditorContext);
   const [busy, setBusy] = useState(false);
   const [pendingSets, setPendingSets] = useState([]);
   const [repositioning, setRepositioning] = useState(null);
@@ -109,6 +111,9 @@ const TracksTab = () => {
   const [inserting, setInserting] = useState(false);
   const [insertTitle, setInsertTitle] = useState("");
   const [insertPosition, setInsertPosition] = useState(1);
+  const [insertSongs, setInsertSongs] = useState([]);
+  const [insertFile, setInsertFile] = useState(null);
+  const [insertProgress, setInsertProgress] = useState(null);
 
   const previewEngine = useRef(null);
   const [preview, setPreview] = useState({ trackId: null, playing: false, time: 0 });
@@ -304,20 +309,31 @@ const TracksTab = () => {
   const addTrack = async () => {
     const position = insertPosition;
     const set = tracks[position - 2]?.set || tracks[0]?.set || "1";
-    setInserting(false);
     setError(null);
     setBusy(true);
     try {
-      setShow(
-        await adminPost(`/shows/${show.date}/tracks`, {
-          position,
-          title: insertTitle.trim(),
-          set,
-        })
-      );
+      const body = {
+        position,
+        title: insertTitle.trim(),
+        set,
+        song_ids: insertSongs.map((s) => s.id),
+      };
+      if (insertFile) {
+        setInsertProgress(0);
+        body.signed_id = await uploadFile(insertFile, setInsertProgress);
+        setInsertProgress(null);
+      }
+      const data = await adminPost(`/shows/${show.date}/tracks`, body);
+      setInserting(false);
+      setShow(data);
+      if (data.job_id) {
+        await pollJob(data.job_id, { onUpdate: () => {} });
+        await reload();
+      }
     } catch (e) {
       setError(e.message);
     } finally {
+      setInsertProgress(null);
       setBusy(false);
     }
   };
@@ -334,6 +350,8 @@ const TracksTab = () => {
         onClick={() => {
           setInsertTitle("");
           setInsertPosition(tracks.length + 1);
+          setInsertSongs([]);
+          setInsertFile(null);
           setInserting(true);
         }}
       >
@@ -481,10 +499,26 @@ const TracksTab = () => {
                 </option>
               </select>
             </label>
+            <label className="admin-modal-field">
+              <span>Songs</span>
+              <SongPicker value={insertSongs} onChange={setInsertSongs} />
+            </label>
+            <label className="admin-modal-field">
+              <span>Audio file</span>
+              <input
+                type="file"
+                accept=".mp3,.flac,.shn,.wav,.aiff"
+                disabled={busy}
+                onChange={(e) => setInsertFile(e.target.files[0] || null)}
+              />
+            </label>
+            {insertProgress !== null && (
+              <progress className="admin-progress-bar" max="100" value={insertProgress} />
+            )}
             <div className="admin-modal-actions">
               <button
                 type="button"
-                disabled={busy || insertTitle.trim() === ""}
+                disabled={busy || insertTitle.trim() === "" || insertSongs.length === 0}
                 onClick={addTrack}
               >
                 <FontAwesomeIcon icon={faCheck} /> Add Track

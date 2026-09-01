@@ -189,22 +189,34 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         requires :position, type: Integer
         requires :title, type: String
         requires :set, type: String, values: ApiV2::Admin::Tracks::VALID_SETS
+        requires :song_ids, type: Array[Integer]
+        optional :signed_id, type: String
       end
       post ":date/tracks", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
         show = admin_show
+        songs = Song.where(id: params[:song_ids]).to_a
+        error!({ message: "at least one song is required" }, 422) if songs.empty?
+        track = nil
         ActiveRecord::Base.transaction do
-          show.tracks.where(position: params[:position]..).order(position: :desc).each do |track|
-            track.update!(position: track.position + 1)
+          show.tracks.where(position: params[:position]..).order(position: :desc).each do |t|
+            t.update!(position: t.position + 1)
           end
-          show.tracks.create!(
+          track = show.tracks.create!(
             position: params[:position],
             title: params[:title],
             set: params[:set],
-            audio_status: "missing"
+            audio_status: "missing",
+            songs:
           )
         end
+        payload = editor_payload(show.reload)
+        if params[:signed_id].present?
+          job = AdminJob.create!(kind: "replace_audio", track:, show:)
+          Admin::ReplaceAudioJob.perform_async(track.id, job.id, params[:signed_id])
+          payload[:job_id] = job.id
+        end
         status 201
-        editor_payload(show.reload)
+        payload
       end
 
       desc "Delete a show", hidden: true
