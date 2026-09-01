@@ -12,10 +12,14 @@ class ApiV2::Admin::Catalog < ApiV2::Admin::Base
       params do
         optional :q, type: String
       end
+      # Substring match rather than the site's full-text kinda_matching: that
+      # search works on whole words, so a half-typed title ("harpu") finds
+      # nothing while the admin is still typing it.
       get do
         songs =
           if params[:q].present?
-            Song.kinda_matching(params[:q]).limit(SEARCH_LIMIT)
+            Song.where("title ILIKE :term", term: "%#{params[:q]}%")
+                .order(:title).limit(SEARCH_LIMIT)
           else
             Song.order(:title).limit(SEARCH_LIMIT)
           end

@@ -33,6 +33,12 @@ RSpec.describe "API v2 Admin Catalog" do
       create(:song, title: "Ghost")
     end
 
+    it "matches a half-typed title" do
+      create(:song, title: "Harpua")
+      get "/api/v2/admin/songs", params: { q: "harpu" }, headers: admin_headers
+      expect(json[:songs].map { it[:title] }).to eq([ "Harpua" ])
+    end
+
     it "returns 401 without a token" do
       get "/api/v2/admin/songs", params: { q: "hood" }, headers: anon_headers
       expect(response).to have_http_status(:unauthorized)
