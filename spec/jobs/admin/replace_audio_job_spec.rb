@@ -103,6 +103,51 @@ RSpec.describe Admin::ReplaceAudioJob do
     end
   end
 
+  describe "a non-mp3 upload" do
+    let(:flac_source) { Rails.root.join("tmp/spec/audio_20s_880.flac") }
+
+    before do
+      attach_old_audio
+      FileUtils.mkdir_p(flac_source.dirname)
+      unless File.exist?(flac_source)
+        system(
+          "ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i",
+          "sine=frequency=880:duration=20", flac_source.to_s,
+          exception: true
+        )
+      end
+    end
+
+    def flac_blob
+      ActiveStorage::Blob.create_and_upload!(
+        io: File.open(flac_source), filename: "new.flac", content_type: "audio/flac"
+      )
+    end
+
+    it "converts the upload to mp3 before attaching" do
+      described_class.new.perform(track.id, admin_job.id, flac_blob.signed_id)
+      blob = track.reload.mp3_audio.blob
+      expect(blob.content_type).to eq("audio/mpeg")
+      expect(blob.download[0, 2]).to satisfy { |b| b == "ID" || b.bytes.first == 0xFF }
+    end
+
+    it "keeps the replacement's duration" do
+      described_class.new.perform(track.id, admin_job.id, flac_blob.signed_id)
+      expect(track.reload.duration).to be_within(500).of(20_000)
+    end
+
+    it "purges the uploaded source blob" do
+      blob = flac_blob
+      described_class.new.perform(track.id, admin_job.id, blob.signed_id)
+      expect(ActiveStorage::Blob.exists?(blob.id)).to be(false)
+    end
+
+    it "completes the admin job" do
+      described_class.new.perform(track.id, admin_job.id, flac_blob.signed_id)
+      expect(admin_job.reload.status).to eq("done")
+    end
+  end
+
   describe "a track with no existing audio" do
     before { track.update!(audio_status: "missing") }
 

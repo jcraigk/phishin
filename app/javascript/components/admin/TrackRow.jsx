@@ -224,13 +224,17 @@ const TrackRow = ({
         </div>
       </td>
     </tr>
-    {tool && (
+    {tool === "replace" && (
+      <ReplacePanel
+        key={`replace-${track.id}`}
+        track={track}
+        onClose={() => setTool(null)}
+      />
+    )}
+    {(tool === "trim" || tool === "boundary") && (
       <tr className="admin-track-tool-row">
         <td colSpan={6}>
           {tool === "trim" && <TrimPanel key={`trim-${track.id}`} track={track} />}
-          {tool === "replace" && (
-            <ReplacePanel key={`replace-${track.id}`} track={track} />
-          )}
           {tool === "boundary" && shiftable && (
             <BoundaryPanel key={`boundary-${track.id}`} track={track} next={next} />
           )}

@@ -1,19 +1,22 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
+import { createPortal } from "react-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminPost } from "./adminApi";
 import { uploadFile } from "./DirectUploader";
 
-const ReplacePanel = ({ track }) => {
+const ReplacePanel = ({ track, onClose }) => {
   const { reload } = useContext(EditorContext);
   const [progress, setProgress] = useState(null);
   const [uploadError, setUploadError] = useState(null);
-  const fileInputRef = useRef(null);
   const { run, busy, status, error } = useJobRunner();
+
+  const working = busy || progress !== null;
 
   const replace = async (file) => {
     if (!file) return;
-    if (!window.confirm(`Replace the audio for "${track.title}" with ${file.name}?`)) return;
     setUploadError(null);
     setProgress(0);
     let signedId;
@@ -27,29 +30,45 @@ const ReplacePanel = ({ track }) => {
     setProgress(null);
     await run(
       () => adminPost(`/tracks/${track.id}/replace_audio`, { signed_id: signedId }),
-      () => reload()
+      async () => {
+        await reload();
+        onClose();
+      }
     );
   };
 
-  return (
-    <div className="admin-audio-panel">
-      <h4>Replace audio</h4>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".mp3,audio/mpeg"
-        disabled={busy || progress !== null}
-        onChange={(e) => {
-          const file = e.target.files[0];
-          // Allow re-selecting the same filename after a failed upload
-          e.target.value = "";
-          replace(file);
-        }}
-      />
-      {progress !== null && <progress max="100" value={progress} />}
-      {status && <span className="admin-audio-status">{status}</span>}
-      {(error || uploadError) && <p className="admin-error">{error || uploadError}</p>}
-    </div>
+  return createPortal(
+    <div className="admin-modal-overlay" onClick={working ? undefined : onClose}>
+      <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+        <h3>Replace Audio</h3>
+        <p className="admin-empty">
+          Upload a new audio file for &quot;{track.title}&quot;. Accepts flac,
+          shn, wav, aiff, or mp3; anything not already mp3 is converted.
+        </p>
+        <input
+          type="file"
+          accept=".mp3,.flac,.shn,.wav,.aiff"
+          disabled={working}
+          onChange={(e) => {
+            const file = e.target.files[0];
+            // Allow re-selecting the same filename after a failed upload
+            e.target.value = "";
+            replace(file);
+          }}
+        />
+        {progress !== null && <progress max="100" value={progress} />}
+        {status && <span className="admin-audio-status">{status}</span>}
+        {(error || uploadError) && (
+          <p className="admin-error">{error || uploadError}</p>
+        )}
+        <div className="admin-modal-actions">
+          <button type="button" disabled={working} onClick={onClose}>
+            <FontAwesomeIcon icon={faXmark} /> Cancel
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
   );
 };
 
