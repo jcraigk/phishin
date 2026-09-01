@@ -13,13 +13,14 @@ module Admin::TaperNotesTracklist
         next
       end
       if (explicit = line.match(EXPLICIT_LINE))
-        mapping[key(explicit[1], explicit[2])] = clean(explicit[3])
+        title = clean(explicit[3])
+        mapping[key(explicit[1], explicit[2])] ||= title if title?(title)
         next
       end
       next if disc.nil?
       if (numbered = line.match(NUMBERED_LINE))
         title = clean(numbered[2])
-        mapping[key(disc, numbered[1])] = title if title =~ /[a-z]/i
+        mapping[key(disc, numbered[1])] ||= title if title?(title)
       end
     end
     mapping
@@ -32,6 +33,10 @@ module Admin::TaperNotesTracklist
   def self.key_for(filename)
     match = File.basename(filename, ".*").match(/d(\d+)\D{0,2}t(\d+)/i)
     match && key(match[1], match[2])
+  end
+
+  def self.title?(title)
+    title =~ /[a-z]/i && title !~ /\.(flac|shn|wav|aiff|mp3)\z/i
   end
 
   def self.clean(title)

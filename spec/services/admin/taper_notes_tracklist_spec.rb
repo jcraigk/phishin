@@ -30,6 +30,19 @@ RSpec.describe Admin::TaperNotesTracklist do
     expect(mapping["d2t02"]).to eq("Weekapaug Groove")
   end
 
+  it "ignores checksum table lines that follow the tracklist" do
+    mapping = described_class.call(<<~NOTES)
+      Disc 2
+      05 - [05:01] - Fast Enough for You
+      06 - [02:39] - Big Ball Jam
+
+      audit report:
+      5:01.00   50.10 MB  flac  0.6209  ph1993-04-13d2t05.flac
+      6:01.65   60.88 MB  flac  0.6326  ph1993-04-13d2t06.flac
+    NOTES
+    expect(mapping).to eq({ "d2t05" => "Fast Enough for You", "d2t06" => "Big Ball Jam" })
+  end
+
   it "strips bracketed track times from titles" do
     mapping = described_class.call("Disc 1 - [70:28]\n01 - [05:16] - Suzy Greenberg\n02 - [08:35] - Foam")
     expect(mapping).to eq({ "d1t01" => "Suzy Greenberg", "d1t02" => "Foam" })
