@@ -655,19 +655,13 @@
   }
 
   td {
-    padding: 0.35rem 0.4rem;
-    border-bottom: 1px solid var(--track-divider);
-    vertical-align: top;
-  }
-
-  .admin-track-row {
-    &.is-drag-over {
-      background-color: var(--bg-blue);
-    }
+    padding: 0.15rem 0.4rem;
+    border-bottom: none;
+    vertical-align: middle;
   }
 
   .admin-set-group + .admin-set-group .admin-set-header th {
-    padding-top: 1.5rem;
+    padding-top: 1rem;
   }
 
   .admin-set-header {
