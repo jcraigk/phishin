@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
@@ -94,6 +95,11 @@ const TracksTab = () => {
   const [repositioning, setRepositioning] = useState(null);
   const [targetPosition, setTargetPosition] = useState(1);
   const [targetSet, setTargetSet] = useState("1");
+  const [actionsSlot, setActionsSlot] = useState(null);
+
+  useEffect(() => {
+    setActionsSlot(document.getElementById("admin-tab-actions"));
+  }, []);
 
   const tracks = show.tracks;
 
@@ -229,31 +235,38 @@ const TracksTab = () => {
     }
   };
 
+  const tabActions = (
+    <>
+      <button type="button" onClick={insertTrack} disabled={busy}>
+        Insert track
+      </button>
+      <select
+        className="admin-select"
+        value=""
+        aria-label="Add set"
+        disabled={busy}
+        onChange={(e) => {
+          if (e.target.value !== "") {
+            setPendingSets((prev) => [...prev, e.target.value]);
+          }
+        }}
+      >
+        <option value="">Add set</option>
+        {SETS.filter(
+          (set) =>
+            !tracks.some((t) => t.set === set) && !pendingSets.includes(set)
+        ).map((set) => (
+          <option key={set} value={set}>{setName(set)}</option>
+        ))}
+      </select>
+    </>
+  );
+
   return (
     <div className="admin-tracks-tab">
       {gapsStale && <GapBanner />}
+      {actionsSlot && createPortal(tabActions, actionsSlot)}
       <div className="admin-tracks-toolbar">
-        <button type="button" onClick={insertTrack} disabled={busy}>
-          Insert track
-        </button>
-        <select
-          value=""
-          aria-label="Add set"
-          disabled={busy}
-          onChange={(e) => {
-            if (e.target.value !== "") {
-              setPendingSets((prev) => [...prev, e.target.value]);
-            }
-          }}
-        >
-          <option value="">Add set</option>
-          {SETS.filter(
-            (set) =>
-              !tracks.some((t) => t.set === set) && !pendingSets.includes(set)
-          ).map((set) => (
-            <option key={set} value={set}>{setName(set)}</option>
-          ))}
-        </select>
         {(show.staged_audio.length > 0 || missingAudioCount > 0) && (
           <span className="admin-staged-summary">
             {show.staged_audio.length > 0 &&

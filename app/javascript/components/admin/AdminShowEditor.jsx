@@ -175,6 +175,7 @@ const AdminShowEditor = () => {
                   </button>
                 );
               })}
+              <div className="admin-tab-actions" id="admin-tab-actions" />
             </nav>
             {tab === "Setlist" && <TracksTab />}
             {tab === "Art" && <ArtTab />}

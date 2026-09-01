@@ -47,7 +47,46 @@
   }
 }
 
-.admin-layout .admin-tabs button {
+.admin-layout select,
+.admin-layout .admin-filter-control input {
+  appearance: none;
+}
+
+.admin-layout select {
+  padding: 0.35rem 2.2rem 0.35rem 0.75rem;
+  border: 1px solid var(--border-gray);
+  border-radius: 6px;
+  background-color: var(--control-gray);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5l5 5 5-5' fill='none' stroke='%23888888' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-position: right 0.85rem center;
+  background-repeat: no-repeat;
+  color: var(--list-item-link-color);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: var(--text-gray);
+  }
+
+  &:focus {
+    border-color: var(--blue);
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+}
+
+.admin-layout select.admin-select {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  border-radius: $radius;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.admin-layout .admin-tabs > button {
   border: 0 !important;
   border-bottom: 2px solid transparent !important;
   border-radius: 0;
@@ -488,7 +527,6 @@
 .admin-show-panel {
   margin-bottom: 1rem;
   padding: 0.75rem 0;
-  border-bottom: 1px solid var(--border-gray);
 
   .admin-panel-body {
     display: flex;
@@ -566,11 +604,20 @@
 
 .admin-tabs {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
   border-bottom: 1px solid var(--border-gray);
 
-  button {
+  .admin-tab-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+    padding-bottom: 0.35rem;
+  }
+
+  > button {
     border: 0;
     border-bottom: 2px solid transparent;
     border-radius: 0;
