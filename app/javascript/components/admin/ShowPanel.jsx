@@ -219,19 +219,6 @@ const ShowPanel = () => {
             />
           </div>
 
-          <div className="admin-field">
-            <label htmlFor="admin-matches-pnet">
-              <input
-                id="admin-matches-pnet"
-                type="checkbox"
-                checked={Boolean(show.matches_pnet)}
-                disabled={busy}
-                onChange={(e) => patchShow({ matches_pnet: e.target.checked })}
-              />
-              {" "}Matches Phish.net
-            </label>
-          </div>
-
           <button
             type="button"
             className="admin-danger"
