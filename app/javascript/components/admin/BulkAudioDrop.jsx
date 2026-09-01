@@ -179,7 +179,7 @@ const BulkAudioDrop = () => {
                 <p className="admin-progress-line">
                   <MoonLoader color="#c7c8ca" size={18} /> Uploading{" "}
                   {Math.min(uploading.done + 1, uploading.total)} of {uploading.total}:{" "}
-                  {uploading.filename} ({uploading.percent ?? 0}%)
+                  {uploading.filename}
                 </p>
                 <progress className="admin-progress-bar" max="100" value={uploading.percent ?? 0} />
               </>
@@ -187,8 +187,7 @@ const BulkAudioDrop = () => {
             {preparing && (
               <>
                 <p className="admin-progress-line">
-                  <MoonLoader color="#c7c8ca" size={18} /> {preparing.message} (
-                  {preparing.percent}%)
+                  <MoonLoader color="#c7c8ca" size={18} /> {preparing.message}
                 </p>
                 <progress className="admin-progress-bar" max="100" value={preparing.percent} />
               </>
