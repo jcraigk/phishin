@@ -1,3 +1,6 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import { formatDate } from "../helpers/utils";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { adminGet } from "./adminApi";
@@ -69,7 +72,7 @@ const AdminShowEditor = () => {
       <div className="admin-show-editor">
         <header>
           <h1>
-            {show.date} {show.venue_name}
+            {formatDate(show.date)}
             {!show.published && <span className="admin-badge">DRAFT</span>}
           </h1>
           <a
@@ -77,8 +80,10 @@ const AdminShowEditor = () => {
             href={`/${show.date}`}
             target="_blank"
             rel="noreferrer"
+            title="Preview on the site"
+            aria-label="Preview on the site"
           >
-            Preview
+            <FontAwesomeIcon icon={faExternalLinkAlt} />
           </a>
         </header>
         {error && <p className="admin-error">{error}</p>}
