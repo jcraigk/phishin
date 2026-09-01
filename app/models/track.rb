@@ -24,7 +24,9 @@ class Track < ApplicationRecord
 
   validates :position, :title, :set, presence: true
   validates :position, uniqueness: { scope: :show_id }
-  validates :songs, length: { minimum: 1 }, if: :songs_required?
+  validates :songs,
+            length: { minimum: 1, too_short: "must include at least one on a published show" },
+            if: :songs_required?
 
   before_save :generate_slug
   after_save :update_show_audio_status
