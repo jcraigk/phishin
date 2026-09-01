@@ -79,7 +79,12 @@ const VenueControl = () => {
     <div className="admin-venue-control">
       <FilterSelect
         id="admin-venue"
-        value={show.venue_name || ""}
+        value={
+          (() => {
+            const current = venues.find((venue) => venue.id === show.venue_id);
+            return current ? venueLabel(current) : show.venue_name || "";
+          })()
+        }
         placeholder="Filter venues"
         options={venues.map((venue) => ({ id: venue.id, label: venueLabel(venue), venue }))}
         disabled={busy}
