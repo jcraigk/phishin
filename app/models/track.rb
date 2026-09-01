@@ -24,9 +24,7 @@ class Track < ApplicationRecord
 
   validates :position, :title, :set, presence: true
   validates :position, uniqueness: { scope: :show_id }
-  validates :songs,
-            length: { minimum: 1, too_short: "must include at least one on a published show" },
-            if: :songs_required?
+  validate :must_have_song, if: :songs_required?
 
   before_save :generate_slug
   after_save :update_show_audio_status
@@ -146,5 +144,11 @@ class Track < ApplicationRecord
   # show.nil? keeps the CLI importer behavior for in-memory tracks and any track built without a show.
   def songs_required?
     show.nil? || show.published?
+  end
+
+  # On :base rather than :songs so the message reads as a sentence instead of
+  # leading with the attribute name.
+  def must_have_song
+    errors.add(:base, "Tracks must include at least one song") if songs.empty?
   end
 end
