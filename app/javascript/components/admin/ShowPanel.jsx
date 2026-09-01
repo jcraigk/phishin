@@ -1,26 +1,25 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { EditorContext } from "./AdminShowEditor";
 import { adminGet, adminPost, adminPatch, adminDelete } from "./adminApi";
-
-const DEBOUNCE_MS = 300;
+import FilterSelect from "./FilterSelect";
 
 const BLANK_VENUE = { name: "", city: "", state: "", country: "USA" };
+
+const venueLabel = (venue) =>
+  `${venue.name}, ${venue.city}${venue.state ? `, ${venue.state}` : ""} (${venue.country})`;
 
 const ShowPanel = () => {
   const { show, setShow, setError } = useContext(EditorContext);
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-  const [venueQuery, setVenueQuery] = useState("");
-  const [venueResults, setVenueResults] = useState([]);
-  const [venueOpen, setVenueOpen] = useState(false);
+  const [venues, setVenues] = useState([]);
   const [newVenue, setNewVenue] = useState(null);
   const [tours, setTours] = useState([]);
   const [taperNotes, setTaperNotes] = useState(show.taper_notes || "");
   const [adminNotes, setAdminNotes] = useState(show.admin_notes || "");
   const [gap, setGap] = useState(String(show.performance_gap_value ?? ""));
   const [busy, setBusy] = useState(false);
-  const venueRef = useRef(null);
 
   useEffect(() => setTaperNotes(show.taper_notes || ""), [show.taper_notes]);
   useEffect(() => setAdminNotes(show.admin_notes || ""), [show.admin_notes]);
@@ -33,39 +32,10 @@ const ShowPanel = () => {
     adminGet("/tours")
       .then((data) => setTours(data.tours))
       .catch((e) => setError(e.message));
+    adminGet("/venues?all=true")
+      .then((data) => setVenues(data.venues))
+      .catch((e) => setError(e.message));
   }, [setError]);
-
-  useEffect(() => {
-    const term = venueQuery.trim();
-    if (term === "") {
-      setVenueResults([]);
-      return undefined;
-    }
-    let cancelled = false;
-    const timer = setTimeout(async () => {
-      try {
-        const data = await adminGet(`/venues?q=${encodeURIComponent(term)}`);
-        if (!cancelled) setVenueResults(data.venues);
-      } catch (e) {
-        if (!cancelled) setError(e.message);
-      }
-    }, DEBOUNCE_MS);
-
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [venueQuery, setError]);
-
-  useEffect(() => {
-    const onDocumentClick = (e) => {
-      if (venueRef.current && !venueRef.current.contains(e.target)) {
-        setVenueOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", onDocumentClick);
-    return () => document.removeEventListener("mousedown", onDocumentClick);
-  }, []);
 
   const patchShow = async (body) => {
     setError(null);
@@ -80,9 +50,6 @@ const ShowPanel = () => {
   };
 
   const selectVenue = async (venue) => {
-    setVenueQuery("");
-    setVenueResults([]);
-    setVenueOpen(false);
     await patchShow({ venue_id: venue.id });
   };
 
@@ -92,6 +59,9 @@ const ShowPanel = () => {
     try {
       const venue = await adminPost("/venues", newVenue);
       setNewVenue(null);
+      setVenues((prev) =>
+        [...prev, venue].sort((a, b) => a.name.localeCompare(b.name))
+      );
       await selectVenue(venue);
     } catch (e) {
       setError(e.message);
@@ -139,46 +109,28 @@ const ShowPanel = () => {
 
       {!collapsed && (
         <div className="admin-panel-body">
-          <div className="admin-field" ref={venueRef}>
+          <div className="admin-field">
             <label htmlFor="admin-venue">Venue</label>
-            <p className="admin-current-value">
-              {show.venue_name || (
-                <span className="admin-attention">No venue set</span>
-              )}
-            </p>
-            <input
+            <FilterSelect
               id="admin-venue"
-              type="text"
-              placeholder="Search venues"
-              value={venueQuery}
+              value={show.venue_name || ""}
+              placeholder="Filter venues"
+              options={venues.map((venue) => ({ id: venue.id, label: venueLabel(venue), venue }))}
               disabled={busy}
-              onFocus={() => setVenueOpen(true)}
-              onChange={(e) => {
-                setVenueQuery(e.target.value);
-                setVenueOpen(true);
-              }}
-            />
-            {venueOpen && venueQuery.trim() !== "" && (
-              <ul className="admin-venue-results">
-                {venueResults.map((venue) => (
-                  <li key={venue.id}>
-                    <button type="button" onClick={() => selectVenue(venue)}>
-                      {venue.name}, {venue.city}
-                      {venue.state ? `, ${venue.state}` : ""} ({venue.country})
-                    </button>
-                  </li>
-                ))}
+              onSelect={(option) => selectVenue(option.venue)}
+              footer={(query) => (
                 <li>
                   <button
                     type="button"
-                    onClick={() =>
-                      setNewVenue({ ...BLANK_VENUE, name: venueQuery.trim() })
-                    }
+                    onClick={() => setNewVenue({ ...BLANK_VENUE, name: query })}
                   >
                     Create venue
                   </button>
                 </li>
-              </ul>
+              )}
+            />
+            {!show.venue_name && (
+              <span className="admin-attention">No venue set</span>
             )}
 
             {newVenue && (
@@ -210,23 +162,17 @@ const ShowPanel = () => {
 
           <div className="admin-field">
             <label htmlFor="admin-tour">Tour</label>
-            <select
+            <FilterSelect
               id="admin-tour"
-              value={show.tour_id ?? ""}
+              value={tours.find((tour) => tour.id === show.tour_id)?.name || ""}
+              placeholder="Filter tours"
+              options={[
+                { id: null, label: "No tour set" },
+                ...tours.map((tour) => ({ id: tour.id, label: tour.name })),
+              ]}
               disabled={busy}
-              onChange={(e) =>
-                patchShow({
-                  tour_id: e.target.value === "" ? null : Number(e.target.value),
-                })
-              }
-            >
-              <option value="">No tour set</option>
-              {tours.map((tour) => (
-                <option key={tour.id} value={tour.id}>
-                  {tour.name}
-                </option>
-              ))}
-            </select>
+              onSelect={(option) => patchShow({ tour_id: option.id })}
+            />
             {show.tour_id === null && (
               <span className="admin-attention">Needs a tour</span>
             )}
@@ -248,9 +194,9 @@ const ShowPanel = () => {
 
           <div className="admin-field">
             <label htmlFor="admin-admin-notes">Admin notes</label>
-            <textarea
+            <input
               id="admin-admin-notes"
-              rows={3}
+              type="text"
               value={adminNotes}
               disabled={busy}
               onChange={(e) => setAdminNotes(e.target.value)}

@@ -43,10 +43,12 @@ class ApiV2::Admin::Catalog < ApiV2::Admin::Base
     resource :venues do
       desc "Search venues", hidden: true
       params do
+        optional :all, type: Boolean, default: false, desc: "Return every venue"
         optional :q, type: String
       end
       get do
-        venues = Venue.order(:name).limit(SEARCH_LIMIT)
+        venues = Venue.order(:name)
+        venues = venues.limit(SEARCH_LIMIT) unless params[:all]
         if params[:q].present?
           venues = venues.where("venues.name ILIKE :term", term: "%#{params[:q]}%")
         end

@@ -638,6 +638,24 @@
     }
   }
 
+  .admin-set-group + .admin-set-group .admin-set-header th {
+    padding-top: 1.5rem;
+  }
+
+  .admin-set-header {
+    th {
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--border-gray);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--title-gray);
+    }
+
+    &.is-drag-over th {
+      background-color: var(--bg-blue);
+    }
+  }
+
   .admin-track-handle {
     color: var(--text-gray);
     cursor: grab;
@@ -663,14 +681,18 @@
     white-space: nowrap;
   }
 
-  .admin-track-jam {
-    width: 5rem;
-  }
-
   .admin-track-actions {
-    display: flex;
-    gap: 0.35rem;
     white-space: nowrap;
+  }
+}
+
+.admin-icon-button {
+  padding: 0.3rem 0.5rem;
+  line-height: 1;
+  color: var(--text-gray);
+
+  &:hover:not(:disabled) {
+    color: var(--alert-red);
   }
 }
 
@@ -1716,3 +1738,78 @@
   white-space: nowrap;
 }
 
+
+.admin-filter-select {
+  position: relative;
+  max-width: 22rem;
+}
+
+.admin-filter-control {
+  position: relative;
+
+  input {
+    width: 100%;
+    padding: 0.4rem 2rem 0.4rem 0.6rem;
+    border: 1px solid var(--border-gray);
+    border-radius: 6px;
+    background-color: var(--control-gray);
+    color: var(--list-item-link-color);
+
+    &:focus {
+      border-color: var(--blue);
+      outline: none;
+    }
+  }
+}
+
+.admin-filter-chevron {
+  position: absolute;
+  top: 50%;
+  right: 0.7rem;
+  transform: translateY(-50%);
+  color: var(--text-gray);
+  font-size: 0.7rem;
+  pointer-events: none;
+}
+
+.admin-filter-options {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  right: 0;
+  max-height: 16rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.25rem;
+  border: 1px solid var(--border-gray);
+  border-radius: 6px;
+  background-color: var(--card-bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  list-style: none;
+
+  li {
+    margin: 0;
+  }
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 0.35rem 0.5rem;
+    border: none !important;
+    border-radius: 4px;
+    background: none;
+    text-align: left;
+    font-weight: 400;
+
+    &.active,
+    &:hover {
+      background-color: var(--bg-gray);
+    }
+  }
+}
+
+.admin-filter-none {
+  padding: 0.35rem 0.5rem;
+  color: var(--text-gray);
+}
