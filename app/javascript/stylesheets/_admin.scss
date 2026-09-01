@@ -603,7 +603,7 @@
 
 .admin-tabs {
   display: flex;
-  align-items: stretch;
+  align-items: flex-end;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
   border-bottom: 1px solid var(--border-gray);
@@ -613,18 +613,16 @@
     align-items: center;
     gap: 0.5rem;
     margin-left: auto;
-    padding-bottom: 0.35rem;
+    padding-bottom: 0.4rem;
   }
 
   > button {
-    display: flex;
-    align-items: center;
     border: 0;
     border-bottom: 2px solid transparent;
     border-radius: 0;
     background: none;
-    padding: 0.4rem 0.75rem;
-    font-size: 0.95rem;
+    padding: 0.25rem 0.75rem 0.3rem;
+    font-size: 1rem;
 
     &.active {
       border-bottom-color: var(--blue);
@@ -919,23 +917,13 @@
 }
 
 .admin-bulk-audio {
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  border: 1px solid var(--border-gray);
-  border-radius: $radius;
-  background-color: var(--card-bg);
+  display: contents;
+}
 
-  h3 {
-    font-weight: 700;
-  }
-
+.admin-bulk-plan {
   h4 {
     margin-top: 0.75rem;
     font-weight: 700;
-  }
-
-  button {
-    margin-right: 0.5rem;
   }
 }
 
