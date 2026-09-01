@@ -29,6 +29,8 @@ class ApiV2::Admin::Catalog < ApiV2::Admin::Base
       desc "Create a song", hidden: true
       params do
         requires :title, type: String
+        optional :original, type: Boolean, default: false
+        optional :artist, type: String
       end
       post do
         title = params[:title].strip
@@ -38,7 +40,11 @@ class ApiV2::Admin::Catalog < ApiV2::Admin::Base
         if Song.where("LOWER(title) = ?", title.downcase).exists?
           error!({ message: "A song titled \"#{title}\" already exists" }, 409)
         end
-        song = Song.create!(title:)
+        artist = params[:artist].to_s.strip
+        if !params[:original] && artist.empty?
+          error!({ message: "A cover needs its original artist" }, 422)
+        end
+        song = Song.create!(title:, original: params[:original], artist: params[:original] ? nil : artist)
         status 201
         song_payload(song)
       end

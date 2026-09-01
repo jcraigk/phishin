@@ -9,6 +9,7 @@ const SongPicker = ({ value, onChange }) => {
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [creating, setCreating] = useState(null);
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
   const inputRef = useRef(null);
@@ -65,12 +66,15 @@ const SongPicker = ({ value, onChange }) => {
   };
 
   const createSong = async () => {
-    const title = query.trim();
-    if (title === "") return;
     setError(null);
     setBusy(true);
     try {
-      const song = await adminPost("/songs", { title });
+      const song = await adminPost("/songs", {
+        title: creating.title.trim(),
+        original: creating.original,
+        artist: creating.original ? undefined : creating.artist.trim(),
+      });
+      setCreating(null);
       addSong(song);
     } catch (e) {
       setError(e.message);
@@ -135,12 +139,67 @@ const SongPicker = ({ value, onChange }) => {
           ))}
           {!hasExactMatch && (
             <li className="admin-song-create">
-              <button type="button" onClick={createSong} disabled={busy}>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setCreating({ title: term, original: false, artist: "" });
+                  setOpen(false);
+                }}
+              >
                 Create &quot;{term}&quot;
               </button>
             </li>
           )}
         </ul>
+      )}
+      {creating && (
+        <div className="admin-modal-overlay" onClick={() => setCreating(null)}>
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>New Song</h3>
+            <label className="admin-modal-field">
+              <span>Title</span>
+              <input
+                type="text"
+                value={creating.title}
+                onChange={(e) => setCreating({ ...creating, title: e.target.value })}
+              />
+            </label>
+            <label className="admin-modal-check">
+              <input
+                type="checkbox"
+                checked={creating.original}
+                onChange={(e) => setCreating({ ...creating, original: e.target.checked })}
+              />
+              {" "}Phish original
+            </label>
+            {!creating.original && (
+              <label className="admin-modal-field">
+                <span>Original artist</span>
+                <input
+                  type="text"
+                  placeholder="Who wrote it"
+                  value={creating.artist}
+                  onChange={(e) => setCreating({ ...creating, artist: e.target.value })}
+                />
+              </label>
+            )}
+            <div className="admin-modal-actions">
+              <button
+                type="button"
+                disabled={
+                  busy ||
+                  creating.title.trim() === "" ||
+                  (!creating.original && creating.artist.trim() === "")
+                }
+                onClick={createSong}
+              >
+                Create Song
+              </button>
+              <button type="button" onClick={() => setCreating(null)}>Cancel</button>
+            </div>
+          </div>
+        </div>
       )}
       {error && <p className="admin-error">{error}</p>}
     </div>

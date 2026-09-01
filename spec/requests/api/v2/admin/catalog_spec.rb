@@ -85,13 +85,30 @@ RSpec.describe "API v2 Admin Catalog" do
       expect(response).to have_http_status(:forbidden)
     end
 
-    it "creates a song with a generated slug" do
-      post "/api/v2/admin/songs", params: { title: "New Jam" }.to_json, headers: admin_headers
+    it "creates an original with a generated slug" do
+      post "/api/v2/admin/songs", params: { title: "New Jam", original: true }.to_json, headers: admin_headers
       expect(response).to have_http_status(:created)
       song = Song.find_by(title: "New Jam")
       expect(song).to be_present
       expect(song.slug).to eq("new-jam")
+      expect(song.original).to be(true)
       expect(json[:id]).to eq(song.id)
+    end
+
+    it "creates a cover with its original artist" do
+      post "/api/v2/admin/songs", params: { title: "Golden Age", artist: "TV on the Radio" }.to_json,
+           headers: admin_headers
+      expect(response).to have_http_status(:created)
+      song = Song.find_by(title: "Golden Age")
+      expect(song.original).to be(false)
+      expect(song.artist).to eq("TV on the Radio")
+    end
+
+    it "422s a cover without an artist" do
+      expect {
+        post "/api/v2/admin/songs", params: { title: "Golden Age" }.to_json, headers: admin_headers
+      }.not_to change(Song, :count)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "returns 409 on a duplicate title" do
