@@ -64,13 +64,17 @@ const BulkAudioDrop = () => {
       // and transcode lossless sources before the filename matching runs.
       if (files.some((file) => !isMp3(file))) {
         setUploading(null);
-        setPreparing("Preparing files");
+        setPreparing({ message: "Preparing files", percent: 0 });
         const { job_id: jobId } = await adminPost(
           `/shows/${show.date}/bulk_audio_prepare`,
           { signed_ids: signedIds }
         );
         const job = await pollJob(jobId, {
-          onUpdate: (j) => setPreparing(j.message || "Preparing files"),
+          onUpdate: (j) =>
+            setPreparing({
+              message: j.message || "Preparing files",
+              percent: j.progress ?? 0,
+            }),
         });
         signedIds = job.payload.signed_ids;
       }
@@ -154,9 +158,13 @@ const BulkAudioDrop = () => {
               </>
             )}
             {preparing && (
-              <p className="admin-progress-line">
-                <FontAwesomeIcon icon={faSpinner} spin /> {preparing}
-              </p>
+              <>
+                <p className="admin-progress-line">
+                  <FontAwesomeIcon icon={faSpinner} spin /> {preparing.message} (
+                  {preparing.percent}%)
+                </p>
+                <progress className="admin-progress-bar" max="100" value={preparing.percent} />
+              </>
             )}
             {uploadError && <p className="admin-error">{uploadError}</p>}
             <div className="admin-modal-actions">
