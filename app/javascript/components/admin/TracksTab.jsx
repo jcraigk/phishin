@@ -155,6 +155,26 @@ const TracksTab = () => {
     };
   }, [playableKey]);
 
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.code !== "Space") return;
+      const tag = e.target.tagName;
+      if (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT" ||
+        tag === "BUTTON" ||
+        e.target.isContentEditable
+      ) return;
+      const engine = previewEngine.current;
+      if (!engine || preview.trackId === null) return;
+      e.preventDefault();
+      engine.toggle();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [preview.trackId]);
+
   const togglePreview = (track) => {
     const engine = previewEngine.current;
     if (!engine) return;
