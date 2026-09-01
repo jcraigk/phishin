@@ -35,6 +35,6 @@ module Admin::TaperNotesTracklist
   end
 
   def self.clean(title)
-    title.strip.sub(/[\s>,*-]+\z/, "").strip
+    title.strip.sub(/\A\[[\d:.]+\]\s*[\s.):-]*/, "").sub(/[\s>,*-]+\z/, "").strip
   end
 end

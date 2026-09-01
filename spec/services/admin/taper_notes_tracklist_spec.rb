@@ -30,6 +30,11 @@ RSpec.describe Admin::TaperNotesTracklist do
     expect(mapping["d2t02"]).to eq("Weekapaug Groove")
   end
 
+  it "strips bracketed track times from titles" do
+    mapping = described_class.call("Disc 1 - [70:28]\n01 - [05:16] - Suzy Greenberg\n02 - [08:35] - Foam")
+    expect(mapping).to eq({ "d1t01" => "Suzy Greenberg", "d1t02" => "Foam" })
+  end
+
   it "ignores numbered lines before any disc header" do
     expect(described_class.call(notes).values).not_to include(a_string_matching(/1993/))
   end
