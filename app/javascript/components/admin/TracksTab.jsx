@@ -250,7 +250,7 @@ const TracksTab = () => {
   const tabActions = (
     <>
       <button type="button" onClick={insertTrack} disabled={busy}>
-        <FontAwesomeIcon icon={faPlus} /> Insert track
+        <FontAwesomeIcon icon={faPlus} /> Add track
       </button>
       <BulkAudioDrop />
       <div className="admin-row-menu">
