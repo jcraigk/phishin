@@ -10,6 +10,7 @@ import ArtTab from "./ArtTab";
 import TagsTab from "./TagsTab";
 import HistoryTab from "./HistoryTab";
 import ShowPanel from "./ShowPanel";
+import VenueControl from "./VenueControl";
 import PublishPanel from "./PublishPanel";
 import StagingEditor from "./StagingEditor";
 
@@ -78,6 +79,7 @@ const AdminShowEditor = () => {
             {formatDate(show.date)}
             {!show.published && <span className="admin-badge">DRAFT</span>}
           </h1>
+          <VenueControl />
           <a
             className="admin-preview-link"
             href={`/${show.date}`}

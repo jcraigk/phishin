@@ -493,6 +493,11 @@
     }
   }
 
+  .admin-venue-control {
+    position: relative;
+    min-width: 18rem;
+  }
+
   .admin-icon-button {
     padding: 0.3rem 0.5rem;
     background: none;
@@ -543,7 +548,6 @@
     align-items: flex-start;
 
     textarea {
-      min-height: 2.1rem;
       resize: vertical;
     }
   }
