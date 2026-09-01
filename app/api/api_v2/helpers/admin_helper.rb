@@ -53,6 +53,7 @@ module ApiV2::Helpers::AdminHelper
       performance_gap_value: show.performance_gap_value,
       matches_pnet: show.matches_pnet,
       staged_audio: staged_audio_payload(show),
+      edits_count: TrackEdit.where(show_id: show.id).count,
       staging: staging_payload(show),
       show_tags: show_tags_payload(show),
       tracks: show.tracks.order(:position).map { |track| track_payload(track) }

@@ -33,9 +33,11 @@ const TrackRow = ({
 }) => {
   const { setShow, setTrack, setError } = useContext(EditorContext);
   const [title, setTitle] = useState(track.title || "");
+  const [slug, setSlug] = useState(track.slug || "");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => setTitle(track.title || ""), [track.title]);
+  useEffect(() => setSlug(track.slug || ""), [track.slug]);
 
   const patchTrack = async (body) => {
     setError(null);
@@ -64,6 +66,11 @@ const TrackRow = ({
   const saveTitle = () => {
     if (title === (track.title || "")) return;
     patchTrack({ title });
+  };
+
+  const saveSlug = () => {
+    if (slug === (track.slug || "") || slug.trim() === "") return;
+    patchTrack({ slug: slug.trim() });
   };
 
   const deleteTrack = () => {
@@ -104,7 +111,16 @@ const TrackRow = ({
           onBlur={saveTitle}
         />
       </td>
-      <td className="admin-track-slug">{track.slug}</td>
+      <td className="admin-track-slug">
+        <input
+          type="text"
+          aria-label="Slug"
+          value={slug}
+          disabled={busy}
+          onChange={(e) => setSlug(e.target.value)}
+          onBlur={saveSlug}
+        />
+      </td>
       <td className="admin-track-songs">
         <SongPicker
           value={track.songs}

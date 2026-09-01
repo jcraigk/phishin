@@ -10,6 +10,7 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       desc "Update a track", hidden: true
       params do
         optional :title, type: String
+        optional :slug, type: String, regexp: /\A[a-z0-9]+(-[a-z0-9]+)*\z/
         optional :set, type: String, values: VALID_SETS
         optional :song_ids, type: Array[Integer]
         optional :jam_starts_at_second, type: Integer
@@ -28,7 +29,8 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
           attachment_id = updates.delete(:staged_attachment_id)
 
           # A published show keeps its slug so existing track URLs stay valid.
-          if updates.key?(:title) && !track.show.published?
+          # An explicit slug edit is the admin overriding that on purpose.
+          if updates.key?(:title) && !track.show.published? && !updates.key?(:slug)
             track.title = updates.delete(:title)
             track.generate_slug(force: true)
           end

@@ -16,7 +16,7 @@ import StagingEditor from "./StagingEditor";
 
 export const EditorContext = createContext(null);
 
-const TABS = ["Tracks", "Audio", "Art", "Tags", "History"];
+const TABS = ["Setlist", "Audio", "Art", "Tags", "History"];
 
 const AdminShowEditor = () => {
   const { date } = useParams();
@@ -24,7 +24,7 @@ const AdminShowEditor = () => {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [show, setShow] = useState(null);
-  const [tab, setTab] = useState("Tracks");
+  const [tab, setTab] = useState("Setlist");
   const [error, setError] = useState(null);
   const [gapsStale, setGapsStale] = useState(false);
 
@@ -52,6 +52,17 @@ const AdminShowEditor = () => {
           }
     );
   }, []);
+
+  const tabCounts = show
+    ? {
+        Setlist: show.tracks.length,
+        Audio: show.tracks.filter((t) => t.audio_status !== "missing").length,
+        Tags:
+          show.show_tags.length +
+          show.tracks.reduce((sum, t) => sum + t.track_tags.length, 0),
+        History: show.edits_count,
+      }
+    : {};
 
   if (!show) {
     return (
@@ -142,18 +153,22 @@ const AdminShowEditor = () => {
             <ShowPanel />
             <PublishPanel />
             <nav className="admin-tabs">
-              {TABS.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  className={t === tab ? "active" : ""}
-                  onClick={() => setTab(t)}
-                >
-                  {t}
-                </button>
-              ))}
+              {TABS.map((t) => {
+                const count = tabCounts[t];
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    className={t === tab ? "active" : ""}
+                    onClick={() => setTab(t)}
+                  >
+                    {t}
+                    {count > 0 && <span className="admin-count">{count}</span>}
+                  </button>
+                );
+              })}
             </nav>
-            {tab === "Tracks" && <TracksTab />}
+            {tab === "Setlist" && <TracksTab />}
             {tab === "Audio" && <AudioTab />}
             {tab === "Art" && <ArtTab />}
             {tab === "Tags" && <TagsTab />}

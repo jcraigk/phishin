@@ -47,6 +47,17 @@ RSpec.describe "API v2 Admin Tracks" do
       expect(response).to have_http_status(:forbidden)
     end
 
+    it "updates the slug directly" do
+      patch "/api/v2/admin/tracks/#{track1.id}", params: { slug: "custom-slug" }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:ok)
+      expect(track1.reload.slug).to eq("custom-slug")
+    end
+
+    it "rejects a slug with invalid characters" do
+      patch "/api/v2/admin/tracks/#{track1.id}", params: { slug: "Bad Slug!" }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:bad_request)
+    end
+
     it "updates title, set, and songs" do
       patch "/api/v2/admin/tracks/#{track1.id}",
             params: { title: "Ghost Jam", set: "2", song_ids: [ song_b.id ] }.to_json,
@@ -173,6 +184,29 @@ RSpec.describe "API v2 Admin Tracks" do
           params: { track_ids: [ track3.id, track1.id, track2.id ] }.to_json,
           headers: admin_headers
       expect(json[:tracks].map { |t| t[:id] }).to eq([ track3.id, track1.id, track2.id ])
+    end
+
+    it "applies set changes for moved tracks in the same request" do
+      track4 = create(:track, show:, position: 4, title: "Fourth", set: "2")
+      order = [ track1, track2, track4, track3 ]
+
+      put "/api/v2/admin/shows/2025-08-01/track_order",
+          params: { track_ids: order.map(&:id), sets: { track4.id.to_s => "1" } }.to_json,
+          headers: admin_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(order.map { |t| t.reload.position }).to eq([ 1, 2, 3, 4 ])
+      expect(track4.set).to eq("1")
+      expect(json[:tracks].find { |t| t[:id] == track4.id }[:set]).to eq("1")
+    end
+
+    it "rejects an invalid set" do
+      put "/api/v2/admin/shows/2025-08-01/track_order",
+          params: { track_ids: [ track3.id, track1.id, track2.id ], sets: { track3.id.to_s => "Q" } }.to_json,
+          headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(positions_for(show)).to eq([ 1, 2, 3 ])
+      expect(track3.reload.set).to eq("1")
     end
 
     it "rejects a partial list" do
