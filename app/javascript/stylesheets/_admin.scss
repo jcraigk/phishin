@@ -962,6 +962,11 @@
     border-bottom: 1px solid var(--border-gray);
   }
 
+  .admin-bulk-check {
+    flex-shrink: 0;
+    accent-color: var(--blue);
+  }
+
   .admin-bulk-position {
     flex-shrink: 0;
     min-width: 2rem;

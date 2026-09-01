@@ -34,6 +34,23 @@ const BulkAudioDrop = () => {
   const folderInputRef = useRef(null);
   const previewEngine = useRef(null);
   const [preview, setPreview] = useState({ index: 0, playing: false, time: 0 });
+  const [selected, setSelected] = useState(() => new Set());
+
+  useEffect(() => {
+    setSelected(new Set((plan?.matches || []).map((m) => m.signed_id)));
+  }, [plan]);
+
+  const toggleSelected = (signedId) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(signedId)) {
+        next.delete(signedId);
+      } else {
+        next.add(signedId);
+      }
+      return next;
+    });
+  };
 
   const previewList = useMemo(
     () =>
@@ -175,10 +192,12 @@ const BulkAudioDrop = () => {
   };
 
   const apply = () => {
-    const assignments = plan.matches.map((m) => ({
-      signed_id: m.signed_id,
-      track_id: m.track_id,
-    }));
+    const assignments = plan.matches
+      .filter((m) => selected.has(m.signed_id))
+      .map((m) => ({
+        signed_id: m.signed_id,
+        track_id: m.track_id,
+      }));
     if (
       !window.confirm(
         `Apply ${assignments.length} files to ${show.date}? Replaced originals are backed up.`
@@ -312,6 +331,12 @@ const BulkAudioDrop = () => {
                     const active = preview.index === flatIndex;
                     return (
                       <li key={m.signed_id}>
+                        <input
+                          type="checkbox"
+                          className="admin-bulk-check"
+                          checked={selected.has(m.signed_id)}
+                          onChange={() => toggleSelected(m.signed_id)}
+                        />
                         <span className="admin-bulk-position">{m.position}</span>
                         <span className="admin-bulk-title">{m.title}</span>
                         <span className="admin-bulk-preview">
@@ -377,8 +402,8 @@ const BulkAudioDrop = () => {
           </div>
 
           <div className="admin-modal-actions">
-            <button type="button" onClick={apply} disabled={busy || plan.matches.length === 0}>
-              <FontAwesomeIcon icon={faCheck} /> Apply {plan.matches.length} files
+            <button type="button" onClick={apply} disabled={busy || selected.size === 0}>
+              <FontAwesomeIcon icon={faCheck} /> Apply
             </button>
             <button type="button" onClick={close} disabled={busy}>
               <FontAwesomeIcon icon={faXmark} /> Cancel
