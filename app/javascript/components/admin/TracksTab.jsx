@@ -127,6 +127,26 @@ const TracksTab = () => {
     setRepositioning(track);
   };
 
+  // A position determines its set except at a boundary, where the slot at the
+  // end of one set is the same slot as the start of the next. The choices are
+  // the sets of the neighboring tracks (plus any just-added empty set), and
+  // the earlier one is the default.
+  const setChoicesFor = (track, position) => {
+    const ordered = tracks.filter((t) => t.id !== track.id);
+    ordered.splice(position - 1, 0, track);
+    const at = ordered.indexOf(track);
+    const neighbors = [ordered[at - 1]?.set, ordered[at + 1]?.set].filter(Boolean);
+    const choices = [...new Set([...neighbors, track.set, ...pendingSets])];
+    if (choices.length === 0) return SETS;
+    return SETS.filter((set) => choices.includes(set));
+  };
+
+  const chooseTargetPosition = (position) => {
+    setTargetPosition(position);
+    const choices = setChoicesFor(repositioning, position);
+    setTargetSet(choices[0]);
+  };
+
   const applyReposition = () => {
     const track = repositioning;
     setRepositioning(null);
@@ -289,7 +309,7 @@ const TracksTab = () => {
               <span>Position</span>
               <select
                 value={targetPosition}
-                onChange={(e) => setTargetPosition(Number(e.target.value))}
+                onChange={(e) => chooseTargetPosition(Number(e.target.value))}
               >
                 {tracks.map((t, i) => (
                   <option key={t.id} value={i + 1}>
@@ -302,7 +322,7 @@ const TracksTab = () => {
             <label className="admin-modal-field">
               <span>Set</span>
               <select value={targetSet} onChange={(e) => setTargetSet(e.target.value)}>
-                {SETS.map((set) => (
+                {setChoicesFor(repositioning, targetPosition).map((set) => (
                   <option key={set} value={set}>{setName(set)}</option>
                 ))}
               </select>
