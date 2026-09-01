@@ -142,7 +142,7 @@ const ShowPanel = () => {
             <label htmlFor="admin-taper-notes">Taper notes</label>
             <textarea
               id="admin-taper-notes"
-              rows={5}
+              rows={1}
               value={taperNotes}
               disabled={busy}
               onChange={(e) => setTaperNotes(e.target.value)}
