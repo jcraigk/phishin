@@ -107,7 +107,19 @@ const AdminShowEditor = () => {
             <FontAwesomeIcon icon={faTrashAlt} />
           </button>
         </header>
-        {error && <p className="admin-error">{error}</p>}
+        {error && (
+          <div className="admin-modal-overlay" onClick={() => setError(null)}>
+            <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+              <h3>Something went wrong</h3>
+              <p className="admin-error">{error}</p>
+              <div className="admin-modal-actions">
+                <button type="button" onClick={() => setError(null)}>
+                  <FontAwesomeIcon icon={faCheck} /> OK
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {confirmingDelete && (
           <div className="admin-modal-overlay" onClick={() => setConfirmingDelete(false)}>
             <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
