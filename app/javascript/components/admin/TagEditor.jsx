@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import { adminDelete, adminPatch, adminPost } from "./adminApi";
-import { reasonText } from "./HistoryTab";
+import { reasonText } from "./orphanReasons";
 
 // Blank number inputs mean "no timestamp" rather than zero, so they are sent as
 // null instead of being coerced.

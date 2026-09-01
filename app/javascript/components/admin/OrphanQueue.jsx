@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { adminGet, adminPatch } from "./adminApi";
-import { reasonText } from "./HistoryTab";
+import { reasonText } from "./orphanReasons";
 
 const secondsOrNull = (value) => (value.trim() === "" ? null : Number(value));
 
