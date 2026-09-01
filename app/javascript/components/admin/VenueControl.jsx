@@ -3,7 +3,23 @@ import { EditorContext } from "./AdminShowEditor";
 import { adminGet, adminPost, adminPatch } from "./adminApi";
 import FilterSelect from "./FilterSelect";
 
-const BLANK_VENUE = { name: "", city: "", state: "", country: "USA" };
+const BLANK_VENUE = {
+  name: "",
+  city: "",
+  state: "",
+  country: "USA",
+  latitude: "",
+  longitude: "",
+};
+
+const FIELD_LABELS = {
+  name: "Name",
+  city: "City",
+  state: "State",
+  country: "Country",
+  latitude: "Latitude",
+  longitude: "Longitude",
+};
 
 const venueLabel = (venue) => {
   const place = `${venue.city}${venue.state ? `, ${venue.state}` : ""}`;
@@ -41,7 +57,11 @@ const VenueControl = () => {
     setError(null);
     setBusy(true);
     try {
-      const venue = await adminPost("/venues", newVenue);
+      const venue = await adminPost("/venues", {
+        ...newVenue,
+        latitude: newVenue.latitude === "" ? undefined : Number(newVenue.latitude),
+        longitude: newVenue.longitude === "" ? undefined : Number(newVenue.longitude),
+      });
       setNewVenue(null);
       setVenues((prev) =>
         [...prev, venue].sort((a, b) => a.name.localeCompare(b.name))
@@ -79,11 +99,12 @@ const VenueControl = () => {
         <div className="admin-modal-overlay" onClick={() => setNewVenue(null)}>
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>New Venue</h3>
-            {["name", "city", "state", "country"].map((field) => (
+            {Object.keys(FIELD_LABELS).map((field) => (
               <label key={field} className="admin-modal-field">
-                <span>{field[0].toUpperCase() + field.slice(1)}</span>
+                <span>{FIELD_LABELS[field]}</span>
                 <input
                   type="text"
+                  placeholder={field === "latitude" ? "44.0429" : field === "longitude" ? "-72.7089" : ""}
                   value={newVenue[field]}
                   onChange={(e) =>
                     setNewVenue({ ...newVenue, [field]: e.target.value })

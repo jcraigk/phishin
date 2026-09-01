@@ -71,6 +71,8 @@ class ApiV2::Admin::Catalog < ApiV2::Admin::Base
         requires :city, type: String
         optional :state, type: String
         requires :country, type: String
+        optional :latitude, type: Float, values: -90.0..90.0
+        optional :longitude, type: Float, values: -180.0..180.0
       end
       post do
         name = params[:name].strip
@@ -83,7 +85,9 @@ class ApiV2::Admin::Catalog < ApiV2::Admin::Base
           name:,
           city:,
           state: params[:state].to_s.strip,
-          country: params[:country].strip
+          country: params[:country].strip,
+          latitude: params[:latitude],
+          longitude: params[:longitude]
         )
         status 201
         venue_payload(venue)

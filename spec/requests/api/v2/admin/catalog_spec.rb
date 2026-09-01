@@ -200,6 +200,17 @@ RSpec.describe "API v2 Admin Catalog" do
       expect(json[:id]).to eq(venue.id)
     end
 
+    it "stores coordinates when given" do
+      post "/api/v2/admin/venues",
+           params: { name: "The Gorge", city: "George", state: "WA", country: "USA",
+                      latitude: 47.0987, longitude: -119.9963 }.to_json,
+           headers: admin_headers
+      expect(response).to have_http_status(:created)
+      venue = Venue.find_by(name: "The Gorge")
+      expect(venue.latitude).to eq(47.0987)
+      expect(venue.longitude).to eq(-119.9963)
+    end
+
     it "stores a blank state when none is given" do
       post "/api/v2/admin/venues",
            params: { name: "Bataclan", city: "Paris", country: "France" }.to_json,
