@@ -18,15 +18,10 @@ const ShowPanel = () => {
   const [tours, setTours] = useState([]);
   const [taperNotes, setTaperNotes] = useState(show.taper_notes || "");
   const [adminNotes, setAdminNotes] = useState(show.admin_notes || "");
-  const [gap, setGap] = useState(String(show.performance_gap_value ?? ""));
   const [busy, setBusy] = useState(false);
 
   useEffect(() => setTaperNotes(show.taper_notes || ""), [show.taper_notes]);
   useEffect(() => setAdminNotes(show.admin_notes || ""), [show.admin_notes]);
-  useEffect(
-    () => setGap(String(show.performance_gap_value ?? "")),
-    [show.performance_gap_value]
-  );
 
   useEffect(() => {
     adminGet("/tours")
@@ -89,12 +84,6 @@ const ShowPanel = () => {
   const saveText = (field, current, stored) => {
     if (current === (stored || "")) return;
     patchShow({ [field]: current });
-  };
-
-  const saveGap = () => {
-    const stored = String(show.performance_gap_value ?? "");
-    if (gap === stored || gap === "") return;
-    patchShow({ performance_gap_value: Number(gap) });
   };
 
   return (
@@ -203,19 +192,6 @@ const ShowPanel = () => {
               onBlur={() =>
                 saveText("admin_notes", adminNotes, show.admin_notes)
               }
-            />
-          </div>
-
-          <div className="admin-field">
-            <label htmlFor="admin-gap">Performance gap value</label>
-            <input
-              id="admin-gap"
-              type="number"
-              min="0"
-              value={gap}
-              disabled={busy}
-              onChange={(e) => setGap(e.target.value)}
-              onBlur={saveGap}
             />
           </div>
 
