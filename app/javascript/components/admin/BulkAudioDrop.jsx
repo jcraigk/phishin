@@ -237,6 +237,12 @@ const BulkAudioDrop = () => {
                       <span className="admin-bulk-position">{m.position}</span>
                       <span className="admin-bulk-title">{m.title}</span>
                       <span className="admin-bulk-filename">{m.filename}</span>
+                      <audio
+                        className="admin-bulk-preview"
+                        controls
+                        preload="none"
+                        src={m.url}
+                      />
                       <span className="admin-bulk-duration">
                         {m.duration ? formatDurationTrack(m.duration) : ""}
                       </span>

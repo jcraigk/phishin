@@ -70,6 +70,10 @@ RSpec.describe BulkAudioMatcher do
     it "reports each file's duration in milliseconds" do
       expect(result[:matches].first[:duration]).to be_within(500).of(20_000)
     end
+
+    it "reports a playable blob url for each file" do
+      expect(result[:matches].first[:url]).to start_with("/rails/active_storage/blobs/")
+    end
   end
 
   it "orders matches by track position" do

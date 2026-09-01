@@ -977,6 +977,12 @@
     white-space: nowrap;
   }
 
+  .admin-bulk-preview {
+    flex-shrink: 0;
+    width: 16rem;
+    height: 2rem;
+  }
+
   .admin-bulk-duration {
     flex-shrink: 0;
     min-width: 3.5rem;

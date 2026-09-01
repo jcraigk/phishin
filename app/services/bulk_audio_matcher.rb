@@ -48,6 +48,9 @@ class BulkAudioMatcher < ApplicationService
   def match_payload(filename, track)
     {
       signed_id: blobs_by_filename[filename].signed_id,
+      url: Rails.application.routes.url_helpers.rails_blob_path(
+        blobs_by_filename[filename], only_path: true
+      ),
       filename:,
       track_id: track.id,
       position: track.position,
