@@ -2051,8 +2051,16 @@
 }
 
 .admin-modal-check {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   margin-bottom: 0.75rem;
+
+  input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    accent-color: var(--blue);
+  }
 }
 
 .admin-modal-actions {
