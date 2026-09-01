@@ -631,6 +631,8 @@
   }
 
   .admin-track-handle {
+    width: 1.4rem;
+    padding-right: 0;
     color: var(--text-gray);
     cursor: grab;
   }
@@ -1795,7 +1797,7 @@
   align-items: center;
   gap: 0.3rem;
   padding: 0.1rem 0.3rem 0.1rem 0.55rem;
-  border-radius: 999px;
+  border-radius: 4px;
   background-color: var(--bg-gray);
   font-size: 0.85rem;
   white-space: nowrap;
@@ -1950,7 +1952,9 @@
   list-style: none;
 
   button {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     width: 100%;
     padding: 0.35rem 0.5rem;
     border: none !important;
