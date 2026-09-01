@@ -152,16 +152,25 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
       # so assigning final positions row by row would collide with a row that has not
       # moved yet. Every row is parked in the negative mirror of its target position
       # first (a range no real row occupies), then flipped positive.
+      # A drag across a set boundary also changes the moved track's set, so the
+      # client sends both in one request and neither lands without the other.
       desc "Reorder tracks", hidden: true
       params do
         requires :track_ids, type: Array[Integer]
+        optional :sets, type: Hash, default: {}
       end
       put ":date/track_order", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
         show = admin_show
         if params[:track_ids].sort != show.tracks.pluck(:id).sort
           error!({ message: "track_ids must include every track exactly once" }, 422)
         end
+        sets = params[:sets].to_h { |id, set| [ id.to_i, set ] }
+        unless sets.keys.all? { |id| params[:track_ids].include?(id) } &&
+               sets.values.all? { |set| ApiV2::Admin::Tracks::VALID_SETS.include?(set) }
+          error!({ message: "sets must map tracks of this show to valid sets" }, 422)
+        end
         ActiveRecord::Base.transaction do
+          sets.each { |id, set| show.tracks.find(id).update!(set:) }
           params[:track_ids].each_with_index do |id, index|
             Track.where(id:).update_all(position: -(index + 1))
           end
