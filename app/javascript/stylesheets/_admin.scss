@@ -1803,8 +1803,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.4rem;
+  gap: 0.2rem;
+  padding: 0.1rem 0.3rem;
   border: 1px solid var(--border-gray);
   border-radius: 6px;
   background-color: var(--control-gray);
@@ -1817,7 +1817,7 @@
   input[type="text"] {
     flex: 1;
     min-width: 6rem;
-    padding: 0.15rem 0.2rem;
+    padding: 0.05rem 0.15rem;
     border: none;
     background: none;
     color: var(--list-item-link-color);
