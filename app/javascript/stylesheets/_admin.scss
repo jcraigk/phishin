@@ -1964,6 +1964,42 @@
   }
 }
 
+.admin-diff {
+  max-height: 55vh;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+  overflow: auto;
+  border: 1px solid var(--border-gray);
+  border-radius: 6px;
+  background-color: var(--control-gray);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.admin-diff-line {
+  padding: 0 0.6rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  &.is-add {
+    background-color: rgba(72, 199, 116, 0.18);
+    color: #6fdc95;
+  }
+
+  &.is-del {
+    background-color: rgba(241, 70, 104, 0.15);
+    color: #f38aa0;
+    text-decoration: line-through;
+  }
+}
+
+.admin-diff-sign {
+  display: inline-block;
+  width: 1.1rem;
+  color: var(--text-gray);
+}
+
 .admin-modal-wide {
   width: 42rem;
   max-height: 80vh;

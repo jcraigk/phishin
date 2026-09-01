@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import { adminGet, adminPatch } from "./adminApi";
 import FilterSelect from "./FilterSelect";
+import diffLines from "./diffLines";
 
 const ShowPanel = () => {
   const { show, setShow, setError } = useContext(EditorContext);
@@ -9,6 +12,7 @@ const ShowPanel = () => {
   const [taperNotes, setTaperNotes] = useState(show.taper_notes || "");
   const [adminNotes, setAdminNotes] = useState(show.admin_notes || "");
   const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState(null);
 
   useEffect(() => setTaperNotes(show.taper_notes || ""), [show.taper_notes]);
   useEffect(() => setAdminNotes(show.admin_notes || ""), [show.admin_notes]);
@@ -31,9 +35,19 @@ const ShowPanel = () => {
     }
   };
 
-  const saveText = (field, current, stored) => {
+  const requestSave = (field, label, current, stored, revert) => {
     if (current === (stored || "")) return;
-    patchShow({ [field]: current });
+    setPending({ field, label, current, stored: stored || "", revert });
+  };
+
+  const confirmPending = () => {
+    patchShow({ [pending.field]: pending.current });
+    setPending(null);
+  };
+
+  const cancelPending = () => {
+    pending.revert(pending.stored);
+    setPending(null);
   };
 
   return (
@@ -65,7 +79,13 @@ const ShowPanel = () => {
               disabled={busy}
               onChange={(e) => setTaperNotes(e.target.value)}
               onBlur={() =>
-                saveText("taper_notes", taperNotes, show.taper_notes)
+                requestSave(
+                  "taper_notes",
+                  "Taper Notes",
+                  taperNotes,
+                  show.taper_notes,
+                  setTaperNotes
+                )
               }
             />
           </div>
@@ -79,12 +99,46 @@ const ShowPanel = () => {
               disabled={busy}
               onChange={(e) => setAdminNotes(e.target.value)}
               onBlur={() =>
-                saveText("admin_notes", adminNotes, show.admin_notes)
+                requestSave(
+                  "admin_notes",
+                  "Admin Notes",
+                  adminNotes,
+                  show.admin_notes,
+                  setAdminNotes
+                )
               }
             />
           </div>
 
       </div>
+      {pending && (
+        <div className="admin-modal-overlay" onClick={cancelPending}>
+          <div
+            className="admin-modal admin-modal-wide"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>Save {pending.label}?</h3>
+            <div className="admin-diff">
+              {diffLines(pending.stored, pending.current).map((line, i) => (
+                <div key={i} className={`admin-diff-line is-${line.type}`}>
+                  <span className="admin-diff-sign">
+                    {line.type === "add" ? "+" : line.type === "del" ? "-" : " "}
+                  </span>
+                  {line.text === "" ? " " : line.text}
+                </div>
+              ))}
+            </div>
+            <div className="admin-modal-actions">
+              <button type="button" disabled={busy} onClick={confirmPending}>
+                <FontAwesomeIcon icon={faCheck} /> Save
+              </button>
+              <button type="button" onClick={cancelPending}>
+                <FontAwesomeIcon icon={faXmark} /> Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
