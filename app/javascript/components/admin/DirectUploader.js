@@ -89,14 +89,16 @@ export const collectFiles = async (dataTransfer, accept = isMp3) => {
   );
 };
 
-export const uploadFile = (file, onProgress) =>
+export const uploadFile = (file, onProgress, onCancelable) =>
   new Promise((resolve, reject) => {
     const delegate = {
       // DirectUpload does not forward our auth header, so set it on each XHR
       directUploadWillCreateBlobWithXHR: (xhr) => {
         xhr.setRequestHeader("X-Auth-Token", localStorage.getItem("jwt") || "");
+        if (onCancelable) onCancelable(() => xhr.abort());
       },
       directUploadWillStoreFileWithXHR: (xhr) => {
+        if (onCancelable) onCancelable(() => xhr.abort());
         if (!onProgress) return;
         xhr.upload.addEventListener("progress", (event) => {
           if (event.lengthComputable) {

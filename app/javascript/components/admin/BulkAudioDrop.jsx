@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faCloudArrowUp, faSpinner, faXmark } from "@fortawesome/free-solid-svg-icons";
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminPost, pollJob } from "./adminApi";
@@ -17,6 +17,9 @@ const BulkAudioDrop = () => {
   const [plan, setPlan] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const { run, busy, status, error } = useJobRunner();
+  const cancelSeq = useRef(0);
+  const abortUpload = useRef(null);
+  const pollController = useRef(null);
 
   const reset = () => {
     setPlan(null);
@@ -25,7 +28,11 @@ const BulkAudioDrop = () => {
   };
 
   const close = () => {
+    cancelSeq.current += 1;
+    if (abortUpload.current) abortUpload.current();
+    if (pollController.current) pollController.current.abort();
     reset();
+    setPreparing(null);
     setOpen(false);
   };
 
@@ -39,21 +46,29 @@ const BulkAudioDrop = () => {
     let doneBytes = 0;
     setUploading({ done: 0, total: files.length, percent: 0, filename: files[0].name });
 
+    const seq = cancelSeq.current;
+    const cancelled = () => cancelSeq.current !== seq;
     let signedIds = [];
     try {
       for (const file of files) {
         setUploading((prev) => ({ ...prev, filename: file.name }));
         signedIds.push(
-          await uploadFile(file, (percent) =>
-            setUploading((prev) => ({
-              ...prev,
-              percent: Math.min(
-                99,
-                Math.round(((doneBytes + (file.size * percent) / 100) / totalBytes) * 100)
-              ),
-            }))
+          await uploadFile(
+            file,
+            (percent) =>
+              setUploading((prev) => ({
+                ...prev,
+                percent: Math.min(
+                  99,
+                  Math.round(((doneBytes + (file.size * percent) / 100) / totalBytes) * 100)
+                ),
+              })),
+            (abort) => {
+              abortUpload.current = abort;
+            }
           )
         );
+        if (cancelled()) return;
         doneBytes += file.size;
         setUploading((prev) => ({
           ...prev,
@@ -70,7 +85,10 @@ const BulkAudioDrop = () => {
           `/shows/${show.date}/bulk_audio_prepare`,
           { signed_ids: signedIds }
         );
+        if (cancelled()) return;
+        pollController.current = new AbortController();
         const job = await pollJob(jobId, {
+          signal: pollController.current.signal,
           onUpdate: (j) =>
             setPreparing({
               message: j.message || "Preparing files",
@@ -79,15 +97,21 @@ const BulkAudioDrop = () => {
         });
         signedIds = job.payload.signed_ids;
       }
+      if (cancelled()) return;
       const result = await adminPost(`/shows/${show.date}/bulk_audio_match`, {
         signed_ids: signedIds,
       });
+      if (cancelled()) return;
       setPlan(result);
     } catch (e) {
-      setUploadError(e.message);
+      if (!cancelled()) setUploadError(e.message);
     } finally {
-      setUploading(null);
-      setPreparing(null);
+      abortUpload.current = null;
+      pollController.current = null;
+      if (!cancelled()) {
+        setUploading(null);
+        setPreparing(null);
+      }
     }
   };
 
