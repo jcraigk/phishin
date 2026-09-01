@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faCloudArrowUp, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faCloudArrowUp, faFileAudio, faFolderOpen, faXmark } from "@fortawesome/free-solid-svg-icons";
 import MoonLoader from "react-spinners/MoonLoader";
 import React, { useContext, useRef, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
@@ -20,6 +20,8 @@ const BulkAudioDrop = () => {
   const [uploadError, setUploadError] = useState(null);
   const { run, busy, status, error } = useJobRunner();
   const cancelSeq = useRef(0);
+  const fileInputRef = useRef(null);
+  const folderInputRef = useRef(null);
   const abortUpload = useRef(null);
   const pollController = useRef(null);
 
@@ -116,6 +118,12 @@ const BulkAudioDrop = () => {
     }
   };
 
+  const pickFiles = (e) => {
+    const files = Array.from(e.target.files).filter(isStagingSource);
+    e.target.value = "";
+    stage(files);
+  };
+
   const apply = () => {
     const assignments = plan.matches.map((m) => ({
       signed_id: m.signed_id,
@@ -175,8 +183,30 @@ const BulkAudioDrop = () => {
                 here to replace and fill track audio. Include a notes txt to
                 name the tracks.
               </p>
+              <div className="admin-dropzone-browse">
+                <button type="button" onClick={() => fileInputRef.current.click()}>
+                  <FontAwesomeIcon icon={faFileAudio} /> Browse files
+                </button>
+                <button type="button" onClick={() => folderInputRef.current.click()}>
+                  <FontAwesomeIcon icon={faFolderOpen} /> Browse folder
+                </button>
+              </div>
             </div>
             )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              hidden
+              onChange={pickFiles}
+            />
+            <input
+              ref={folderInputRef}
+              type="file"
+              webkitdirectory=""
+              hidden
+              onChange={pickFiles}
+            />
             {uploading && (
               <>
                 <p className="admin-progress-line">
