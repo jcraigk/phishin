@@ -5,6 +5,17 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
 
   namespace :admin do
     resource :shows do
+      # Lightweight list for pickers that need every show: three plucked
+      # columns, no includes, no payload building.
+      desc "Every show as id, date and venue", hidden: true
+      get :dates do
+        {
+          shows: Show.order(date: :desc).pluck(:id, :date, :venue_name).map do |id, date, venue_name|
+            { id:, date: date.to_s, venue_name: }
+          end
+        }
+      end
+
       desc "List shows for admin", hidden: true
       params do
         optional :published, type: Boolean, desc: "Filter by published state"

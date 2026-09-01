@@ -28,6 +28,13 @@ RSpec.describe "API v2 Admin Shows" do
       create(:show, date: "2024-06-02")
     end
 
+    it "lists every show as id, date and venue via dates" do
+      get "/api/v2/admin/shows/dates", headers: admin_headers
+      shows = JSON.parse(response.body)["shows"]
+      expect(shows.map { it["date"] }).to eq([ "2024-06-02", "2024-06-01" ])
+      expect(shows.first.keys).to match_array(%w[id date venue_name])
+    end
+
     it "filters by year" do
       create(:show, date: "1997-11-22")
       get "/api/v2/admin/shows", params: { year: 1997 }, headers: admin_headers

@@ -3,6 +3,7 @@ import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminGet, adminPatch, adminPost } from "./adminApi";
 import { uploadFile } from "./DirectUploader";
+import FilterSelect from "./FilterSelect";
 
 const SELECT_CONFIRM =
   "Sets cover art, composites the album cover, and re-embeds ID3 tags on all tracks. Continue?";
@@ -117,17 +118,76 @@ const CandidateCard = ({ candidate }) => {
   );
 };
 
+// Where this show's art comes from: its own generated or uploaded image, or a
+// straight copy of another show's art. The two paths are exclusive, so picking
+// a source date hides the prompt and generation controls entirely.
+const SourcePicker = ({ dates }) => {
+  const { show, setShow, reload } = useContext(EditorContext);
+  const art = show.cover_art;
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const { run, busy, status, error } = useJobRunner();
+
+  const parent = dates.find((d) => d.id === art.parent_show_id) || null;
+
+  const setParent = async (id) => {
+    setSaveError(null);
+    setSaving(true);
+    try {
+      setShow(await adminPatch(`/shows/${show.date}`, { cover_art_parent_show_id: id }));
+    } catch (e) {
+      setSaveError(e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const copyFromParent = () =>
+    run(() => adminPost(`/shows/${show.date}/cover_art/generate`), () => reload());
+
+  return (
+    <section className="admin-art-source">
+      <div className="admin-field">
+        <label htmlFor="admin-art-source">Art source</label>
+        <FilterSelect
+          id="admin-art-source"
+          value={parent ? `${parent.date} - ${parent.venue_name}` : "This show's own art"}
+          placeholder="Filter shows by date or venue"
+          options={[
+            { id: null, label: "This show's own art (generate or upload)" },
+            ...dates
+              .filter((d) => d.id !== show.id)
+              .map((d) => ({ id: d.id, label: `${d.date} - ${d.venue_name}` })),
+          ]}
+          disabled={saving || busy}
+          onSelect={(option) => setParent(option.id)}
+        />
+      </div>
+      {parent && (
+        <div className="admin-art-actions">
+          <button type="button" disabled={busy || saving} onClick={copyFromParent}>
+            {busy ? "Copying..." : `Copy art from ${parent.date}`}
+          </button>
+          <span className="admin-audio-note">
+            Reuses that show's art as a candidate. No image is generated.
+          </span>
+        </div>
+      )}
+      {status && <span className="admin-audio-status">{status}</span>}
+      {(error || saveError) && <p className="admin-error">{error || saveError}</p>}
+    </section>
+  );
+};
+
 const PromptPanel = ({ options }) => {
   const { show, setShow, reload } = useContext(EditorContext);
   const art = show.cover_art;
   const [prompt, setPrompt] = useState(art.prompt || "");
-  const [parentId, setParentId] = useState(String(art.parent_show_id ?? ""));
   const [saveError, setSaveError] = useState(null);
   const [saving, setSaving] = useState(false);
   const { run, busy, status, error } = useJobRunner();
 
   useEffect(() => setPrompt(art.prompt || ""), [art.prompt]);
-  useEffect(() => setParentId(String(art.parent_show_id ?? "")), [art.parent_show_id]);
 
   const patchArt = async (body) => {
     setSaveError(null);
@@ -144,12 +204,6 @@ const PromptPanel = ({ options }) => {
   const savePrompt = () => {
     if (prompt === (art.prompt || "")) return;
     patchArt({ cover_art_prompt: prompt });
-  };
-
-  const saveParent = () => {
-    const stored = String(art.parent_show_id ?? "");
-    if (parentId === stored) return;
-    patchArt({ cover_art_parent_show_id: parentId === "" ? null : Number(parentId) });
   };
 
   return (
@@ -198,19 +252,6 @@ const PromptPanel = ({ options }) => {
             </option>
           ))}
         </select>
-      </div>
-
-      <div className="admin-field">
-        <label htmlFor="admin-art-parent">Reuse art from show ID</label>
-        <input
-          id="admin-art-parent"
-          type="number"
-          min="1"
-          value={parentId}
-          disabled={saving || busy}
-          onChange={(e) => setParentId(e.target.value)}
-          onBlur={saveParent}
-        />
       </div>
 
       <button
@@ -283,11 +324,16 @@ const GenerateControls = () => {
 const ArtTab = () => {
   const { show, setError } = useContext(EditorContext);
   const [options, setOptions] = useState(null);
+  const [dates, setDates] = useState(null);
   const art = show.cover_art;
+  const reusing = art.parent_show_id != null;
 
   useEffect(() => {
     adminGet("/cover_art_options")
       .then(setOptions)
+      .catch((e) => setError(e.message));
+    adminGet("/shows/dates")
+      .then((data) => setDates(data.shows))
       .catch((e) => setError(e.message));
   }, [setError]);
 
@@ -305,9 +351,11 @@ const ArtTab = () => {
         </ImageCard>
       </section>
 
-      {options && <PromptPanel options={options} />}
+      {dates && <SourcePicker dates={dates} />}
 
-      <GenerateControls />
+      {!reusing && options && <PromptPanel options={options} />}
+
+      {!reusing && <GenerateControls />}
 
       <h3>Candidates</h3>
       {art.candidates.length === 0 ? (
