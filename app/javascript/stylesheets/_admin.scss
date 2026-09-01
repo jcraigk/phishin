@@ -607,19 +607,21 @@
 }
 
 .admin-tabs {
+  position: relative;
   display: flex;
   align-items: flex-end;
   gap: 0.5rem;
+  min-height: 2.7rem;
   margin-bottom: 0.5rem;
   border-bottom: 1px solid var(--border-gray);
 
   .admin-tab-actions {
+    position: absolute;
+    right: 0;
+    bottom: 0.4rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    min-height: 2.1rem;
-    margin-left: auto;
-    padding-bottom: 0.4rem;
   }
 
   > button {
