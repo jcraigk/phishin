@@ -79,11 +79,11 @@
 }
 
 .admin-layout select.admin-select {
-  padding-top: 0.4rem;
-  padding-bottom: 0.4rem;
+  padding: 0.4rem 2.2rem 0.4rem 0.9rem;
   border-radius: $radius;
   font-size: 0.95rem;
   font-weight: 600;
+  line-height: 1.2;
 }
 
 .admin-layout .admin-tabs > button {
@@ -500,7 +500,6 @@
 
   input[type="text"],
   input[type="number"],
-  select,
   textarea {
     padding: 0.3rem;
     border: 1px solid var(--border-gray);
@@ -604,9 +603,9 @@
 
 .admin-tabs {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   border-bottom: 1px solid var(--border-gray);
 
   .admin-tab-actions {
@@ -618,11 +617,14 @@
   }
 
   > button {
+    display: flex;
+    align-items: center;
     border: 0;
     border-bottom: 2px solid transparent;
     border-radius: 0;
     background: none;
     padding: 0.4rem 0.75rem;
+    font-size: 0.95rem;
 
     &.active {
       border-bottom-color: var(--blue);
@@ -2017,12 +2019,3 @@
   padding: 0 0.5rem 0.75rem;
 }
 
-.admin-field-bulk {
-  min-width: 16rem;
-
-  .admin-dropzone {
-    margin-top: 0.25rem;
-    padding: 0.6rem;
-    font-size: 0.85rem;
-  }
-}

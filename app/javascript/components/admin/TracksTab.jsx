@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import TrackRow from "./TrackRow";
+import BulkAudioDrop from "./BulkAudioDrop";
 import useJobRunner from "./useJobRunner";
 import { adminPost, adminPut } from "./adminApi";
 
@@ -240,6 +241,7 @@ const TracksTab = () => {
       <button type="button" onClick={insertTrack} disabled={busy}>
         Insert track
       </button>
+      <BulkAudioDrop />
       <select
         className="admin-select"
         value=""

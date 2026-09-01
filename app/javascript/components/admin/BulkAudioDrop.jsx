@@ -10,6 +10,7 @@ const ACTION_LABEL = { replace: "replaces existing audio", fill: "fills empty tr
 
 const BulkAudioDrop = () => {
   const { show, reload } = useContext(EditorContext);
+  const [open, setOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(null);
   const [plan, setPlan] = useState(null);
@@ -20,6 +21,11 @@ const BulkAudioDrop = () => {
     setPlan(null);
     setUploading(null);
     setUploadError(null);
+  };
+
+  const close = () => {
+    reset();
+    setOpen(false);
   };
 
   const stage = async (files) => {
@@ -62,7 +68,7 @@ const BulkAudioDrop = () => {
     run(
       () => adminPost(`/shows/${show.date}/bulk_audio_apply`, { assignments }),
       async () => {
-        setPlan(null);
+        close();
         await reload();
       }
     );
@@ -75,36 +81,52 @@ const BulkAudioDrop = () => {
 
   return (
     <div className="admin-bulk-audio">
-      <div
-        className={`admin-dropzone${dragging ? " is-dragging" : ""}`}
-        onDragOver={(e) => {
-          e.preventDefault();
-          setDragging(true);
-        }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={(e) => {
-          e.preventDefault();
-          setDragging(false);
-          // webkitGetAsEntry must run before the handler returns, which
-          // collectFiles does synchronously ahead of its first await.
-          collectFiles(e.dataTransfer, isMp3)
-            .then(stage)
-            .catch((err) => setUploadError(err.message));
-        }}
-      >
-        <p>Drop a show folder of mp3s here to replace and fill track audio.</p>
-      </div>
+      <button type="button" onClick={() => setOpen(true)}>
+        Update audio
+      </button>
 
-      {uploading && (
-        <p className="admin-audio-status">
-          Uploading {uploading.done} of {uploading.total}
-        </p>
+      {open && !plan && (
+        <div className="admin-modal-overlay" onClick={close}>
+          <div className="admin-modal admin-modal-wide" onClick={(e) => e.stopPropagation()}>
+            <h3>Update audio</h3>
+            <div
+              className={`admin-dropzone${dragging ? " is-dragging" : ""}`}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragging(true);
+              }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDragging(false);
+                // webkitGetAsEntry must run before the handler returns, which
+                // collectFiles does synchronously ahead of its first await.
+                collectFiles(e.dataTransfer, isMp3)
+                  .then(stage)
+                  .catch((err) => setUploadError(err.message));
+              }}
+            >
+              <p>Drop a show folder of mp3s here to replace and fill track audio.</p>
+            </div>
+            {uploading && (
+              <p className="admin-audio-status">
+                Uploading {uploading.done} of {uploading.total}
+              </p>
+            )}
+            {uploadError && <p className="admin-error">{uploadError}</p>}
+            <div className="admin-modal-actions">
+              <button type="button" onClick={close}>
+                <FontAwesomeIcon icon={faXmark} /> Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {plan && (
-        <div className="admin-modal-overlay" onClick={reset}>
+        <div className="admin-modal-overlay" onClick={close}>
         <div className="admin-modal admin-modal-wide admin-bulk-plan" onClick={(e) => e.stopPropagation()}>
-          <h3>Bulk audio upsert</h3>
+          <h3>Update audio</h3>
           <p>
             {counts.replace} to replace, {counts.fill} to fill,{" "}
             {plan.unmatched_filenames.length} unmatched.
@@ -151,7 +173,7 @@ const BulkAudioDrop = () => {
             <button type="button" onClick={apply} disabled={busy || plan.matches.length === 0}>
               <FontAwesomeIcon icon={faCheck} /> Apply {plan.matches.length} files
             </button>
-            <button type="button" onClick={reset} disabled={busy}>
+            <button type="button" onClick={close} disabled={busy}>
               <FontAwesomeIcon icon={faXmark} /> Cancel
             </button>
           </div>
@@ -161,8 +183,6 @@ const BulkAudioDrop = () => {
         </div>
       )}
 
-      {status && <span className="admin-audio-status">{status}</span>}
-      {(error || uploadError) && <p className="admin-error">{error || uploadError}</p>}
     </div>
   );
 };
