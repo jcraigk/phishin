@@ -2007,3 +2007,12 @@
   padding: 0 0.5rem 0.75rem;
 }
 
+
+.admin-progress-line {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 1.25rem 0 0;
+  color: var(--list-item-link-color);
+  font-size: 1.1rem;
+}

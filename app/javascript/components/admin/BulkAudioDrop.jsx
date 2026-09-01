@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faCloudArrowUp, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faCloudArrowUp, faSpinner, faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
@@ -128,11 +128,15 @@ const BulkAudioDrop = () => {
               </p>
             </div>
             {uploading && (
-              <p className="admin-audio-status">
-                Uploading {uploading.done} of {uploading.total}
+              <p className="admin-progress-line">
+                <FontAwesomeIcon icon={faSpinner} spin /> Uploading {uploading.done} of {uploading.total}
               </p>
             )}
-            {preparing && <p className="admin-audio-status">{preparing}</p>}
+            {preparing && (
+              <p className="admin-progress-line">
+                <FontAwesomeIcon icon={faSpinner} spin /> {preparing}
+              </p>
+            )}
             {uploadError && <p className="admin-error">{uploadError}</p>}
             <div className="admin-modal-actions">
               <button type="button" onClick={close}>
