@@ -7,11 +7,13 @@ RSpec.describe Admin::PrepareBulkAudioJob do
 
   before do
     FileUtils.mkdir_p(fixtures)
-    { "d1t01.flac" => 3, "d1t02.flac" => 4 }.each do |name, secs|
+    { "d1t01.flac" => [ 3, "Llama" ], "d1t02.flac" => [ 4, nil ] }.each do |name, (secs, title)|
       path = fixtures.join(name)
       next if File.exist?(path)
-      system("ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i",
-             "sine=frequency=440:duration=#{secs}", "-c:a", "flac", path.to_s, exception: true)
+      args = [ "ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i",
+               "sine=frequency=440:duration=#{secs}" ]
+      args += [ "-metadata", "title=#{title}" ] if title
+      system(*args, "-c:a", "flac", path.to_s, exception: true)
     end
     mp3 = fixtures.join("d2t01.mp3")
     unless File.exist?(mp3)
@@ -39,7 +41,7 @@ RSpec.describe Admin::PrepareBulkAudioJob do
 
     expect(admin_job.reload.status).to eq("done")
     blobs = admin_job.payload["signed_ids"].map { ActiveStorage::Blob.find_signed!(it) }
-    expect(blobs.map { it.filename.to_s }).to eq(%w[d1t01.mp3 d1t02.mp3 d2t01.mp3])
+    expect(blobs.map { it.filename.to_s }).to eq([ "Llama.mp3", "d1t02.mp3", "d2t01.mp3" ])
     blobs.each do |blob|
       expect(mp3_frame_sync?(blob.download)).to be(true)
     end
