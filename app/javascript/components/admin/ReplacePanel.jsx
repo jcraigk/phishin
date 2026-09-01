@@ -41,10 +41,6 @@ const ReplacePanel = ({ track, onClose }) => {
     <div className="admin-modal-overlay" onClick={working ? undefined : onClose}>
       <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
         <h3>Replace Audio</h3>
-        <p className="admin-empty">
-          Upload a new audio file for &quot;{track.title}&quot;. Accepts flac,
-          shn, wav, aiff, or mp3; anything not already mp3 is converted.
-        </p>
         <input
           type="file"
           accept=".mp3,.flac,.shn,.wav,.aiff"
