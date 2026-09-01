@@ -7,6 +7,7 @@ import { adminGet, adminDelete } from "./adminApi";
 import TracksTab from "./TracksTab";
 import ArtTab from "./ArtTab";
 import TagsTab from "./TagsTab";
+import NotesTab from "./NotesTab";
 import ShowPanel from "./ShowPanel";
 import VenueControl from "./VenueControl";
 import PublishPanel from "./PublishPanel";
@@ -14,7 +15,7 @@ import StagingEditor from "./StagingEditor";
 
 export const EditorContext = createContext(null);
 
-const TABS = ["Setlist", "Tags", "Art"];
+const TABS = ["Setlist", "Tags", "Notes", "Art"];
 
 const AdminShowEditor = () => {
   const { date } = useParams();
@@ -180,6 +181,7 @@ const AdminShowEditor = () => {
             {tab === "Setlist" && <TracksTab />}
             {tab === "Art" && <ArtTab />}
             {tab === "Tags" && <TagsTab />}
+            {tab === "Notes" && <NotesTab />}
               </>
         )}
       </div>

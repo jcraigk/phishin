@@ -1966,6 +1966,18 @@
   }
 }
 
+.admin-notes-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  textarea {
+    width: 100%;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 0.85rem;
+  }
+}
+
 .admin-diff {
   max-height: 55vh;
   margin-bottom: 1rem;
