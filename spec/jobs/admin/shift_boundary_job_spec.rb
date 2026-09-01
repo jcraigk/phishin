@@ -111,11 +111,11 @@ RSpec.describe Admin::ShiftBoundaryJob do
       attach(second, 6)
     end
 
-    it "backs up both originals" do
-      keys = [ first.mp3_audio.blob.key, second.mp3_audio.blob.key ]
+    it "backs up both originals under stamped names" do
       described_class.new.perform(first.id, admin_job.id, 2.0, true)
-      expect(admin_job.reload.payload["backup_paths"].map { File.basename(it) })
-        .to eq([ "2024-07-19_ghost_#{keys[0]}.mp3", "2024-07-19_free_#{keys[1]}.mp3" ])
+      names = admin_job.reload.payload["backup_paths"].map { File.basename(it) }
+      expect(names[0]).to match(/\A2024-07-19_ghost_shift_boundary_\d{8}-\d{6}\.mp3\z/)
+      expect(names[1]).to match(/\A2024-07-19_free_shift_boundary_\d{8}-\d{6}\.mp3\z/)
     end
 
     it "writes both backups to disk at their original durations" do

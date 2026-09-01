@@ -17,7 +17,7 @@ RSpec.describe Admin::BulkReplaceAudioJob do
     render_tone(new_source, frequency: 880, duration: 20)
     allow(WaveformImageService).to receive(:call)
     allow(Id3TagService).to receive(:call)
-    FileUtils.rm_rf(TrackAudioReplacer::BACKUP_DIR)
+    FileUtils.rm_rf(AudioBackup::DIR)
     attach_old_audio(with_audio)
   end
 
@@ -83,15 +83,15 @@ RSpec.describe Admin::BulkReplaceAudioJob do
     end
 
     it "backs up the original of the replaced track" do
-      old_key = with_audio.mp3_audio.blob.key
       run_with(assignments)
-      backup = TrackAudioReplacer::BACKUP_DIR.join("2024-07-19_ghost_#{old_key}.mp3")
+      backup = Dir.glob(AudioBackup::DIR.join("2024-07-19_ghost_*.mp3")).first
+      expect(backup).to be_present
       expect(File.binread(backup)).to eq(File.binread(old_source))
     end
 
     it "writes exactly one backup, for the replace and not the fill" do
       run_with(assignments)
-      expect(Dir.glob(TrackAudioReplacer::BACKUP_DIR.join("*.mp3")).size).to eq(1)
+      expect(Dir.glob(AudioBackup::DIR.join("*.mp3")).size).to eq(1)
     end
 
     it "reports the replaced track on the payload" do

@@ -232,7 +232,6 @@ class Admin::ShiftBoundaryJob
     attach(first, side_paths[0])
     attach(second, side_paths[1])
     shift_timestamps
-    log_edits
   end
 
   # THE TWO SIDES DO NOT SHARE A DELTA, and getting that backwards is how a
@@ -274,25 +273,6 @@ class Admin::ShiftBoundaryJob
     @new_durations ||= [ cut_s, total_duration_s - cut_s ].map { it.round(1) }
   end
 
-  # One record per side. They are two tracks with two different deltas and two
-  # different backups, and the history panel hangs off a track - a single row
-  # naming both would show up under one of them and hide from the other.
-  def log_edits
-    [ first, second ].each_with_index do |track, i|
-      TrackEdit.record!(
-        track:, operation: "shift_boundary", admin_job: @admin_job, show:,
-        shift: @shifts[track],
-        duration_before_s: @concat[:source_durations][i],
-        duration_after_s: new_durations[i],
-        delta_s: i.zero? ? 0.0 : -delta_s,
-        boundary_delta_s: delta_s.round(2),
-        cut_s:,
-        side: i.zero? ? "first" : "second",
-        paired_track_id: (i.zero? ? second : first).id,
-        backup_path: @backup_paths[i]
-      )
-    end
-  end
 
   def rename!
     return if renames.empty?
@@ -344,14 +324,7 @@ class Admin::ShiftBoundaryJob
   def reslugged = @reslugged ||= []
 
   def back_up(record)
-    FileUtils.mkdir_p(TrackAudioReplacer::BACKUP_DIR)
-    path = TrackAudioReplacer::BACKUP_DIR.join(
-      "#{record.show.date}_#{record.slug}_#{record.mp3_audio.blob.key}.mp3"
-    )
-    File.open(path, "wb") do |file|
-      record.mp3_audio.blob.download { |chunk| file.write(chunk) }
-    end
-    path.to_s
+    AudioBackup.store(record, operation: "shift_boundary")
   end
 
   # Through TrackAudioReplacer for the blob safety it already carries:

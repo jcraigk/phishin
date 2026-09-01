@@ -13,13 +13,12 @@ class AudioEdgeTrimService < ApplicationService
   option :fade_out, default: -> { 6.0 }
   option :min_cut, default: -> { MIN_CUT_S }
   option :dry_run, default: -> { false }
-  # Only so the TrackEdit can point back at the job an admin watched this run
-  # under. Nil for the rake tasks, which trim in bulk with no job behind them.
+  # Unused by the render itself; kept so callers can hand the job through
+  # without caring whether anything downstream still wants it.
   option :admin_job, default: -> { nil }
 
   MIN_CUT_S = 5.0
   OUTPUT_DIR = Rails.root.join("tmp/audio_trims")
-  BACKUP_DIR = Rails.root.join("tmp/audio_trim_backups")
 
   class Error < StandardError; end
   class MissingAudioError < Error; end
@@ -51,7 +50,6 @@ class AudioEdgeTrimService < ApplicationService
       backup_original
       replace_audio
       shift_timestamps
-      log_edit
     end
 
     result
@@ -116,11 +114,7 @@ class AudioEdgeTrimService < ApplicationService
   end
 
   def backup_original
-    FileUtils.mkdir_p(BACKUP_DIR)
-    @backup_path = BACKUP_DIR.join(
-      "#{track.show.date}_#{track.slug}_#{track.mp3_audio.blob.key}.mp3"
-    )
-    FileUtils.cp(@original.path, @backup_path)
+    @backup_path = AudioBackup.store_file(@original.path, track:, operation: "trim")
   end
 
   def replace_audio
@@ -148,20 +142,6 @@ class AudioEdgeTrimService < ApplicationService
 
   def kept_s = kept_end - trim_start
 
-  # Written after the audio is in place, so a failed render leaves no record of
-  # an edit that never happened. A dry run writes nothing at all: it renders a
-  # file for review and changes neither the audio nor a single timestamp.
-  def log_edit
-    TrackEdit.record!(
-      track:, operation: "trim", admin_job:, shift: @shift,
-      duration_before_s: duration_s.round(1),
-      duration_after_s: kept_s.round(1),
-      delta_s: -trim_start,
-      trim_start_s: trim_start,
-      trim_end_s: kept_end.round(2),
-      backup_path: @backup_path&.to_s
-    )
-  end
 
   def result
     {

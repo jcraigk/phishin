@@ -11,7 +11,6 @@ class Track < ApplicationRecord
   has_many :playlist_tracks, dependent: :destroy
   # Deliberately NOT dependent: :destroy. A combine destroys a track and its
   # audit record has to survive that; the foreign key nullifies instead.
-  has_many :track_edits
 
   has_one_attached :mp3_audio
   has_one_attached :png_waveform

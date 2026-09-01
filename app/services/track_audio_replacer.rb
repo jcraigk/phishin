@@ -6,8 +6,6 @@
 # track it matched. Callers hand it a blob rather than a signed id so a bulk
 # caller can pass blobs it built itself.
 class TrackAudioReplacer < ApplicationService
-  BACKUP_DIR = Rails.root.join("tmp/audio_replacements")
-
   option :track
   option :blob
   # Nil means "I am somebody else's primitive": shift the audio, touch no
@@ -24,7 +22,7 @@ class TrackAudioReplacer < ApplicationService
     track.update!(audio_status: "complete")
     track.reload.process_mp3_audio
     track.show.update_audio_status_from_tracks!
-    record_replacement(backup_path) if operation
+    orphan_timestamps if operation
     backup_path
   end
 
@@ -36,38 +34,17 @@ class TrackAudioReplacer < ApplicationService
   # timestamp on the track is orphaned for review with its numbers intact, which
   # is the one honest answer: a guess here would move a jam chart entry to a
   # moment nobody checked.
-  def record_replacement(backup_path)
-    shift = TimestampShifter.call(
+  def orphan_timestamps
+    TimestampShifter.call(
       track: track.reload, delta_s: nil, new_duration_s: nil,
       reason: "replace_audio"
-    )
-    TrackEdit.record!(
-      track:, operation:, admin_job:, shift:,
-      duration_before_s: @duration_before_s,
-      duration_after_s: track.reload.duration.to_i / 1000.0,
-      delta_s: nil,
-      backup_path:
     )
   end
 
   # Returns nil for a track that had no audio: that is the fill case a bulk
   # upsert hits on most tracks, not an error.
   def back_up_existing_audio
-    # Read before anything is attached: it is the only point where the row still
-    # reports the length of the audio being displaced.
-    @duration_before_s = track.duration.to_i / 1000.0
-    return nil unless track.mp3_audio.attached?
-
-    FileUtils.mkdir_p(BACKUP_DIR)
-    path = BACKUP_DIR.join(backup_filename)
-    File.open(path, "wb") do |file|
-      track.mp3_audio.blob.download { |chunk| file.write(chunk) }
-    end
-    path.to_s
-  end
-
-  def backup_filename
-    "#{track.show.date}_#{track.slug}_#{track.mp3_audio.blob.key}.mp3"
+    AudioBackup.store(track, operation: operation || "replace")
   end
 
   # Copy the bytes into a blob of the track's own rather than attaching the

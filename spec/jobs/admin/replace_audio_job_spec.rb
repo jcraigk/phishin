@@ -15,7 +15,7 @@ RSpec.describe Admin::ReplaceAudioJob do
     render_tone(new_source, frequency: 880, duration: 20)
     allow(WaveformImageService).to receive(:call)
     allow(Id3TagService).to receive(:call)
-    FileUtils.rm_rf(TrackAudioReplacer::BACKUP_DIR)
+    FileUtils.rm_rf(AudioBackup::DIR)
   end
 
   def render_tone(path, frequency:, duration:)
@@ -49,27 +49,26 @@ RSpec.describe Admin::ReplaceAudioJob do
       expect(admin_job.reload.status).to eq("done")
     end
 
-    it "backs up the original under the show date, slug and old blob key" do
-      old_key = track.mp3_audio.blob.key
+    it "backs up the original under the show date, slug, operation and time" do
       described_class.new.perform(track.id, admin_job.id, new_blob.signed_id)
-      backup = TrackAudioReplacer::BACKUP_DIR.join("2024-07-19_target_#{old_key}.mp3")
+      backup = admin_job.reload.payload["backup_path"]
+      expect(File.basename(backup))
+        .to match(/\A2024-07-19_target_replace_audio_\d{8}-\d{6}\.mp3\z/)
       expect(File.exist?(backup)).to be(true)
     end
 
     # The point of the backup is recovering the file the replace displaced, so it
     # has to hold the bytes that were there before, not the ones that replaced them.
     it "writes the original bytes to the backup, not the replacement" do
-      old_key = track.mp3_audio.blob.key
       described_class.new.perform(track.id, admin_job.id, new_blob.signed_id)
-      backup = TrackAudioReplacer::BACKUP_DIR.join("2024-07-19_target_#{old_key}.mp3")
+      backup = admin_job.reload.payload["backup_path"]
       expect(File.binread(backup)).to eq(File.binread(old_source))
     end
 
     it "records the backup path on the job" do
-      old_key = track.mp3_audio.blob.key
       described_class.new.perform(track.id, admin_job.id, new_blob.signed_id)
-      expect(admin_job.reload.payload["backup_path"])
-        .to eq(TrackAudioReplacer::BACKUP_DIR.join("2024-07-19_target_#{old_key}.mp3").to_s)
+      backup = admin_job.reload.payload["backup_path"]
+      expect(backup).to start_with(AudioBackup::DIR.to_s)
     end
 
     it "swaps the attachment off the original blob" do
@@ -143,7 +142,7 @@ RSpec.describe Admin::ReplaceAudioJob do
 
     it "writes no backup" do
       described_class.new.perform(track.id, admin_job.id, new_blob.signed_id)
-      expect(Dir.glob(TrackAudioReplacer::BACKUP_DIR.join("*.mp3"))).to be_empty
+      expect(Dir.glob(AudioBackup::DIR.join("*.mp3"))).to be_empty
     end
 
     it "records no backup path on the job" do

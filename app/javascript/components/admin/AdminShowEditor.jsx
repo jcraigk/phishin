@@ -15,7 +15,7 @@ import StagingEditor from "./StagingEditor";
 
 export const EditorContext = createContext(null);
 
-const TABS = ["Setlist", "Audio", "Art", "Tags"];
+const TABS = ["Setlist", "Audio", "Tags", "Art"];
 
 const AdminShowEditor = () => {
   const { date } = useParams();

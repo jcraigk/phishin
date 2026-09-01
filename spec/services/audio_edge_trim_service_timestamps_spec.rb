@@ -57,35 +57,10 @@ RSpec.describe AudioEdgeTrimService do
       expect(track.reload.jam_starts_at_second).to eq(17)
     end
 
-    it "writes a TrackEdit" do
-      expect { result }.to change(TrackEdit, :count).by(1)
-    end
-
-    it "records the operation" do
-      result
-      expect(TrackEdit.last.operation).to eq("trim")
-    end
-
-    it "records the delta as the negative of the head trim" do
-      result
-      expect(TrackEdit.last.payload["delta_s"]).to eq(-3.0)
-    end
-
-    it "records the move in the payload" do
-      result
-      expect(TrackEdit.last.payload["shifted"]).to include(
-        hash_including("type" => "TrackTag", "from" => 20, "to" => 17)
-      )
-    end
-
-    it "records the backup path so the original audio is findable" do
-      result
-      expect(TrackEdit.last.payload["backup_path"]).to be_present
-    end
-
-    it "records the new duration" do
-      result
-      expect(TrackEdit.last.payload["duration_after_s"]).to eq(27.0)
+    it "copies the original audio aside with a stamped filename" do
+      backup = result[:backup_path]
+      expect(backup).to include("_trim_")
+      expect(File.exist?(backup)).to be(true)
     end
   end
 
@@ -115,19 +90,6 @@ RSpec.describe AudioEdgeTrimService do
       result
       expect(track_tag.reload.orphan_reason).to eq("past_new_end")
     end
-
-    it "records the orphan in the payload" do
-      result
-      expect(TrackEdit.last.payload["orphaned"]).to include(
-        hash_including("type" => "TrackTag", "at" => 20, "reason" => "past_new_end")
-      )
-    end
-
-    # A tail trim moves nothing; the audio just got shorter underneath it.
-    it "records a delta of zero" do
-      result
-      expect(TrackEdit.last.payload["delta_s"]).to eq(0.0)
-    end
   end
 
   describe "a dry run" do
@@ -139,10 +101,6 @@ RSpec.describe AudioEdgeTrimService do
     it "moves nothing" do
       result
       expect(track_tag.reload.starts_at_second).to eq(20)
-    end
-
-    it "writes no TrackEdit" do
-      expect { result }.not_to change(TrackEdit, :count)
     end
   end
 end

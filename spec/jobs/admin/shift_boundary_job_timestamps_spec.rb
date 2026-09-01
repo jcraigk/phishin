@@ -41,10 +41,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     )
   end
 
-  def edit_for(track)
-    TrackEdit.where(track:, operation: "shift_boundary").newest_first.first
-  end
-
   # Two seconds of the second track become the tail of the first.
   describe "shifting the boundary later" do
     let(:delta_s) { 2.0 }
@@ -59,47 +55,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       track_tag = create(:track_tag, track: first, tag:, starts_at_second: 4)
       described_class.new.perform(first.id, admin_job.id, delta_s, true)
       expect(track_tag.reload.starts_at_second).to eq(4)
-    end
-
-    it "records a delta of zero on the first track" do
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect(edit_for(first).payload["delta_s"]).to eq(0.0)
-    end
-
-    it "records the OPPOSITE delta on the second track" do
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect(edit_for(second).payload["delta_s"]).to eq(-2.0)
-    end
-
-    it "records the first track's longer duration" do
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect(edit_for(first).payload["duration_after_s"]).to be_within(0.3).of(12.0)
-    end
-
-    it "records the second track's shorter duration" do
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect(edit_for(second).payload["duration_after_s"]).to be_within(0.3).of(4.0)
-    end
-
-    it "writes one record per side" do
-      expect { described_class.new.perform(first.id, admin_job.id, delta_s, true) }
-        .to change { TrackEdit.where(operation: "shift_boundary").count }.by(2)
-    end
-
-    it "names which side each record is" do
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect([ edit_for(first).payload["side"], edit_for(second).payload["side"] ])
-        .to eq(%w[first second])
-    end
-
-    it "points each record at the other side" do
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect(edit_for(first).payload["paired_track_id"]).to eq(second.id)
-    end
-
-    it "records the backup path for each side" do
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect(edit_for(second).payload["backup_path"]).to be_present
     end
 
     # The second track lost its first two seconds to the track above, so a tag
@@ -129,16 +84,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(track_tag.reload.starts_at_second).to eq(5)
     end
 
-    it "records the opposite delta on the second track" do
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect(edit_for(second).payload["delta_s"]).to eq(2.0)
-    end
-
-    it "still records a delta of zero on the first track" do
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect(edit_for(first).payload["delta_s"]).to eq(0.0)
-    end
-
     # The first track keeps its origin, so nothing on it moves - but it is two
     # seconds shorter, so a tag in the seconds it gave away now points past its
     # own end.
@@ -160,11 +105,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       track_tag = create(:track_tag, track: second, tag:, starts_at_second: 5)
       described_class.new.perform(first.id, admin_job.id, 2.0, false)
       expect(track_tag.reload.starts_at_second).to eq(5)
-    end
-
-    it "writes no TrackEdit" do
-      expect { described_class.new.perform(first.id, admin_job.id, 2.0, false) }
-        .not_to change(TrackEdit, :count)
     end
   end
 end

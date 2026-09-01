@@ -30,7 +30,7 @@
 #      still describes real audio, so it is reported separately from an orphan:
 #      a clamp is a narrowed truth, an orphan is a lost one.
 #
-# Every decision comes back in the shape TrackEdit's payload records directly:
+# Every decision comes back in one summarizing hash:
 # shifted/clamped entries carry type/id/from/to, orphaned entries carry
 # type/id/at/reason.
 class TimestampShifter < ApplicationService
@@ -109,7 +109,7 @@ class TimestampShifter < ApplicationService
   # orphan - there is no partial overlap to clamp. It lives on the track rather
   # than on a row of its own, so orphaning clears the column: leaving a stale
   # offset would keep pointing listeners at the wrong moment, and the original
-  # value is preserved in the TrackEdit payload instead.
+  # value is preserved in the returned summary instead.
   def shift_jam_start
     jam = track.jam_starts_at_second
     return if jam.nil?
