@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faCloudArrowUp, faSpinner, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faCloudArrowUp, faXmark } from "@fortawesome/free-solid-svg-icons";
+import MoonLoader from "react-spinners/MoonLoader";
 import React, { useContext, useRef, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
@@ -176,7 +177,7 @@ const BulkAudioDrop = () => {
             {uploading && (
               <>
                 <p className="admin-progress-line">
-                  <FontAwesomeIcon icon={faSpinner} spin /> Uploading{" "}
+                  <MoonLoader color="#c7c8ca" size={18} /> Uploading{" "}
                   {Math.min(uploading.done + 1, uploading.total)} of {uploading.total}:{" "}
                   {uploading.filename} ({uploading.percent ?? 0}%)
                 </p>
@@ -186,7 +187,7 @@ const BulkAudioDrop = () => {
             {preparing && (
               <>
                 <p className="admin-progress-line">
-                  <FontAwesomeIcon icon={faSpinner} spin /> {preparing.message} (
+                  <MoonLoader color="#c7c8ca" size={18} /> {preparing.message} (
                   {preparing.percent}%)
                 </p>
                 <progress className="admin-progress-bar" max="100" value={preparing.percent} />
