@@ -8,7 +8,6 @@ import TracksTab from "./TracksTab";
 import AudioTab from "./AudioTab";
 import ArtTab from "./ArtTab";
 import TagsTab from "./TagsTab";
-import HistoryTab from "./HistoryTab";
 import ShowPanel from "./ShowPanel";
 import VenueControl from "./VenueControl";
 import PublishPanel from "./PublishPanel";
@@ -16,7 +15,7 @@ import StagingEditor from "./StagingEditor";
 
 export const EditorContext = createContext(null);
 
-const TABS = ["Setlist", "Audio", "Art", "Tags", "History"];
+const TABS = ["Setlist", "Audio", "Art", "Tags"];
 
 const AdminShowEditor = () => {
   const { date } = useParams();
@@ -60,7 +59,6 @@ const AdminShowEditor = () => {
         Tags:
           show.show_tags.length +
           show.tracks.reduce((sum, t) => sum + t.track_tags.length, 0),
-        History: show.edits_count,
       }
     : {};
 
@@ -172,8 +170,7 @@ const AdminShowEditor = () => {
             {tab === "Audio" && <AudioTab />}
             {tab === "Art" && <ArtTab />}
             {tab === "Tags" && <TagsTab />}
-            {tab === "History" && <HistoryTab />}
-          </>
+              </>
         )}
       </div>
     </EditorContext.Provider>
