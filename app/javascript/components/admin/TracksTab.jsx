@@ -116,7 +116,22 @@ const TracksTab = () => {
     commitOrder(ordered, sets);
   };
 
-  const hintFor = (index) => (overIndex === index ? overHalf : null);
+  // One insertion slot, not per-row highlights: hovering the lower half of one
+  // row and the upper half of the next is the same gap, so both resolve to the
+  // same slot and the same single line renders.
+  const overSlot =
+    typeof overIndex === "number" && overHalf !== null
+      ? overHalf === "below"
+        ? overIndex + 1
+        : overIndex
+      : null;
+
+  const hintFor = (index) => {
+    if (overSlot === null) return null;
+    if (overSlot === index) return "above";
+    if (index === tracks.length - 1 && overSlot === tracks.length) return "below";
+    return null;
+  };
 
   // Removing a set does not remove its tracks: they fold into the set above,
   // or the one below when the removed set is first. Order never changes, so

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faGripVertical, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import SongPicker from "./SongPicker";
 import { adminPatch, adminDelete } from "./adminApi";
@@ -90,7 +90,9 @@ const TrackRow = ({
       onDrop={onDrop}
       onDragEnd={onDragEnd}
     >
-      <td className="admin-track-handle" aria-hidden="true">::</td>
+      <td className="admin-track-handle" aria-hidden="true">
+        <FontAwesomeIcon icon={faGripVertical} />
+      </td>
       <td className="admin-track-position">{track.position}</td>
       <td className="admin-track-validity">
         {problems.length > 0 && (
