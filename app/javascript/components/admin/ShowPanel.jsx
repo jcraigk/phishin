@@ -4,7 +4,7 @@ import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import { adminGet, adminPatch } from "./adminApi";
 import FilterSelect from "./FilterSelect";
-import diffLines from "./diffLines";
+import diffLines, { normalizeText } from "./diffLines";
 
 const ShowPanel = () => {
   const { show, setShow, setError } = useContext(EditorContext);
@@ -36,8 +36,14 @@ const ShowPanel = () => {
   };
 
   const requestSave = (field, label, current, stored, revert) => {
-    if (current === (stored || "")) return;
-    setPending({ field, label, current, stored: stored || "", revert });
+    if (normalizeText(current) === normalizeText(stored)) return;
+    setPending({
+      field,
+      label,
+      current: normalizeText(current),
+      stored: stored || "",
+      revert,
+    });
   };
 
   const confirmPending = () => {
@@ -119,14 +125,20 @@ const ShowPanel = () => {
           >
             <h3>Save {pending.label}?</h3>
             <div className="admin-diff">
-              {diffLines(pending.stored, pending.current).map((line, i) => (
+              {diffLines(pending.stored, pending.current).map((line, i) =>
+                line.type === "skip" ? (
+                  <div key={i} className="admin-diff-skip">
+                    {line.count} unchanged {line.count === 1 ? "line" : "lines"}
+                  </div>
+                ) : (
                 <div key={i} className={`admin-diff-line is-${line.type}`}>
                   <span className="admin-diff-sign">
                     {line.type === "add" ? "+" : line.type === "del" ? "-" : " "}
                   </span>
                   {line.text === "" ? " " : line.text}
                 </div>
-              ))}
+                )
+              )}
             </div>
             <div className="admin-modal-actions">
               <button type="button" disabled={busy} onClick={confirmPending}>

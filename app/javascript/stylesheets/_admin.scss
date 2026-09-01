@@ -1994,6 +1994,15 @@
   }
 }
 
+.admin-diff-skip {
+  padding: 0.15rem 0.6rem;
+  border-top: 1px solid var(--border-gray);
+  border-bottom: 1px solid var(--border-gray);
+  color: var(--text-gray);
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
 .admin-diff-sign {
   display: inline-block;
   width: 1.1rem;

@@ -1,6 +1,8 @@
-const diffLines = (oldText, newText) => {
-  const a = (oldText || "").split("\n");
-  const b = (newText || "").split("\n");
+export const normalizeText = (text) => (text || "").replace(/\r\n?/g, "\n");
+
+const rawDiff = (oldText, newText) => {
+  const a = normalizeText(oldText).split("\n");
+  const b = normalizeText(newText).split("\n");
   const lcs = Array.from({ length: a.length + 1 }, () =>
     new Array(b.length + 1).fill(0)
   );
@@ -38,5 +40,35 @@ const diffLines = (oldText, newText) => {
   }
   return lines;
 };
+
+const CONTEXT = 3;
+
+const collapseContext = (lines) => {
+  const keep = new Array(lines.length).fill(false);
+  lines.forEach((line, index) => {
+    if (line.type === "same") return;
+    const from = Math.max(0, index - CONTEXT);
+    const to = Math.min(lines.length - 1, index + CONTEXT);
+    for (let k = from; k <= to; k++) keep[k] = true;
+  });
+  const collapsed = [];
+  let skipped = 0;
+  const flush = () => {
+    if (skipped > 0) collapsed.push({ type: "skip", count: skipped });
+    skipped = 0;
+  };
+  lines.forEach((line, index) => {
+    if (keep[index]) {
+      flush();
+      collapsed.push(line);
+    } else {
+      skipped += 1;
+    }
+  });
+  flush();
+  return collapsed;
+};
+
+const diffLines = (oldText, newText) => collapseContext(rawDiff(oldText, newText));
 
 export default diffLines;
