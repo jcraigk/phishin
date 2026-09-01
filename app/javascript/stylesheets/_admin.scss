@@ -1847,15 +1847,16 @@
 
 .admin-song-picker {
   position: relative;
-  max-width: 16rem;
+  width: 100%;
 }
 
 .admin-song-box {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 0.2rem;
   padding: 0.1rem 0.3rem;
+  overflow-x: auto;
   border: 1px solid var(--border-gray);
   border-radius: 6px;
   background-color: var(--control-gray);
@@ -1867,7 +1868,7 @@
 
   input[type="text"] {
     flex: 1;
-    min-width: 6rem;
+    min-width: 4rem;
     padding: 0.05rem 0.15rem;
     border: none;
     background: none;
