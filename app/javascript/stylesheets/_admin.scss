@@ -1870,6 +1870,12 @@
   }
 }
 
+.admin-modal-wide {
+  width: 42rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
 .admin-modal-check {
   display: block;
   margin-bottom: 0.75rem;

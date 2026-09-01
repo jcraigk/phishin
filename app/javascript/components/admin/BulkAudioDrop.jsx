@@ -73,7 +73,6 @@ const BulkAudioDrop = () => {
 
   return (
     <div className="admin-bulk-audio">
-      <h3>Bulk audio upsert</h3>
       <div
         className={`admin-dropzone${dragging ? " is-dragging" : ""}`}
         onDragOver={(e) => {
@@ -101,7 +100,9 @@ const BulkAudioDrop = () => {
       )}
 
       {plan && (
-        <div className="admin-bulk-plan">
+        <div className="admin-modal-overlay" onClick={reset}>
+        <div className="admin-modal admin-modal-wide admin-bulk-plan" onClick={(e) => e.stopPropagation()}>
+          <h3>Bulk audio upsert</h3>
           <p>
             {counts.replace} to replace, {counts.fill} to fill,{" "}
             {plan.unmatched_filenames.length} unmatched.
@@ -144,12 +145,17 @@ const BulkAudioDrop = () => {
             </div>
           )}
 
-          <button type="button" onClick={apply} disabled={busy || plan.matches.length === 0}>
-            Apply {plan.matches.length} files
-          </button>
-          <button type="button" onClick={reset} disabled={busy}>
-            Cancel
-          </button>
+          <div className="admin-modal-actions">
+            <button type="button" onClick={apply} disabled={busy || plan.matches.length === 0}>
+              Apply {plan.matches.length} files
+            </button>
+            <button type="button" onClick={reset} disabled={busy}>
+              Cancel
+            </button>
+          </div>
+          {status && <span className="admin-audio-status">{status}</span>}
+          {error && <p className="admin-error">{error}</p>}
+        </div>
         </div>
       )}
 
