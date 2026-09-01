@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+
 import { adminGet, adminPost } from "./adminApi";
 
 const DEBOUNCE_MS = 300;
@@ -10,6 +11,7 @@ const SongPicker = ({ value, onChange }) => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     const term = query.trim();
@@ -82,32 +84,46 @@ const SongPicker = ({ value, onChange }) => {
     (s) => s.title.toLowerCase() === term.toLowerCase()
   );
 
+  const onKeyDown = (e) => {
+    if (e.key === "Backspace" && query === "" && value.length > 0) {
+      removeSong(value[value.length - 1]);
+    }
+  };
+
   return (
     <div className="admin-song-picker" ref={containerRef}>
-      <ul className="admin-song-chips">
+      <div
+        className="admin-song-box"
+        onClick={() => inputRef.current && inputRef.current.focus()}
+      >
         {value.map((song) => (
-          <li key={song.id}>
-            <span>{song.title}</span>
+          <span key={song.id} className="admin-song-pill">
+            {song.title}
             <button
               type="button"
               aria-label={`Remove ${song.title}`}
-              onClick={() => removeSong(song)}
+              onClick={(e) => {
+                e.stopPropagation();
+                removeSong(song);
+              }}
             >
-              x
+              &times;
             </button>
-          </li>
+          </span>
         ))}
-      </ul>
-      <input
-        type="text"
-        placeholder="Add song"
-        value={query}
-        onFocus={() => setOpen(true)}
-        onChange={(e) => {
-          setQuery(e.target.value);
-          setOpen(true);
-        }}
-      />
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder={value.length === 0 ? "Add song" : ""}
+          value={query}
+          onFocus={() => setOpen(true)}
+          onKeyDown={onKeyDown}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setOpen(true);
+          }}
+        />
+      </div>
       {open && term !== "" && (
         <ul className="admin-song-results">
           {results.map((song) => (

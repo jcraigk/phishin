@@ -696,38 +696,6 @@
   }
 }
 
-.admin-song-picker {
-  input[type="text"] {
-    width: 100%;
-    min-width: 8rem;
-  }
-}
-
-.admin-song-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  margin-bottom: 0.25rem;
-
-  li {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.1rem 0.35rem;
-    border-radius: $radius;
-    background-color: var(--list-item-bg);
-    font-size: 0.85rem;
-  }
-
-  button {
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--text-gray);
-    line-height: 1;
-  }
-}
-
 .waveform-scrubber {
   position: relative;
   margin-bottom: 0.5rem;
@@ -1812,4 +1780,64 @@
 .admin-filter-none {
   padding: 0.35rem 0.5rem;
   color: var(--text-gray);
+}
+
+.admin-song-picker {
+  position: relative;
+  max-width: 26rem;
+}
+
+.admin-song-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid var(--border-gray);
+  border-radius: 6px;
+  background-color: var(--control-gray);
+  cursor: text;
+
+  &:focus-within {
+    border-color: var(--blue);
+  }
+
+  input[type="text"] {
+    flex: 1;
+    min-width: 6rem;
+    padding: 0.15rem 0.2rem;
+    border: none;
+    background: none;
+    color: var(--list-item-link-color);
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.admin-song-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.1rem 0.3rem 0.1rem 0.55rem;
+  border-radius: 999px;
+  background-color: var(--bg-gray);
+  font-size: 0.85rem;
+  white-space: nowrap;
+
+  button {
+    padding: 0 0.3rem;
+    border: none !important;
+    border-radius: 999px;
+    background: none;
+    color: var(--text-gray) !important;
+    font-size: 0.9rem;
+    line-height: 1;
+
+    &:hover:not(:disabled) {
+      background-color: var(--border-gray);
+      color: var(--list-item-link-color) !important;
+    }
+  }
 }
