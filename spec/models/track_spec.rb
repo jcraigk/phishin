@@ -112,7 +112,7 @@ RSpec.describe Track do
   it 'invalidates < 1 song' do
     track.songs = []
     track.validate
-    expect(track.errors.attribute_names).to include(:songs)
+    expect(track.errors.full_messages).to include("Tracks must include at least one song")
   end
 
   describe 'scopes' do
