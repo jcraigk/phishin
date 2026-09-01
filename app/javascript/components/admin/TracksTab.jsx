@@ -200,7 +200,7 @@ const TracksTab = () => {
                     handleDrop(firstIndex, group.set, { before: true });
                   }}
                 >
-                  <th colSpan={7}>
+                  <th colSpan={8}>
                     {setName(group.set)}
                     {group.pending && (
                       <button

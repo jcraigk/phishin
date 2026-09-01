@@ -104,6 +104,7 @@ const TrackRow = ({
           onBlur={saveTitle}
         />
       </td>
+      <td className="admin-track-slug">{track.slug}</td>
       <td className="admin-track-songs">
         <SongPicker
           value={track.songs}
