@@ -5,6 +5,8 @@ import {
   faArrowsUpDown,
   faCloudArrowUp,
   faEllipsis,
+  faPause,
+  faPlay,
   faScissors,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
@@ -32,10 +34,19 @@ const problemsFor = (track) => {
   return problems;
 };
 
-const TrackRow = ({ track, next, stagedOptions, onReposition }) => {
+const TrackRow = ({
+  track,
+  next,
+  stagedOptions,
+  onReposition,
+  previewActive,
+  previewPlaying,
+  previewTime,
+  onTogglePreview,
+  onSeekPreview,
+}) => {
   const { setShow, setTrack, setError } = useContext(EditorContext);
   const [title, setTitle] = useState(track.title || "");
-  const [slug, setSlug] = useState(track.slug || "");
   const [busy, setBusy] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [tool, setTool] = useState(null);
@@ -53,7 +64,6 @@ const TrackRow = ({ track, next, stagedOptions, onReposition }) => {
   }, [menuOpen]);
 
   useEffect(() => setTitle(track.title || ""), [track.title]);
-  useEffect(() => setSlug(track.slug || ""), [track.slug]);
 
   const patchTrack = async (body) => {
     setError(null);
@@ -82,11 +92,6 @@ const TrackRow = ({ track, next, stagedOptions, onReposition }) => {
   const saveTitle = () => {
     if (title === (track.title || "")) return;
     patchTrack({ title });
-  };
-
-  const saveSlug = () => {
-    if (slug === (track.slug || "") || slug.trim() === "") return;
-    patchTrack({ slug: slug.trim() });
   };
 
   const deleteTrack = () => {
@@ -135,16 +140,6 @@ const TrackRow = ({ track, next, stagedOptions, onReposition }) => {
           onBlur={saveTitle}
         />
       </td>
-      <td className="admin-track-slug">
-        <input
-          type="text"
-          aria-label="Slug"
-          value={slug}
-          disabled={busy}
-          onChange={(e) => setSlug(e.target.value)}
-          onBlur={saveSlug}
-        />
-      </td>
       <td className="admin-track-songs">
         <SongPicker
           value={track.songs}
@@ -173,7 +168,32 @@ const TrackRow = ({ track, next, stagedOptions, onReposition }) => {
             ))}
           </select>
         ) : (
-          formatDuration(track.duration)
+          <span className="admin-audio-cell">
+            <button
+              type="button"
+              className="admin-preview-toggle"
+              aria-label={previewPlaying ? "Pause" : "Play"}
+              onClick={onTogglePreview}
+            >
+              <FontAwesomeIcon icon={previewPlaying ? faPause : faPlay} />
+            </button>
+            {previewActive && (
+              <input
+                type="range"
+                className="admin-preview-scrub"
+                min="0"
+                max={(track.duration || 0) / 1000}
+                step="0.1"
+                value={previewTime}
+                onChange={(e) => onSeekPreview(Number(e.target.value))}
+              />
+            )}
+            <span className="admin-track-duration">
+              {previewActive
+                ? formatDuration(previewTime * 1000)
+                : formatDuration(track.duration)}
+            </span>
+          </span>
         )}
       </td>
       <td className="admin-track-actions">
@@ -208,7 +228,7 @@ const TrackRow = ({ track, next, stagedOptions, onReposition }) => {
     </tr>
     {tool && (
       <tr className="admin-track-tool-row">
-        <td colSpan={7}>
+        <td colSpan={6}>
           {tool === "trim" && <TrimPanel key={`trim-${track.id}`} track={track} />}
           {tool === "replace" && (
             <ReplacePanel key={`replace-${track.id}`} track={track} />

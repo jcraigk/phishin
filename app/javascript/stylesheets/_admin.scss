@@ -692,6 +692,18 @@
     }
   }
 
+  .admin-audio-cell {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.4rem;
+  }
+
+  .admin-track-duration {
+    min-width: 3rem;
+    text-align: right;
+  }
+
   .admin-track-position,
   .admin-track-validity {
     text-align: right;
@@ -1996,12 +2008,6 @@
   }
 }
 
-.admin-track-slug {
-  color: var(--text-gray);
-  font-size: 0.8rem;
-  white-space: nowrap;
-}
-
 .admin-tabs .admin-count {
   margin-left: 0.35rem;
   min-width: 1.2rem;
@@ -2009,11 +2015,6 @@
   font-size: 0.65rem;
   line-height: 1.3;
   vertical-align: 0.1rem;
-}
-
-.admin-track-slug input {
-  width: 11rem;
-  font-size: 0.8rem;
 }
 
 .admin-row-menu {

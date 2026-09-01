@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,6 +14,8 @@ import BulkAudioDrop from "./BulkAudioDrop";
 import useJobRunner from "./useJobRunner";
 import { adminPost, adminPut } from "./adminApi";
 import { formatDurationShow } from "../helpers/utils";
+import { GaplessEngine } from "../player/GaplessEngine";
+import { WebAudioBackend } from "../player/WebAudioBackend";
 
 const GapBanner = () => {
   const { show, setGapsStale } = useContext(EditorContext);
@@ -109,11 +111,62 @@ const TracksTab = () => {
   const [insertTitle, setInsertTitle] = useState("");
   const [insertPosition, setInsertPosition] = useState(1);
 
+  const previewEngine = useRef(null);
+  const [preview, setPreview] = useState({ trackId: null, playing: false, time: 0 });
+
   useEffect(() => {
     setActionsSlot(document.getElementById("admin-tab-actions"));
   }, []);
 
   const tracks = show.tracks;
+
+  const playable = useMemo(
+    () => tracks.filter((t) => t.mp3_url && t.audio_status !== "missing"),
+    [tracks]
+  );
+  const playableRef = useRef(playable);
+  playableRef.current = playable;
+  const playableKey = playable.map((t) => t.mp3_url).join("|");
+
+  useEffect(() => {
+    if (playableKey === "") return undefined;
+    const engine = new GaplessEngine(new WebAudioBackend());
+    engine.onTime = (seconds, index) =>
+      setPreview((prev) => ({
+        ...prev,
+        time: seconds,
+        trackId: playableRef.current[index]?.id ?? null,
+      }));
+    engine.onTrackChange = (index) =>
+      setPreview((prev) => ({
+        ...prev,
+        time: 0,
+        trackId: playableRef.current[index]?.id ?? null,
+      }));
+    engine.onPlayChange = (playing) =>
+      setPreview((prev) => ({ ...prev, playing }));
+    engine.load(
+      playableRef.current.map((t) => ({ url: t.mp3_url, offset: 0, end: null }))
+    );
+    previewEngine.current = engine;
+    setPreview({ trackId: null, playing: false, time: 0 });
+    return () => {
+      engine.destroy();
+      previewEngine.current = null;
+    };
+  }, [playableKey]);
+
+  const togglePreview = (track) => {
+    const engine = previewEngine.current;
+    if (!engine) return;
+    if (preview.trackId === track.id) {
+      engine.toggle();
+    } else {
+      engine.goto(playable.findIndex((t) => t.id === track.id), { play: true });
+    }
+  };
+
+  const seekPreview = (seconds) => previewEngine.current?.seek(seconds);
 
   // The payload does not say which staged file backs an attached track, so the
   // summary reports tracks still awaiting audio rather than claiming which files
@@ -319,7 +372,7 @@ const TracksTab = () => {
             return (
               <tbody key={headerKey} className="admin-set-group">
                 <tr className="admin-set-header">
-                  <th colSpan={7}>
+                  <th colSpan={6}>
                     {setName(group.set)}
                     {group.tracks.length > 0 && (
                       <span className="admin-set-duration">
@@ -359,6 +412,11 @@ const TracksTab = () => {
                     next={tracks[index + 1] || null}
                     stagedOptions={show.staged_audio}
                     onReposition={() => openReposition(track)}
+                    previewActive={preview.trackId === track.id}
+                    previewPlaying={preview.trackId === track.id && preview.playing}
+                    previewTime={preview.time}
+                    onTogglePreview={() => togglePreview(track)}
+                    onSeekPreview={seekPreview}
                   />
                 ))}
               </tbody>

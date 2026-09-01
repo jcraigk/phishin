@@ -28,7 +28,7 @@ const BulkAudioDrop = () => {
   const [preparing, setPreparing] = useState(null);
   const [plan, setPlan] = useState(null);
   const [uploadError, setUploadError] = useState(null);
-  const { run, busy, status, error } = useJobRunner();
+  const { run, busy, status, progress, error } = useJobRunner();
   const cancelSeq = useRef(0);
   const fileInputRef = useRef(null);
   const folderInputRef = useRef(null);
@@ -409,7 +409,14 @@ const BulkAudioDrop = () => {
               <FontAwesomeIcon icon={faXmark} /> Cancel
             </button>
           </div>
-          {status && <span className="admin-audio-status">{status}</span>}
+          {busy && (
+            <>
+              <p className="admin-progress-line">
+                <MoonLoader color="#c7c8ca" size={18} /> {status || "Applying files"}
+              </p>
+              <progress className="admin-progress-bar" max="100" value={progress ?? 0} />
+            </>
+          )}
           {error && <p className="admin-error">{error}</p>}
         </div>
         </div>

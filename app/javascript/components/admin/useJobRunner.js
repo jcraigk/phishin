@@ -9,6 +9,7 @@ const useJobRunner = () => {
   const mountedRef = useRef(true);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState(null);
+  const [progress, setProgress] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(
@@ -22,18 +23,25 @@ const useJobRunner = () => {
   const run = useCallback(async (start, onDone) => {
     setError(null);
     setStatus(null);
+    setProgress(null);
     setBusy(true);
     const controller = new AbortController();
     controllerRef.current = controller;
     try {
       const { job_id: jobId } = await start();
       const job = await pollJob(jobId, {
-        onUpdate: (j) => setStatus(j.message || j.status),
+        onUpdate: (j) => {
+          setStatus(j.message || j.status);
+          setProgress(j.progress ?? null);
+        },
         signal: controller.signal,
       });
       if (!mountedRef.current) return null;
       if (onDone) await onDone(job);
-      if (mountedRef.current) setStatus(null);
+      if (mountedRef.current) {
+        setStatus(null);
+        setProgress(null);
+      }
       return job;
     } catch (e) {
       if (!isPollAbort(e) && mountedRef.current) setError(e.message);
@@ -44,7 +52,7 @@ const useJobRunner = () => {
     }
   }, []);
 
-  return { run, busy, status, error, setError };
+  return { run, busy, status, progress, error, setError };
 };
 
 export default useJobRunner;
