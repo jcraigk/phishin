@@ -20,13 +20,11 @@ class SearchService < ApplicationService
   end
 
   def merge_tag_matches(results)
-    # Add Show Tag matches to other_shows
     if results[:show_tags].present?
       ids = results[:show_tags].map(&:show_id) + (results[:other_shows]&.map(&:id) || [])
       results[:other_shows] = Show.includes(:venue, :tour, show_tags: :tag).where(id: ids)
     end
 
-    # Add Track Tag matches to tracks
     if results[:track_tags].present?
       ids = results[:track_tags].map(&:track_id) + (results[:tracks]&.map(&:id) || [])
       results[:tracks] = Track.includes(:show).where(id: ids)
@@ -106,11 +104,9 @@ class SearchService < ApplicationService
   end
 
   def songs
-    return [] if term_is_date?
     scope = Song.where("songs.title ILIKE :term OR songs.alias ILIKE :term", term: "%#{term}%")
                .limit(LIMIT)
 
-    # Filter songs to only include those with audio if audio_status is complete_or_partial
     if audio_status == "complete_or_partial"
       scope = scope.joins(songs_tracks: { track: :show })
                    .merge(Show.with_audio)
@@ -124,13 +120,11 @@ class SearchService < ApplicationService
   end
 
   def venues
-    return [] if term_is_date?
     scope = Venue.left_outer_joins(:venue_renames)
                  .where(venue_where_str, term: "%#{term}%")
                  .order(name: :asc)
                  .distinct
 
-    # Filter venues to only include those with shows with audio if audio_status is complete_or_partial
     if audio_status == "complete_or_partial"
       scope = scope.where("venues.shows_with_audio_count > 0")
     end

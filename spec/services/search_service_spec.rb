@@ -69,6 +69,28 @@ RSpec.describe SearchService do
     end
   end
 
+  context 'with a term that parses as a date but also matches text' do
+    let(:term) { 'summer of' }
+    let!(:song) { create(:song, title: "Summer of '89") }
+    let!(:venue) { create(:venue, name: 'Summer of Love Hall') }
+    let(:expected_results) do
+      {
+        exact_show: nil,
+        other_shows: [],
+        songs: [ song ],
+        venues: [ venue ],
+        tags: [],
+        show_tags: [],
+        track_tags: [],
+        tracks: [],
+        playlists: [],
+        tours: []
+      }
+    end
+
+    it_behaves_like 'expected results'
+  end
+
   context 'with text-based term' do
     let(:term) { 'hood' }
     let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }
