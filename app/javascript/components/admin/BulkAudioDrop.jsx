@@ -195,11 +195,6 @@ const BulkAudioDrop = () => {
     );
   };
 
-  const counts = plan && {
-    replace: plan.matches.filter((m) => m.action === "replace").length,
-    fill: plan.matches.filter((m) => m.action === "fill").length,
-  };
-
   return (
     <div className="admin-bulk-audio">
       <button type="button" onClick={() => setOpen(true)}>
@@ -209,7 +204,7 @@ const BulkAudioDrop = () => {
       {open && !plan && (
         <div className="admin-modal-overlay" onClick={close}>
           <div className="admin-modal admin-modal-wide" onClick={(e) => e.stopPropagation()}>
-            <h3>Update audio</h3>
+            <h3>Update Audio</h3>
             {!uploading && !preparing && (
             <div
               className={`admin-dropzone${dragging ? " is-dragging" : ""}`}
@@ -300,17 +295,17 @@ const BulkAudioDrop = () => {
       {plan && (
         <div className="admin-modal-overlay" onClick={close}>
         <div className="admin-modal admin-modal-wide admin-bulk-plan" onClick={(e) => e.stopPropagation()}>
-          <h3>Update audio</h3>
-          <p className="admin-bulk-summary">
-            {counts.replace} to replace, {counts.fill} to fill.
-          </p>
+          <h3>Update Audio</h3>
 
           {["replace", "fill"].map((action) => {
             const items = plan.matches.filter((m) => m.action === action);
-            if (items.length === 0) return null;
+            if (items.length === 0 && action === "fill") return null;
             return (
               <div key={action} className="admin-bulk-group">
-                <h4>{GROUP_LABEL[action]}</h4>
+                <h4>
+                  {GROUP_LABEL[action]}{" "}
+                  <span className="admin-count">{items.length}</span>
+                </h4>
                 <ul className="admin-bulk-matches">
                   {items.map((m) => {
                     const flatIndex = previewList.indexOf(m);
@@ -319,7 +314,6 @@ const BulkAudioDrop = () => {
                       <li key={m.signed_id}>
                         <span className="admin-bulk-position">{m.position}</span>
                         <span className="admin-bulk-title">{m.title}</span>
-                        <span className="admin-bulk-filename">{m.filename}</span>
                         <span className="admin-bulk-preview">
                           <button
                             type="button"
@@ -362,31 +356,24 @@ const BulkAudioDrop = () => {
           })}
 
           <div className="admin-bulk-unmatched">
-            <h4>Unmatched files</h4>
-            {plan.unmatched_filenames.length > 0 ? (
+            <h4>
+              Unmatched files{" "}
+              <span className="admin-count">{plan.unmatched_filenames.length}</span>
+            </h4>
+            {plan.unmatched_filenames.length > 0 && (
               <ul>
                 {plan.unmatched_filenames.map((name) => (
                   <li key={name}>{name}</li>
                 ))}
               </ul>
-            ) : (
-              <p>None</p>
             )}
           </div>
 
           <div className="admin-bulk-gaps">
-            <h4>Unmatched tracks</h4>
-            {plan.unmatched_tracks.length > 0 ? (
-              <ul>
-                {plan.unmatched_tracks.map((t) => (
-                  <li key={t.track_id}>
-                    {t.position}. {t.title}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>None</p>
-            )}
+            <h4>
+              Unmatched tracks{" "}
+              <span className="admin-count">{plan.unmatched_tracks.length}</span>
+            </h4>
           </div>
 
           <div className="admin-modal-actions">
