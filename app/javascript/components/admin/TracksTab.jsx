@@ -89,11 +89,11 @@ const withPendingSets = (groups, pendingSets) => {
 
 const TracksTab = () => {
   const { show, setShow, setError, gapsStale } = useContext(EditorContext);
-  const [dragIndex, setDragIndex] = useState(null);
-  const [overIndex, setOverIndex] = useState(null);
-  const [overHalf, setOverHalf] = useState(null);
   const [busy, setBusy] = useState(false);
   const [pendingSets, setPendingSets] = useState([]);
+  const [repositioning, setRepositioning] = useState(null);
+  const [targetPosition, setTargetPosition] = useState(1);
+  const [targetSet, setTargetSet] = useState("1");
 
   const tracks = show.tracks;
 
@@ -121,44 +121,23 @@ const TracksTab = () => {
     }
   };
 
-  // Insertion-point semantics: the drop lands in the gap the indicator marks,
-  // above or below the hovered row. A drop on a set header lands first in that
-  // set. Either way the track adopts the target set.
-  const handleDrop = (targetIndex, targetSet, { half = "above" } = {}) => {
-    setOverIndex(null);
-    setOverHalf(null);
-    if (dragIndex === null) return;
-    setPendingSets((prev) => prev.filter((set) => set !== targetSet));
-    const moved = tracks[dragIndex];
-    const sets = moved.set === targetSet ? {} : { [moved.id]: targetSet };
-    let insertAt = half === "below" ? targetIndex + 1 : targetIndex;
-    if (dragIndex < insertAt) insertAt -= 1;
-    if (dragIndex === insertAt && Object.keys(sets).length === 0) {
-      setDragIndex(null);
-      return;
-    }
-    const ordered = [...tracks];
-    ordered.splice(dragIndex, 1);
-    ordered.splice(insertAt, 0, moved);
-    setDragIndex(null);
-    commitOrder(ordered, sets);
+  const openReposition = (track) => {
+    setTargetPosition(track.position);
+    setTargetSet(track.set);
+    setRepositioning(track);
   };
 
-  // One insertion slot, not per-row highlights: hovering the lower half of one
-  // row and the upper half of the next is the same gap, so both resolve to the
-  // same slot and the same single line renders.
-  const overSlot =
-    typeof overIndex === "number" && overHalf !== null
-      ? overHalf === "below"
-        ? overIndex + 1
-        : overIndex
-      : null;
-
-  const hintFor = (index) => {
-    if (overSlot === null) return null;
-    if (overSlot === index) return "above";
-    if (index === tracks.length - 1 && overSlot === tracks.length) return "below";
-    return null;
+  const applyReposition = () => {
+    const track = repositioning;
+    setRepositioning(null);
+    setPendingSets((prev) => prev.filter((set) => set !== targetSet));
+    const from = tracks.indexOf(track);
+    const ordered = [...tracks];
+    ordered.splice(from, 1);
+    ordered.splice(targetPosition - 1, 0, track);
+    const sets = track.set === targetSet ? {} : { [track.id]: targetSet };
+    if (from === targetPosition - 1 && Object.keys(sets).length === 0) return;
+    commitOrder(ordered, sets);
   };
 
   // Removing a set does not remove its tracks: they fold into the set above,
@@ -182,14 +161,6 @@ const TracksTab = () => {
       group.tracks.map(({ track }) => [track.id, neighbor.set])
     );
     commitOrder(tracks, sets);
-  };
-
-  const trackDragOver = (index) => (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    const rect = e.currentTarget.getBoundingClientRect();
-    setOverIndex(index);
-    setOverHalf(e.clientY < rect.top + rect.height / 2 ? "above" : "below");
   };
 
   // The new track takes the set of the track above its slot, since position
@@ -271,21 +242,7 @@ const TracksTab = () => {
             const headerKey = `set-${firstIndex}`;
             return (
               <tbody key={headerKey} className="admin-set-group">
-                <tr
-                  className={`admin-set-header${
-                    overIndex === headerKey ? " is-drag-over" : ""
-                  }`}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = "move";
-                    setOverIndex(headerKey);
-                    setOverHalf(null);
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    handleDrop(firstIndex, group.set, { half: "above" });
-                  }}
-                >
+                <tr className="admin-set-header">
                   <th colSpan={7}>
                     {setName(group.set)}
                     <button
@@ -315,29 +272,51 @@ const TracksTab = () => {
                     track={track}
                     next={tracks[index + 1] || null}
                     stagedOptions={show.staged_audio}
-                    dropHint={hintFor(index)}
-                    lifted={dragIndex === index}
-                    onDragStart={(e) => {
-                      setDragIndex(index);
-                      e.dataTransfer.effectAllowed = "move";
-                      e.dataTransfer.setData("text/plain", String(index));
-                    }}
-                    onDragOver={trackDragOver(index)}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      handleDrop(index, group.set, { half: overHalf || "above" });
-                    }}
-                    onDragEnd={() => {
-                      setDragIndex(null);
-                      setOverIndex(null);
-                      setOverHalf(null);
-                    }}
+                    onReposition={() => openReposition(track)}
                   />
                 ))}
               </tbody>
             );
           })}
         </table>
+      )}
+
+      {repositioning && (
+        <div className="admin-modal-overlay" onClick={() => setRepositioning(null)}>
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Reposition &quot;{repositioning.title}&quot;</h3>
+            <label className="admin-modal-field">
+              <span>Position</span>
+              <select
+                value={targetPosition}
+                onChange={(e) => setTargetPosition(Number(e.target.value))}
+              >
+                {tracks.map((t, i) => (
+                  <option key={t.id} value={i + 1}>
+                    {i + 1}
+                    {t.id === repositioning.id ? " (current)" : ` - ${t.title}`}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="admin-modal-field">
+              <span>Set</span>
+              <select value={targetSet} onChange={(e) => setTargetSet(e.target.value)}>
+                {SETS.map((set) => (
+                  <option key={set} value={set}>{setName(set)}</option>
+                ))}
+              </select>
+            </label>
+            <div className="admin-modal-actions">
+              <button type="button" disabled={busy} onClick={applyReposition}>
+                Move
+              </button>
+              <button type="button" onClick={() => setRepositioning(null)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

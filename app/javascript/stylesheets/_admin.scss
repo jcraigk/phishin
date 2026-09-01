@@ -637,13 +637,6 @@
     }
   }
 
-  .admin-track-handle {
-    width: 1.4rem;
-    padding-right: 0;
-    color: var(--text-gray);
-    cursor: grab;
-  }
-
   .admin-track-position,
   .admin-track-validity {
     text-align: right;
@@ -1930,20 +1923,6 @@
 .admin-track-slug input {
   width: 11rem;
   font-size: 0.8rem;
-}
-
-.admin-track-row.is-lifted td {
-  opacity: 0.35;
-}
-
-.admin-track-row.is-drop-above td {
-  border-top: 3px solid var(--blue);
-  padding-top: 0.6rem;
-}
-
-.admin-track-row.is-drop-below td {
-  border-bottom: 3px solid var(--blue);
-  padding-bottom: 0.6rem;
 }
 
 .admin-row-menu {

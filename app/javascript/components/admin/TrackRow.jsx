@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowsLeftRight,
+  faArrowsUpDown,
   faCloudArrowUp,
   faEllipsis,
-  faGripVertical,
   faScissors,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
@@ -32,17 +32,7 @@ const problemsFor = (track) => {
   return problems;
 };
 
-const TrackRow = ({
-  track,
-  next,
-  stagedOptions,
-  dropHint,
-  lifted,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onDragEnd,
-}) => {
+const TrackRow = ({ track, next, stagedOptions, onReposition }) => {
   const { setShow, setTrack, setError } = useContext(EditorContext);
   const [title, setTitle] = useState(track.title || "");
   const [slug, setSlug] = useState(track.slug || "");
@@ -123,17 +113,8 @@ const TrackRow = ({
 
   return (
     <>
-    <tr
-      className={`admin-track-row${dropHint ? ` is-drop-${dropHint}` : ""}${lifted ? " is-lifted" : ""}`}
-      draggable
-      onDragStart={onDragStart}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
-      onDragEnd={onDragEnd}
-    >
-      <td className="admin-track-handle" aria-hidden="true">
-        <FontAwesomeIcon icon={faGripVertical} />
-      </td>
+    <tr className="admin-track-row">
+      <td className="admin-track-position">{track.position}</td>
       <td className="admin-track-validity">
         {problems.length > 0 && (
           <span
@@ -209,6 +190,10 @@ const TrackRow = ({
           </button>
           {menuOpen && (
             <ul className="admin-row-menu-list">
+              {menuItem("Reposition", faArrowsUpDown, true, () => {
+                setMenuOpen(false);
+                onReposition();
+              })}
               {menuItem("Trim", faScissors, hasAudio, () => pickTool("trim"))}
               {menuItem("Replace audio", faCloudArrowUp, true, () => pickTool("replace"))}
               {menuItem("Boundary with next", faArrowsLeftRight, shiftable, () => pickTool("boundary"))}
