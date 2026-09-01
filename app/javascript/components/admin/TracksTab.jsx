@@ -281,7 +281,7 @@ const TracksTab = () => {
                     handleDrop(firstIndex, group.set, { half: "above" });
                   }}
                 >
-                  <th colSpan={8}>
+                  <th colSpan={7}>
                     {setName(group.set)}
                     <button
                       type="button"

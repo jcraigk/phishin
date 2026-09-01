@@ -1,6 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faGripVertical } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowsLeftRight,
+  faCloudArrowUp,
+  faEllipsis,
+  faGripVertical,
+  faScissors,
+  faTrashCan,
+} from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import SongPicker from "./SongPicker";
 import TrimPanel from "./TrimPanel";
@@ -106,10 +113,10 @@ const TrackRow = ({
     setTool((prev) => (prev === name ? null : name));
   };
 
-  const menuItem = (label, enabled, onClick) => (
+  const menuItem = (label, icon, enabled, onClick) => (
     <li>
       <button type="button" disabled={!enabled} onClick={onClick}>
-        {label}
+        <FontAwesomeIcon icon={icon} fixedWidth /> {label}
       </button>
     </li>
   );
@@ -127,7 +134,6 @@ const TrackRow = ({
       <td className="admin-track-handle" aria-hidden="true">
         <FontAwesomeIcon icon={faGripVertical} />
       </td>
-      <td className="admin-track-position">{track.position}</td>
       <td className="admin-track-validity">
         {problems.length > 0 && (
           <span
@@ -203,10 +209,10 @@ const TrackRow = ({
           </button>
           {menuOpen && (
             <ul className="admin-row-menu-list">
-              {menuItem("Trim", hasAudio, () => pickTool("trim"))}
-              {menuItem("Replace audio", true, () => pickTool("replace"))}
-              {menuItem("Boundary with next", shiftable, () => pickTool("boundary"))}
-              {menuItem("Delete track", true, () => {
+              {menuItem("Trim", faScissors, hasAudio, () => pickTool("trim"))}
+              {menuItem("Replace audio", faCloudArrowUp, true, () => pickTool("replace"))}
+              {menuItem("Boundary with next", faArrowsLeftRight, shiftable, () => pickTool("boundary"))}
+              {menuItem("Delete track", faTrashCan, true, () => {
                 setMenuOpen(false);
                 deleteTrack();
               })}
@@ -217,7 +223,7 @@ const TrackRow = ({
     </tr>
     {tool && (
       <tr className="admin-track-tool-row">
-        <td colSpan={8}>
+        <td colSpan={7}>
           {tool === "trim" && <TrimPanel key={`trim-${track.id}`} track={track} />}
           {tool === "replace" && (
             <ReplacePanel key={`replace-${track.id}`} track={track} />
