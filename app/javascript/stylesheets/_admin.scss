@@ -1229,6 +1229,11 @@
   background: none;
   text-align: left;
   cursor: pointer;
+
+  .admin-tag-disclosure {
+    color: var(--text-gray);
+    font-size: 0.75rem;
+  }
 }
 
 .admin-tag-editor {

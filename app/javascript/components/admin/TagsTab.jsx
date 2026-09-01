@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import TagEditor from "./TagEditor";
 import TaginPanel from "./TaginPanel";
@@ -124,6 +126,9 @@ const TrackTagBlock = ({ track, tags, taginTags }) => {
         className="admin-tag-track-header"
         onClick={() => setOpen(!open)}
       >
+        <span className="admin-tag-disclosure">
+          <FontAwesomeIcon icon={open ? faChevronDown : faChevronRight} fixedWidth />
+        </span>
         <span className="admin-audio-position">{track.position}</span>
         <span className="admin-audio-title">{track.title}</span>
         <span className="admin-audio-duration">
