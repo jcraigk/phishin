@@ -1971,6 +1971,12 @@
   flex-direction: column;
   gap: 1rem;
 
+  .admin-field label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--list-item-link-color);
+  }
+
   textarea {
     width: 100%;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;

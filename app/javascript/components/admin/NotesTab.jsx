@@ -54,7 +54,7 @@ const NotesTab = () => {
         <label htmlFor="admin-taper-notes">Taper notes</label>
         <textarea
           id="admin-taper-notes"
-          rows={14}
+          rows={28}
           value={taperNotes}
           disabled={busy}
           onChange={(e) => setTaperNotes(e.target.value)}
@@ -74,7 +74,7 @@ const NotesTab = () => {
         <label htmlFor="admin-admin-notes">Admin notes</label>
         <textarea
           id="admin-admin-notes"
-          rows={6}
+          rows={3}
           value={adminNotes}
           disabled={busy}
           onChange={(e) => setAdminNotes(e.target.value)}
