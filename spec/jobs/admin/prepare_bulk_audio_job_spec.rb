@@ -1,11 +1,12 @@
 require "rails_helper"
 
 RSpec.describe Admin::PrepareBulkAudioJob do
-  let(:show) { create(:show, date: "2024-07-19") }
+  let(:show) { create(:show, date: "2024-07-19", taper_notes: nil) }
   let(:admin_job) { create(:admin_job, kind: "bulk_audio_prepare", show:) }
   let(:fixtures) { Rails.root.join("tmp/spec/bulk_prepare") }
 
   before do
+    allow(Admin::TaperNotesAiTracklist).to receive(:call).and_return({})
     FileUtils.mkdir_p(fixtures)
     { "d1t01.flac" => [ 3, "Llama" ], "d1t02.flac" => [ 4, nil ] }.each do |name, (secs, title)|
       path = fixtures.join(name)
@@ -56,6 +57,24 @@ RSpec.describe Admin::PrepareBulkAudioJob do
       file.flush
       expect(probe_duration(file.path)).to be_within(0.2).of(3.0)
     end
+  end
+
+  it "prefers a taper notes title over the embedded tag" do
+    show.update!(taper_notes: "Disc 1\n01. Suzie Greenberg")
+    described_class.new.perform(show.id, admin_job.id, [ upload("d1t01.flac", "audio/flac") ])
+    blob = ActiveStorage::Blob.find_signed!(admin_job.reload.payload["signed_ids"].first)
+    expect(blob.filename.to_s).to eq("Suzie Greenberg.mp3")
+  end
+
+  it "asks the AI fallback about files the notes do not identify" do
+    show.update!(taper_notes: "A lovely soundboard recording.")
+    allow(Admin::TaperNotesAiTracklist).to receive(:call)
+      .and_return({ "d1t02.flac" => "Foam" })
+    described_class.new.perform(show.id, admin_job.id, [ upload("d1t02.flac", "audio/flac") ])
+    blob = ActiveStorage::Blob.find_signed!(admin_job.reload.payload["signed_ids"].first)
+    expect(blob.filename.to_s).to eq("Foam.mp3")
+    expect(Admin::TaperNotesAiTracklist).to have_received(:call)
+      .with(notes: "A lovely soundboard recording.", filenames: [ "d1t02.flac" ])
   end
 
   it "passes an mp3 through without renaming it" do

@@ -18,12 +18,13 @@ class Admin::PrepareBulkAudioJob
         receive_uploads(signed_ids)
         files = audio_files
         raise NoAudioError, "no audio files found in the upload" if files.empty?
+        titles = titles_for(files)
         ids = files.map.with_index do |path, index|
           @admin_job.update!(
             progress: (index * 100.0 / files.size).round,
             message: "Preparing #{File.basename(path)}"
           )
-          upload_as_mp3(path).signed_id
+          upload_as_mp3(path, titles[path]).signed_id
         end
         @admin_job.update!(
           message: "Prepared #{files.size} files",
@@ -63,8 +64,25 @@ class Admin::PrepareBulkAudioJob
     end.sort_by(&:downcase)
   end
 
-  def upload_as_mp3(path)
-    filename = "#{embedded_title(path) || File.basename(path, '.*')}.mp3"
+  def titles_for(files)
+    notes = @show.taper_notes.to_s
+    parsed = Admin::TaperNotesTracklist.call(notes)
+    titles = files.index_with do |path|
+      key = Admin::TaperNotesTracklist.key_for(path)
+      key && parsed[key]
+    end
+    unresolved = titles.select { |_path, title| title.nil? }.keys
+    if notes.present? && unresolved.any?
+      by_basename = Admin::TaperNotesAiTracklist.call(
+        notes:, filenames: unresolved.map { File.basename(it) }
+      )
+      unresolved.each { |path| titles[path] ||= by_basename[File.basename(path)] }
+    end
+    titles.transform_values { |title| title&.tr("/", "-") }
+  end
+
+  def upload_as_mp3(path, title)
+    filename = "#{title || embedded_title(path) || File.basename(path, '.*')}.mp3"
     out = path
     unless extension(path) == "mp3"
       out = File.join(@dir, "#{SecureRandom.hex(4)}.mp3")
