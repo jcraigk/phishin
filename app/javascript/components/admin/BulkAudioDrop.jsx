@@ -151,8 +151,9 @@ const BulkAudioDrop = () => {
             {uploading && (
               <>
                 <p className="admin-progress-line">
-                  <FontAwesomeIcon icon={faSpinner} spin /> Uploading {uploading.done} of{" "}
-                  {uploading.total} ({uploading.percent ?? 0}%)
+                  <FontAwesomeIcon icon={faSpinner} spin /> Uploading{" "}
+                  {Math.min(uploading.done + 1, uploading.total)} of {uploading.total} (
+                  {uploading.percent ?? 0}%)
                 </p>
                 <progress className="admin-progress-bar" max="100" value={uploading.percent ?? 0} />
               </>
