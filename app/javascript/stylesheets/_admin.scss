@@ -682,6 +682,13 @@
     &.is-drag-over th {
       background-color: var(--bg-blue);
     }
+
+    .admin-set-duration {
+      float: right;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--text-gray);
+    }
   }
 
   .admin-track-position,

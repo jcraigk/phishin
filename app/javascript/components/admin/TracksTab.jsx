@@ -13,6 +13,7 @@ import TrackRow from "./TrackRow";
 import BulkAudioDrop from "./BulkAudioDrop";
 import useJobRunner from "./useJobRunner";
 import { adminPost, adminPut } from "./adminApi";
+import { formatDurationShow } from "../helpers/utils";
 
 const GapBanner = () => {
   const { show, setGapsStale } = useContext(EditorContext);
@@ -320,6 +321,16 @@ const TracksTab = () => {
                 <tr className="admin-set-header">
                   <th colSpan={7}>
                     {setName(group.set)}
+                    {group.tracks.length > 0 && (
+                      <span className="admin-set-duration">
+                        {formatDurationShow(
+                          group.tracks.reduce(
+                            (sum, { track }) => sum + (track.duration || 0),
+                            0
+                          )
+                        )}
+                      </span>
+                    )}
                     <button
                       type="button"
                       className="admin-trash-button admin-set-dismiss"
