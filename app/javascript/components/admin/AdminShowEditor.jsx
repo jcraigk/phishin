@@ -5,7 +5,6 @@ import React, { createContext, useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { adminGet, adminDelete } from "./adminApi";
 import TracksTab from "./TracksTab";
-import AudioTab from "./AudioTab";
 import ArtTab from "./ArtTab";
 import TagsTab from "./TagsTab";
 import ShowPanel from "./ShowPanel";
@@ -15,7 +14,7 @@ import StagingEditor from "./StagingEditor";
 
 export const EditorContext = createContext(null);
 
-const TABS = ["Setlist", "Audio", "Tags", "Art"];
+const TABS = ["Setlist", "Tags", "Art"];
 
 const AdminShowEditor = () => {
   const { date } = useParams();
@@ -55,7 +54,6 @@ const AdminShowEditor = () => {
   const tabCounts = show
     ? {
         Setlist: show.tracks.length,
-        Audio: show.tracks.filter((t) => t.audio_status !== "missing").length,
         Tags:
           show.show_tags.length +
           show.tracks.reduce((sum, t) => sum + t.track_tags.length, 0),
@@ -167,7 +165,6 @@ const AdminShowEditor = () => {
               })}
             </nav>
             {tab === "Setlist" && <TracksTab />}
-            {tab === "Audio" && <AudioTab />}
             {tab === "Art" && <ArtTab />}
             {tab === "Tags" && <TagsTab />}
               </>

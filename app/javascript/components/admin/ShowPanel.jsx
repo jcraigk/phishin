@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import { adminGet, adminPatch } from "./adminApi";
+import BulkAudioDrop from "./BulkAudioDrop";
 import FilterSelect from "./FilterSelect";
 
 const ShowPanel = () => {
@@ -83,6 +84,13 @@ const ShowPanel = () => {
               }
             />
           </div>
+
+          {show.tracks.length > 0 && (
+            <div className="admin-field admin-field-bulk">
+              <label>Audio files</label>
+              <BulkAudioDrop />
+            </div>
+          )}
       </div>
     </section>
   );

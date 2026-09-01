@@ -3,7 +3,33 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import TrackRow from "./TrackRow";
+import useJobRunner from "./useJobRunner";
 import { adminPost, adminPut } from "./adminApi";
+
+const GapBanner = () => {
+  const { show, setGapsStale } = useContext(EditorContext);
+  const { run, busy, status, error } = useJobRunner();
+
+  return (
+    <div className="admin-gap-banner">
+      <span>Set lists changed. Recompute gaps.</span>
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() =>
+          run(
+            () => adminPost(`/shows/${show.date}/recompute_gaps`),
+            () => setGapsStale(false)
+          )
+        }
+      >
+        Recompute Gaps
+      </button>
+      {status && <span className="admin-audio-status">{status}</span>}
+      {error && <span className="admin-error">{error}</span>}
+    </div>
+  );
+};
 
 const SETS = ["S", "1", "2", "3", "4", "E", "E2", "E3"];
 
@@ -62,7 +88,7 @@ const withPendingSets = (groups, pendingSets) => {
 };
 
 const TracksTab = () => {
-  const { show, setShow, setError } = useContext(EditorContext);
+  const { show, setShow, setError, gapsStale } = useContext(EditorContext);
   const [dragIndex, setDragIndex] = useState(null);
   const [overIndex, setOverIndex] = useState(null);
   const [overHalf, setOverHalf] = useState(null);
@@ -197,6 +223,7 @@ const TracksTab = () => {
 
   return (
     <div className="admin-tracks-tab">
+      {gapsStale && <GapBanner />}
       <div className="admin-tracks-toolbar">
         <button type="button" onClick={insertTrack} disabled={busy}>
           Insert track
@@ -281,6 +308,7 @@ const TracksTab = () => {
                   <TrackRow
                     key={track.id}
                     track={track}
+                    next={tracks[index + 1] || null}
                     stagedOptions={show.staged_audio}
                     dropHint={hintFor(index)}
                     lifted={dragIndex === index}

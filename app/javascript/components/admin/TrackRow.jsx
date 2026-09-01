@@ -1,8 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGripVertical, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faGripVertical } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import SongPicker from "./SongPicker";
+import TrimPanel from "./TrimPanel";
+import ReplacePanel from "./ReplacePanel";
+import BoundaryPanel from "./BoundaryPanel";
 import { adminPatch, adminDelete } from "./adminApi";
 
 const formatDuration = (ms) => {
@@ -24,6 +27,7 @@ const problemsFor = (track) => {
 
 const TrackRow = ({
   track,
+  next,
   stagedOptions,
   dropHint,
   lifted,
@@ -36,6 +40,20 @@ const TrackRow = ({
   const [title, setTitle] = useState(track.title || "");
   const [slug, setSlug] = useState(track.slug || "");
   const [busy, setBusy] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [tool, setTool] = useState(null);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onDocumentClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDocumentClick);
+    return () => document.removeEventListener("mousedown", onDocumentClick);
+  }, [menuOpen]);
 
   useEffect(() => setTitle(track.title || ""), [track.title]);
   useEffect(() => setSlug(track.slug || ""), [track.slug]);
@@ -80,8 +98,24 @@ const TrackRow = ({
   };
 
   const problems = problemsFor(track);
+  const hasAudio = track.audio_status !== "missing";
+  const shiftable = Boolean(next) && hasAudio && next.audio_status !== "missing";
+
+  const pickTool = (name) => {
+    setMenuOpen(false);
+    setTool((prev) => (prev === name ? null : name));
+  };
+
+  const menuItem = (label, enabled, onClick) => (
+    <li>
+      <button type="button" disabled={!enabled} onClick={onClick}>
+        {label}
+      </button>
+    </li>
+  );
 
   return (
+    <>
     <tr
       className={`admin-track-row${dropHint ? ` is-drop-${dropHint}` : ""}${lifted ? " is-lifted" : ""}`}
       draggable
@@ -156,18 +190,45 @@ const TrackRow = ({
         )}
       </td>
       <td className="admin-track-actions">
-        <button
-          type="button"
-          className="admin-trash-button"
-          aria-label="Delete track"
-          title="Delete track"
-          disabled={busy}
-          onClick={deleteTrack}
-        >
-          <FontAwesomeIcon icon={faTrashCan} />
-        </button>
+        <div className="admin-row-menu" ref={menuRef}>
+          <button
+            type="button"
+            className="admin-trash-button"
+            aria-label="Track actions"
+            title="Track actions"
+            disabled={busy}
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <FontAwesomeIcon icon={faEllipsis} />
+          </button>
+          {menuOpen && (
+            <ul className="admin-row-menu-list">
+              {menuItem("Trim", hasAudio, () => pickTool("trim"))}
+              {menuItem("Replace audio", true, () => pickTool("replace"))}
+              {menuItem("Boundary with next", shiftable, () => pickTool("boundary"))}
+              {menuItem("Delete track", true, () => {
+                setMenuOpen(false);
+                deleteTrack();
+              })}
+            </ul>
+          )}
+        </div>
       </td>
     </tr>
+    {tool && (
+      <tr className="admin-track-tool-row">
+        <td colSpan={8}>
+          {tool === "trim" && <TrimPanel key={`trim-${track.id}`} track={track} />}
+          {tool === "replace" && (
+            <ReplacePanel key={`replace-${track.id}`} track={track} />
+          )}
+          {tool === "boundary" && shiftable && (
+            <BoundaryPanel key={`boundary-${track.id}`} track={track} next={next} />
+          )}
+        </td>
+      </tr>
+    )}
+    </>
   );
 };
 

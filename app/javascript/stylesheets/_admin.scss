@@ -1929,3 +1929,52 @@
   border-bottom: 3px solid var(--blue);
   padding-bottom: 0.6rem;
 }
+
+.admin-row-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.admin-row-menu-list {
+  position: absolute;
+  z-index: 40;
+  top: 100%;
+  right: 0;
+  min-width: 11rem;
+  margin: 0;
+  padding: 0.25rem;
+  border: 1px solid var(--border-gray);
+  border-radius: 6px;
+  background-color: var(--card-bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  list-style: none;
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 0.35rem 0.5rem;
+    border: none !important;
+    border-radius: 4px;
+    background: none;
+    text-align: left;
+    font-weight: 400;
+
+    &:hover:not(:disabled) {
+      background-color: var(--bg-gray);
+    }
+  }
+}
+
+.admin-track-tool-row > td {
+  padding: 0 0.5rem 0.75rem;
+}
+
+.admin-field-bulk {
+  min-width: 16rem;
+
+  .admin-dropzone {
+    margin-top: 0.25rem;
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+}
