@@ -80,7 +80,6 @@ const BulkAudioDrop = () => {
       // Anything beyond bare mp3s takes a server-side pass to unpack archives
       // and transcode lossless sources before the filename matching runs.
       if (files.some((file) => !isMp3(file))) {
-        setUploading(null);
         setPreparing({ message: "Preparing files", percent: 0 });
         const { job_id: jobId } = await adminPost(
           `/shows/${show.date}/bulk_audio_prepare`,
@@ -180,11 +179,23 @@ const BulkAudioDrop = () => {
             {uploading && (
               <>
                 <p className="admin-progress-line">
-                  <MoonLoader color="#c7c8ca" size={18} /> Uploading{" "}
-                  {Math.min(uploading.done + 1, uploading.total)} of {uploading.total}:{" "}
-                  {uploading.filename}
+                  {preparing ? (
+                    <>
+                      <FontAwesomeIcon icon={faCheck} /> Upload Complete
+                    </>
+                  ) : (
+                    <>
+                      <MoonLoader color="#c7c8ca" size={18} /> Uploading{" "}
+                      {Math.min(uploading.done + 1, uploading.total)} of {uploading.total}:{" "}
+                      {uploading.filename}
+                    </>
+                  )}
                 </p>
-                <progress className="admin-progress-bar" max="100" value={uploading.percent ?? 0} />
+                <progress
+                  className="admin-progress-bar"
+                  max="100"
+                  value={preparing ? 100 : uploading.percent ?? 0}
+                />
               </>
             )}
             {preparing && (
