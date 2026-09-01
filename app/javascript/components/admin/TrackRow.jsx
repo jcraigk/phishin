@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import SongPicker from "./SongPicker";
 import { adminPatch, adminDelete } from "./adminApi";
-
-const SETS = ["S", "1", "2", "3", "4", "E", "E2", "E3"];
 
 const formatDuration = (ms) => {
   if (!ms) return "";
@@ -33,19 +33,9 @@ const TrackRow = ({
 }) => {
   const { setShow, setTrack, setError } = useContext(EditorContext);
   const [title, setTitle] = useState(track.title || "");
-  const [jamStart, setJamStart] = useState(
-    track.jam_starts_at_second === null ? "" : String(track.jam_starts_at_second)
-  );
   const [busy, setBusy] = useState(false);
 
   useEffect(() => setTitle(track.title || ""), [track.title]);
-  useEffect(() => {
-    setJamStart(
-      track.jam_starts_at_second === null
-        ? ""
-        : String(track.jam_starts_at_second)
-    );
-  }, [track.jam_starts_at_second]);
 
   const patchTrack = async (body) => {
     setError(null);
@@ -76,15 +66,6 @@ const TrackRow = ({
     patchTrack({ title });
   };
 
-  const saveJamStart = () => {
-    const current =
-      track.jam_starts_at_second === null
-        ? ""
-        : String(track.jam_starts_at_second);
-    if (jamStart === current) return;
-    patchTrack({ jam_starts_at_second: jamStart === "" ? null : Number(jamStart) });
-  };
-
   const deleteTrack = () => {
     if (!window.confirm(`Delete track "${track.title}"?`)) return;
     replaceShow(() => adminDelete(`/tracks/${track.id}`));
@@ -112,19 +93,6 @@ const TrackRow = ({
             *
           </span>
         )}
-      </td>
-      <td>
-        <select
-          value={track.set || ""}
-          aria-label="Set"
-          disabled={busy}
-          onChange={(e) => patchTrack({ set: e.target.value })}
-        >
-          {!track.set && <option value="">--</option>}
-          {SETS.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
       </td>
       <td className="admin-track-title">
         <input
@@ -167,21 +135,16 @@ const TrackRow = ({
           formatDuration(track.duration)
         )}
       </td>
-      <td>
-        <input
-          type="number"
-          className="admin-track-jam"
-          aria-label="Jam starts at second"
-          min="0"
-          value={jamStart}
-          disabled={busy}
-          onChange={(e) => setJamStart(e.target.value)}
-          onBlur={saveJamStart}
-        />
-      </td>
       <td className="admin-track-actions">
-        <button type="button" disabled={busy} onClick={deleteTrack}>
-          Delete
+        <button
+          type="button"
+          className="admin-icon-button"
+          aria-label="Delete track"
+          title="Delete track"
+          disabled={busy}
+          onClick={deleteTrack}
+        >
+          <FontAwesomeIcon icon={faTrashCan} />
         </button>
       </td>
     </tr>
