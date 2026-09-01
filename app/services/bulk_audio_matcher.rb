@@ -20,7 +20,7 @@ class BulkAudioMatcher < ApplicationService
         next if track.nil?
         claimed << track.id
         match_payload(filename, track)
-      end
+      end.sort_by { |m| m[:position] }
     end
   end
 
@@ -52,8 +52,18 @@ class BulkAudioMatcher < ApplicationService
       track_id: track.id,
       position: track.position,
       title: track.title,
+      duration: duration_ms(blobs_by_filename[filename]),
       action: track.mp3_audio.attached? ? "replace" : "fill"
     }
+  end
+
+  def duration_ms(blob)
+    return nil unless blob.service.respond_to?(:path_for)
+    out, _err, status = Open3.capture3(
+      "ffprobe", "-v", "error", "-show_entries", "format=duration",
+      "-of", "csv=p=0", blob.service.path_for(blob.key)
+    )
+    status.success? ? (out.to_f * 1000).round : nil
   end
 
   def audioless_track_payloads

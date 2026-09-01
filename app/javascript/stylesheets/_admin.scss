@@ -939,6 +939,11 @@
   margin-top: 0.75rem;
 }
 
+.admin-bulk-summary {
+  margin-bottom: 1.25rem;
+  font-size: 1.05rem;
+}
+
 .admin-bulk-matches {
   margin-bottom: 0.75rem;
 
@@ -948,15 +953,6 @@
     align-items: baseline;
     padding: 0.3rem 0.5rem;
     border-bottom: 1px solid var(--border-gray);
-    border-left: 3px solid transparent;
-  }
-
-  li.is-replace {
-    border-left-color: var(--highlight-orange);
-  }
-
-  li.is-fill {
-    border-left-color: var(--blue);
   }
 
   .admin-bulk-position {
@@ -981,10 +977,11 @@
     white-space: nowrap;
   }
 
-  .admin-bulk-action {
+  .admin-bulk-duration {
     flex-shrink: 0;
+    min-width: 3.5rem;
     color: var(--text-gray);
-    font-size: 0.85rem;
+    text-align: right;
   }
 }
 

@@ -6,8 +6,9 @@ import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminPost, pollJob } from "./adminApi";
 import { uploadFile, collectFiles, isMp3, isStagingSource } from "./DirectUploader";
+import { formatDurationTrack } from "../helpers/utils";
 
-const ACTION_LABEL = { replace: "replaces existing audio", fill: "fills empty track" };
+const GROUP_LABEL = { replace: "Replaces existing audio", fill: "Fills empty tracks" };
 
 const BulkAudioDrop = () => {
   const { show, reload } = useContext(EditorContext);
@@ -181,7 +182,7 @@ const BulkAudioDrop = () => {
                 <p className="admin-progress-line">
                   {preparing ? (
                     <>
-                      <FontAwesomeIcon icon={faCheck} /> Upload Complete
+                      <FontAwesomeIcon icon={faCheck} /> Upload complete
                     </>
                   ) : (
                     <>
@@ -220,38 +221,48 @@ const BulkAudioDrop = () => {
         <div className="admin-modal-overlay" onClick={close}>
         <div className="admin-modal admin-modal-wide admin-bulk-plan" onClick={(e) => e.stopPropagation()}>
           <h3>Update audio</h3>
-          <p>
-            {counts.replace} to replace, {counts.fill} to fill,{" "}
-            {plan.unmatched_filenames.length} unmatched.
+          <p className="admin-bulk-summary">
+            {counts.replace} to replace, {counts.fill} to fill.
           </p>
 
-          {plan.matches.length > 0 && (
-            <ul className="admin-bulk-matches">
-              {plan.matches.map((m) => (
-                <li key={m.signed_id} className={`is-${m.action}`}>
-                  <span className="admin-bulk-position">{m.position}</span>
-                  <span className="admin-bulk-title">{m.title}</span>
-                  <span className="admin-bulk-filename">{m.filename}</span>
-                  <span className="admin-bulk-action">{ACTION_LABEL[m.action]}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          {["replace", "fill"].map((action) => {
+            const items = plan.matches.filter((m) => m.action === action);
+            if (items.length === 0) return null;
+            return (
+              <div key={action} className="admin-bulk-group">
+                <h4>{GROUP_LABEL[action]}</h4>
+                <ul className="admin-bulk-matches">
+                  {items.map((m) => (
+                    <li key={m.signed_id}>
+                      <span className="admin-bulk-position">{m.position}</span>
+                      <span className="admin-bulk-title">{m.title}</span>
+                      <span className="admin-bulk-filename">{m.filename}</span>
+                      <span className="admin-bulk-duration">
+                        {m.duration ? formatDurationTrack(m.duration) : ""}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
 
-          {plan.unmatched_filenames.length > 0 && (
-            <div className="admin-bulk-unmatched">
-              <h4>Unmatched files</h4>
+          <div className="admin-bulk-unmatched">
+            <h4>Unmatched files</h4>
+            {plan.unmatched_filenames.length > 0 ? (
               <ul>
                 {plan.unmatched_filenames.map((name) => (
                   <li key={name}>{name}</li>
                 ))}
               </ul>
-            </div>
-          )}
+            ) : (
+              <p>None</p>
+            )}
+          </div>
 
-          {plan.tracks_without_audio.length > 0 && (
-            <div className="admin-bulk-gaps">
-              <h4>Tracks still without audio</h4>
+          <div className="admin-bulk-gaps">
+            <h4>Unmatched tracks</h4>
+            {plan.tracks_without_audio.length > 0 ? (
               <ul>
                 {plan.tracks_without_audio.map((t) => (
                   <li key={t.track_id}>
@@ -259,8 +270,10 @@ const BulkAudioDrop = () => {
                   </li>
                 ))}
               </ul>
-            </div>
-          )}
+            ) : (
+              <p>None</p>
+            )}
+          </div>
 
           <div className="admin-modal-actions">
             <button type="button" onClick={apply} disabled={busy || plan.matches.length === 0}>
