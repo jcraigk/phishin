@@ -18,7 +18,7 @@ import { formatDurationTrack } from "../helpers/utils";
 import { GaplessEngine } from "../player/GaplessEngine";
 import { WebAudioBackend } from "../player/WebAudioBackend";
 
-const GROUP_LABEL = { replace: "Replaces existing audio", fill: "Fills empty tracks" };
+const GROUP_LABEL = { replace: "Replace track audio", fill: "Fill empty tracks" };
 
 const BulkAudioDrop = () => {
   const { show, reload } = useContext(EditorContext);
