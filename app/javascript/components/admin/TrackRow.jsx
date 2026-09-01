@@ -177,15 +177,36 @@ const TrackRow = ({
             >
               <FontAwesomeIcon icon={previewPlaying ? faPause : faPlay} />
             </button>
-            <input
-              type="range"
-              className="admin-preview-scrub"
-              min="0"
-              max={(track.duration || 0) / 1000}
-              step="0.1"
-              value={previewActive ? previewTime : 0}
-              onChange={(e) => onSeekPreview(Number(e.target.value))}
-            />
+            <span
+              className="admin-row-waveform"
+              style={
+                track.waveform_url
+                  ? { backgroundImage: `url(${track.waveform_url})` }
+                  : undefined
+              }
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const frac = (e.clientX - rect.left) / rect.width;
+                onSeekPreview(frac * ((track.duration || 0) / 1000));
+              }}
+            >
+              <span
+                className="admin-row-waveform-progress"
+                style={{
+                  maskImage: track.waveform_url
+                    ? `url(${track.waveform_url})`
+                    : undefined,
+                  WebkitMaskImage: track.waveform_url
+                    ? `url(${track.waveform_url})`
+                    : undefined,
+                  background: `linear-gradient(to right, var(--blue) ${
+                    previewActive && track.duration
+                      ? (previewTime / (track.duration / 1000)) * 100
+                      : 0
+                  }%, transparent 0)`,
+                }}
+              />
+            </span>
             <span className="admin-track-duration">
               {previewActive
                 ? formatDuration(previewTime * 1000)

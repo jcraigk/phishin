@@ -64,7 +64,7 @@ const ReplacePanel = ({ track, onClose }) => {
         </div>
       </div>
     </div>,
-    document.body
+    document.querySelector(".admin-layout") || document.body
   );
 };
 

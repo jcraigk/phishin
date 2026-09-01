@@ -698,10 +698,27 @@
     justify-content: flex-end;
     gap: 0.4rem;
 
-    .admin-preview-scrub {
+    .admin-row-waveform {
+      position: relative;
       flex: 1;
       min-width: 8rem;
-      accent-color: var(--blue);
+      height: 30px;
+      cursor: pointer;
+      background-color: var(--control-gray);
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      border-radius: 4px;
+    }
+
+    .admin-row-waveform-progress {
+      position: absolute;
+      inset: 0;
+      mask-size: 100% 100%;
+      mask-repeat: no-repeat;
+      mask-mode: alpha;
+      -webkit-mask-size: 100% 100%;
+      -webkit-mask-repeat: no-repeat;
+      pointer-events: none;
     }
   }
 
