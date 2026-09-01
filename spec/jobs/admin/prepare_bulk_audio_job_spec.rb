@@ -77,6 +77,29 @@ RSpec.describe Admin::PrepareBulkAudioJob do
       .with(notes: "A lovely soundboard recording.", filenames: [ "d1t02.flac" ])
   end
 
+  it "uses an uploaded notes txt as the title source and saves it to the show" do
+    File.write(fixtures.join("info.txt"), "Disc 1\n01. Chalk Dust Torture")
+    described_class.new.perform(
+      show.id, admin_job.id,
+      [ upload("info.txt", "text/plain"), upload("d1t01.flac", "audio/flac") ]
+    )
+    blob = ActiveStorage::Blob.find_signed!(admin_job.reload.payload["signed_ids"].first)
+    expect(blob.filename.to_s).to eq("Chalk Dust Torture.mp3")
+    expect(show.reload.taper_notes).to eq("Disc 1\n01. Chalk Dust Torture")
+  end
+
+  it "prefers an uploaded notes txt over stale show notes without overwriting them" do
+    show.update!(taper_notes: "Disc 1\n01. Suzie Greenberg")
+    File.write(fixtures.join("info.txt"), "Disc 1\n01. Chalk Dust Torture")
+    described_class.new.perform(
+      show.id, admin_job.id,
+      [ upload("info.txt", "text/plain"), upload("d1t01.flac", "audio/flac") ]
+    )
+    blob = ActiveStorage::Blob.find_signed!(admin_job.reload.payload["signed_ids"].first)
+    expect(blob.filename.to_s).to eq("Chalk Dust Torture.mp3")
+    expect(show.reload.taper_notes).to eq("Disc 1\n01. Suzie Greenberg")
+  end
+
   it "passes an mp3 through without renaming it" do
     described_class.new.perform(show.id, admin_job.id, [ upload("d2t01.mp3", "audio/mpeg") ])
     blob = ActiveStorage::Blob.find_signed!(admin_job.reload.payload["signed_ids"].first)

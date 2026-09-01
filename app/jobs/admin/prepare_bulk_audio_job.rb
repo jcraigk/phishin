@@ -64,8 +64,16 @@ class Admin::PrepareBulkAudioJob
     end.sort_by(&:downcase)
   end
 
+  def uploaded_notes
+    @uploaded_notes ||= Dir.glob(File.join(@dir, "**/*.txt")).select do |path|
+      File.file?(path) && !path.include?("__MACOSX") &&
+        !File.basename(path).start_with?(".")
+    end.sort.map { File.read(it).scrub }.join("\n")
+  end
+
   def titles_for(files)
-    notes = @show.taper_notes.to_s
+    notes = uploaded_notes.presence || @show.taper_notes.to_s
+    @show.update!(taper_notes: notes) if uploaded_notes.present? && @show.taper_notes.blank?
     parsed = Admin::TaperNotesTracklist.call(notes)
     titles = files.index_with do |path|
       key = Admin::TaperNotesTracklist.key_for(path)
