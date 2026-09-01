@@ -37,11 +37,12 @@ const BulkAudioDrop = () => {
     reset();
     const totalBytes = files.reduce((sum, file) => sum + file.size, 0) || 1;
     let doneBytes = 0;
-    setUploading({ done: 0, total: files.length, percent: 0 });
+    setUploading({ done: 0, total: files.length, percent: 0, filename: files[0].name });
 
     let signedIds = [];
     try {
       for (const file of files) {
+        setUploading((prev) => ({ ...prev, filename: file.name }));
         signedIds.push(
           await uploadFile(file, (percent) =>
             setUploading((prev) => ({
@@ -152,8 +153,8 @@ const BulkAudioDrop = () => {
               <>
                 <p className="admin-progress-line">
                   <FontAwesomeIcon icon={faSpinner} spin /> Uploading{" "}
-                  {Math.min(uploading.done + 1, uploading.total)} of {uploading.total} (
-                  {uploading.percent ?? 0}%)
+                  {Math.min(uploading.done + 1, uploading.total)} of {uploading.total}:{" "}
+                  {uploading.filename} ({uploading.percent ?? 0}%)
                 </p>
                 <progress className="admin-progress-bar" max="100" value={uploading.percent ?? 0} />
               </>
