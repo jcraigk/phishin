@@ -66,6 +66,15 @@ RSpec.describe BulkAudioMatcher do
     it "leaves nothing unmatched" do
       expect(result[:unmatched_filenames]).to be_empty
     end
+
+    it "reports each file's duration in milliseconds" do
+      expect(result[:matches].first[:duration]).to be_within(500).of(20_000)
+    end
+  end
+
+  it "orders matches by track position" do
+    result = plan("02 Bathtub Gin.mp3", "01 Ghost.mp3")
+    expect(result[:matches].map { |m| m[:position] }).to eq([ 1, 2 ])
   end
 
   it "matches on a set-prefixed position like the importer's filenames" do
