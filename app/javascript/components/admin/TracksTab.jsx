@@ -104,6 +104,9 @@ const TracksTab = () => {
   const [targetSet, setTargetSet] = useState("1");
   const [actionsSlot, setActionsSlot] = useState(null);
   const [addSetOpen, setAddSetOpen] = useState(false);
+  const [inserting, setInserting] = useState(false);
+  const [insertTitle, setInsertTitle] = useState("");
+  const [insertPosition, setInsertPosition] = useState(1);
 
   useEffect(() => {
     setActionsSlot(document.getElementById("admin-tab-actions"));
@@ -216,23 +219,17 @@ const TracksTab = () => {
 
   // The new track takes the set of the track above its slot, since position
   // inside a set is what determines set membership now.
-  const insertTrack = async () => {
-    const position = window.prompt(
-      "Insert at position",
-      String(tracks.length + 1)
-    );
-    if (position === null) return;
-    const title = window.prompt("Track title", "");
-    if (title === null) return;
-    const set = tracks[Number(position) - 2]?.set || tracks[0]?.set || "1";
-
+  const addTrack = async () => {
+    const position = insertPosition;
+    const set = tracks[position - 2]?.set || tracks[0]?.set || "1";
+    setInserting(false);
     setError(null);
     setBusy(true);
     try {
       setShow(
         await adminPost(`/shows/${show.date}/tracks`, {
-          position: Number(position),
-          title,
+          position,
+          title: insertTitle.trim(),
           set,
         })
       );
@@ -249,7 +246,15 @@ const TracksTab = () => {
 
   const tabActions = (
     <>
-      <button type="button" onClick={insertTrack} disabled={busy}>
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => {
+          setInsertTitle("");
+          setInsertPosition(tracks.length + 1);
+          setInserting(true);
+        }}
+      >
         <FontAwesomeIcon icon={faPlus} /> Add track
       </button>
       <BulkAudioDrop />
@@ -349,6 +354,50 @@ const TracksTab = () => {
             );
           })}
         </table>
+      )}
+
+      {inserting && (
+        <div className="admin-modal-overlay" onClick={() => setInserting(false)}>
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Add Track</h3>
+            <label className="admin-modal-field">
+              <span>Title</span>
+              <input
+                type="text"
+                value={insertTitle}
+                onChange={(e) => setInsertTitle(e.target.value)}
+              />
+            </label>
+            <label className="admin-modal-field">
+              <span>Position</span>
+              <select
+                value={insertPosition}
+                onChange={(e) => setInsertPosition(Number(e.target.value))}
+              >
+                {tracks.map((t, i) => (
+                  <option key={t.id} value={i + 1}>
+                    {i + 1}. before {t.title}
+                  </option>
+                ))}
+                <option value={tracks.length + 1}>
+                  {tracks.length + 1}. (end of show)
+                </option>
+              </select>
+            </label>
+            <div className="admin-modal-actions">
+              <button
+                type="button"
+                disabled={busy || insertTitle.trim() === ""}
+                onClick={addTrack}
+              >
+                <FontAwesomeIcon icon={faCheck} /> Add Track
+              </button>
+              <button type="button" onClick={() => setInserting(false)}>
+                <FontAwesomeIcon icon={faXmark} /> Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {repositioning && (
