@@ -5,8 +5,11 @@ import FilterSelect from "./FilterSelect";
 
 const BLANK_VENUE = { name: "", city: "", state: "", country: "USA" };
 
-const venueLabel = (venue) =>
-  `${venue.name}, ${venue.city}${venue.state ? `, ${venue.state}` : ""} (${venue.country})`;
+const venueLabel = (venue) => {
+  const place = `${venue.city}${venue.state ? `, ${venue.state}` : ""}`;
+  const country = venue.country && venue.country !== "USA" ? ` (${venue.country})` : "";
+  return `${venue.name} - ${place}${country}`;
+};
 
 // The venue picker that sits in the editor's title row. Selecting a venue
 // saves immediately, like every other metadata control.
