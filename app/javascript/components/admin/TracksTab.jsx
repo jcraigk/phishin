@@ -166,7 +166,16 @@ const TracksTab = () => {
     }
   };
 
-  const seekPreview = (seconds) => previewEngine.current?.seek(seconds);
+  const seekPreview = (track, seconds) => {
+    const engine = previewEngine.current;
+    if (!engine) return;
+    if (preview.trackId !== track.id) {
+      engine.goto(playable.findIndex((t) => t.id === track.id), {
+        play: preview.playing,
+      });
+    }
+    engine.seek(seconds);
+  };
 
   // The payload does not say which staged file backs an attached track, so the
   // summary reports tracks still awaiting audio rather than claiming which files
@@ -416,7 +425,7 @@ const TracksTab = () => {
                     previewPlaying={preview.trackId === track.id && preview.playing}
                     previewTime={preview.time}
                     onTogglePreview={() => togglePreview(track)}
-                    onSeekPreview={seekPreview}
+                    onSeekPreview={(seconds) => seekPreview(track, seconds)}
                   />
                 ))}
               </tbody>

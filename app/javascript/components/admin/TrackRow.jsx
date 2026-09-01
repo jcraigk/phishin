@@ -177,17 +177,15 @@ const TrackRow = ({
             >
               <FontAwesomeIcon icon={previewPlaying ? faPause : faPlay} />
             </button>
-            {previewActive && (
-              <input
-                type="range"
-                className="admin-preview-scrub"
-                min="0"
-                max={(track.duration || 0) / 1000}
-                step="0.1"
-                value={previewTime}
-                onChange={(e) => onSeekPreview(Number(e.target.value))}
-              />
-            )}
+            <input
+              type="range"
+              className="admin-preview-scrub"
+              min="0"
+              max={(track.duration || 0) / 1000}
+              step="0.1"
+              value={previewActive ? previewTime : 0}
+              onChange={(e) => onSeekPreview(Number(e.target.value))}
+            />
             <span className="admin-track-duration">
               {previewActive
                 ? formatDuration(previewTime * 1000)
