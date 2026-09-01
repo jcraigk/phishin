@@ -131,20 +131,26 @@ const TracksTab = () => {
   // end of one set is the same slot as the start of the next. The choices are
   // the sets of the neighboring tracks (plus any just-added empty set), and
   // the earlier one is the default.
-  const setChoicesFor = (track, position) => {
+  const slotNeighbors = (track, position) => {
     const ordered = tracks.filter((t) => t.id !== track.id);
     ordered.splice(position - 1, 0, track);
     const at = ordered.indexOf(track);
-    const neighbors = [ordered[at - 1]?.set, ordered[at + 1]?.set].filter(Boolean);
-    const choices = [...new Set([...neighbors, track.set, ...pendingSets])];
+    return { above: ordered[at - 1], below: ordered[at + 1] };
+  };
+
+  const setChoicesFor = (track, position) => {
+    const { above, below } = slotNeighbors(track, position);
+    const choices = [
+      ...new Set([above?.set, below?.set, track.set, ...pendingSets].filter(Boolean)),
+    ];
     if (choices.length === 0) return SETS;
     return SETS.filter((set) => choices.includes(set));
   };
 
   const chooseTargetPosition = (position) => {
     setTargetPosition(position);
-    const choices = setChoicesFor(repositioning, position);
-    setTargetSet(choices[0]);
+    const { above, below } = slotNeighbors(repositioning, position);
+    setTargetSet(above?.set || below?.set || repositioning.set);
   };
 
   const applyReposition = () => {
