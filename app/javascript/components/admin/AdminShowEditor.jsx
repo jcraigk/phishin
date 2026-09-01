@@ -110,8 +110,8 @@ const AdminShowEditor = () => {
         {error && (
           <div className="admin-modal-overlay" onClick={() => setError(null)}>
             <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-              <h3>Something went wrong</h3>
-              <p className="admin-error">{error}</p>
+              <h3>Error</h3>
+              <p className="admin-error admin-modal-message">{error}</p>
               <div className="admin-modal-actions">
                 <button type="button" onClick={() => setError(null)}>
                   <FontAwesomeIcon icon={faCheck} /> OK
