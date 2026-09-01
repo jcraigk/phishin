@@ -147,7 +147,12 @@ const AdminDashboard = () => {
       </div>
 
       <div className="admin-grid">
-        <Card title="Draft Shows" icon={faCompactDisc} count={drafts?.length}>
+        <Card
+          title="Draft Shows"
+          icon={faCompactDisc}
+          count={drafts?.length}
+          action={<Link className="admin-card-action" to="/admin/shows">All shows</Link>}
+        >
           {drafts === null ? (
             <Empty>Loading</Empty>
           ) : drafts.length === 0 ? (
