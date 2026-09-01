@@ -2028,4 +2028,13 @@
 .admin-progress-bar {
   width: 100%;
   margin-top: 0.5rem;
+  accent-color: var(--blue);
+
+  &::-webkit-progress-value {
+    background: var(--blue);
+  }
+
+  &::-moz-progress-bar {
+    background: var(--blue);
+  }
 }
