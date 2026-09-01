@@ -101,7 +101,7 @@ const AdminShowEditor = () => {
           </a>
           <button
             type="button"
-            className="admin-icon-button admin-danger"
+            className="admin-trash-button"
             title="Delete show"
             aria-label="Delete show"
             onClick={() => setConfirmingDelete(true)}

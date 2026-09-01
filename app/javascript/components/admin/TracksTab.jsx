@@ -258,7 +258,7 @@ const TracksTab = () => {
                     {setName(group.set)}
                     <button
                       type="button"
-                      className="admin-set-dismiss"
+                      className="admin-trash-button admin-set-dismiss"
                       aria-label={`Remove ${setName(group.set)}`}
                       title={
                         group.pending

@@ -158,7 +158,7 @@ const TrackRow = ({
       <td className="admin-track-actions">
         <button
           type="button"
-          className="admin-icon-button"
+          className="admin-trash-button"
           aria-label="Delete track"
           title="Delete track"
           disabled={busy}
