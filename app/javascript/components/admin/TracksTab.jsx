@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
-  faLayerGroup,
   faPlus,
   faTrashCan,
   faXmark,
@@ -320,14 +319,13 @@ const TracksTab = () => {
       >
         <FontAwesomeIcon icon={faPlus} /> Add track
       </button>
-      <BulkAudioDrop />
       <div className="admin-row-menu">
         <button
           type="button"
           disabled={busy || addableSets.length === 0}
           onClick={() => setAddSetOpen(!addSetOpen)}
         >
-          <FontAwesomeIcon icon={faLayerGroup} /> Add set
+          <FontAwesomeIcon icon={faPlus} /> Add set
         </button>
         {addSetOpen && (
           <ul className="admin-row-menu-list">
@@ -347,6 +345,7 @@ const TracksTab = () => {
           </ul>
         )}
       </div>
+      <BulkAudioDrop />
     </>
   );
 
