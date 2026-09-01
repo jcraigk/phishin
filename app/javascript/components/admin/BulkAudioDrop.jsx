@@ -35,13 +35,30 @@ const BulkAudioDrop = () => {
       return;
     }
     reset();
-    setUploading({ done: 0, total: files.length });
+    const totalBytes = files.reduce((sum, file) => sum + file.size, 0) || 1;
+    let doneBytes = 0;
+    setUploading({ done: 0, total: files.length, percent: 0 });
 
     let signedIds = [];
     try {
       for (const file of files) {
-        signedIds.push(await uploadFile(file));
-        setUploading((prev) => ({ ...prev, done: signedIds.length }));
+        signedIds.push(
+          await uploadFile(file, (percent) =>
+            setUploading((prev) => ({
+              ...prev,
+              percent: Math.min(
+                99,
+                Math.round(((doneBytes + (file.size * percent) / 100) / totalBytes) * 100)
+              ),
+            }))
+          )
+        );
+        doneBytes += file.size;
+        setUploading((prev) => ({
+          ...prev,
+          done: signedIds.length,
+          percent: Math.round((doneBytes / totalBytes) * 100),
+        }));
       }
       // Anything beyond bare mp3s takes a server-side pass to unpack archives
       // and transcode lossless sources before the filename matching runs.
@@ -128,9 +145,13 @@ const BulkAudioDrop = () => {
               </p>
             </div>
             {uploading && (
-              <p className="admin-progress-line">
-                <FontAwesomeIcon icon={faSpinner} spin /> Uploading {uploading.done} of {uploading.total}
-              </p>
+              <>
+                <p className="admin-progress-line">
+                  <FontAwesomeIcon icon={faSpinner} spin /> Uploading {uploading.done} of{" "}
+                  {uploading.total} ({uploading.percent}%)
+                </p>
+                <progress className="admin-progress-bar" max="100" value={uploading.percent} />
+              </>
             )}
             {preparing && (
               <p className="admin-progress-line">
