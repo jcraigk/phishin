@@ -96,6 +96,18 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         { job_id: job.id }
       end
 
+      desc "Unpack and transcode uploads into mp3 blobs for a bulk upsert", hidden: true
+      params do
+        requires :signed_ids, type: Array[String]
+      end
+      post ":date/bulk_audio_prepare", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        show = admin_show
+        job = AdminJob.create!(kind: "bulk_audio_prepare", show:)
+        Admin::PrepareBulkAudioJob.perform_async(show.id, job.id, params[:signed_ids])
+        status 201
+        { job_id: job.id }
+      end
+
       desc "Plan a bulk audio upsert against a show's tracks", hidden: true
       params do
         requires :signed_ids, type: Array[String]

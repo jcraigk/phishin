@@ -3,8 +3,8 @@ import { faCheck, faCloudArrowUp, faXmark } from "@fortawesome/free-solid-svg-ic
 import React, { useContext, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
-import { adminPost } from "./adminApi";
-import { uploadFile, collectFiles, isMp3 } from "./DirectUploader";
+import { adminPost, pollJob } from "./adminApi";
+import { uploadFile, collectFiles, isMp3, isStagingSource } from "./DirectUploader";
 
 const ACTION_LABEL = { replace: "replaces existing audio", fill: "fills empty track" };
 
@@ -13,6 +13,7 @@ const BulkAudioDrop = () => {
   const [open, setOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(null);
+  const [preparing, setPreparing] = useState(null);
   const [plan, setPlan] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const { run, busy, status, error } = useJobRunner();
@@ -30,17 +31,31 @@ const BulkAudioDrop = () => {
 
   const stage = async (files) => {
     if (files.length === 0) {
-      setUploadError("No mp3 files found in that drop.");
+      setUploadError("No audio files found in that drop.");
       return;
     }
     reset();
     setUploading({ done: 0, total: files.length });
 
-    const signedIds = [];
+    let signedIds = [];
     try {
       for (const file of files) {
         signedIds.push(await uploadFile(file));
         setUploading((prev) => ({ ...prev, done: signedIds.length }));
+      }
+      // Anything beyond bare mp3s takes a server-side pass to unpack archives
+      // and transcode lossless sources before the filename matching runs.
+      if (files.some((file) => !isMp3(file))) {
+        setUploading(null);
+        setPreparing("Preparing files");
+        const { job_id: jobId } = await adminPost(
+          `/shows/${show.date}/bulk_audio_prepare`,
+          { signed_ids: signedIds }
+        );
+        const job = await pollJob(jobId, {
+          onUpdate: (j) => setPreparing(j.message || "Preparing files"),
+        });
+        signedIds = job.payload.signed_ids;
       }
       const result = await adminPost(`/shows/${show.date}/bulk_audio_match`, {
         signed_ids: signedIds,
@@ -50,6 +65,7 @@ const BulkAudioDrop = () => {
       setUploadError(e.message);
     } finally {
       setUploading(null);
+      setPreparing(null);
     }
   };
 
@@ -101,18 +117,22 @@ const BulkAudioDrop = () => {
                 setDragging(false);
                 // webkitGetAsEntry must run before the handler returns, which
                 // collectFiles does synchronously ahead of its first await.
-                collectFiles(e.dataTransfer, isMp3)
+                collectFiles(e.dataTransfer, isStagingSource)
                   .then(stage)
                   .catch((err) => setUploadError(err.message));
               }}
             >
-              <p>Drop a show folder of mp3s here to replace and fill track audio.</p>
+              <p>
+                Drop a show folder, zip, or audio files (flac, shn, wav, mp3)
+                here to replace and fill track audio.
+              </p>
             </div>
             {uploading && (
               <p className="admin-audio-status">
                 Uploading {uploading.done} of {uploading.total}
               </p>
             )}
+            {preparing && <p className="admin-audio-status">{preparing}</p>}
             {uploadError && <p className="admin-error">{uploadError}</p>}
             <div className="admin-modal-actions">
               <button type="button" onClick={close}>
