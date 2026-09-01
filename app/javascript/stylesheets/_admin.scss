@@ -697,6 +697,12 @@
     align-items: center;
     justify-content: flex-end;
     gap: 0.4rem;
+
+    .admin-preview-scrub {
+      flex: 1;
+      min-width: 8rem;
+      accent-color: var(--blue);
+    }
   }
 
   .admin-track-duration {
@@ -721,6 +727,7 @@
   }
 
   .admin-track-audio {
+    width: 30%;
     white-space: nowrap;
     text-align: right;
   }
