@@ -1,28 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import { adminDelete, adminPatch, adminPost } from "./adminApi";
 import { reasonText } from "./orphanReasons";
-
-// Blank number inputs mean "no timestamp" rather than zero, so they are sent as
-// null instead of being coerced.
-const secondsOrNull = (value) => (value.trim() === "" ? null : Number(value));
+import TimeInput from "./TimeInput";
 
 const TrackTagRow = ({ track, trackTag, managed, onSaved, onError }) => {
   const [notes, setNotes] = useState(trackTag.notes || "");
-  const [startsAt, setStartsAt] = useState(String(trackTag.starts_at_second ?? ""));
-  const [endsAt, setEndsAt] = useState(String(trackTag.ends_at_second ?? ""));
   const [transcript, setTranscript] = useState(trackTag.transcript || "");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => setNotes(trackTag.notes || ""), [trackTag.notes]);
-  useEffect(
-    () => setStartsAt(String(trackTag.starts_at_second ?? "")),
-    [trackTag.starts_at_second]
-  );
-  useEffect(
-    () => setEndsAt(String(trackTag.ends_at_second ?? "")),
-    [trackTag.ends_at_second]
-  );
   useEffect(() => setTranscript(trackTag.transcript || ""), [trackTag.transcript]);
 
   const save = async (body) => {
@@ -47,12 +36,11 @@ const TrackTagRow = ({ track, trackTag, managed, onSaved, onError }) => {
     save({ transcript });
   };
 
-  const saveSecond = (field, value, stored) => {
-    if (value === String(stored ?? "")) return;
+  const saveSecond = (field, seconds) => {
     // Editing a timestamp is the admin saying where the tag really points, so
     // an orphaned tag resolves in the same request rather than needing a second
     // click to clear a flag the edit already answered.
-    const body = { [field]: secondsOrNull(value) };
+    const body = { [field]: seconds };
     if (trackTag.orphaned_at) body.orphaned = false;
     save(body);
   };
@@ -86,28 +74,27 @@ const TrackTagRow = ({ track, trackTag, managed, onSaved, onError }) => {
           onChange={(e) => setNotes(e.target.value)}
           onBlur={saveNotes}
         />
-        <input
-          type="number"
-          min="0"
+        <TimeInput
+          value={trackTag.starts_at_second}
           placeholder="Start"
-          value={startsAt}
           disabled={busy}
-          onChange={(e) => setStartsAt(e.target.value)}
-          onBlur={() =>
-            saveSecond("starts_at_second", startsAt, trackTag.starts_at_second)
-          }
+          onCommit={(seconds) => saveSecond("starts_at_second", seconds)}
         />
-        <input
-          type="number"
-          min="0"
+        <TimeInput
+          value={trackTag.ends_at_second}
           placeholder="End"
-          value={endsAt}
           disabled={busy}
-          onChange={(e) => setEndsAt(e.target.value)}
-          onBlur={() => saveSecond("ends_at_second", endsAt, trackTag.ends_at_second)}
+          onCommit={(seconds) => saveSecond("ends_at_second", seconds)}
         />
-        <button type="button" className="admin-danger" disabled={busy} onClick={remove}>
-          Remove
+        <button
+          type="button"
+          className="admin-trash-button"
+          aria-label={`Remove ${trackTag.tag_name} tag`}
+          title="Remove tag"
+          disabled={busy}
+          onClick={remove}
+        >
+          <FontAwesomeIcon icon={faTrashCan} />
         </button>
       </div>
       {trackTag.orphaned_at && (
@@ -139,8 +126,8 @@ const TrackTagRow = ({ track, trackTag, managed, onSaved, onError }) => {
 const AddTrackTag = ({ track, tags, onSaved, onError }) => {
   const [tagId, setTagId] = useState("");
   const [notes, setNotes] = useState("");
-  const [startsAt, setStartsAt] = useState("");
-  const [endsAt, setEndsAt] = useState("");
+  const [startsAt, setStartsAt] = useState(null);
+  const [endsAt, setEndsAt] = useState(null);
   const [busy, setBusy] = useState(false);
 
   const add = async () => {
@@ -152,14 +139,14 @@ const AddTrackTag = ({ track, tags, onSaved, onError }) => {
         await adminPost(`/tracks/${track.id}/track_tags`, {
           tag_id: Number(tagId),
           notes,
-          starts_at_second: secondsOrNull(startsAt),
-          ends_at_second: secondsOrNull(endsAt),
+          starts_at_second: startsAt,
+          ends_at_second: endsAt,
         })
       );
       setTagId("");
       setNotes("");
-      setStartsAt("");
-      setEndsAt("");
+      setStartsAt(null);
+      setEndsAt(null);
     } catch (e) {
       onError(e.message);
     } finally {
@@ -190,21 +177,17 @@ const AddTrackTag = ({ track, tags, onSaved, onError }) => {
         disabled={busy}
         onChange={(e) => setNotes(e.target.value)}
       />
-      <input
-        type="number"
-        min="0"
-        placeholder="Start"
+      <TimeInput
         value={startsAt}
+        placeholder="Start"
         disabled={busy}
-        onChange={(e) => setStartsAt(e.target.value)}
+        onCommit={setStartsAt}
       />
-      <input
-        type="number"
-        min="0"
-        placeholder="End"
+      <TimeInput
         value={endsAt}
+        placeholder="End"
         disabled={busy}
-        onChange={(e) => setEndsAt(e.target.value)}
+        onCommit={setEndsAt}
       />
       <button type="button" disabled={busy || tagId === ""} onClick={add}>
         Add

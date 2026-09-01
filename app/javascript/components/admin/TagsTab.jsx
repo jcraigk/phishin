@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronRight, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import TagEditor from "./TagEditor";
 import TaginPanel from "./TaginPanel";
@@ -52,8 +52,15 @@ const ShowTagRow = ({ showTag, managed, onSaved, onError }) => {
           onChange={(e) => setNotes(e.target.value)}
           onBlur={saveNotes}
         />
-        <button type="button" className="admin-danger" disabled={busy} onClick={remove}>
-          Remove
+        <button
+          type="button"
+          className="admin-trash-button"
+          aria-label={`Remove ${showTag.tag_name} tag`}
+          title="Remove tag"
+          disabled={busy}
+          onClick={remove}
+        >
+          <FontAwesomeIcon icon={faTrashCan} />
         </button>
       </div>
     </li>

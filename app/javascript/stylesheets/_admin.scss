@@ -1167,10 +1167,11 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
+}
 
-  input[type="number"] {
-    width: 5rem;
-  }
+.admin-time-input {
+  width: 5.5rem;
+  text-align: right;
 }
 
 .admin-tag-name {
@@ -1203,10 +1204,6 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
-
-  input[type="number"] {
-    width: 5rem;
-  }
 }
 
 .admin-tag-tracks {
