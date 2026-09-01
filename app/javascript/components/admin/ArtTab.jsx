@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
-import { adminGet, adminPatch, adminPost } from "./adminApi";
+import { adminDelete, adminGet, adminPatch, adminPost } from "./adminApi";
 import { uploadFile } from "./DirectUploader";
 import FilterSelect from "./FilterSelect";
 
@@ -77,9 +77,24 @@ const EditControl = ({ blobKey, label }) => {
 };
 
 const CandidateCard = ({ candidate }) => {
-  const { show, reload } = useContext(EditorContext);
+  const { show, reload, setError } = useContext(EditorContext);
   const [zoom, setZoom] = useState("0");
+  const [removing, setRemoving] = useState(false);
   const { run, busy, status, error } = useJobRunner();
+
+  const remove = async () => {
+    if (!window.confirm("Remove this candidate?")) return;
+    setRemoving(true);
+    try {
+      await adminDelete(
+        `/shows/${show.date}/cover_art/candidates?blob_key=${encodeURIComponent(candidate.blob_key)}`
+      );
+      await reload();
+    } catch (e) {
+      setError(e.message);
+      setRemoving(false);
+    }
+  };
 
   const select = () => {
     if (!window.confirm(SELECT_CONFIRM)) return;
@@ -107,8 +122,16 @@ const CandidateCard = ({ candidate }) => {
             onChange={(e) => setZoom(e.target.value)}
           />
         </label>
-        <button type="button" disabled={busy} onClick={select}>
+        <button type="button" disabled={busy || removing} onClick={select}>
           {busy ? "Applying..." : "Select"}
+        </button>
+        <button
+          type="button"
+          className="admin-danger"
+          disabled={busy || removing}
+          onClick={remove}
+        >
+          {removing ? "Removing..." : "Remove"}
         </button>
       </div>
       <EditControl blobKey={candidate.blob_key} label="AI edit" />

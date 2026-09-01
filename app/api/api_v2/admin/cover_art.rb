@@ -82,6 +82,29 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
             status 201
             { job_id: job.id }
           end
+
+          # Purge only when nothing else points at the blob: a parent-linked
+          # candidate shares the parent show's cover art blob, and purging that
+          # would take the parent's art with it.
+          desc "Remove a candidate", hidden: true
+          params do
+            requires :blob_key, type: String
+          end
+          delete :candidates do
+            show = admin_show
+            validate_candidate_blob_key!(show, params[:blob_key])
+            attachments = show.cover_art_candidates_attachments.includes(:blob)
+                              .select { |a| a.blob.key == params[:blob_key] }
+            attachments.each do |attachment|
+              blob_in_use = ActiveStorage::Attachment
+                            .where(blob_id: attachment.blob_id)
+                            .where.not(id: attachment.id)
+                            .exists?
+              blob_in_use ? attachment.destroy : attachment.purge
+            end
+            status 204
+            body false
+          end
         end
       end
     end

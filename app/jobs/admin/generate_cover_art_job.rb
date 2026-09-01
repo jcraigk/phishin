@@ -15,7 +15,11 @@ class Admin::GenerateCoverArtJob
 
     admin_job.run! do
       blob = show.cover_art_parent_show_id.present? ? parent_blob(show) : generated_blob(show)
-      show.cover_art_candidates.attach(blob)
+      # Copying from a parent twice would attach the same blob twice and render
+      # a duplicate card; the second copy is a no-op instead.
+      unless show.cover_art_candidates_attachments.any? { it.blob_id == blob.id }
+        show.cover_art_candidates.attach(blob)
+      end
       admin_job.payload["blob_key"] = blob.key
       admin_job.save!
     end

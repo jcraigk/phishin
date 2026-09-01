@@ -1,4 +1,6 @@
 import React, { useContext, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import TrackRow from "./TrackRow";
 import { adminPost, adminPut } from "./adminApi";
@@ -271,7 +273,7 @@ const TracksTab = () => {
                           : removeSet(group)
                       }
                     >
-                      &times;
+                      <FontAwesomeIcon icon={faTrashCan} />
                     </button>
                   </th>
                 </tr>
