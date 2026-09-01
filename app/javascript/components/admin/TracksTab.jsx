@@ -118,6 +118,29 @@ const TracksTab = () => {
 
   const hintFor = (index) => (overIndex === index ? overHalf : null);
 
+  // Removing a set does not remove its tracks: they fold into the set above,
+  // or the one below when the removed set is first. Order never changes, so
+  // this is a pure set reassignment through the same reorder endpoint.
+  const removeSet = (group) => {
+    const groups = groupBySet(tracks);
+    const at = groups.findIndex((g) => g.set === group.set && g.tracks[0]?.index === group.tracks[0]?.index);
+    const neighbor = groups[at - 1] || groups[at + 1];
+    if (!neighbor) {
+      setError("The only set cannot be removed.");
+      return;
+    }
+    if (
+      !window.confirm(
+        `Remove ${setName(group.set)}? Its ${group.tracks.length} track${group.tracks.length === 1 ? "" : "s"} move to ${setName(neighbor.set)}.`
+      )
+    )
+      return;
+    const sets = Object.fromEntries(
+      group.tracks.map(({ track }) => [track.id, neighbor.set])
+    );
+    commitOrder(tracks, sets);
+  };
+
   const trackDragOver = (index) => (e) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
@@ -216,20 +239,25 @@ const TracksTab = () => {
                 >
                   <th colSpan={8}>
                     {setName(group.set)}
-                    {group.pending && (
-                      <button
-                        type="button"
-                        className="admin-set-dismiss"
-                        aria-label={`Remove empty ${setName(group.set)}`}
-                        onClick={() =>
-                          setPendingSets((prev) =>
-                            prev.filter((set) => set !== group.set)
-                          )
-                        }
-                      >
-                        &times;
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      className="admin-set-dismiss"
+                      aria-label={`Remove ${setName(group.set)}`}
+                      title={
+                        group.pending
+                          ? "Remove this empty set"
+                          : "Remove this set and fold its tracks into the neighboring set"
+                      }
+                      onClick={() =>
+                        group.pending
+                          ? setPendingSets((prev) =>
+                              prev.filter((set) => set !== group.set)
+                            )
+                          : removeSet(group)
+                      }
+                    >
+                      &times;
+                    </button>
                   </th>
                 </tr>
                 {group.tracks.map(({ track, index }) => (
