@@ -6,7 +6,7 @@ class BulkAudioMatcher < ApplicationService
     {
       matches:,
       unmatched_filenames: filenames - matches.map { |m| m[:filename] },
-      tracks_without_audio: audioless_track_payloads
+      unmatched_tracks: unmatched_track_payloads
     }
   end
 
@@ -69,8 +69,9 @@ class BulkAudioMatcher < ApplicationService
     status.success? ? (out.to_f * 1000).round : nil
   end
 
-  def audioless_track_payloads
-    tracks.reject { |track| track.mp3_audio.attached? }.map do |track|
+  def unmatched_track_payloads
+    matched = matches.map { |m| m[:track_id] }
+    tracks.reject { |track| matched.include?(track.id) }.map do |track|
       { track_id: track.id, position: track.position, title: track.title }
     end
   end

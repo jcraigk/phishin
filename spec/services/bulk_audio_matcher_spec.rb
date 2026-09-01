@@ -101,10 +101,15 @@ RSpec.describe BulkAudioMatcher do
     expect(result[:matches].map { |m| m[:track_id] }).to eq([ track1.id ])
   end
 
-  it "reports the tracks that still have no audio" do
+  it "reports the tracks that matched no file" do
     result = plan("01 Ghost.mp3")
-    expect(result[:tracks_without_audio])
+    expect(result[:unmatched_tracks])
       .to eq([ { track_id: track2.id, position: 2, title: "Bathtub Gin" } ])
+  end
+
+  it "reports no unmatched tracks when every track gets a file" do
+    result = plan("01 Ghost.mp3", "02 Bathtub Gin.mp3")
+    expect(result[:unmatched_tracks]).to eq([])
   end
 
   it "carries the signed id of each matched blob" do

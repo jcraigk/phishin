@@ -609,10 +609,10 @@ RSpec.describe "API v2 Admin Shows" do
         expect(JSON.parse(response.body)["unmatched_filenames"]).to eq([ "88 Unknown Jam.mp3" ])
       end
 
-      it "lists the tracks still without audio" do
+      it "lists the tracks that matched no file" do
         post "/api/v2/admin/shows/2025-08-01/bulk_audio_match",
              params: { signed_ids: }, headers: admin_headers
-        expect(JSON.parse(response.body)["tracks_without_audio"].map { |t| t["track_id"] })
+        expect(JSON.parse(response.body)["unmatched_tracks"].map { |t| t["track_id"] })
           .to eq([ without_audio.id ])
       end
 
