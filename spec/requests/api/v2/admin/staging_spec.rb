@@ -1,4 +1,3 @@
-# spec/requests/api/v2/admin/staging_spec.rb
 require "rails_helper"
 
 RSpec.describe "API v2 Admin Staging" do
@@ -134,8 +133,6 @@ RSpec.describe "API v2 Admin Staging" do
       expect(tracks.second.set).to eq("1")
     end
 
-    # A fade-out belongs to the end of the track; after a split that end is the
-    # second half's. The first half keeps the fade-in.
     it "hands the fade-out to the second half" do
       a.update!(fade_in_s: 1, fade_out_s: 4)
       post "#{base}/staging/tracks/#{a.id}/split", params: { at_s: 20 }, headers: admin_headers

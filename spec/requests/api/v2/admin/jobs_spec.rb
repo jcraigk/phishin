@@ -34,8 +34,6 @@ RSpec.describe "API v2 Admin Jobs" do
       expect(JSON.parse(response.body)["jobs"].size).to eq(2)
     end
 
-    # The dashboard links a row to its show by date, so the date has to be in the
-    # payload rather than only the id.
     it "includes the show date when the job has a show" do
       show = create(:show, date: "2024-07-19")
       create(:admin_job, kind: "publish", show:)
@@ -104,9 +102,6 @@ RSpec.describe "API v2 Admin Jobs" do
     end
   end
 
-  # The whole point of preview-before-commit: what the job rendered must still be
-  # auditionable through the endpoint once the job has finished and its temp
-  # handles are gone.
   describe "streaming a completed trim preview" do
     let(:show) { create(:show, date: "2024-07-19") }
     let(:track) { create(:track, show:, position: 1, songs: [ create(:song) ]) }
@@ -142,8 +137,6 @@ RSpec.describe "API v2 Admin Jobs" do
     end
   end
 
-  # A boundary shift renders both sides, so each has to be auditionable through
-  # the one endpoint by index before an admin commits to the move.
   describe "streaming a completed boundary preview" do
     let(:show) { create(:show, date: "2024-07-19") }
     let(:track) do

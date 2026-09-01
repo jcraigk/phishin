@@ -1,8 +1,3 @@
-# app/api/api_v2/admin/staging.rb
-# Every edit in staging is a write to staged_tracks; the audio is untouched
-# until commit. Each mutating endpoint answers with the full staging payload,
-# because a split, combine or delete renumbers its neighbors and the editor
-# would otherwise have to guess which rows moved.
 class ApiV2::Admin::Staging < ApiV2::Admin::Base
   helpers ApiV2::Helpers::AdminHelper
 
@@ -57,8 +52,6 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
           staging_payload(track.show.reload)
         end
 
-        # The fade-out travels with the end of the track, so it goes to the
-        # second half. Positions after the cut shift down by one.
         desc "Split a staged track at a time", hidden: true
         params do
           requires :at_s, type: Float
@@ -170,9 +163,6 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
       id.nil? ? nil : klass.find(id)
     end
 
-    # Neighbors are checked here rather than in the model so the message can
-    # name what was hit. Trimming inward (a gap between tracks) is allowed: it
-    # is how the head of a show or a between-set tape flip gets dropped.
     def ensure_in_bounds!(track)
       total = track.show.staged_sources.sum(:duration_s)
       error!({ message: "start must not be before the timeline" }, 422) if track.start_s.negative?

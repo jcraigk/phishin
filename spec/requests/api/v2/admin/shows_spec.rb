@@ -12,9 +12,6 @@ RSpec.describe "API v2 Admin Shows" do
     { "X-Auth-Token" => token_for(admin) }
   end
 
-  # Destroying a record with attachments enqueues ActiveStorage::PurgeJob rather than
-  # purging inline, so blob deletion is invisible to a test unless the job is run.
-  # Only purge jobs are drained; draining everything would fire unrelated jobs.
   def run_enqueued_purge_jobs
     Sidekiq::Queues.jobs_by_queue.values.flatten.each do |job|
       next unless job["wrapped"] == "ActiveStorage::PurgeJob"
@@ -139,8 +136,6 @@ RSpec.describe "API v2 Admin Shows" do
       expect(staged.first["byte_size"]).to eq(blob.byte_size)
     end
 
-    # ActiveStorage::Filename#to_s replaces ">" with "-". Segue markers must
-    # survive for the importer to match track titles in Task 4.
     it "preserves segue characters in the staged filename payload" do
       blob = upload_blob("II 03 Harry Hood > Wilson.mp3")
       post "/api/v2/admin/shows/2025-08-01/staged_audio",
@@ -475,9 +470,6 @@ RSpec.describe "API v2 Admin Shows" do
       expect(ActiveStorage::Attachment.where(record_type: "Show", record_id: show.id)).to be_empty
     end
 
-    # Deleting a show enqueues a purge for each of its blobs. These two examples pin
-    # down that a blob survives while anything else still points at it, and is only
-    # then reclaimed. Purge jobs must actually run or the assertions prove nothing.
     it "keeps a blob that a track on another show still references" do
       show = create(:show, date: "2025-08-01", published: false)
       keeper = create(:show, date: "2025-08-05", published: false)
@@ -519,7 +511,6 @@ RSpec.describe "API v2 Admin Shows" do
       expect(blob.service.exist?(blob.key)).to be(true)
     end
 
-    # The same guard must not leak blobs that nothing else points at.
     it "purges a blob no other record references" do
       show = create(:show, date: "2025-08-01", published: false)
       blob = ActiveStorage::Blob.create_and_upload!(
@@ -625,8 +616,6 @@ RSpec.describe "API v2 Admin Shows" do
           .to eq([ without_audio.id ])
       end
 
-      # The whole reason the plan exists: an admin sees what would be overwritten
-      # before anything is.
       it "mutates no track audio" do
         key = with_audio.mp3_audio.blob.key
         post "/api/v2/admin/shows/2025-08-01/bulk_audio_match",
@@ -906,15 +895,11 @@ RSpec.describe "API v2 Admin Shows" do
       expect(response).to have_http_status(:not_found)
     end
 
-    # The point of the whole feature: a draft is invisible to the public API until
-    # this runs, and visible the moment it finishes.
     it "puts the show on the public API once the job runs" do
       allow(LoreSyncService).to receive(:call)
       create(:tag, name: "Debut")
       create(:tag, name: "Bustout")
       make_ready
-      # The public show serializer builds cover art variants, which need a real image
-      # behind the attachment rather than the placeholder make_ready uses.
       show.cover_art.attach(
         io: file_fixture("cover-art-large.jpg").open,
         filename: "cover.jpg",

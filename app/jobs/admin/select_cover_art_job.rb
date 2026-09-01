@@ -1,16 +1,3 @@
-# Promotes one cover art candidate to be the show's actual cover art, then walks
-# the rest of the pipeline the CLI runs by hand: composite the album cover, push
-# the new art into every track's ID3 tags, hand it down to parent-linked child
-# shows, and drop the candidates the admin passed over.
-#
-# Blob ownership is the delicate part. A candidate blob can be shared -- a
-# parent-linked show is offered its parent's own cover art blob as a candidate --
-# so nothing here purges a blob that another attachment still points at. Losing
-# candidates give up their attachment first and their blob only if that was the
-# last reference. Variant records are never touched: replacing an attachment lets
-# Active Storage retire the old blob and its variants together, while destroying
-# variant records by hand is what orphans them and silently breaks album art
-# embedding.
 class Admin::SelectCoverArtJob
   include Sidekiq::Job
 
@@ -36,8 +23,6 @@ class Admin::SelectCoverArtJob
 
   private
 
-  # The key must name an image this show already holds. An arbitrary key would
-  # let a caller install any file in storage as the show's cover art.
   def candidate_blob(blob_key)
     attachment = @show.cover_art_candidates_attachments.includes(:blob)
                       .find { |candidate| candidate.blob.key == blob_key }
@@ -45,9 +30,6 @@ class Admin::SelectCoverArtJob
     attachment.blob
   end
 
-  # Zoom reuses HasCoverArt#attach_cover_art_by_path, the same crop-and-resize the
-  # CLI drives, so a zoomed selection lands on a freshly processed blob. Without
-  # zoom the candidate blob is attached as-is and the two attachments share it.
   def attach_cover_art(blob, zoom)
     if zoom.positive?
       attach_zoomed(blob, zoom)
@@ -71,10 +53,6 @@ class Admin::SelectCoverArtJob
     @admin_job.update!(progress: ALBUM_COVER_PROGRESS, message: "Composited album cover")
   end
 
-  # One track's ID3 rewrite failing must not cost the admin the rest of the show:
-  # the same isolation Admin::BulkReplaceAudioJob uses. Every track is
-  # independent, a partial re-embed is still an improvement over none, and the
-  # skipped tracks are named on the payload so the admin can retry them.
   def embed_id3_tags
     tracks = @show.tracks.order(:position).to_a
     tracks.each_with_index do |track, index|
@@ -98,9 +76,6 @@ class Admin::SelectCoverArtJob
     )
   end
 
-  # Children of a run share the parent's image, so they take the blob itself
-  # rather than a copy. Attaching directly rather than through CoverArtImageService
-  # keeps a child with a broken parent link from reaching the billed image API.
   def propagate_to_children
     children = Show.where(cover_art_parent_show_id: @show.id).order(date: :asc)
     children.each do |child|
@@ -111,10 +86,6 @@ class Admin::SelectCoverArtJob
     end
   end
 
-  # The winner keeps its blob: it is now the cover art (or, when zoomed, the
-  # source the processed copy came from and possibly another show's art). Losers
-  # give up their attachment, and their blob only when no other attachment is
-  # left pointing at it.
   def clear_candidates(winner_blob)
     @show.cover_art_candidates_attachments.reload.each do |attachment|
       blob = attachment.blob

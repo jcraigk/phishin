@@ -13,8 +13,6 @@ class AudioEdgeTrimService < ApplicationService
   option :fade_out, default: -> { 6.0 }
   option :min_cut, default: -> { MIN_CUT_S }
   option :dry_run, default: -> { false }
-  # Unused by the render itself; kept so callers can hand the job through
-  # without caring whether anything downstream still wants it.
   option :admin_job, default: -> { nil }
 
   MIN_CUT_S = 5.0
@@ -73,7 +71,6 @@ class AudioEdgeTrimService < ApplicationService
     @duration_s ||= probe(@original.path, "duration").to_f
   end
 
-
   def probe(path, entry)
     out, err, status = Open3.capture3(
       "ffprobe", "-v", "error", "-show_entries", "format=#{entry}",
@@ -127,12 +124,6 @@ class AudioEdgeTrimService < ApplicationService
     track.process_mp3_audio
   end
 
-  # Every timestamp on this track is measured from the head of the audio, and
-  # the head is exactly what trim_start cut off, so the whole track's clock moves
-  # back by that much. A tail-only trim has a delta of zero and still matters:
-  # kept_s is shorter than the track was, so a window past the new end no longer
-  # describes anything and orphans. The fades do not enter into it - they change
-  # what the first and last seconds sound like, not where any second is.
   def shift_timestamps
     @shift = TimestampShifter.call(
       track: track.reload, delta_s: -trim_start, new_duration_s: kept_s,
@@ -141,7 +132,6 @@ class AudioEdgeTrimService < ApplicationService
   end
 
   def kept_s = kept_end - trim_start
-
 
   def result
     {

@@ -1,8 +1,5 @@
 require "rails_helper"
 
-# CoverArtPromptService calls the paid chat completions endpoint through
-# Typhoeus.post, so it is stubbed in every example that lets the real service
-# run, and replaced with a double everywhere else.
 RSpec.describe Admin::RegenerateCoverArtPromptJob, :openai do
   let(:venue) { create(:venue) }
   let(:show) { create(:show, date: "2024-07-19", venue:) }

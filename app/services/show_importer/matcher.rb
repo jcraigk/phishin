@@ -1,7 +1,3 @@
-# Non-interactive matching shared by the CLI importer and the web import job.
-# Nothing here may read $stdin or prompt: it runs inside Sidekiq, where a prompt
-# would hang the worker. Unmatched venue/tour are returned as nil for the caller
-# to resolve.
 class ShowImporter::Matcher
   Result = Struct.new(:venue, :tour, :show_info, :tracks, keyword_init: true)
 

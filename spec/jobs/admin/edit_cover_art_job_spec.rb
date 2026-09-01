@@ -1,7 +1,5 @@
 require "rails_helper"
 
-# Typhoeus.post is stubbed in every example: the image edit endpoint is billed
-# per call, so the suite must never reach it.
 RSpec.describe Admin::EditCoverArtJob, :openai do
   let(:show) { create(:show, date: "2024-07-19", cover_art_prompt: "a red barn") }
   let(:admin_job) { create(:admin_job, kind: "cover_art_edit", show:) }

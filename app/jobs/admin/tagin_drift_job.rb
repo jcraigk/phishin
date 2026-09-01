@@ -1,22 +1,8 @@
-# Compares the tagin spreadsheet against the database and reports the
-# differences, without changing either one.
-#
-# The sheet is the source of truth for these tags, and a sync clobbers the
-# database to match it. That makes an unexplained difference worth seeing before
-# it is overwritten: a tag added by hand in the admin UI disappears at the next
-# sync, and a sheet row whose URL no longer resolves silently syncs nothing.
-# This job is the read-only half of that workflow. It never writes a tag; the
-# admin fixes the sheet and then runs the sync.
 class Admin::TaginDriftJob
   include Sidekiq::Job
 
-  # Raised when no tag could be compared, which points at credentials or the
-  # spreadsheet id rather than at eleven separate sheet problems.
   class DriftFailed < StandardError; end
 
-  # Attributes compared between a TrackTag and its sheet row, mapped to the
-  # column headers TrackTagSyncService reads. Timestamps are held as seconds and
-  # written from "mm:ss" cells, so both sides go through the same conversion.
   COMPARED = {
     "notes" => "Notes",
     "transcript" => "Transcript",
@@ -24,13 +10,8 @@ class Admin::TaginDriftJob
     "ends_at_second" => "Ends At"
   }.freeze
 
-  # Tags whose rows are identified by notes as well as url, matching how
-  # TrackTagSyncService looks up an existing tag for them.
   MULTI_ENTRY_TAGS = %w[Tease Signal].freeze
 
-  # Entries kept per category per tag. A first run against a stale database can
-  # produce thousands of differences, and the payload is a jsonb column the UI
-  # polls; the full counts are reported alongside the capped list.
   MAX_ENTRIES = 100
 
   def perform(admin_job_id)
@@ -61,8 +42,6 @@ class Admin::TaginDriftJob
     )
   end
 
-  # A tab that is missing or renamed costs its own tag only; the rest of the
-  # comparison still reaches the admin.
   def compare_tag(tag_name)
     build_report(tag_name)
   rescue StandardError => e
@@ -107,9 +86,6 @@ class Admin::TaginDriftJob
     ).reject { |row| row["URL"].to_s.strip.empty? }
   end
 
-  # Tease and Signal carry several tags per track, so their rows are keyed by
-  # notes as well; keying those by url alone would report every one after the
-  # first as drift.
   def index_sheet_rows(rows, tag_name)
     rows.index_by do |row|
       url = row["URL"].to_s.strip
@@ -137,9 +113,6 @@ class Admin::TaginDriftJob
     }
   end
 
-  # A sheet row is resolved through the same lookup the sync uses, so an entry
-  # reports the track the sync would write to, or nulls when the url resolves to
-  # nothing, which is itself the reason the row never synced.
   def sheet_entry(row)
     url = row["URL"].to_s.strip
     track = resolve_track(url)
@@ -166,9 +139,6 @@ class Admin::TaginDriftJob
     end
   end
 
-  # Sheet values go through the transformations a sync applies before they are
-  # compared, so a difference here is a difference in content rather than in
-  # formatting.
   def field_diffs(track_tag, row)
     COMPARED.each_with_object({}) do |(attr, column), diffs|
       db_value = track_tag.public_send(attr)

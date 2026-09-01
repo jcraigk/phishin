@@ -1,8 +1,6 @@
 require "csv"
 
 class TrackTagSyncService < ApplicationService
-  # Shared with Admin::TaginDriftJob so the drift report compares sheet values
-  # the same way this service writes them.
   delegate :sanitize_str, :seconds_or_nil, to: TaginRowNormalizer
 
   attr_reader :track, :created_ids, :updated_ids, :missing_tracks

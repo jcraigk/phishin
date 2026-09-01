@@ -25,11 +25,6 @@ class Show < ApplicationRecord
   end
   has_one_attached :album_zip
   has_many_attached :staged_audio
-  # Cover art the admin editor has produced or uploaded but not chosen yet. A
-  # candidate is only ever an attachment: the blob behind it may be shared with
-  # another show's cover art (parent-linked shows reuse the parent's blob), so
-  # dropping a candidate destroys the attachment and never purges the blob
-  # unless nothing else references it.
   has_many_attached :cover_art_candidates
 
   extend FriendlyId
@@ -85,9 +80,6 @@ class Show < ApplicationRecord
     published.audio_status_filter(audio_status).order(date: :desc).pick(:date)
   end
 
-  # ActiveStorage sanitizes characters like ">" out of Filename#to_s, but the
-  # unsanitized value survives in the column. Track filenames carry segue markers
-  # that the importer matches on, so read the column directly.
   def self.original_filename(blob)
     blob.read_attribute(:filename)
   end
@@ -158,7 +150,6 @@ class Show < ApplicationRecord
     decrement_shows_with_audio_counters
   end
 
-  # Drafts may have no venue or tour yet, so count whichever is already set.
   def increment_shows_with_audio_counters
     venue&.increment!(:shows_with_audio_count)
     tour&.increment!(:shows_with_audio_count)

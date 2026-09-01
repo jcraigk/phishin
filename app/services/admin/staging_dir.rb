@@ -1,11 +1,6 @@
-# Every path under a show's staging directory, in one place. Paths derive from
-# the date and row positions rather than being stored, so the layout is
-# knowable from the database alone.
 class Admin::StagingDir
   ROOT = Rails.root.join("tmp/staging")
 
-  # Directories no staging show accounts for: a commit or discard that died
-  # between deleting rows and removing files, or a show deleted outright.
   def self.orphaned
     return [] unless ROOT.exist?
     live = Show.joins(:staged_sources).distinct.pluck(:date).map(&:to_s)
@@ -18,8 +13,6 @@ class Admin::StagingDir
 
   def root = ROOT.join(@show.date.to_s)
 
-  # Where uploads land and archives unpack, before the audio is sorted into
-  # numbered sources.
   def incoming = root.join("incoming")
 
   def sources_dir = root.join("sources")
@@ -34,7 +27,6 @@ class Admin::StagingDir
     sources_dir.join(format("%03d-%s", source.position, source.filename))
   end
 
-  # An mp3 source is its own proxy: it is already what the browser can play.
   def proxy_path(source)
     return source_path(source) if source.mp3?
     proxies_dir.join(format("%03d.mp3", source.position))

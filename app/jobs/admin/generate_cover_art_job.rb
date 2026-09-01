@@ -1,11 +1,3 @@
-# Produces one new cover art candidate for a show. Candidates accumulate until
-# an admin selects one, so this never touches show.cover_art itself -- hence the
-# dry_run flag on the service, which uploads the generated image as a standalone
-# blob and returns its URL without attaching it anywhere.
-#
-# Shows linked to a parent (a multi-night run shares one image) are short
-# circuited here rather than in the service: the service's parent branch returns
-# early with no URL, which would leave this job with nothing to attach.
 class Admin::GenerateCoverArtJob
   include Sidekiq::Job
 
@@ -15,8 +7,6 @@ class Admin::GenerateCoverArtJob
 
     admin_job.run! do
       blob = show.cover_art_parent_show_id.present? ? parent_blob(show) : generated_blob(show)
-      # Copying from a parent twice would attach the same blob twice and render
-      # a duplicate card; the second copy is a no-op instead.
       unless show.cover_art_candidates_attachments.any? { it.blob_id == blob.id }
         show.cover_art_candidates.attach(blob)
       end

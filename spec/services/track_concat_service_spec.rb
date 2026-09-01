@@ -92,8 +92,6 @@ RSpec.describe TrackConcatService do
         expect(result[:reencoded]).to be(true)
       end
 
-      # ffprobe reports the container's measured rate, so a nominal 192k file
-      # probes a few kbps high; what matters is that the higher source wins.
       it "re-encodes at the highest source bitrate" do
         expect(result[:bitrate].to_i).to be_within(6).of(192)
       end

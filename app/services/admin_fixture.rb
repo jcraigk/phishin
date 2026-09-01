@@ -1,26 +1,4 @@
-# Builds and rolls back a repeatable local fixture for exercising the admin UI
-# against real audio. See lib/tasks/admin_fixture.rake for the entry points.
-#
-# The development database ships with attachment RECORDS but no attachment
-# FILES, which is why PRODUCTION_CONTENT=true works: every blob URL redirects
-# to phish.in. That is fine for browsing and useless for testing the admin
-# audio tools, which read bytes off the local disk and write new ones back.
-#
-# Production serves blobs by key at /blob/<key>.<ext> and the local database
-# already holds those keys, so the download needs no API calls and no metadata
-# changes: the same key that resolves remotely resolves locally once the file
-# is on disk.
 class AdminFixture
-  # Three shows, deliberately different, so a restore has something real to
-  # prove it put back and the timestamp rules have something real to move:
-  #
-  #   1992-07-11  10 tracks, one timestamped tag. The small, fast case.
-  #   1990-12-28  24 tracks, likes, tags and playlist entries.
-  #   1993-04-13  21 tracks and six timestamped tags, three of them on a single
-  #               20 minute "Mike's Song > I Am Hydrogen > Weekapaug Groove" at
-  #               211s, 298s and 459s. A segue track long enough to split, with
-  #               several tags on one clock, is the case where a shift that gets
-  #               its delta wrong moves some tags and not others.
   DATES = %w[1992-07-11 1990-12-28 1993-04-13].freeze
   SNAPSHOT_DIR = Rails.root.join("tmp/admin_fixture")
 
@@ -76,12 +54,6 @@ class AdminFixture
       Show.find_by(date:) || raise("#{date} is not in this database.")
     end
 
-    # --- snapshot ------------------------------------------------------------
-
-    # Attributes are read from the schema rather than listed, because this
-    # database is not always on the same migration as the branch being tested -
-    # the admin-ui branch adds shows.published, and a hardcoded list would either
-    # miss it or blow up on a database that predates it.
     def snapshot(show)
       data = {
       "date" => show.date.to_s,
@@ -98,9 +70,6 @@ class AdminFixture
       File.write(snapshot_path(show.date.to_s), JSON.pretty_generate(data))
   end
 
-    # Blob KEYS are what matter here. An audio tool replaces a track's attachment
-    # with a new blob, so restoring the row is not enough - the attachment has to
-    # point back at the original key or the show still plays the edited audio.
     def attachment_rows(show)
       ActiveStorage::Attachment
       .where(record: [ show ] + show.tracks.to_a)
@@ -118,8 +87,6 @@ class AdminFixture
         }
       end
   end
-
-    # --- download ------------------------------------------------------------
 
     def download_blobs(show)
       blobs = blobs_for(show)
@@ -140,8 +107,6 @@ class AdminFixture
       .uniq(&:key)
   end
 
-    # Written to a temp file and moved into place, so an interrupted download
-    # cannot leave a truncated file that service.exist? then reports as present.
     def fetch_blob(blob, label)
       ext = File.extname(blob.read_attribute(:filename).to_s)
       url = "#{Rails.configuration.production_base_url}/blob/#{blob.key}#{ext}"
@@ -160,12 +125,6 @@ class AdminFixture
       ActiveSupport::NumberHelper.number_to_human_size(bytes)
   end
 
-    # --- restore -------------------------------------------------------------
-
-    # Order matters: tracks are deleted and rebuilt from the snapshot because an
-    # audio tool may have split one into two or combined two into one, so the
-    # rows present now are not necessarily the rows the snapshot describes.
-    # Everything that references a track is restored after the tracks exist.
     def restore(data)
       show = Show.find_by(date: data["date"])
       abort "#{data['date']} vanished from the database." if show.nil?
@@ -190,15 +149,10 @@ class AdminFixture
       end
   end
 
-    # Only columns the current schema actually has, so a snapshot taken on one
-    # migration still restores on another.
     def restorable(klass, attrs)
       attrs.slice(*klass.column_names).except("id")
   end
 
-    # Points each attachment back at its ORIGINAL blob, recreating the blob row
-    # when an edit replaced it. The downloaded file is still on disk under the
-    # original key, so a restored show plays the original audio again.
     def restore_attachments(data)
       data["attachments"].each do |row|
       blob = ActiveStorage::Blob.find_by(key: row["blob_key"]) || ActiveStorage::Blob.create!(
@@ -242,11 +196,6 @@ class AdminFixture
       restore_counters(show.reload, data)
   end
 
-    # Counter caches are written back from the snapshot rather than recounted.
-    # A show's likes_count covers likes this fixture does not own - the snapshot
-    # only carries likes belonging to this show and its tracks - so recounting
-    # would zero a number that was never wrong. The tracks are recounted from
-    # their restored likes because their rows were just rebuilt.
     def restore_counters(show, data)
       show.update_columns(
       restorable(Show, data["show"]).slice("likes_count", "tags_count")
@@ -258,20 +207,11 @@ class AdminFixture
       end
   end
 
-    # insert_all skips validations and callbacks on purpose: these rows are being
-    # put back exactly as they were, not created afresh.
     def insert_rows(klass, rows)
       return if rows.blank?
       klass.insert_all(rows.map { it.slice(*klass.column_names) })
   end
 
-    # --- helpers -------------------------------------------------------------
-
-    # Compared through JSON on both sides, because a snapshot round trip turns a
-    # Date into a String and a TimeWithZone into a formatted String. The two
-    # sides still format timestamps differently ("... -0400" versus ISO8601), and
-    # updated_at moves on any touch regardless, so timestamps are dropped: this
-    # is a report on what an admin changed, not on when a row was written.
     def comparable(klass, attrs)
       JSON.parse(restorable(klass, attrs).except("created_at", "updated_at").to_json)
   end

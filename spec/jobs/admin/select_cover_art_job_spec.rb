@@ -1,10 +1,6 @@
 require "rails_helper"
 require "mini_magick"
 
-# Nothing here reaches OpenAI: selection promotes an image the show already
-# holds, so the billed image endpoints are never constructed. The examples that
-# stub AlbumCoverService and apply_id3_tags do so for speed, not for cost -- the
-# "end to end" group below runs both for real.
 RSpec.describe Admin::SelectCoverArtJob do
   let(:show) do
     create(:show, date: "2024-07-19", venue: create(:venue, name: "Hampton Coliseum"))
@@ -79,9 +75,6 @@ RSpec.describe Admin::SelectCoverArtJob do
     end
   end
 
-  # A parent-linked show is offered its parent's own cover art blob as a
-  # candidate, so a purge of a passed-over candidate would take the parent's art
-  # with it.
   describe "a candidate blob shared with another show" do
     let(:parent) { create(:show, date: "2024-07-18") }
 
@@ -215,9 +208,6 @@ RSpec.describe Admin::SelectCoverArtJob do
     end
   end
 
-  # The real pipeline, no stubs: this is the example that would catch an orphaned
-  # variant record, since Id3TagService downloads the album_cover :id3 variant and
-  # embeds it into an actual MP3.
   describe "end to end with real image and ID3 processing" do
     let(:mp3_path) { Rails.root.join("tmp/select_cover_art_spec.mp3") }
     let!(:track) { create(:track, show:, position: 1, songs: [ create(:song) ]) }
@@ -253,9 +243,6 @@ RSpec.describe Admin::SelectCoverArtJob do
       end
     end
 
-    # Asserted on the state the job left behind, with no variant processing of its
-    # own: calling .processed here would regenerate a missing variant and hide the
-    # very orphan this is looking for.
     it "leaves no orphaned variant record behind" do
       described_class.new.perform(show.id, admin_job.id, winner.key, 0)
       orphans = ActiveStorage::VariantRecord.left_joins(:image_attachment)

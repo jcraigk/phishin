@@ -1,5 +1,3 @@
-# Runs the tagin spreadsheet sync in the background, reporting which tag is in
-# flight so the admin UI can show progress across the eleven sheet tabs.
 class Admin::TaginSyncJob
   include Sidekiq::Job
 
@@ -21,8 +19,6 @@ class Admin::TaginSyncJob
     )
   end
 
-  # Per-tag outcomes land on the payload so an admin can see exactly which tab
-  # failed rather than only a count.
   def finalize(results)
     @admin_job.payload["tags"] = results.map { |result| result.transform_keys(&:to_s) }
     @admin_job.save!

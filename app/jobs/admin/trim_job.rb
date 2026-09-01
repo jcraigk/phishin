@@ -1,9 +1,6 @@
 class Admin::TrimJob
   include Sidekiq::Job
 
-  # The admin picks trim points by hand and may shave a short blemish, so this
-  # relaxes the scan-tuned 5s floor. Keeping a floor at all means a no-op render
-  # still fails loudly instead of producing an identical file.
   MIN_CUT_S = 0.5
 
   def perform(track_id, admin_job_id, opts_json, apply)

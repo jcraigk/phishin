@@ -18,7 +18,6 @@ class ShowImporter::Orchestrator
     import_notes
   end
 
-  # Reuses the Matcher's fetch when one ran, so Phish.net is hit once per import.
   def show_info
     return @matcher_result.show_info if @matcher_result
     @show_info ||= ShowImporter::ShowInfo.new(date)

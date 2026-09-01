@@ -37,8 +37,6 @@ class ApiV2::Admin::Taggings < ApiV2::Admin::Base
         editor_payload(show_tag.show.reload)
       end
 
-      # Removes only the association; the Tag itself belongs to the public catalog
-      # and is never destroyed here.
       desc "Remove a show tag", hidden: true
       delete ":id" do
         show_tag = ShowTag.find(params[:id])
@@ -67,13 +65,6 @@ class ApiV2::Admin::Taggings < ApiV2::Admin::Base
     end
 
     resource :track_tags do
-      # `orphaned` is the one flag an admin can only ever turn OFF. An audio
-      # operation sets it; resolving the orphan means the admin has decided the
-      # tag points somewhere real again, either because they corrected the
-      # numbers in the same request or because the flag was wrong. Letting the
-      # UI set it back to true would let a hand edit fabricate a record of an
-      # audio operation that never happened, so false is the only accepted value
-      # and the reason is cleared with it.
       desc "Update a track tag", hidden: true
       params do
         optional :notes, type: String
@@ -91,7 +82,6 @@ class ApiV2::Admin::Taggings < ApiV2::Admin::Base
         track_payload(track_tag.track.reload)
       end
 
-      # As with show tags, this detaches the tag without touching the Tag record.
       desc "Remove a track tag", hidden: true
       delete ":id" do
         track_tag = TrackTag.find(params[:id])

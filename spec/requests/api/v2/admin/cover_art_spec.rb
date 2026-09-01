@@ -1,9 +1,5 @@
 require "rails_helper"
 
-# No example here reaches OpenAI. The endpoints only enqueue Sidekiq jobs, and
-# Sidekiq::Testing.fake! (spec/support/sidekiq.rb) keeps those jobs on the queue
-# rather than running them, so the paid services are never constructed. The
-# assertions below check the queue, never the job's effects.
 RSpec.describe "API v2 Admin Cover Art" do
   let(:admin) { create(:user, :admin) }
   let(:user) { create(:user) }

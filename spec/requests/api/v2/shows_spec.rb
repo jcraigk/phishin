@@ -44,9 +44,6 @@ RSpec.describe "API v2 Shows" do
       tweezer_song = Song.find_by(title: "Tweezer")
 
       # Set up some test gap data after GapService has run
-      # Ordered by position, the same order the endpoint returns tracks in. Without
-      # it the rows come back in whatever order the join yields and the gap of 5
-      # can land on a Tweezer other than the first.
       show.tracks.joins(:songs).where(songs: { title: "Tweezer" })
           .order(:position).each_with_index do |track, index|
         songs_track = SongsTrack.find_by(track:, song: tweezer_song)

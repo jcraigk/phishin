@@ -1,10 +1,3 @@
-# Runs an AI edit of an existing image (a candidate, or the show's current cover
-# art) into a brand new candidate. The source blob is only read, never modified:
-# an edit that disappoints must leave the admin with the image they started from.
-#
-# Unlike generation this ignores cover_art_parent_show_id -- the service treats a
-# request carrying both source_blob_key and edit_prompt as an edit regardless of
-# any parent link, and an admin editing a specific image means that image.
 class Admin::EditCoverArtJob
   include Sidekiq::Job
 

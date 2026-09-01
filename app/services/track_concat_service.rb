@@ -1,16 +1,3 @@
-# Joins the audio of two or more adjacent tracks into a single MP3, in the
-# order given. The audio-joining primitive behind combining tracks and shifting
-# the boundary between a pair - nothing else in this codebase concatenates.
-#
-# Fidelity first: when every source shares a codec and bitrate the join is a
-# stream copy through ffmpeg's concat demuxer, so the bytes are never decoded.
-# Re-encoding a lossy MP3 a second time compounds generation loss, and this is
-# an archive. Mixed bitrates leave no copy path, so those re-encode at the
-# highest source bitrate and the result says so.
-#
-# This service only RENDERS. It writes no DB records and touches no attachment
-# either way; dry_run only decides whether the output lands in a temp file or
-# in OUTPUT_DIR, so a caller can hold onto an applied render.
 class TrackConcatService < ApplicationService
   option :tracks
   option :dry_run, default: -> { false }
@@ -59,8 +46,6 @@ class TrackConcatService < ApplicationService
       file.flush
       file
     rescue ActiveStorage::FileNotFoundError
-      # The row says the audio is attached but the file is gone from storage.
-      # Typed so a job records it as a failure rather than aborting the run.
       raise MissingAudioError,
             "#{label(track)}: blob #{track.mp3_audio.blob.key} is not in storage"
     end
@@ -70,8 +55,6 @@ class TrackConcatService < ApplicationService
     @source_durations ||= @sources.map { probe(it.path, "duration").to_f }
   end
 
-  # nil when ffprobe reports no usable integer, which forces the re-encode path
-  # rather than a copy across streams we cannot prove are alike.
   def source_bitrates
     @source_bitrates ||= @sources.map do |file|
       raw = probe(file.path, "bit_rate")
@@ -122,8 +105,6 @@ class TrackConcatService < ApplicationService
       end
   end
 
-  # The concat demuxer needs a list file of paths; -safe 0 allows the absolute
-  # temp paths the downloads live at.
   def list_path
     @list_path ||= begin
       @list_file = Tempfile.new([ "concat_list", ".txt" ])

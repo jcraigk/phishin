@@ -1,18 +1,11 @@
-# An archive.org item as an ingest source. Metadata comes from the JSON
-# endpoint; the audio comes down with curl, which copes with the intermittent
-# 5xx archive.org mirrors throw where a single Typhoeus request would not.
 class Admin::ArchiveItem
   METADATA_URL = "https://archive.org/metadata/%s".freeze
   DOWNLOAD_URL = "https://archive.org/download/%s/%s".freeze
   DETAILS_URL = "https://archive.org/details/%s".freeze
 
-  # Lossless first. An item that offers both flac and the derived mp3 is
-  # ingested from the flac; the mp3 list is only used when that is all there is.
   LOSSLESS = [ "Flac", "Shorten", "WAVE", "AIFF" ].freeze
   LOSSY = [ "VBR MP3", "MP3", "64Kbps MP3", "128Kbps MP3" ].freeze
 
-  # archive.org identifiers are always this shape; anything else is either a
-  # typo or an attempt to walk the metadata or download URL somewhere else.
   IDENTIFIER = /\A[A-Za-z0-9._-]+\z/
 
   class NotFoundError < StandardError; end
@@ -72,8 +65,6 @@ class Admin::ArchiveItem
     end
   end
 
-  # File names carry spaces and punctuation; curl sends the URL as given, so
-  # the path is escaped the way a browser would.
   def fetch(name, dest)
     url = format(DOWNLOAD_URL, identifier, URI::RFC2396_PARSER.escape(name))
     tmp = "#{dest}.part"

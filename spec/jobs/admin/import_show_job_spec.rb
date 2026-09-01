@@ -38,8 +38,6 @@ RSpec.describe Admin::ImportShowJob do
   before do
     allow(Typhoeus).to receive(:get).and_return(response)
     stage_mp3("I 01 Buried Alive.mp3")
-    # The ">" here is the trap: ActiveStorage sanitizes it out of Filename#to_s,
-    # so the job must correlate blobs by their original filename column.
     stage_mp3("I 02 Mike's Song > I Am Hydrogen.mp3")
   end
 
@@ -96,9 +94,6 @@ RSpec.describe Admin::ImportShowJob do
     expect(ActiveStorage::Blob.where(id: blob_ids).count).to eq(blob_ids.size)
   end
 
-  # A staged blob is the source of a track's audio, so purging one would delete
-  # a file still in use. process_mp3_audio replaces mp3_audio, and replacement
-  # purges the blob it replaces, so the track must never hold the staged blob.
   it "never enqueues a purge for a staged blob" do
     staged_ids = show.staged_audio_attachments.map(&:blob_id)
     purged_ids = []

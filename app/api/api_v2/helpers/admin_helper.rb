@@ -20,10 +20,6 @@ module ApiV2::Helpers::AdminHelper
     end
   end
 
-  # Candidates are served straight from their blob rather than through a variant:
-  # they are throwaway images the editor shows at review size, and building
-  # variant records for art that is about to be discarded would leave orphaned
-  # records behind.
   def cover_art_payload(show)
     {
       prompt: show.cover_art_prompt,
@@ -59,8 +55,6 @@ module ApiV2::Helpers::AdminHelper
     )
   end
 
-  # Nil rather than an empty structure when nothing is staged, so the editor
-  # can branch on presence alone.
   def staging_payload(show)
     return nil unless show.staging?
     sources = show.staged_sources.order(:position)

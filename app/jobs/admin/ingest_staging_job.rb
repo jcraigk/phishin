@@ -1,14 +1,3 @@
-# Turns an upload or an archive.org item into a staged show: every audio file
-# laid end to end on one lossless timeline, a browser-playable proxy per file,
-# and a staged track per file with a first-guess title.
-#
-# The timeline is built with ffmpeg's concat filter rather than the concat
-# demuxer because the filter resamples inputs to one format, so a set whose
-# files disagree on sample rate still joins. mp3 inputs decode with LAME
-# gapless trimming, which keeps their seams sample-accurate.
-#
-# Re-running on a show replaces its staging wholesale: this is the start of a
-# review, not an edit to one.
 class Admin::IngestStagingJob
   include Sidekiq::Job
 
@@ -57,7 +46,6 @@ class Admin::IngestStagingJob
     item.description
   end
 
-  # Blobs are throwaway transport: purged as soon as their bytes are on disk.
   def receive_uploads(signed_ids)
     progress(5, "Receiving upload")
     Array(signed_ids).each do |signed_id|
@@ -85,8 +73,6 @@ class Admin::IngestStagingJob
     File.extname(path.to_s).delete(".").downcase
   end
 
-  # Sorted by full relative path so a multi-disc set keeps its disc order, and
-  # skipping Finder's resource forks and dotfiles.
   def audio_files
     Dir.glob(@dir.incoming.join("**/*")).select do |path|
       File.file?(path) && !File.symlink?(path) && AUDIO_EXTENSIONS.include?(extension(path)) &&

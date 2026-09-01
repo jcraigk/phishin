@@ -1,10 +1,3 @@
-# First-guess titles for freshly ingested sources. An admin corrects these in
-# the staging editor, so the goal is a good start, not certainty.
-#
-# archive.org sets are almost always one file per setlist song, so when the
-# counts agree the setlist is applied in order. Otherwise the importer's
-# filename matcher gets a turn (it recognizes "I 01 Buried Alive" style names),
-# and anything still unmatched is titled after its file.
 class Admin::StagingTitler
   def self.call(show:, sources:)
     new(show:, sources:).call
@@ -27,8 +20,6 @@ class Admin::StagingTitler
     @setlist = match&.tracks
   end
 
-  # Filenames are handed over with an mp3 extension because FilenameMatcher
-  # scrubs exactly that suffix before searching song titles.
   def match
     @match ||= ShowImporter::Matcher.call(
       date: @show.date.to_s, filenames: @sources.map { as_mp3(it.filename) }

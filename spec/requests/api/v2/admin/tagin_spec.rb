@@ -1,8 +1,5 @@
 require "rails_helper"
 
-# The endpoint only enqueues a Sidekiq job, and Sidekiq::Testing.fake!
-# (spec/support/sidekiq.rb) leaves it on the queue rather than running it, so no
-# example here reaches the Google Sheets API.
 RSpec.describe "API v2 Admin Tagin" do
   let(:admin) { create(:user, :admin) }
   let(:user) { create(:user) }

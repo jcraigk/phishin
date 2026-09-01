@@ -19,8 +19,6 @@ class Admin::ImportShowJob
 
   private
 
-  # Keyed by the unsanitized filename column, since ActiveStorage strips
-  # characters like ">" out of Filename#to_s and the Matcher keys on segues.
   def staged_blobs
     @staged_blobs ||=
       @show.staged_audio_attachments
@@ -72,10 +70,6 @@ class Admin::ImportShowJob
     track.process_mp3_audio
   end
 
-  # Give the track its own blob rather than sharing the staged one. Attaching
-  # the staged blob directly would make process_mp3_audio's ID3 rewrite replace
-  # that attachment, and replacement purges the blob it replaces: the staged
-  # original would be destroyed out from under the show's staged_audio.
   def attach_audio(track, blob)
     blob.open do |file|
       track.mp3_audio.attach(
@@ -86,9 +80,6 @@ class Admin::ImportShowJob
     end
   end
 
-  # Release the staged originals once they have become track audio. detach
-  # deletes only the join rows and leaves every blob in place; purge would
-  # destroy blobs that a track may still be pointing at.
   def clear_staged_audio
     @show.staged_audio.detach
   end

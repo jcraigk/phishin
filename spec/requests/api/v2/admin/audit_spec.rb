@@ -54,16 +54,12 @@ RSpec.describe "API v2 Admin Audit" do
       )
     end
 
-    # The numbers are evidence of where the tag used to point. Recomputing or
-    # blanking them would destroy the only record of what it described.
     it "reports the original timestamps untouched" do
       get "/api/v2/admin/track_tags/orphaned", headers: admin_headers
       entry = json[:orphans].find { |o| o[:id] == orphan.id }
       expect(entry).to include(starts_at_second: 459, ends_at_second: 470)
     end
 
-    # The shifter orphans on starts_at_second || ends_at_second, so a tag with
-    # only an end reaches the queue and has to render without a start.
     it "lists an orphan that carries only an end timestamp" do
       end_only = create(
         :track_tag, track:, tag: create(:tag, name: "Alt Version"),
@@ -133,8 +129,6 @@ RSpec.describe "API v2 Admin Audit" do
       expect(orphan.orphaned_at).to be_present
     end
 
-    # Only an audio operation may declare a tag orphaned. Accepting true here
-    # would let a hand edit fabricate a record of an operation that never ran.
     it "refuses to set the flag" do
       healthy = create(:track_tag, track:, tag: create(:tag, name: "Jamcharts"),
                        starts_at_second: 10)
@@ -145,9 +139,6 @@ RSpec.describe "API v2 Admin Audit" do
       expect(healthy.reload.orphaned_at).to be_nil
     end
 
-    # The Tags tab sends the corrected second and the flag together for the same
-    # reason the queue does: a saved timestamp is the admin answering the
-    # question the flag was asking.
     it "resolves when only the end timestamp is corrected" do
       orphan.update_columns(starts_at_second: nil, ends_at_second: 900)
       patch "/api/v2/admin/track_tags/#{orphan.id}",

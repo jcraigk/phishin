@@ -1,8 +1,5 @@
 require "rails_helper"
 
-# Every example here stubs Typhoeus.post outright, so no example can reach
-# api.openai.com. Image generation is a paid endpoint: an unstubbed call would
-# bill the account on every run of the suite.
 RSpec.describe Admin::GenerateCoverArtJob, :openai do
   let(:show) { create(:show, date: "2024-07-19", cover_art_prompt: "a red barn") }
   let(:admin_job) { create(:admin_job, kind: "cover_art_generate", show:) }

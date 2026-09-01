@@ -1,22 +1,6 @@
-# Turns a staged show into tracks. Each staged track is rendered once from the
-# lossless timeline through lame, which is the only lossy pass any of this
-# audio takes. A staged track that exactly covers one mp3 source with no fades
-# is copied through instead, so an mp3-sourced show imports without a re-encode
-# just as the mp3 import path always has.
-#
-# Nothing here is transactional across tracks on purpose: an attach on a
-# persisted record defers its upload to after_commit, so attaching inside a
-# transaction leaves process_mp3_audio probing a file that is not there yet.
-# Tracks are created one at a time in position order, the same way
-# ImportShowJob does it, and a failure leaves the show with the tracks created
-# so far plus its staging intact. A failed commit is re-run by committing
-# again: any tracks a prior attempt left behind are cleared before rendering
-# resumes from the top.
 class Admin::CommitStagingJob
   include Sidekiq::Job
 
-  # A span within this of a source's edges counts as the whole source. Probed
-  # durations carry millisecond noise; a real edit is never this small.
   PASSTHROUGH_TOLERANCE_S = 0.05
   TRACK_PROGRESS_CEILING = 90.0
 
@@ -50,8 +34,6 @@ class Admin::CommitStagingJob
     @staged ||= @show.staged_tracks.ordered.to_a
   end
 
-  # The Matcher is only asked for venue and tour here; titles were settled in
-  # staging. A date Phish.net does not know leaves both for the admin to set.
   def assign_venue_and_tour
     match = ShowImporter::Matcher.call(date: @show.date.to_s, filenames: [])
     @show.venue = match.venue if match.venue

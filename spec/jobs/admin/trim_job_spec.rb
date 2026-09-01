@@ -50,9 +50,6 @@ RSpec.describe Admin::TrimJob do
       expect(probe_duration(path)).to be_within(0.2).of(20.0)
     end
 
-    # The service renders to a path keyed by show date and track slug, so a later
-    # render on the same track overwrites it. The job must keep its own copy or a
-    # completed preview would silently start streaming another job's audio.
     it "keeps preview audio readable after the job completes" do
       described_class.new.perform(track.id, admin_job.id, opts, false)
       path = admin_job.reload.payload["audio_paths"].first

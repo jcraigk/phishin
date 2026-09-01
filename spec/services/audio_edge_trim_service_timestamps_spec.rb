@@ -1,8 +1,5 @@
 require "rails_helper"
 
-# The trim half of the defect this phase fixes: a trim used to cut seconds off
-# the head of a track and leave every timestamp on it pointing at the audio that
-# used to be there.
 RSpec.describe AudioEdgeTrimService do
   subject(:result) do
     described_class.call(track, trim_start:, trim_end:, dry_run:, min_cut: 0.5)

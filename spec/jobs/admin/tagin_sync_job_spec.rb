@@ -1,7 +1,5 @@
 require "rails_helper"
 
-# TaginSyncService is stubbed in every example, so nothing here touches the
-# Google Sheets API or its credentials.
 RSpec.describe Admin::TaginSyncJob do
   let(:admin_job) { create(:admin_job, kind: "tagin_sync") }
 
@@ -17,8 +15,6 @@ RSpec.describe Admin::TaginSyncJob do
     expect(admin_job.reload).to have_attributes(status: "done", progress: 100)
   end
 
-  # Progress is captured mid-run because the job's completion overwrites it with
-  # the final summary.
   it "reports the tag being synced" do
     seen = nil
     allow(TaginSyncService).to receive(:call) do |progress:|

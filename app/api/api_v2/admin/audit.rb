@@ -1,8 +1,3 @@
-# Read surface over the tags an audio operation left behind.
-#
-# A read only. Resolving an orphan is an ordinary tag edit through
-# PATCH /admin/track_tags/:id, which already writes timestamps and also
-# clears the flag, so nothing here mutates anything.
 class ApiV2::Admin::Audit < ApiV2::Admin::Base
   helpers ApiV2::Helpers::AdminHelper
 
@@ -26,9 +21,6 @@ class ApiV2::Admin::Audit < ApiV2::Admin::Base
   end
 
   helpers do
-    # The original numbers ride along untouched. They are what the tag used to
-    # point at, which is the only evidence an admin has when deciding where it
-    # should point now, so they are never recomputed or presented as current.
     def orphan_payload(track_tag)
       track = track_tag.track
       {

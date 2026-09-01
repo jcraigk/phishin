@@ -74,8 +74,6 @@ Rails.application.routes.draw do
   # API v2
   mount ApiV2::Api => "/api/v2"
 
-  # React harness. Admin routes nest deeper than the two segments the generic
-  # harness route accepts (/admin/shows/2024-07-19), so they get their own glob.
   root to: "application#application"
   get "/admin/*path", to: "application#application"
   get "/(:path(/:arg))", to: "application#application"

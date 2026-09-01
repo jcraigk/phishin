@@ -9,8 +9,6 @@ class Track < ApplicationRecord
   has_many :track_tags, dependent: :destroy
   has_many :tags, through: :track_tags
   has_many :playlist_tracks, dependent: :destroy
-  # Deliberately NOT dependent: :destroy. A combine destroys a track and its
-  # audit record has to survive that; the foreign key nullifies instead.
 
   has_one_attached :mp3_audio
   has_one_attached :png_waveform
@@ -141,13 +139,10 @@ class Track < ApplicationRecord
     songs.each { |song| song.decrement!(:tracks_with_audio_count) }
   end
 
-  # show.nil? keeps the CLI importer behavior for in-memory tracks and any track built without a show.
   def songs_required?
     show.nil? || show.published?
   end
 
-  # On :base rather than :songs so the message reads as a sentence instead of
-  # leading with the attribute name.
   def must_have_song
     errors.add(:base, "Tracks must include at least one song") if songs.empty?
   end

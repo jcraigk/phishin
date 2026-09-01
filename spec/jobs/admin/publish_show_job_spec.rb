@@ -28,7 +28,6 @@ RSpec.describe Admin::PublishShowJob do
   end
 
   before do
-    # LoreSyncService hits phish.net and an LLM API. Never let a spec reach either.
     allow(LoreSyncService).to receive(:call)
     allow(Rails.cache).to receive(:clear)
     ready_show
@@ -119,8 +118,6 @@ RSpec.describe Admin::PublishShowJob do
       )
     end
 
-    # Re-running after a mid-pipeline failure is the recovery path, so it has to be
-    # safe to run twice. A second Announcement would double-post to subscribers.
     it "is not duplicated when the job runs twice" do
       described_class.new.perform(show.id, admin_job.id)
       second_job = create(:admin_job, kind: "publish", show:)
@@ -148,9 +145,6 @@ RSpec.describe Admin::PublishShowJob do
   end
 
   describe "a show that is not ready" do
-    # The endpoint checks readiness too, but a draft can lose a file between the
-    # check and Sidekiq picking the job up. Publishing anyway would put a show with
-    # no audio on the public API.
     it "refuses to publish and records why" do
       show.tracks.first.mp3_audio.detach
 
@@ -175,8 +169,6 @@ RSpec.describe Admin::PublishShowJob do
   describe "a side effect that raises" do
     before { allow(GapService).to receive(:call).and_raise("gap blew up") }
 
-    # The flag flips last on purpose: a pipeline that dies partway leaves a draft,
-    # not a half-public show missing gap data.
     it "leaves the show unpublished" do
       expect {
         described_class.new.perform(show.id, admin_job.id)
@@ -201,8 +193,6 @@ RSpec.describe Admin::PublishShowJob do
   end
 
   describe "staged audio cleanup" do
-    # Import detaches staged audio already, but a draft can carry files an admin
-    # uploaded and never imported. Publishing is the last chance to release them.
     def audio_blob(name)
       ActiveStorage::Blob.create_and_upload!(
         io: StringIO.new(name), filename: "#{name}.mp3", content_type: "audio/mpeg"

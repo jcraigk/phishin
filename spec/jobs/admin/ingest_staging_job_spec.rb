@@ -1,4 +1,3 @@
-# spec/jobs/admin/ingest_staging_job_spec.rb
 require "rails_helper"
 
 RSpec.describe Admin::IngestStagingJob do
@@ -7,7 +6,6 @@ RSpec.describe Admin::IngestStagingJob do
   let(:dir) { Admin::StagingDir.new(show) }
   let(:fixtures) { Rails.root.join("tmp/spec/ingest") }
 
-  # Two short flacs of different lengths, and a zip holding both plus notes.
   before do
     FileUtils.mkdir_p(fixtures)
     { "d1t01.flac" => 4, "d1t02.flac" => 6 }.each do |name, secs|

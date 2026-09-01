@@ -21,8 +21,6 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
             { job_id: job.id }
           end
 
-          # Generation costs money per call, so a show with neither a prompt nor a
-          # parent to copy is rejected here rather than enqueued to fail later.
           desc "Generate a cover art candidate", hidden: true
           post :generate do
             show = admin_show
@@ -46,9 +44,6 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
             { cover_art: cover_art_payload(show.reload) }
           end
 
-          # The source may be a candidate or the show's current cover art, but it
-          # must be an image this show already owns: an arbitrary blob key would
-          # let an edit read any file in storage.
           desc "AI-edit an image into a new candidate", hidden: true
           params do
             requires :source_blob_key, type: String
@@ -65,8 +60,6 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
             { job_id: job.id }
           end
 
-          # The candidate must be one this show holds; the job re-checks the key
-          # for itself, but rejecting it here saves the admin a failed job.
           desc "Apply a candidate as the show's cover art", hidden: true
           params do
             requires :blob_key, type: String
@@ -83,9 +76,6 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
             { job_id: job.id }
           end
 
-          # Purge only when nothing else points at the blob: a parent-linked
-          # candidate shares the parent show's cover art blob, and purging that
-          # would take the parent's art with it.
           desc "Remove a candidate", hidden: true
           params do
             requires :blob_key, type: String

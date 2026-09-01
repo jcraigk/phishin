@@ -28,8 +28,6 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
 
           attachment_id = updates.delete(:staged_attachment_id)
 
-          # A published show keeps its slug so existing track URLs stay valid.
-          # An explicit slug edit is the admin overriding that on purpose.
           if updates.key?(:title) && !track.show.published? && !updates.key?(:slug)
             track.title = updates.delete(:title)
             track.generate_slug(force: true)
@@ -91,8 +89,6 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
   end
 
   helpers do
-    # Preview and apply differ only in the dry_run flag handed to the job, so both
-    # audition and commit run the same render through the same service.
     def enqueue_trim(kind, apply)
       track = Track.find(params[:id])
       error!({ message: "Track has no audio" }, 422) unless track.mp3_audio.attached?
@@ -104,19 +100,6 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       { job_id: job.id }
     end
 
-    # The boundary shift is the same preview-then-apply job pair as trim. It
-    # MOVES an existing boundary and never creates or removes one: splitting and
-    # combining are CLI-only (lib/tasks/split_scan.rake), deliberately kept out
-    # of the admin UI. The range check runs here, off the stored durations, so a delta
-    # that would leave a zero-length side comes back as a 422 naming what is
-    # allowed rather than as a failed background job. The job re-checks against
-    # the probed audio, which is the authority.
-    #
-    # Optional titles ride along on the same request so a rename lands in the
-    # same transaction as the audio: renaming through PATCH first would leave a
-    # rename behind when the shift is abandoned or its render fails. A preview
-    # accepts them and echoes them back without writing anything, so the panel
-    # can show the slugs an apply would produce.
     def enqueue_shift_boundary(kind, apply)
       track = Track.find(params[:id])
       following = track.show.tracks.find_by(position: track.position + 1)
@@ -133,10 +116,6 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       { job_id: job.id, titles: }.compact
     end
 
-    # A key that is absent means "leave that side's title alone"; a key that is
-    # present but blank is a mistake, so it 422s here rather than reaching the
-    # job. Returns nil when nothing was asked for, which is the argument that
-    # keeps the job on its pre-rename path.
     def boundary_titles
       given = declared(params, include_missing: false)["titles"]
       return nil if given.blank?
@@ -167,11 +146,6 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       track.process_mp3_audio
     end
 
-    # Position is unique per show, so the first pass parks every row in the negative
-    # mirror of its target (a range no real row occupies) and the second flips them
-    # positive. update_columns bypasses validations, which is what makes the parking
-    # state legal. Callers today only ever compact downward after a destroy, which a
-    # single ascending pass would survive, but this stays correct for any target order.
     def renumber(show)
       show.tracks.order(:position).each.with_index(1) do |track, index|
         track.update_columns(position: -index)

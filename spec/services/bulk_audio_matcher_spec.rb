@@ -100,8 +100,6 @@ RSpec.describe BulkAudioMatcher do
     expect(ActiveStorage::Blob.find_signed!(signed_id)).to be_present
   end
 
-  # ActiveStorage's Filename#to_s turns ">" into "-", so a matcher reading it
-  # would see a different filename than the one the admin dropped.
   it "reports the unsanitized filename for a segue" do
     result = plan("03 Mike's Song > I Am Hydrogen.mp3")
     expect(result[:unmatched_filenames] + result[:matches].map { |m| m[:filename] })

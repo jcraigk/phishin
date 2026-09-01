@@ -1,8 +1,5 @@
 require "rails_helper"
 
-# No example here reaches the Google Sheets API. GoogleSpreadsheetFetcher is
-# stubbed at the class level in every example, which keeps the google-api-client
-# stack and its OAuth credentials out of the picture entirely.
 RSpec.describe TaginSyncService do
   before do
     allow(GoogleSpreadsheetFetcher).to receive(:call).and_return([])

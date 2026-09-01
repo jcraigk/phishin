@@ -1,7 +1,5 @@
 require "rails_helper"
 
-# GoogleSpreadsheetFetcher is stubbed in every example, so nothing here reaches
-# the Google Sheets API or its credentials.
 RSpec.describe Admin::TaginDriftJob do
   let(:admin_job) { create(:admin_job, kind: "tagin_drift") }
   let(:tag_name) { "Guest" }
@@ -11,8 +9,6 @@ RSpec.describe Admin::TaginDriftJob do
   let!(:orphan) { create(:track, show:, position: 2, slug: "db-only") }
   let(:sheet_only_url) { "#{App.base_url}/2024-07-19/sheet-only" }
 
-  # Only the tag under test returns rows; the other tabs come back empty so
-  # they contribute no drift.
   def stub_sheet(rows)
     allow(GoogleSpreadsheetFetcher).to receive(:call) do |_id, range, **|
       range.start_with?("#{tag_name}!") ? rows : []
@@ -97,12 +93,7 @@ RSpec.describe Admin::TaginDriftJob do
     end
   end
 
-  # A sheet value only counts as drift when it differs in content. The sync
-  # writes notes through sanitization and TrackTag's own normalization, so the
-  # report has to apply both before comparing or it flags formatting as drift.
   describe "normalization parity with the sync" do
-    # Only the shared track is in play here, so any drift reported is a
-    # normalization artifact rather than a genuine difference.
     before { orphan.track_tags.destroy_all }
 
     it "ignores a trailing period the model strips on write" do
@@ -134,8 +125,6 @@ RSpec.describe Admin::TaginDriftJob do
     end
   end
 
-  # Tease and Signal allow several tags on one track, distinguished by notes,
-  # so those tabs are keyed by url and notes rather than url alone.
   describe "tags that allow multiple entries per track" do
     let(:tag_name) { "Tease" }
 
@@ -218,7 +207,6 @@ RSpec.describe Admin::TaginDriftJob do
       expect(admin_job.reload.message).to eq("1 of #{TAGIN_TAGS.size} tags have drift")
     end
 
-    # Progress is captured mid-run because completion overwrites it.
     it "reports the tag being compared" do
       seen = nil
       allow(GoogleSpreadsheetFetcher).to receive(:call) do |_id, range, **|

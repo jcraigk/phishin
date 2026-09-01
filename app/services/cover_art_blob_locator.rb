@@ -1,7 +1,3 @@
-# CoverArtImageService reports the image it uploaded as a public URL rather than
-# a blob, because its non-admin callers only ever hand that URL to the attach
-# helper. The admin flow needs the blob itself so the image can be held as a
-# candidate, so this resolves the URL back to its record.
 class CoverArtBlobLocator < ApplicationService
   param :url
 

@@ -21,9 +21,6 @@ RSpec.describe Admin::StagingRender do
     Admin::AudioProbe.duration_s(path)
   end
 
-  # Mean absolute sample value over a one second window, read from a raw
-  # decode. The tone is constant amplitude, so the ratio between two windows is
-  # the fade curve's ratio at those times.
   def level_at(path, second)
     pcm = `ffmpeg -v error -ss #{second} -t 1 -i #{path} -f s16le -ac 1 -ar 8000 - 2>/dev/null`
     samples = pcm.unpack("s<*")
@@ -55,9 +52,6 @@ RSpec.describe Admin::StagingRender do
       expect(probe_duration(out)).to be_within(0.1).of(15.0)
     end
 
-    # ffmpeg's afade defaults to a triangular (linear) curve, so one second into
-    # a two second fade-in the level is half of full. The browser preview in
-    # plan 12 applies the same linear ramp; this pins the server side of it.
     it "fades in linearly" do
       track = build(:staged_track, show:, start_s: 0, end_s: 10, fade_in_s: 2)
       described_class.call(timeline:, track:, out_path: out)

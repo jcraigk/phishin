@@ -1,7 +1,3 @@
-# Asks the prompt service for a fresh prompt, hue and style for a show. The
-# service persists them itself (including clearing or setting the parent link for
-# shows in a multi-night run), so this only mirrors the result onto the job for
-# the editor to display without a refetch.
 class Admin::RegenerateCoverArtPromptJob
   include Sidekiq::Job
 

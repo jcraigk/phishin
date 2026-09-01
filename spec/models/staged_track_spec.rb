@@ -21,8 +21,6 @@ RSpec.describe StagedTrack do
     expect(a.previous_track).to be_nil
   end
 
-  # Positions carry a unique index scoped to the show, so a renumber that assigns
-  # final positions row by row collides with a row that has not moved yet.
   describe ".renumber!" do
     it "orders rows by start time and closes gaps" do
       create(:staged_track, show:, position: 5, start_s: 20, end_s: 30)

@@ -5,8 +5,6 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
 
   namespace :admin do
     resource :shows do
-      # Lightweight list for pickers that need every show: three plucked
-      # columns, no includes, no payload building.
       desc "Every show as id, date and venue", hidden: true
       get :dates do
         {
@@ -48,17 +46,11 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         editor_payload(admin_show)
       end
 
-      # Read-only on purpose. It reports what would stop a publish; it never
-      # repairs anything, so the editor can poll it while an admin works.
       desc "Publish readiness check", hidden: true
       get ":date/readiness", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
         Admin::ShowReadiness.call(admin_show)
       end
 
-      # Readiness is checked here so the editor gets the issue list synchronously
-      # instead of enqueueing a job that only fails. The job re-checks: a draft can
-      # lose a file between this call and Sidekiq picking it up, and only the job
-      # is close enough to the publish to catch that.
       desc "Publish a draft show", hidden: true
       post ":date/publish", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
         show = admin_show
@@ -95,9 +87,6 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         { job_id: job.id }
       end
 
-      # Splits do not recompute gaps: a show can take several splits, and running
-      # per split would work from a half-changed set list. The editor offers this
-      # once the splits are in; publishing a draft recomputes them anyway.
       desc "Recompute gap data for a show", hidden: true
       post ":date/recompute_gaps", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
         show = admin_show
@@ -107,9 +96,6 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         { job_id: job.id }
       end
 
-      # A dry run on purpose: an admin dropping a folder onto a show that already
-      # has audio is about to overwrite files, so the editor shows what would
-      # happen and waits for an explicit apply. Nothing here writes.
       desc "Plan a bulk audio upsert against a show's tracks", hidden: true
       params do
         requires :signed_ids, type: Array[String]
@@ -159,12 +145,6 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         editor_payload(show.reload)
       end
 
-      # Positions carry a uniqueness validation and a unique index scoped to the show,
-      # so assigning final positions row by row would collide with a row that has not
-      # moved yet. Every row is parked in the negative mirror of its target position
-      # first (a range no real row occupies), then flipped positive.
-      # A drag across a set boundary also changes the moved track's set, so the
-      # client sends both in one request and neither lands without the other.
       desc "Reorder tracks", hidden: true
       params do
         requires :track_ids, type: Array[Integer]
@@ -201,8 +181,6 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
       post ":date/tracks", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
         show = admin_show
         ActiveRecord::Base.transaction do
-          # Descending order means each row moves into a slot the row above it has
-          # already vacated, so no intermediate state duplicates a position.
           show.tracks.where(position: params[:position]..).order(position: :desc).each do |track|
             track.update!(position: track.position + 1)
           end
@@ -217,11 +195,6 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         editor_payload(show.reload)
       end
 
-      # Destroy cascades to tracks, likes and show_tags, and enqueues an
-      # ActiveStorage::PurgeJob per attachment. Purging a blob that a surviving
-      # attachment still references is safe: the attachments foreign key makes the
-      # blob's destroy raise InvalidForeignKey, which purge rescues, leaving the row
-      # and the stored file intact. Never replace that with a bare blob delete.
       desc "Delete a show", hidden: true
       delete ":date", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
         admin_show.destroy!
@@ -244,8 +217,6 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
   end
 
   helpers do
-    # Grape keeps explicitly supplied nils, so a nil venue_id or tour_id clears the
-    # association rather than being ignored. Unknown ids raise RecordNotFound (404).
     def show_updates
       updates = declared(params, include_missing: false).except(:date).symbolize_keys
       updates[:venue] = lookup_or_nil(Venue, updates.delete(:venue_id)) if updates.key?(:venue_id)
@@ -257,18 +228,12 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
       id.nil? ? nil : klass.find(id)
     end
 
-    # A signed id the verifier rejects would otherwise surface as a 500 from deep
-    # inside the matcher, with nothing telling the admin which of forty files was
-    # the bad one.
     def find_signed_blob(signed_id)
       ActiveStorage::Blob.find_signed!(signed_id)
     rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveRecord::RecordNotFound
       error!({ message: "Unknown upload: #{signed_id}" }, 422)
     end
 
-    # Reject the whole batch rather than let the job discover mid-run that a
-    # track belongs to another show, and refuse to point two files at one track:
-    # both would be applied, and the second would silently win.
     def validate_assignments!(show, assignments)
       track_ids = assignments.map { |a| a["track_id"] }
       if track_ids.uniq.size != track_ids.size

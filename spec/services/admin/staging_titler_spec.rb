@@ -1,4 +1,3 @@
-# spec/services/admin/staging_titler_spec.rb
 require "rails_helper"
 
 RSpec.describe Admin::StagingTitler do

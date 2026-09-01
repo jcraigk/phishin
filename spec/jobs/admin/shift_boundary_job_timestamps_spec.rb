@@ -1,11 +1,5 @@
 require "rails_helper"
 
-# The subtle half of the defect this phase fixes. A boundary shift moves audio
-# ACROSS a boundary, so the two tracks do not share a delta: the first track
-# keeps its origin and only changes length, while everything on the second track
-# moves by the opposite of the shift. Both sides are pinned here because getting
-# the second side's sign backwards is the failure mode that looks right on the
-# first track and silently breaks the second.
 RSpec.describe Admin::ShiftBoundaryJob do
   let(:show) { create(:show, date: "2024-07-19", published: false) }
   let!(:first) { create(:track, show:, position: 1, title: "Ghost", slug: "ghost") }
@@ -41,7 +35,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     )
   end
 
-  # Two seconds of the second track become the tail of the first.
   describe "shifting the boundary later" do
     let(:delta_s) { 2.0 }
 
@@ -57,10 +50,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(track_tag.reload.starts_at_second).to eq(4)
     end
 
-    # The second track lost its first two seconds to the track above, so a tag
-    # that lived in them describes audio the second track no longer holds. It is
-    # not moved onto the first track: reparenting a window across a boundary is a
-    # judgment this makes no attempt at, so it is kept and flagged instead.
     it "orphans a tag that fell into the audio handed to the first track" do
       track_tag = create(:track_tag, track: second, tag:, starts_at_second: 1)
       described_class.new.perform(first.id, admin_job.id, delta_s, true)
@@ -74,7 +63,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     end
   end
 
-  # Two seconds of the first track become the head of the second.
   describe "shifting the boundary earlier" do
     let(:delta_s) { -2.0 }
 
@@ -84,9 +72,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(track_tag.reload.starts_at_second).to eq(5)
     end
 
-    # The first track keeps its origin, so nothing on it moves - but it is two
-    # seconds shorter, so a tag in the seconds it gave away now points past its
-    # own end.
     it "orphans a tag left past the first track's new end" do
       track_tag = create(:track_tag, track: first, tag:, starts_at_second: 9)
       described_class.new.perform(first.id, admin_job.id, delta_s, true)

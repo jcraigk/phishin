@@ -118,9 +118,6 @@ class MetaTagService < ApplicationService
     TITLES[path] || dynamic_route_title
   end
 
-  # The admin pages are client-rendered and exist for any depth of path, so
-  # they take a fixed title rather than falling through to the 404 meta that
-  # would otherwise stamp an editor page as not found.
   def dynamic_route_title
     return "Admin" if path == "/admin" || path.start_with?("/admin/")
     "Reset Password" if path.match?(/^\/reset-password\/.+/)

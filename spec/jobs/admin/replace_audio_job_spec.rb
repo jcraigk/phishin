@@ -57,8 +57,6 @@ RSpec.describe Admin::ReplaceAudioJob do
       expect(File.exist?(backup)).to be(true)
     end
 
-    # The point of the backup is recovering the file the replace displaced, so it
-    # has to hold the bytes that were there before, not the ones that replaced them.
     it "writes the original bytes to the backup, not the replacement" do
       described_class.new.perform(track.id, admin_job.id, new_blob.signed_id)
       backup = admin_job.reload.payload["backup_path"]
@@ -95,14 +93,6 @@ RSpec.describe Admin::ReplaceAudioJob do
       )
     end
 
-    # process_mp3_audio replaces the attachment to rewrite ID3 tags, and replacing
-    # an attachment purges the blob it replaced. Attaching the uploaded blob itself
-    # rather than a copy of its bytes would destroy the upload mid-job.
-    #
-    # Two things have to be real for that to be observable: the ID3 rewrite that
-    # does the replacing, and the purge itself, which ActiveStorage defers with
-    # purge_later. Under the suite's fake Sidekiq queue the purge is only enqueued,
-    # so a stubbed Id3TagService or a fake queue both let the bug pass unnoticed.
     it "leaves the uploaded blob intact for other references" do
       allow(Id3TagService).to receive(:call).and_call_original
       blob = new_blob
@@ -113,10 +103,6 @@ RSpec.describe Admin::ReplaceAudioJob do
     end
   end
 
-  # The fill case a bulk upsert hits on most tracks: no audio yet, so nothing to
-  # back up. The factory defaults audio_status to "complete", so this starts from
-  # "missing" to match a real audioless track and to make the status assertion
-  # test the code rather than the factory.
   describe "a track with no existing audio" do
     before { track.update!(audio_status: "missing") }
 

@@ -190,10 +190,6 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
           .then { |s| paginate_relation(s) }
     end
 
-
-
-    # Admins may preview an unpublished show here, and only here. The cache is
-    # bypassed for them so a draft never lands in the shared public cache entry.
     def show_by_date
       if (params[:liked_by_user] && current_user) || current_user&.admin?
         fetch_show_by_date

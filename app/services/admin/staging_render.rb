@@ -1,16 +1,3 @@
-# Renders one staged track from the lossless timeline to mp3. Builds its own
-# ffmpeg arguments on purpose: AudioEdgeTrimService.filters and
-# TrackSplitService.filters are parity-locked to the scan scripts, and staging
-# must keep working when those are removed.
-#
-# Input seeking (-ss/-to before -i) rather than an atrim filter, because atrim
-# decodes from the head of the file on every call and a three hour timeline
-# would make each track cost minutes. The seek on flac is sample accurate.
-#
-# Fades use ffmpeg's default curve, which is linear. The browser preview ramps
-# a GainNode linearly to match; spec/services/admin/staging_render_spec.rb and
-# spec/javascript/staging_fade_parity_spec.rb hold both sides to the same
-# numbers.
 class Admin::StagingRender
   include LameEncoding
 

@@ -1,10 +1,3 @@
-# Applies a whole folder's worth of audio to a show in one pass, replacing the
-# tracks that already had audio and filling the ones that did not.
-#
-# Every assignment is independent: a bad blob or a track that fails its ID3
-# rewrite must not cost the admin the other twenty tracks that uploaded fine, so
-# a failure is recorded on the job's payload and the batch carries on. The job
-# only fails outright if nothing at all succeeded.
 class Admin::BulkReplaceAudioJob
   include Sidekiq::Job
 
@@ -24,8 +17,6 @@ class Admin::BulkReplaceAudioJob
 
   private
 
-  # Sidekiq round-trips arguments through JSON, so keys arrive as strings whether
-  # the caller passed symbols or not.
   def normalize(assignment)
     assignment.symbolize_keys
   end

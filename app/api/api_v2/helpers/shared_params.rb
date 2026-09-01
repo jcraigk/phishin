@@ -27,8 +27,6 @@ module ApiV2::Helpers::SharedParams
     optional :fade_out, type: Float, default: 6.0
   end
 
-  # Titles are optional on both boundary endpoints: a shift can rename the two
-  # tracks it touches, and a side left out keeps the title it has.
   params :shift_boundary_params do
     requires :delta_s, type: Float
     optional :titles, type: Hash do

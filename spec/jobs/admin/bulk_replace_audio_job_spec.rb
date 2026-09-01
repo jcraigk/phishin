@@ -122,8 +122,6 @@ RSpec.describe Admin::BulkReplaceAudioJob do
     end
   end
 
-  # The whole point of a bulk run: an admin dropping forty files must not lose
-  # thirty-nine of them because one blob went missing.
   describe "one assignment failing" do
     let(:assignments) do
       [
@@ -178,9 +176,6 @@ RSpec.describe Admin::BulkReplaceAudioJob do
     end
   end
 
-  # process_mp3_audio's ID3 rewrite replaces the attachment, and replacement
-  # purges the blob it displaced. Sharing one upload across two tracks would
-  # destroy it under the second track mid-batch.
   it "leaves each uploaded blob intact after the batch" do
     allow(Id3TagService).to receive(:call).and_call_original
     blobs = [ new_blob("01 Ghost.mp3"), new_blob("02 Gin.mp3") ]

@@ -9,8 +9,6 @@ RSpec.describe Admin::CommitStagingJob do
   let(:song) { create(:song, title: "Ghost") }
   let(:setlist) { [ { artistid: 1, position: 1, song: "Ghost", set: "1", venue: "Deer Creek", city: "Noblesville" } ] }
 
-  # A ten second flac timeline made of one lossless source, plus a separate
-  # 4s mp3 source case set up per example.
   before do
     allow(Typhoeus).to receive(:get).and_return(
       instance_double(Typhoeus::Response, body: { data: setlist }.to_json)
@@ -82,9 +80,6 @@ RSpec.describe Admin::CommitStagingJob do
       create(:staged_track, show:, position: 1, title: "Ghost", set: "1", song:, start_s: 0, end_s: 4)
     end
 
-    # The whole point of passthrough: an mp3 show imports as it does today, with
-    # no encode. The attached bytes are the source bytes (before the ID3 rewrite
-    # process_mp3_audio applies), so the audio frames are compared.
     it "copies the file through without re-encoding" do
       described_class.new.perform(show.id, admin_job.id)
       expect(Admin::StagingRender).not_to have_received(:call)

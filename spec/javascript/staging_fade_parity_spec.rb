@@ -1,10 +1,5 @@
 require "rails_helper"
 
-# The browser previews a fade with a GainNode driven by gainAt, and the commit
-# renders it with ffmpeg's afade, whose default curve is linear. The render
-# spec measures the rendered audio at two points; this holds gainAt to the same
-# two numbers, read off the file the editor actually imports, so the preview
-# cannot drift from what commit writes.
 RSpec.describe "staging fade parity" do # rubocop:disable RSpec/DescribeClass
   let(:math) { Rails.root.join("app/javascript/components/admin/stagingMath.js") }
 

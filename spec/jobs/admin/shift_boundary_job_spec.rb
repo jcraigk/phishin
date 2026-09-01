@@ -20,8 +20,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     allow(Id3TagService).to receive(:call)
   end
 
-  # Known, DIFFERENT durations: a shift that dropped a side entirely would still
-  # look plausible if both sides started out the same length.
   def tone(seconds)
     path = Rails.root.join("tmp/spec/boundary_tone_#{seconds}s.mp3")
     FileUtils.mkdir_p(path.dirname)
@@ -65,8 +63,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(second.reload.duration).to be_within(400).of(4_000)
     end
 
-    # The assertion that catches audio dropped at the seam: whatever the
-    # boundary does, the pair still holds everything it held before.
     it "preserves the combined duration" do
       described_class.new.perform(first.id, admin_job.id, 2.0, true)
       expect(durations.sum).to be_within(500).of(16_000)
@@ -143,7 +139,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
         .to eq(%w[complete complete])
     end
 
-    # Matching bitrates join by stream copy, so the only lossy pass is the recut.
     it "reports that the join was not re-encoded" do
       described_class.new.perform(first.id, admin_job.id, 2.0, true)
       expect(admin_job.reload.payload["reencoded"]).to be(false)
@@ -155,8 +150,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     end
   end
 
-  # This operation moves a cut point, nothing else. Anything that changed here
-  # would be a metadata edit an admin never asked for.
   describe "metadata left untouched" do
     let(:user) { create(:user) }
 
@@ -196,12 +189,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect([ first.reload.likes.count, second.reload.likes.count ]).to eq([ 0, 1 ])
     end
 
-    # Not "left untouched" like the rest of this group: a tag is measured from
-    # the head of its track's audio, and this edit moves that head. Two seconds
-    # of the second track became the tail of the first, so a tag that was two
-    # seconds in now sits at the very start of what is left. Holding it at 2
-    # would silently repoint it at audio it never described - the defect this
-    # phase exists to fix.
     it "moves a track tag with the audio it describes" do
       create(:track_tag, track: second, tag: create(:tag), starts_at_second: 2)
       described_class.new.perform(first.id, admin_job.id, 2.0, true)
@@ -224,8 +211,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     end
   end
 
-  # The rename half of the operation. Titles ride along on the apply so a fixed
-  # boundary and the fixed titles that go with it are one edit, not two.
   describe "renaming both sides" do
     before do
       attach(first, 10)
@@ -258,7 +243,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(first.reload.slug).to eq("ghost")
     end
 
-    # The rename is metadata; the audio still has to land where the delta says.
     it "still moves the boundary" do
       shift({ "first" => "Tweezer", "second" => "Mike's Song" })
       expect(first.reload.duration).to be_within(400).of(12_000)
@@ -318,10 +302,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     end
   end
 
-  # The case a naive implementation fails on. TrackSlugGenerator numbers dupe
-  # titles by position, so renaming into an existing title renumbers rows that
-  # were never named in the request, and the final slugs permute among them -
-  # assigning directly would collide with the unique (show_id, slug) index.
   describe "renaming into a title another track already has" do
     let!(:fourth) do
       create(:track, show:, position: 4, title: "Tweezer", slug: "tweezer")
@@ -349,8 +329,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
                  [ "Tweezer", "tweezer-2" ] ])
     end
 
-    # The renamed track lands ahead of the existing Tweezer, so the two slugs
-    # swap: the row nobody renamed has to move for the row that was renamed.
     it "reslugs the sibling that was never named in the request" do
       shift({ "second" => "Tweezer" })
       expect(admin_job.reload.payload["reslugged"])
@@ -371,8 +349,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(show.tracks.reload.pluck(:slug).grep(/\Atmp-/)).to be_empty
     end
 
-    # Renaming AWAY from a duplicated title renumbers the rows left behind, and
-    # those rows are not the ones the request named either.
     it "renumbers the rows left behind when a duplicate title is vacated" do
       second.update!(title: "Tweezer", slug: "tweezer-2")
       fourth.update_columns(slug: "tweezer-3")
@@ -387,11 +363,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     end
   end
 
-  # The shape reproduced on dev show 1984-12-01: two adjacent tracks where the
-  # FIRST is renamed to the title the SECOND already has. Both then compute the
-  # same slug, so a direct assignment violates the unique (show_id, slug) index,
-  # and the untouched second track has to give up the bare slug it has held all
-  # along. Neither row can be reslugged on its own.
   describe "renaming the first side onto the second side's title" do
     before do
       first.update!(title: "Wild Child")
@@ -406,8 +377,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       described_class.new.perform(first.id, admin_job.id, 2.0, true, { "first" => "Bertha" })
     end
 
-    # Both sides genuinely compute "bertha" before anything is written; this is
-    # the precondition that makes the two-phase write necessary.
     it "has both tracks computing the same slug beforehand" do
       renamed = Track.find(first.id).tap { it.title = "Bertha" }
       expect(TrackSlugGenerator.call(renamed)).to eq(TrackSlugGenerator.call(second))
@@ -422,8 +391,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(first.reload.slug).to eq("bertha")
     end
 
-    # The row nobody asked to change: it must move rather than keep a slug that
-    # is now wrong for its position.
     it "renumbers the untouched sibling to bertha-2" do
       shift
       expect(second.reload.slug).to eq("bertha-2")
@@ -449,9 +416,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     end
   end
 
-  # The mirror of the case above. Slugs are numbered by position, so vacating a
-  # duplicated title has to let the rows behind it move UP a number, or a show
-  # ends up with a "-2" and no "-1".
   describe "renaming away from a duplicated title" do
     before do
       show.tracks.order(:position).each_with_index do |track, i|
@@ -500,8 +464,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(slugs.uniq.size).to eq(slugs.size)
     end
 
-    # On a published show the numbering is deliberately left stale: a live URL
-    # outranks a tidy suffix.
     it "keeps the stale suffix when the show is published" do
       show.update!(published: true)
       shift
@@ -509,8 +471,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     end
   end
 
-  # Every live track URL, playlist link and shared permalink for a published show
-  # is built from the slug, so a rename there changes the title and nothing else.
   describe "renaming on a published show" do
     before do
       show.update!(published: true)
@@ -592,7 +552,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(durations).to eq(before_durations)
     end
 
-    # The screen runs before the join, so a typo costs no ffmpeg time.
     it "refuses before rendering anything" do
       allow(TrackConcatService).to receive(:call)
       expect { shift({ "first" => "" }) }.to raise_error(described_class::BlankTitleError)
@@ -600,8 +559,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     end
   end
 
-  # Every check and both renders finish before a single title is written, so a
-  # failure cannot leave a rename behind without the audio edit it belonged to.
   describe "a failed render with a valid rename" do
     before do
       attach(first, 10)
@@ -639,9 +596,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
     end
   end
 
-  # The user chose to rename titles without repointing tracks.songs, so the job
-  # reports the mismatch and the panel warns. It never blocks: a segue title
-  # legitimately matches no single song.
   describe "song drift" do
     before do
       attach(first, 10)
@@ -766,8 +720,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(admin_job.reload.status).to eq("failed")
     end
 
-    # The stored-duration screen runs before the join, so an impossible delta
-    # costs no ffmpeg time at all.
     it "refuses before rendering when the stored durations rule it out" do
       first.update_columns(duration: 10_000)
       second.update_columns(duration: 6_000)
@@ -799,7 +751,6 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(first.reload.mp3_audio.blob.key).to eq(key)
     end
 
-    # A row can claim its audio is attached while the file is gone from storage.
     it "fails when a blob is missing from storage" do
       attach(first, 10)
       attach(second, 6)

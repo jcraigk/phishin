@@ -1,6 +1,3 @@
-# The audit trail is gone: recovery now rests on the timestamped copies
-# AudioBackup writes to tmp/audio_backups before each edit, whose filenames
-# carry the show date, slug, operation and time.
 class DropTrackEdits < ActiveRecord::Migration[8.0]
   def up
     drop_table :track_edits

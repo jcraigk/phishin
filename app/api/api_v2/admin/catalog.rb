@@ -12,9 +12,6 @@ class ApiV2::Admin::Catalog < ApiV2::Admin::Base
       params do
         optional :q, type: String
       end
-      # Substring match rather than the site's full-text kinda_matching: that
-      # search works on whole words, so a half-typed title ("harpu") finds
-      # nothing while the admin is still typing it.
       get do
         songs =
           if params[:q].present?
@@ -34,9 +31,6 @@ class ApiV2::Admin::Catalog < ApiV2::Admin::Base
       end
       post do
         title = params[:title].strip
-        # Songs are a public catalog, so a near-duplicate is reported rather than
-        # created. Titles are unique case-sensitively in the database, so the
-        # pre-check is case-insensitive to catch "new jam" against "New Jam".
         if Song.where("LOWER(title) = ?", title.downcase).exists?
           error!({ message: "A song titled \"#{title}\" already exists" }, 409)
         end
@@ -80,7 +74,6 @@ class ApiV2::Admin::Catalog < ApiV2::Admin::Base
         if Venue.where("LOWER(name) = ? AND LOWER(city) = ?", name.downcase, city.downcase).exists?
           error!({ message: "A venue named \"#{name}\" already exists in #{city}" }, 409)
         end
-        # venues.state is NOT NULL; venues outside the USA store a blank string.
         venue = Venue.create!(
           name:,
           city:,
@@ -117,8 +110,6 @@ class ApiV2::Admin::Catalog < ApiV2::Admin::Base
         ends_on = params[:ends_on]
         error!({ message: "ends_on must be on or after starts_on" }, 422) if ends_on < starts_on
 
-        # starts_on and ends_on each carry their own uniqueness constraint, so an
-        # overlapping tour collides on a date even when the name is new.
         conflict = tour_conflict(name, starts_on, ends_on)
         error!({ message: conflict }, 409) if conflict
 

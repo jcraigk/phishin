@@ -1,14 +1,3 @@
-# Answers one question: would publishing this draft produce a show the public can
-# actually use? Publishing is the moment a draft becomes visible everywhere, so
-# this errs toward reporting a problem.
-#
-# Two validations only bite once published: Show requires venue and tour
-# `if: :published?`, and Track requires songs when its show is published. A draft
-# may legally lack all three, so `update!(published: true)` on an unchecked draft
-# raises. Catching those here is the point of the check, not a bonus.
-#
-# Attachments are read rather than trusted from the audio_status column: a purge
-# leaves the column saying "complete" with no file behind it.
 class Admin::ShowReadiness < ApplicationService
   param :show
 

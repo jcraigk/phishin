@@ -152,8 +152,6 @@ RSpec.describe "API v2 Admin Tracks" do
       expect(track2.reload.position).to eq(3)
     end
 
-    # A naive implementation that assigns final positions one row at a time collides
-    # with the (show_id, position) uniqueness validation partway through this move.
     it "moves the first track to last across five tracks without colliding" do
       track4 = create(:track, show:, position: 4, title: "Fourth", set: "1")
       track5 = create(:track, show:, position: 5, title: "Fifth", set: "1")
@@ -284,8 +282,6 @@ RSpec.describe "API v2 Admin Tracks" do
       expect(response).to have_http_status(:forbidden)
     end
 
-    # A rejected request has to leave the audio exactly as it found it, whether
-    # it was anonymous or merely unprivileged.
     it "changes no audio when an unauthenticated apply is rejected" do
       keys = [ track1.mp3_audio.blob.key, track2.mp3_audio.blob.key ]
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
@@ -343,7 +339,6 @@ RSpec.describe "API v2 Admin Tracks" do
       expect(Admin::ShiftBoundaryJob.jobs.last["args"].third).to eq(-2.0)
     end
 
-    # A delta past the second track's far edge would leave it zero-length.
     it "422s on a delta past the end of the second track" do
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
            params: { delta_s: 8.0 }.to_json, headers: admin_headers
@@ -381,8 +376,6 @@ RSpec.describe "API v2 Admin Tracks" do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    # Titles ride along on the shift so a rename and the boundary it belongs to
-    # are one edit. A side left out of the hash keeps the title it has.
     it "passes both titles through to the job" do
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
            params: { delta_s: 2.0, titles: { first: "Tweezer", second: "Mike's Song" } }.to_json,
@@ -413,7 +406,6 @@ RSpec.describe "API v2 Admin Tracks" do
       expect(json[:titles]).to eq({ first: "Tweezer" })
     end
 
-    # A preview takes titles so the panel can round-trip them, and writes none.
     it "accepts titles on a preview without writing them" do
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
            params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
@@ -465,8 +457,6 @@ RSpec.describe "API v2 Admin Tracks" do
       expect(track1.reload.title).to eq("Ghost")
     end
 
-    # An out-of-range delta is screened before the titles are even read, so a
-    # rejected shift never enqueues the rename that came with it.
     it "enqueues nothing when titles come with an out-of-range delta" do
       expect {
         post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
@@ -524,7 +514,6 @@ RSpec.describe "API v2 Admin Tracks" do
       expect(response).to have_http_status(:bad_request)
     end
 
-    # The endpoint only enqueues; the render itself waits for the worker.
     it "changes no audio in the request itself" do
       keys = [ track1.mp3_audio.blob.key, track2.mp3_audio.blob.key ]
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
@@ -565,7 +554,6 @@ RSpec.describe "API v2 Admin Tracks" do
       expect(track3.reload.position).to eq(4)
     end
 
-    # Inserting at the front shifts every existing row; done ascending it collides.
     it "inserts before position 1 without colliding" do
       create(:track, show:, position: 4, title: "Fourth", set: "1")
       create(:track, show:, position: 5, title: "Fifth", set: "1")
@@ -604,7 +592,7 @@ RSpec.describe "API v2 Admin Tracks" do
            params: { position: 2, title: "Tuning", set: "1" }.to_json,
            headers: admin_headers
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json[:message]).to include("Songs")
+      expect(json[:message]).to include("at least one song")
     end
 
     it "does not leave shifted positions behind when the insert fails" do

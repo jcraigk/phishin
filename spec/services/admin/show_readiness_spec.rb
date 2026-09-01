@@ -117,10 +117,6 @@ RSpec.describe Admin::ShowReadiness do
       .not_to change { show.reload.attributes }
   end
 
-  # The readiness check is worthless if a show it calls ready still fails
-  # validation on publish: Show requires venue and tour only when published, and
-  # Track requires songs only when its show is published, so both traps spring
-  # exactly at the moment the flag flips.
   it "reports ready only for a show that survives publishing" do
     show = ready_show
     expect(described_class.call(show)[:ready]).to be(true)
