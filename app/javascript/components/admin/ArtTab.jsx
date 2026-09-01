@@ -18,7 +18,13 @@ const EDIT_CONFIRM =
 // variant routes, so a plain img tag works: no auth header, no object URLs.
 const ImageCard = ({ url, alt, children }) => (
   <figure className="admin-art-card">
-    {url ? <img src={url} alt={alt} /> : <div className="admin-art-empty">None</div>}
+    {url ? (
+      <a href={url} target="_blank" rel="noreferrer" title="Open full size">
+        <img src={url} alt={alt} />
+      </a>
+    ) : (
+      <div className="admin-art-empty">None</div>
+    )}
     <figcaption>{children}</figcaption>
   </figure>
 );
