@@ -1904,3 +1904,17 @@
   width: 11rem;
   font-size: 0.8rem;
 }
+
+.admin-track-row.is-lifted td {
+  opacity: 0.35;
+}
+
+.admin-track-row.is-drop-above td {
+  border-top: 3px solid var(--blue);
+  padding-top: 0.6rem;
+}
+
+.admin-track-row.is-drop-below td {
+  border-bottom: 3px solid var(--blue);
+  padding-bottom: 0.6rem;
+}

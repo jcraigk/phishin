@@ -25,7 +25,8 @@ const problemsFor = (track) => {
 const TrackRow = ({
   track,
   stagedOptions,
-  dragging,
+  dropHint,
+  lifted,
   onDragStart,
   onDragOver,
   onDrop,
@@ -82,7 +83,7 @@ const TrackRow = ({
 
   return (
     <tr
-      className={`admin-track-row${dragging ? " is-drag-over" : ""}`}
+      className={`admin-track-row${dropHint ? ` is-drop-${dropHint}` : ""}${lifted ? " is-lifted" : ""}`}
       draggable
       onDragStart={onDragStart}
       onDragOver={onDragOver}

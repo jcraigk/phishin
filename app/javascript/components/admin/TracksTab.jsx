@@ -63,6 +63,7 @@ const TracksTab = () => {
   const { show, setShow, setError } = useContext(EditorContext);
   const [dragIndex, setDragIndex] = useState(null);
   const [overIndex, setOverIndex] = useState(null);
+  const [overHalf, setOverHalf] = useState(null);
   const [busy, setBusy] = useState(false);
   const [pendingSets, setPendingSets] = useState([]);
 
@@ -92,16 +93,18 @@ const TracksTab = () => {
     }
   };
 
-  // Dropping on a row takes that row's slot; dropping on a set header puts
-  // the track first in that set. Either way the track adopts the target set.
-  const handleDrop = (targetIndex, targetSet, { before = false } = {}) => {
+  // Insertion-point semantics: the drop lands in the gap the indicator marks,
+  // above or below the hovered row. A drop on a set header lands first in that
+  // set. Either way the track adopts the target set.
+  const handleDrop = (targetIndex, targetSet, { half = "above" } = {}) => {
     setOverIndex(null);
+    setOverHalf(null);
     if (dragIndex === null) return;
     setPendingSets((prev) => prev.filter((set) => set !== targetSet));
     const moved = tracks[dragIndex];
     const sets = moved.set === targetSet ? {} : { [moved.id]: targetSet };
-    const insertAt =
-      before && dragIndex < targetIndex ? targetIndex - 1 : targetIndex;
+    let insertAt = half === "below" ? targetIndex + 1 : targetIndex;
+    if (dragIndex < insertAt) insertAt -= 1;
     if (dragIndex === insertAt && Object.keys(sets).length === 0) {
       setDragIndex(null);
       return;
@@ -111,6 +114,16 @@ const TracksTab = () => {
     ordered.splice(insertAt, 0, moved);
     setDragIndex(null);
     commitOrder(ordered, sets);
+  };
+
+  const hintFor = (index) => (overIndex === index ? overHalf : null);
+
+  const trackDragOver = (index) => (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    const rect = e.currentTarget.getBoundingClientRect();
+    setOverIndex(index);
+    setOverHalf(e.clientY < rect.top + rect.height / 2 ? "above" : "below");
   };
 
   // The new track takes the set of the track above its slot, since position
@@ -194,10 +207,11 @@ const TracksTab = () => {
                     e.preventDefault();
                     e.dataTransfer.dropEffect = "move";
                     setOverIndex(headerKey);
+                    setOverHalf(null);
                   }}
                   onDrop={(e) => {
                     e.preventDefault();
-                    handleDrop(firstIndex, group.set, { before: true });
+                    handleDrop(firstIndex, group.set, { half: "above" });
                   }}
                 >
                   <th colSpan={8}>
@@ -223,24 +237,22 @@ const TracksTab = () => {
                     key={track.id}
                     track={track}
                     stagedOptions={show.staged_audio}
-                    dragging={overIndex === index}
+                    dropHint={hintFor(index)}
+                    lifted={dragIndex === index}
                     onDragStart={(e) => {
                       setDragIndex(index);
                       e.dataTransfer.effectAllowed = "move";
                       e.dataTransfer.setData("text/plain", String(index));
                     }}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      e.dataTransfer.dropEffect = "move";
-                      setOverIndex(index);
-                    }}
+                    onDragOver={trackDragOver(index)}
                     onDrop={(e) => {
                       e.preventDefault();
-                      handleDrop(index, group.set);
+                      handleDrop(index, group.set, { half: overHalf || "above" });
                     }}
                     onDragEnd={() => {
                       setDragIndex(null);
                       setOverIndex(null);
+                      setOverHalf(null);
                     }}
                   />
                 ))}
