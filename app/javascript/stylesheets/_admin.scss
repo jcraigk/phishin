@@ -474,12 +474,34 @@
   > header {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.9rem;
+    margin-bottom: 0.75rem;
+
+    h1 {
+      margin: 0;
+      font-size: 2.1rem;
+      line-height: 1.1;
+    }
   }
 
   .admin-preview-link {
-    font-size: 0.9rem;
-    text-decoration: underline;
+    color: var(--text-gray);
+    font-size: 1.15rem;
+
+    &:hover {
+      color: var(--list-item-link-color);
+    }
+  }
+
+  .admin-icon-button {
+    padding: 0.3rem 0.5rem;
+    background: none;
+    border: none !important;
+    font-size: 1.05rem;
+
+    &:hover:not(:disabled) {
+      background-color: var(--bg-red);
+    }
   }
 
   input[type="text"],

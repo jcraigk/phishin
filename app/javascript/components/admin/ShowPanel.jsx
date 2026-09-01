@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router";
 import { EditorContext } from "./AdminShowEditor";
-import { adminGet, adminPost, adminPatch, adminDelete } from "./adminApi";
+import { adminGet, adminPost, adminPatch } from "./adminApi";
 import FilterSelect from "./FilterSelect";
 
 const BLANK_VENUE = { name: "", city: "", state: "", country: "USA" };
@@ -11,8 +10,6 @@ const venueLabel = (venue) =>
 
 const ShowPanel = () => {
   const { show, setShow, setError } = useContext(EditorContext);
-  const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
   const [venues, setVenues] = useState([]);
   const [newVenue, setNewVenue] = useState(null);
   const [tours, setTours] = useState([]);
@@ -65,22 +62,6 @@ const ShowPanel = () => {
     }
   };
 
-  const deleteShow = async () => {
-    const typed = window.prompt(
-      `Type ${show.date} to confirm deleting this show and all of its tracks.`
-    );
-    if (typed !== show.date) return;
-    setError(null);
-    setBusy(true);
-    try {
-      await adminDelete(`/shows/${show.date}`);
-      navigate("/admin");
-    } catch (e) {
-      setError(e.message);
-      setBusy(false);
-    }
-  };
-
   const saveText = (field, current, stored) => {
     if (current === (stored || "")) return;
     patchShow({ [field]: current });
@@ -88,16 +69,7 @@ const ShowPanel = () => {
 
   return (
     <section className="admin-show-panel">
-      <button
-        type="button"
-        className="admin-panel-toggle"
-        onClick={() => setCollapsed(!collapsed)}
-      >
-        {collapsed ? "Show details" : "Hide details"}
-      </button>
-
-      {!collapsed && (
-        <div className="admin-panel-body">
+      <div className="admin-panel-body">
           <div className="admin-field">
             <label htmlFor="admin-venue">Venue</label>
             <FilterSelect
@@ -193,17 +165,7 @@ const ShowPanel = () => {
               }
             />
           </div>
-
-          <button
-            type="button"
-            className="admin-danger"
-            disabled={busy}
-            onClick={deleteShow}
-          >
-            Delete Show
-          </button>
-        </div>
-      )}
+      </div>
     </section>
   );
 };

@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import { faExternalLinkAlt, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../helpers/utils";
 import React, { createContext, useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { adminGet } from "./adminApi";
+import { useNavigate, useParams } from "react-router";
+import { adminGet, adminDelete } from "./adminApi";
 import TracksTab from "./TracksTab";
 import AudioTab from "./AudioTab";
 import ArtTab from "./ArtTab";
@@ -19,6 +19,9 @@ const TABS = ["Tracks", "Audio", "Art", "Tags", "History"];
 
 const AdminShowEditor = () => {
   const { date } = useParams();
+  const navigate = useNavigate();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [show, setShow] = useState(null);
   const [tab, setTab] = useState("Tracks");
   const [error, setError] = useState(null);
@@ -85,8 +88,51 @@ const AdminShowEditor = () => {
           >
             <FontAwesomeIcon icon={faExternalLinkAlt} />
           </a>
+          <button
+            type="button"
+            className="admin-icon-button admin-danger"
+            title="Delete show"
+            aria-label="Delete show"
+            onClick={() => setConfirmingDelete(true)}
+          >
+            <FontAwesomeIcon icon={faTrashAlt} />
+          </button>
         </header>
         {error && <p className="admin-error">{error}</p>}
+        {confirmingDelete && (
+          <div className="admin-modal-overlay" onClick={() => setConfirmingDelete(false)}>
+            <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+              <h3>Delete {show.date}?</h3>
+              <p className="admin-empty">
+                The show, its {show.tracks.length} tracks, audio, tags and likes are
+                removed permanently.
+              </p>
+              <div className="admin-modal-actions">
+                <button
+                  type="button"
+                  className="admin-danger"
+                  disabled={deleting}
+                  onClick={async () => {
+                    setDeleting(true);
+                    try {
+                      await adminDelete(`/shows/${show.date}`);
+                      navigate("/admin");
+                    } catch (err) {
+                      setError(err.message);
+                      setDeleting(false);
+                      setConfirmingDelete(false);
+                    }
+                  }}
+                >
+                  Delete Show
+                </button>
+                <button type="button" onClick={() => setConfirmingDelete(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {show.staging && show.tracks.length === 0 ? (
           <StagingEditor />
         ) : (
