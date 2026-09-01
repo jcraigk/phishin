@@ -1,12 +1,22 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faCloudArrowUp, faFileAudio, faFolderOpen, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faCloudArrowUp,
+  faFileAudio,
+  faFolderOpen,
+  faPause,
+  faPlay,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import MoonLoader from "react-spinners/MoonLoader";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminPost, pollJob } from "./adminApi";
 import { uploadFile, collectFiles, isMp3, isStagingSource } from "./DirectUploader";
 import { formatDurationTrack } from "../helpers/utils";
+import { GaplessEngine } from "../player/GaplessEngine";
+import { WebAudioBackend } from "../player/WebAudioBackend";
 
 const GROUP_LABEL = { replace: "Replaces existing audio", fill: "Fills empty tracks" };
 
@@ -22,6 +32,46 @@ const BulkAudioDrop = () => {
   const cancelSeq = useRef(0);
   const fileInputRef = useRef(null);
   const folderInputRef = useRef(null);
+  const previewEngine = useRef(null);
+  const [preview, setPreview] = useState({ index: 0, playing: false, time: 0 });
+
+  const previewList = useMemo(
+    () =>
+      plan
+        ? ["replace", "fill"].flatMap((action) =>
+            plan.matches.filter((m) => m.action === action)
+          )
+        : [],
+    [plan]
+  );
+
+  useEffect(() => {
+    if (previewList.length === 0) return undefined;
+    const engine = new GaplessEngine(new WebAudioBackend());
+    engine.onTime = (seconds, index) =>
+      setPreview((prev) => ({ ...prev, time: seconds, index }));
+    engine.onTrackChange = (index) =>
+      setPreview((prev) => ({ ...prev, index, time: 0 }));
+    engine.onPlayChange = (playing) =>
+      setPreview((prev) => ({ ...prev, playing }));
+    engine.load(previewList.map((m) => ({ url: m.url, offset: 0, end: null })));
+    previewEngine.current = engine;
+    setPreview({ index: 0, playing: false, time: 0 });
+    return () => {
+      engine.destroy();
+      previewEngine.current = null;
+    };
+  }, [previewList]);
+
+  const togglePreview = (flatIndex) => {
+    const engine = previewEngine.current;
+    if (!engine) return;
+    if (preview.index === flatIndex) {
+      engine.toggle();
+    } else {
+      engine.goto(flatIndex, { play: true });
+    }
+  };
   const abortUpload = useRef(null);
   const pollController = useRef(null);
 
@@ -262,22 +312,50 @@ const BulkAudioDrop = () => {
               <div key={action} className="admin-bulk-group">
                 <h4>{GROUP_LABEL[action]}</h4>
                 <ul className="admin-bulk-matches">
-                  {items.map((m) => (
-                    <li key={m.signed_id}>
-                      <span className="admin-bulk-position">{m.position}</span>
-                      <span className="admin-bulk-title">{m.title}</span>
-                      <span className="admin-bulk-filename">{m.filename}</span>
-                      <audio
-                        className="admin-bulk-preview"
-                        controls
-                        preload="none"
-                        src={m.url}
-                      />
-                      <span className="admin-bulk-duration">
-                        {m.duration ? formatDurationTrack(m.duration) : ""}
-                      </span>
-                    </li>
-                  ))}
+                  {items.map((m) => {
+                    const flatIndex = previewList.indexOf(m);
+                    const active = preview.index === flatIndex;
+                    return (
+                      <li key={m.signed_id}>
+                        <span className="admin-bulk-position">{m.position}</span>
+                        <span className="admin-bulk-title">{m.title}</span>
+                        <span className="admin-bulk-filename">{m.filename}</span>
+                        <span className="admin-bulk-preview">
+                          <button
+                            type="button"
+                            className="admin-preview-toggle"
+                            aria-label={active && preview.playing ? "Pause" : "Play"}
+                            onClick={() => togglePreview(flatIndex)}
+                          >
+                            <FontAwesomeIcon
+                              icon={active && preview.playing ? faPause : faPlay}
+                            />
+                          </button>
+                          {active && (
+                            <>
+                              <input
+                                type="range"
+                                className="admin-preview-scrub"
+                                min="0"
+                                max={(m.duration || 0) / 1000}
+                                step="0.1"
+                                value={preview.time}
+                                onChange={(e) =>
+                                  previewEngine.current?.seek(Number(e.target.value))
+                                }
+                              />
+                              <span className="admin-preview-time">
+                                {formatDurationTrack(preview.time * 1000)}
+                              </span>
+                            </>
+                          )}
+                        </span>
+                        <span className="admin-bulk-duration">
+                          {m.duration ? formatDurationTrack(m.duration) : ""}
+                        </span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             );

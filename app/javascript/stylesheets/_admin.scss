@@ -985,9 +985,23 @@
   }
 
   .admin-bulk-preview {
+    display: flex;
     flex-shrink: 0;
+    align-items: center;
+    gap: 0.5rem;
     width: 16rem;
-    height: 2rem;
+  }
+
+  .admin-preview-scrub {
+    flex: 1;
+    accent-color: var(--blue);
+  }
+
+  .admin-preview-time {
+    min-width: 2.6rem;
+    color: var(--text-gray);
+    font-size: 0.8rem;
+    text-align: right;
   }
 
   .admin-bulk-duration {
@@ -1944,6 +1958,19 @@
 
 .admin-modal-message {
   margin: 0;
+}
+
+.admin-layout button.admin-preview-toggle {
+  padding: 0.2rem 0.5rem;
+  border: none !important;
+  background: none;
+  color: var(--list-item-link-color) !important;
+
+  &:hover:not(:disabled) {
+    border: none !important;
+    background: none;
+    color: var(--blue) !important;
+  }
 }
 
 .admin-set-dismiss {
