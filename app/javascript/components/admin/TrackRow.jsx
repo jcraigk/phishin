@@ -3,13 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowsLeftRight,
   faArrowsUpDown,
-  faChevronDown,
-  faChevronRight,
   faCloudArrowUp,
   faEllipsis,
   faPause,
   faPlay,
   faScissors,
+  faTags,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
@@ -43,11 +42,9 @@ const TrackRow = ({
   tags,
   stagedOptions,
   onReposition,
-  previewActive,
-  previewPlaying,
-  previewTime,
-  onTogglePreview,
-  onSeekPreview,
+  isActive,
+  isPlaying,
+  onPlay,
 }) => {
   const { setShow, setTrack, setError } = useContext(EditorContext);
   const [title, setTitle] = useState(track.title || "");
@@ -112,6 +109,20 @@ const TrackRow = ({
     setTool((prev) => (prev === name ? null : name));
   };
 
+  const toggleTags = () => setTool((prev) => (prev === "tags" ? null : "tags"));
+
+  const groupedTags = track.track_tags
+    .slice()
+    .sort(
+      (a, b) =>
+        a.tag_name.localeCompare(b.tag_name) ||
+        (a.starts_at_second || 0) - (b.starts_at_second || 0)
+    )
+    .reduce((acc, tag) => {
+      (acc[tag.tag_name] = acc[tag.tag_name] || []).push(tag);
+      return acc;
+    }, {});
+
   const menuItem = (label, icon, enabled, onClick) => (
     <li>
       <button type="button" disabled={!enabled} onClick={onClick}>
@@ -123,24 +134,18 @@ const TrackRow = ({
   return (
     <>
     <tr className="admin-track-row">
-      <td
-        className="admin-track-disclosure"
-        role="button"
-        tabIndex={0}
-        title="Edit tags"
-        aria-label={`Toggle tags for ${track.title}`}
-        onClick={() => setTool((prev) => (prev === "tags" ? null : "tags"))}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") setTool((prev) => (prev === "tags" ? null : "tags"));
-        }}
-      >
-        <span className="admin-track-position">{track.position}</span>
-        <FontAwesomeIcon
-          className="admin-tag-chevron"
-          icon={tool === "tags" ? faChevronDown : faChevronRight}
-          fixedWidth
-        />
-        <span className="admin-count">{track.track_tags.length}</span>
+      <td className="admin-track-position">{track.position}</td>
+      <td className="admin-track-play">
+        {hasAudio && (
+          <button
+            type="button"
+            className="admin-preview-toggle"
+            aria-label={isPlaying ? "Pause" : "Play"}
+            onClick={onPlay}
+          >
+            <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
+          </button>
+        )}
       </td>
       <td className="admin-track-validity">
         {problems.length > 0 && (
@@ -170,6 +175,37 @@ const TrackRow = ({
           }
         />
       </td>
+      <td className="admin-track-tag-badges">
+        {track.track_tags.length > 0 ? (
+          <div
+            className="tag-badges-container"
+            role="button"
+            tabIndex={0}
+            title="Edit tags"
+            onClick={toggleTags}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") toggleTags();
+            }}
+          >
+            {Object.entries(groupedTags).map(([name, group]) => (
+              <div key={name} className="tag-badge">
+                {name}
+                {group.length > 1 ? ` (${group.length})` : ""}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="admin-tag-add-button"
+            title="Add tags"
+            aria-label={`Add tags to ${track.title}`}
+            onClick={toggleTags}
+          >
+            <FontAwesomeIcon icon={faTags} />
+          </button>
+        )}
+      </td>
       <td className="admin-track-audio">
         {track.audio_status === "missing" ? (
           <select
@@ -190,50 +226,8 @@ const TrackRow = ({
             ))}
           </select>
         ) : (
-          <span className="admin-audio-cell">
-            <button
-              type="button"
-              className="admin-preview-toggle"
-              aria-label={previewPlaying ? "Pause" : "Play"}
-              onClick={onTogglePreview}
-            >
-              <FontAwesomeIcon icon={previewPlaying ? faPause : faPlay} />
-            </button>
-            <span
-              className="admin-row-waveform"
-              style={
-                track.waveform_url
-                  ? { backgroundImage: `url(${track.waveform_url})` }
-                  : undefined
-              }
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const frac = (e.clientX - rect.left) / rect.width;
-                onSeekPreview(frac * ((track.duration || 0) / 1000));
-              }}
-            >
-              <span
-                className="admin-row-waveform-progress"
-                style={{
-                  maskImage: track.waveform_url
-                    ? `url(${track.waveform_url})`
-                    : undefined,
-                  WebkitMaskImage: track.waveform_url
-                    ? `url(${track.waveform_url})`
-                    : undefined,
-                  background: `linear-gradient(to right, var(--blue) ${
-                    previewActive && track.duration
-                      ? (previewTime / (track.duration / 1000)) * 100
-                      : 0
-                  }%, transparent 0)`,
-                }}
-              />
-            </span>
-            <span className="admin-track-duration">
-              {previewActive
-                ? formatDuration(previewTime * 1000)
-                : formatDuration(track.duration)}
-            </span>
+          <span className={`admin-track-duration${isActive ? " is-active" : ""}`}>
+            {formatDuration(track.duration)}
           </span>
         )}
       </td>
@@ -276,7 +270,7 @@ const TrackRow = ({
     )}
     {(tool === "trim" || tool === "boundary" || tool === "tags") && (
       <tr className="admin-track-tool-row">
-        <td colSpan={6}>
+        <td colSpan={8}>
           {tool === "trim" && <TrimPanel key={`trim-${track.id}`} track={track} />}
           {tool === "boundary" && shiftable && (
             <BoundaryPanel key={`boundary-${track.id}`} track={track} next={next} />
