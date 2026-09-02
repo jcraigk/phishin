@@ -925,10 +925,13 @@
   }
 }
 
-.admin-preview-label {
-  min-width: 10rem;
-  font-size: 0.8rem;
+.admin-preview-tag {
+  padding: 0.15rem 0.5rem;
+  border-radius: $radius;
+  background: var(--bg-gray);
   color: var(--text-gray);
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 
 .admin-audio-actions {
@@ -939,6 +942,9 @@
 }
 
 .admin-audio-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   color: var(--text-gray);
   font-size: 0.85rem;
 }

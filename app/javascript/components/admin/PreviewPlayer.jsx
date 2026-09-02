@@ -13,8 +13,8 @@ const PreviewPlayer = ({ label, url, audioRef }) => {
 
   return (
     <div className="admin-preview-player">
-      <span className="admin-preview-label">{label}</span>
       <audio controls src={url} ref={audioRef} />
+      <span className="admin-preview-tag">{label}</span>
     </div>
   );
 };
