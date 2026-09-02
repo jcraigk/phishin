@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faPause, faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
 import MoonLoader from "react-spinners/MoonLoader";
 import { EditorContext } from "./AdminShowEditor";
 import WaveformScrubber from "./WaveformScrubber";
@@ -61,7 +61,7 @@ const TrimPanel = ({ track }) => {
   const [originalPlaying, setOriginalPlaying] = useState(false);
   const audioRef = useRef(null);
   const previewAudioRef = useRef(null);
-  const { run, busy, status, error, setError } = useJobRunner();
+  const { run, cancel, busy, status, error, setError } = useJobRunner();
 
   useEffect(() => {
     // Capture phase so this wins over the bottom Player's own space handler.
@@ -94,6 +94,7 @@ const TrimPanel = ({ track }) => {
   const setValue = (setter) => (value) => {
     setter(value);
     setError(null);
+    cancelledRef.current = false;
     clearPreview();
   };
 
@@ -113,13 +114,14 @@ const TrimPanel = ({ track }) => {
 
   const initialSignatureRef = useRef(signature);
   const dirtyRef = useRef(false);
+  const cancelledRef = useRef(false);
 
   useEffect(() => {
     if (!dirtyRef.current) {
       if (signature === initialSignatureRef.current) return undefined;
       dirtyRef.current = true;
     }
-    if (busy || previewCurrent || error) return undefined;
+    if (busy || previewCurrent || error || cancelledRef.current) return undefined;
     if (trimStart + Math.max(duration - trimEnd, 0) < 0.5) return undefined;
     const timer = setTimeout(renderPreview, 800);
     return () => clearTimeout(timer);
@@ -216,6 +218,17 @@ const TrimPanel = ({ track }) => {
         <button type="button" onClick={applyTrim} disabled={busy || !previewCurrent}>
           <FontAwesomeIcon icon={faCheck} /> Apply
         </button>
+        {busy && (
+          <button
+            type="button"
+            onClick={() => {
+              cancelledRef.current = true;
+              cancel();
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} /> Cancel
+          </button>
+        )}
         {status && (
           <span className="admin-audio-status">
             <MoonLoader color="#c7c8ca" size={14} /> {status}
