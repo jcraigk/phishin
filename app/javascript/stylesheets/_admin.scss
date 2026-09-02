@@ -1355,6 +1355,26 @@
   margin-top: 1rem;
 }
 
+.admin-track-tags {
+  width: 2.75rem;
+  text-align: center;
+}
+
+.admin-layout .admin-tag-toggle {
+  padding: 0.1rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  &:hover .admin-count {
+    filter: brightness(1.2);
+  }
+
+  &.active .admin-count {
+    box-shadow: 0 0 0 2px var(--text-gray);
+  }
+}
+
 .admin-pnet-report {
   max-width: 64rem;
   margin-top: 0.75rem;
