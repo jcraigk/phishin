@@ -119,7 +119,7 @@ const TrackRow = ({
     onAudioTool(track.id, name);
   };
 
-  const toggleTags = () => setTool((prev) => (prev === "tags" ? null : "tags"));
+  const toggleTags = () => onAudioTool(track.id, "tags");
 
   const copyUrl = async () => {
     const url = `${window.location.origin}/${show.date}/${track.slug}`;
@@ -291,7 +291,7 @@ const TrackRow = ({
         onClose={() => setTool(null)}
       />
     )}
-    {(audioName || tool === "tags") && (
+    {audioName && (
       <tr className="admin-track-tool-row">
         <td colSpan={8}>
           {audioName === "trim" && (
@@ -309,7 +309,7 @@ const TrackRow = ({
               onClose={() => onAudioTool(track.id, "boundary")}
             />
           )}
-          {tool === "tags" && <TagEditor track={track} tags={tags} />}
+          {audioName === "tags" && <TagEditor track={track} tags={tags} />}
         </td>
       </tr>
     )}
