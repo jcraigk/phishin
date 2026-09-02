@@ -1095,6 +1095,27 @@
   font-style: italic;
 }
 
+.admin-art-suggest-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.6rem 0;
+
+  .admin-art-busy {
+    margin-top: 0;
+  }
+}
+
+.admin-art-pending {
+  .admin-art-empty {
+    height: 12rem;
+  }
+
+  figcaption {
+    color: var(--text-gray);
+  }
+}
+
 .admin-art-suggestions {
   max-width: 64rem;
   margin: 0.75rem 0 0;
@@ -1160,16 +1181,6 @@
   border: 1px dashed var(--border-gray);
   border-radius: $radius;
   color: var(--text-gray);
-}
-
-.admin-art-prompt {
-  max-width: 64rem;
-  margin-bottom: 1rem;
-
-  textarea {
-    width: 100%;
-    font-size: 1.05rem;
-  }
 }
 
 .admin-run-note {
@@ -2143,6 +2154,11 @@
   width: 42rem;
   max-height: 80vh;
   overflow-y: auto;
+
+  textarea {
+    width: 100%;
+    font-size: 1rem;
+  }
 }
 
 .admin-modal-check {
