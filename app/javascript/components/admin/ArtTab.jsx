@@ -98,6 +98,9 @@ const EditControl = ({ blobKey, label, multiline }) => {
               value={prompt}
               disabled={busy}
               onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") submit();
+              }}
             />
           )}
           <button
