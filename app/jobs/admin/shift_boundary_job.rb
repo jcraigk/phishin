@@ -2,6 +2,7 @@ class Admin::ShiftBoundaryJob
   include Sidekiq::Job
 
   MIN_PART_S = 1.0
+  PREVIEW_WINDOW_S = 5.0
 
   class NoNextTrackError < StandardError; end
   class MissingAudioError < StandardError; end
@@ -133,8 +134,13 @@ class Admin::ShiftBoundaryJob
 
   def render_sides
     FileUtils.mkdir_p(output_dir)
-    render(TrackSplitService.filters(start_s: 0.0, end_s: cut_s), side_paths[0])
-    render(TrackSplitService.filters(start_s: cut_s), side_paths[1])
+    if apply?
+      render(TrackSplitService.filters(start_s: 0.0, end_s: cut_s), side_paths[0])
+      render(TrackSplitService.filters(start_s: cut_s), side_paths[1])
+    else
+      render(TrackSplitService.filters(start_s: [ cut_s - PREVIEW_WINDOW_S, 0.0 ].max, end_s: cut_s), side_paths[0])
+      render(TrackSplitService.filters(start_s: cut_s, end_s: [ cut_s + PREVIEW_WINDOW_S, total_duration_s ].min), side_paths[1])
+    end
   end
 
   def render(filters, out_path)
