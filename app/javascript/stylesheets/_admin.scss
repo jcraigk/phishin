@@ -1279,13 +1279,24 @@
 }
 
 .admin-art-origin {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  margin: 0;
   color: var(--text-gray);
-  font-style: italic;
+
+  p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    margin: 0;
+    font-style: italic;
+  }
+
+  .admin-art-origin-edit {
+    -webkit-line-clamp: 1;
+    margin-top: 0.15rem;
+    padding-left: 0.6rem;
+    border-left: 2px solid var(--border-gray);
+    font-style: normal;
+  }
 }
 
 .admin-art-edit-form {

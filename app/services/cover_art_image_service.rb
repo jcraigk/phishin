@@ -32,9 +32,7 @@ class CoverArtImageService < ApplicationService
     end
 
     result = JSON.parse(safe_body(response))
-    url = upload_candidate(
-      result["data"].first["b64_json"], prompt_trail, usage_cost(result["usage"])
-    )
+    url = upload_candidate(result["data"].first["b64_json"], usage_cost(result["usage"]))
     show.attach_cover_art_by_url(url) unless dry_run
     url
   end
@@ -57,11 +55,19 @@ class CoverArtImageService < ApplicationService
     prompt_override.presence || show.cover_art_prompt
   end
 
-  def prompt_trail
+  def source_metadata
+    @source_metadata ||=
+      ActiveStorage::Blob.find_by(key: source_blob_key)&.metadata || {}
+  end
+
+  def base_prompt
     return generation_prompt unless editing?
-    source_blob = ActiveStorage::Blob.find_by(key: source_blob_key)
-    base = source_blob&.metadata&.dig("prompt").presence || show.cover_art_prompt
-    [ base, "edit: #{edit_prompt}" ].compact.join(" | ")
+    source_metadata["prompt"].presence || show.cover_art_prompt
+  end
+
+  def edit_chain
+    return [] unless editing?
+    Array(source_metadata["edits"]) + [ edit_prompt ]
   end
 
   def generate_request
@@ -117,9 +123,10 @@ class CoverArtImageService < ApplicationService
     body
   end
 
-  def upload_candidate(b64, used_prompt, cost)
+  def upload_candidate(b64, cost)
     metadata = {}
-    metadata["prompt"] = used_prompt if used_prompt.present?
+    metadata["prompt"] = base_prompt if base_prompt.present?
+    metadata["edits"] = edit_chain if edit_chain.any?
     metadata["cost"] = cost if cost.present?
     blob = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new(Base64.decode64(b64)),

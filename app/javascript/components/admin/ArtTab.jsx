@@ -170,18 +170,29 @@ const CandidateCard = ({ candidate }) => {
     );
   };
 
-  const editIndex = (candidate.prompt || "").lastIndexOf("| edit:");
-  const origin = !candidate.prompt
-    ? "Uploaded"
-    : editIndex >= 0
-      ? `Edit: ${candidate.prompt.slice(editIndex + 7).trim()}`
-      : candidate.prompt;
+  // Older candidates carry the whole trail as one "base | edit: x" string,
+  // newer ones a base prompt plus an edits array.
+  const trailParts = (candidate.prompt || "").split(/\s*\|\s*edit:\s*/);
+  const basePrompt = trailParts[0] || null;
+  const edits =
+    (candidate.edits || []).length > 0 ? candidate.edits : trailParts.slice(1);
 
   return (
     <ImageCard url={candidate.url} alt="Cover art candidate" imgStyle={imgStyle}>
-      <p className="admin-art-origin" title={candidate.prompt || "Uploaded"}>
-        {origin}
-      </p>
+      <div className="admin-art-origin">
+        {basePrompt ? (
+          <>
+            <p title={basePrompt}>{basePrompt}</p>
+            {edits.map((edit, index) => (
+              <p key={index} className="admin-art-origin-edit" title={edit}>
+                Edit {index + 1}: {edit}
+              </p>
+            ))}
+          </>
+        ) : (
+          <p>Uploaded</p>
+        )}
+      </div>
       <div className="admin-art-actions">
         <label>
           Zoom %
