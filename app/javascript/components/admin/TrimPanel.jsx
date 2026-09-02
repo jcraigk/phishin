@@ -1,10 +1,15 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faPause, faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRotateLeft,
+  faCheck,
+  faPause,
+  faPlay,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import MoonLoader from "react-spinners/MoonLoader";
 import { EditorContext } from "./AdminShowEditor";
 import WaveformScrubber from "./WaveformScrubber";
-import PreviewPlayer from "./PreviewPlayer";
 import useJobRunner from "./useJobRunner";
 import { adminPost, fetchJobAudio } from "./adminApi";
 
@@ -59,6 +64,9 @@ const TrimPanel = ({ track, onClose }) => {
   const [previewedAt, setPreviewedAt] = useState(null);
   const [playhead, setPlayhead] = useState(0);
   const [originalPlaying, setOriginalPlaying] = useState(false);
+  const [previewPlaying, setPreviewPlaying] = useState(false);
+  const [previewTime, setPreviewTime] = useState(0);
+  const [previewDuration, setPreviewDuration] = useState(null);
   const audioRef = useRef(null);
   const previewAudioRef = useRef(null);
   const { run, cancel, busy, status, error, setError } = useJobRunner();
@@ -120,10 +128,15 @@ const TrimPanel = ({ track, onClose }) => {
   };
 
   useEffect(() => {
-    if (!previewUrl || !autoPlayRef.current) return;
-    autoPlayRef.current = false;
-    if (audioRef.current) audioRef.current.pause();
-    if (previewAudioRef.current) previewAudioRef.current.play();
+    if (!previewUrl) return undefined;
+    setPreviewTime(0);
+    setPreviewDuration(null);
+    if (autoPlayRef.current) {
+      autoPlayRef.current = false;
+      if (audioRef.current) audioRef.current.pause();
+      if (previewAudioRef.current) previewAudioRef.current.play();
+    }
+    return () => URL.revokeObjectURL(previewUrl);
   }, [previewUrl]);
 
   const initialSignatureRef = useRef(signature);
@@ -227,7 +240,67 @@ const TrimPanel = ({ track, onClose }) => {
         onPause={() => setOriginalPlaying(false)}
       />
 
-      <PreviewPlayer url={previewUrl} audioRef={previewAudioRef} />
+      {previewUrl && (
+        <div className="admin-preview-player">
+          <audio
+            src={previewUrl}
+            ref={previewAudioRef}
+            onTimeUpdate={(e) => setPreviewTime(e.target.currentTime)}
+            onLoadedMetadata={(e) => setPreviewDuration(e.target.duration)}
+            onPlay={() => setPreviewPlaying(true)}
+            onPause={() => setPreviewPlaying(false)}
+          />
+          <button
+            type="button"
+            className="admin-trim-play"
+            onClick={() => {
+              const audio = previewAudioRef.current;
+              if (!audio) return;
+              if (audio.paused) audio.play();
+              else audio.pause();
+            }}
+          >
+            <FontAwesomeIcon icon={previewPlaying ? faPause : faPlay} />
+          </button>
+          <button
+            type="button"
+            className="admin-trim-play"
+            onClick={() => {
+              const audio = previewAudioRef.current;
+              if (!audio) return;
+              audio.currentTime = 0;
+              audio.play();
+            }}
+          >
+            <FontAwesomeIcon icon={faArrowRotateLeft} />
+          </button>
+          <div
+            className="admin-preview-scrubber"
+            role="button"
+            onClick={(e) => {
+              const audio = previewAudioRef.current;
+              if (!audio || !previewDuration) return;
+              const rect = e.currentTarget.getBoundingClientRect();
+              const fraction = Math.min(
+                Math.max((e.clientX - rect.left) / rect.width, 0),
+                1
+              );
+              audio.currentTime = fraction * previewDuration;
+            }}
+          >
+            <div
+              className="admin-preview-scrubber-fill"
+              style={{
+                width: `${
+                  previewDuration
+                    ? Math.min(previewTime / previewDuration, 1) * 100
+                    : 0
+                }%`,
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="admin-audio-actions">
         <button type="button" onClick={applyTrim} disabled={busy || !previewCurrent}>
