@@ -204,8 +204,8 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingUpdate, onPendingEn
         )}
       </div>
       <div className="admin-art-actions">
-        <label>
-          Zoom %
+        <label className="admin-zoom-label">
+          Zoom
           <input
             type="number"
             min="0"
