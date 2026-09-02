@@ -1,6 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import MoonLoader from "react-spinners/MoonLoader";
 import { EditorContext } from "./AdminShowEditor";
 import PreviewPlayer from "./PreviewPlayer";
 import useJobRunner from "./useJobRunner";
@@ -10,50 +11,6 @@ import { adminPost, fetchJobAudio } from "./adminApi";
 // so the allowed range shown here is the same one the API enforces.
 const MIN_PART_S = 1.0;
 
-// Mirrors TrackSlugGenerator#abbreviate_long_slug, in the same order and with
-// the same entries, so mirroring them costs less than showing a slug preview
-// that quietly disagrees with the one the server writes for a Hold Your Head Up.
-// spec/javascript/track_slug_generator_parity_spec.rb reads this list off disk
-// and fails if it ever falls behind the Ruby.
-const SLUG_ABBREVIATIONS = [
-  ["hold-your-head-up", "hyhu"],
-  ["the-man-who-stepped-into-yesterday", "tmwsiy"],
-  ["you-enjoy-myself", "yem"],
-  ["she-caught-the-katy-and-left-me-a-mule-to-ride", "she-caught-the-katy"],
-  ["mcgrupp-and-the-watchful-hosemasters", "mcgrupp"],
-  ["big-black-furry-creature-from-mars", "bbfcfm"],
-];
-
-// Mirrors TrackSlugGenerator#slugged_title and its abbreviation pass. The
-// duplicate suffix is not applied here; it depends on the other tracks, so
-// slugFor adds it.
-const baseSlug = (title) => {
-  const slug = (title || "")
-    .toLowerCase()
-    .replace(/'/g, "")
-    .replace(/[^a-z0-9]/g, " ")
-    .trim()
-    .replace(/\s+/g, "-");
-  return SLUG_ABBREVIATIONS.reduce(
-    (result, [long, short]) => result.split(long).join(short),
-    slug
-  );
-};
-
-// TrackSlugGenerator numbers duplicate titles by POSITION order, counting only
-// the tracks ahead of this one, so the preview has to count the same way over
-// the titles this edit would leave behind rather than the ones stored now.
-const slugFor = (trackId, titlesByPosition) => {
-  const mine = titlesByPosition.find((t) => t.id === trackId);
-  if (!mine) return "";
-  let before = 0;
-  for (const other of titlesByPosition) {
-    if (other.id === trackId) break;
-    if (other.title === mine.title) before += 1;
-  }
-  return `${baseSlug(mine.title)}${before === 0 ? "" : `-${before + 1}`}`;
-};
-
 const round = (value) => Math.round(value * 10) / 10;
 
 const seconds = (ms) => round((ms || 0) / 1000);
@@ -61,63 +18,44 @@ const seconds = (ms) => round((ms || 0) / 1000);
 const BoundaryPanel = ({ track, next, onClose }) => {
   const { show, reload, setGapsStale } = useContext(EditorContext);
   const [deltaS, setDeltaS] = useState(0);
-  // null means "no edit yet, follow the stored title". The panel stays mounted
-  // across a reload, so an apply resets to null and the inputs pick up whatever
-  // the server actually saved rather than replaying the text that was typed.
-  const [edits, setEdits] = useState({ first: null, second: null });
   const [previewUrls, setPreviewUrls] = useState([null, null]);
   const [previewedAt, setPreviewedAt] = useState(null);
-  const { run, cancel, busy, status, error } = useJobRunner();
+  const [dragging, setDragging] = useState(false);
+  const containerRef = useRef(null);
+  const { run, cancel, busy, status, error, setError } = useJobRunner();
 
   const firstSeconds = seconds(track.duration);
   const secondSeconds = seconds(next.duration);
+  const total = firstSeconds + secondSeconds;
   const low = round(MIN_PART_S - firstSeconds);
   const high = round(secondSeconds - MIN_PART_S);
   const delta = Number.isFinite(deltaS) ? deltaS : 0;
   const inRange = delta >= low && delta <= high;
-  // Titles are deliberately not part of this comparison. The preview is audio,
-  // and a rename does not change a single sample of it, so editing a title
-  // leaves a rendered preview valid. Changing the delta still invalidates it.
   const previewCurrent = previewedAt === delta;
-
-  const setTitle = (key, value) =>
-    setEdits((prev) => ({ ...prev, [key]: value }));
-
-  const sides = [
-    { key: "first", track },
-    { key: "second", track: next },
-  ].map((side) => ({
-    ...side,
-    title: edits[side.key] === null ? side.track.title : edits[side.key],
-  }));
-  const renamed = sides.filter((side) => side.title.trim() !== side.track.title);
-  const anyBlank = sides.some((side) => side.title.trim() === "");
-
-  // The show's titles as this edit would leave them, in position order, so a
-  // slug preview accounts for a rename that collides with an untouched sibling.
-  const titlesByPosition = show.tracks.map((t) => {
-    const side = sides.find((s) => s.track.id === t.id);
-    return { id: t.id, title: side ? side.title.trim() : t.title };
-  });
 
   const clearPreview = () => {
     setPreviewUrls([null, null]);
     setPreviewedAt(null);
   };
 
+  const cancelledRef = useRef(false);
+
   const changeDelta = (value) => {
     setDeltaS(round(value));
+    setError(null);
+    cancelledRef.current = false;
     clearPreview();
   };
 
-  // Only the sides actually renamed are sent: an untouched side omits its key
-  // so the job leaves that title, and its slug, alone.
-  const titlesParam = () => {
-    if (renamed.length === 0) return undefined;
-    return renamed.reduce(
-      (params, side) => ({ ...params, [side.key]: side.title.trim() }),
-      {}
-    );
+  const secondsAt = (clientX) => {
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
+    return (x / rect.width) * total;
+  };
+
+  const dragTo = (clientX) => {
+    const raw = secondsAt(clientX) - firstSeconds;
+    changeDelta(Math.min(Math.max(raw, low), high));
   };
 
   const renderPreview = () =>
@@ -133,41 +71,68 @@ const BoundaryPanel = ({ track, next, onClose }) => {
       }
     );
 
+  useEffect(() => {
+    if (busy || previewCurrent || error || cancelledRef.current) return undefined;
+    if (!inRange || delta === 0) return undefined;
+    const timer = setTimeout(renderPreview, 800);
+    return () => clearTimeout(timer);
+  }, [delta, busy, previewCurrent, error]);
+
   const applyShift = () => {
-    const renameLines = renamed.map(
-      (side) => ` Rename "${side.track.title}" to "${side.title.trim()}".`
-    );
     const message =
       `Move the boundary between "${track.title}" and "${next.title}" by ` +
-      `${delta.toFixed(1)}s?${renameLines.join("")}` +
-      (renamed.length === 0 ? " Titles are unchanged." : "") +
-      ` Both original audio files are backed up.`;
+      `${delta.toFixed(1)}s? Both original audio files are backed up.`;
     if (!window.confirm(message)) return;
     run(
-      () =>
-        adminPost(`/tracks/${track.id}/shift_boundary_apply`, {
-          delta_s: delta,
-          titles: titlesParam(),
-        }),
+      () => adminPost(`/tracks/${track.id}/shift_boundary_apply`, { delta_s: delta }),
       async () => {
         clearPreview();
-        setEdits({ first: null, second: null });
         await reload();
         if (show.published) setGapsStale(true);
       }
     );
   };
 
+  const boundaryPercent = `${Math.min(Math.max((firstSeconds + delta) / total, 0), 1) * 100}%`;
+
   return (
     <div className="admin-audio-panel">
       <h4>Boundary</h4>
 
-      <p className="admin-audio-note">
-        Between position {track.position} "{track.title}" and position{" "}
-        {next.position} "{next.title}". A positive shift grows the first track
-        and shrinks the second; a negative shift does the reverse. Allowed range
-        is {low.toFixed(1)}s to {high.toFixed(1)}s.
-      </p>
+      <div
+        ref={containerRef}
+        className="waveform-scrubber admin-boundary-scrubber"
+        onMouseMove={(e) => {
+          if (dragging) dragTo(e.clientX);
+        }}
+        onMouseUp={() => setDragging(false)}
+        onMouseLeave={() => setDragging(false)}
+      >
+        <div className="admin-boundary-waves">
+          <img
+            src={track.waveform_url}
+            alt={`Waveform of ${track.title}`}
+            style={{ width: `${(firstSeconds / total) * 100}%` }}
+            draggable={false}
+          />
+          <img
+            src={next.waveform_url}
+            alt={`Waveform of ${next.title}`}
+            style={{ width: `${(secondSeconds / total) * 100}%` }}
+            draggable={false}
+          />
+        </div>
+        <div
+          className="wf-marker"
+          style={{ left: boundaryPercent, background: "var(--blue)" }}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            setDragging(true);
+          }}
+        >
+          <span>boundary</span>
+        </div>
+      </div>
 
       <div className="admin-audio-fields">
         <label className="admin-audio-field">
@@ -184,73 +149,21 @@ const BoundaryPanel = ({ track, next, onClose }) => {
         </label>
       </div>
 
-      <p className="admin-audio-note">
-        Now {firstSeconds.toFixed(1)}s and {secondSeconds.toFixed(1)}s. After the
-        shift: {round(firstSeconds + delta).toFixed(1)}s and{" "}
-        {round(secondSeconds - delta).toFixed(1)}s. The combined length does not
-        change.
-      </p>
-
-      <div className="admin-boundary-titles">
-        {sides.map((side) => {
-          const trimmed = side.title.trim();
-          const drifted =
-            trimmed !== "" &&
-            !side.track.songs.some(
-              (song) => song.title.toLowerCase() === trimmed.toLowerCase()
-            );
-          return (
-            <label className="admin-boundary-title" key={side.key}>
-              <span>Position {side.track.position} title</span>
-              <input
-                type="text"
-                value={side.title}
-                disabled={busy}
-                onChange={(e) => setTitle(side.key, e.target.value)}
-              />
-              {show.published ? (
-                <span className="admin-audio-status">
-                  Slug stays "{side.track.slug}" because the show is published,
-                  so existing links keep working.
-                </span>
-              ) : (
-                <span className="admin-audio-status">
-                  Slug: {trimmed === "" ? "needs a title" : slugFor(side.track.id, titlesByPosition)}
-                </span>
-              )}
-              {drifted && (
-                <span className="admin-audio-warning">
-                  No song on this track is titled "{trimmed}". Renaming does not
-                  change the song association; update it in the Songs control if
-                  it is wrong. A segue title matching neither song is expected.
-                </span>
-              )}
-            </label>
-          );
-        })}
-      </div>
-
-      <PreviewPlayer label={`New "${track.title}"`} url={previewUrls[0]} />
-      <PreviewPlayer label={`New "${next.title}"`} url={previewUrls[1]} />
+      <PreviewPlayer label={`End of "${track.title}"`} url={previewUrls[0]} />
+      <PreviewPlayer label={`Start of "${next.title}"`} url={previewUrls[1]} />
 
       <div className="admin-audio-actions">
         <button
           type="button"
-          onClick={renderPreview}
-          disabled={busy || !inRange || delta === 0}
-        >
-          Render Preview
-        </button>
-        <button
-          type="button"
           onClick={applyShift}
-          disabled={busy || !inRange || delta === 0 || !previewCurrent || anyBlank}
+          disabled={busy || !inRange || delta === 0 || !previewCurrent}
         >
-          Apply Shift
+          <FontAwesomeIcon icon={faCheck} /> Apply
         </button>
         <button
           type="button"
           onClick={() => {
+            cancelledRef.current = true;
             cancel();
             if (onClose) onClose();
           }}
@@ -262,17 +175,11 @@ const BoundaryPanel = ({ track, next, onClose }) => {
             Shift must be between {low.toFixed(1)}s and {high.toFixed(1)}s.
           </span>
         )}
-        {anyBlank && (
+        {status && (
           <span className="admin-audio-status">
-            A title cannot be blank. Restore it to leave that side unchanged.
+            <MoonLoader color="#c7c8ca" size={14} /> {status}
           </span>
         )}
-        {previewUrls[0] && !previewCurrent && (
-          <span className="admin-audio-status">
-            Shift changed. Render a new preview before applying.
-          </span>
-        )}
-        {status && <span className="admin-audio-status">{status}</span>}
       </div>
 
       {error && <p className="admin-error">{error}</p>}

@@ -647,10 +647,10 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(paths.map { File.exist?(it) }).to eq([ true, true ])
     end
 
-    it "stores the sides at the shifted durations" do
+    it "stores five-second windows around the boundary" do
       described_class.new.perform(first.id, admin_job.id, 2.0, false)
       paths = admin_job.reload.payload["audio_paths"]
-      expect(paths.map { probe_duration(it).round(1) }).to eq([ 12.0, 4.0 ])
+      expect(paths.map { probe_duration(it).round(1) }).to eq([ 5.0, 4.0 ])
     end
 
     it "stores the sides at the two audio indices" do
