@@ -4,11 +4,6 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
   before { authenticate_admin! }
 
   namespace :admin do
-    desc "Cover art hue and style options", hidden: true
-    get :cover_art_options do
-      { hues: CoverArtPromptService::HUES, styles: CoverArtPromptService::STYLES }
-    end
-
     resource :shows do
       route_param :date, requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
         namespace :cover_art do

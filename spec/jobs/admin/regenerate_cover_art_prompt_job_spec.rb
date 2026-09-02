@@ -30,12 +30,6 @@ RSpec.describe Admin::RegenerateCoverArtPromptJob, :openai do
     expect(admin_job.reload.payload["prompt"]).to include("a pigeon")
   end
 
-  it "records a hue and style from the known lists on the job payload" do
-    described_class.new.perform(show.id, admin_job.id)
-    expect(admin_job.reload.payload["hue"]).to be_in(CoverArtPromptService::HUES)
-    expect(admin_job.reload.payload["style"]).to be_in(CoverArtPromptService::STYLES)
-  end
-
   it "records the category suggestions on the job payload" do
     described_class.new.perform(show.id, admin_job.id)
     suggestions = admin_job.reload.payload["suggestions"]

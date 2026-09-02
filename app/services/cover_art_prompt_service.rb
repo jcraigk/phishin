@@ -12,11 +12,14 @@ class CoverArtPromptService < ApplicationService
     Apricot Mustard Tangerine Plum Gold
   ]
   STYLES = %w[
-    Futurism Wood-Burned Poster-Art
-    Ink-Drawing Illustration Nihonga
-    Watercolor Line-Art Geometric Low-Poly
-    Oil-Painting Technical-Drawing
-    Block-Prints Comic-Book Photograph Isometric-Drawing
+    Watercolor Gouache Oil-Painting Ink-Drawing Line-Art Charcoal-Sketch
+    Ukiyo-e Nihonga Art-Deco Art-Nouveau Bauhaus
+    Risograph Linocut Block-Prints Screen-Print
+    Pop-Art Psychedelic-Poster Vintage-Travel-Poster Comic-Book
+    Stained-Glass Mosaic Paper-Collage Papercut
+    Pixel-Art Low-Poly Isometric-Drawing Geometric
+    Cyberpunk Synthwave Photograph Macro-Photography
+    Claymation Felt-Craft Embroidery Wood-Burned
   ]
   CATEGORIES = %w[animals plants foods misc_objects time_concepts phish]
   BASE_PROMPT = <<~TXT
@@ -109,7 +112,7 @@ class CoverArtPromptService < ApplicationService
   TXT
   def call
     if dry_run
-      { prompt: new_prompt, hue:, style:, suggestions: chatgpt_response }
+      { prompt: new_prompt, suggestions: chatgpt_response }
     elsif show == run_kickoff_show
       generate_new_prompt
       print_response_hints
@@ -144,8 +147,6 @@ class CoverArtPromptService < ApplicationService
 
   def generate_new_prompt
     show.update! \
-      cover_art_style: style,
-      cover_art_hue: hue,
       cover_art_prompt: new_prompt,
       cover_art_parent_show_id: nil
   end
@@ -153,8 +154,6 @@ class CoverArtPromptService < ApplicationService
   def defer_to_kickoff_show
     show.update! \
       cover_art_parent_show_id: run_kickoff_show.id,
-      cover_art_style: run_kickoff_show.cover_art_style,
-      cover_art_hue: run_kickoff_show.cover_art_hue,
       cover_art_prompt: run_kickoff_show.cover_art_prompt
   end
 
@@ -177,39 +176,12 @@ class CoverArtPromptService < ApplicationService
     kickoff_show
   end
 
-  # Select a hue from our list, voiding repetition of the previous show's hue
   def hue
-    return @hue if defined?(@hue)
-    available_hues = HUES.dup
-    if prior_show&.cover_art_hue.present?
-      available_hues.delete(prior_show.cover_art_hue)
-    end
-    @hue = available_hues.sample
+    @hue ||= HUES.sample
   end
 
-
-  # Select a style from our list, avoiding repetition of the previous show's style
   def style
-    return @style if defined?(@style)
-    available_styles = STYLES.dup
-    if prior_show&.cover_art_style.present?
-      available_styles.delete(prior_show.cover_art_style)
-    end
-    @style = available_styles.sample
-  end
-
-  # Fetch the previous show not at same venue to avoid duplication
-  def prior_show
-    return @prior_show if defined?(@prior_show)
-
-    @prior_show =
-      Show.where("date < ?", show.date)
-          .where.not(venue: show.venue)
-          .order(date: :desc)
-          .first
-    # Loop to last show if no prior show found
-    @prior_show = Show.order(date: :desc).first if @prior_show.nil?
-    @prior_show
+    @style ||= STYLES.sample
   end
 
   def chatgpt_response

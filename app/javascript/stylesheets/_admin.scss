@@ -1063,7 +1063,12 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 0.75rem;
-  margin-bottom: 1rem;
+  max-width: 64rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border-gray);
+  border-radius: $radius;
+  background-color: var(--card-bg);
 }
 
 .admin-art-pair {
