@@ -264,8 +264,8 @@ const TrackRow = ({
                 onReposition();
               })}
               {menuItem("Trim", faScissors, hasAudio, () => pickTool("trim"))}
-              {menuItem("Replace audio", faCloudArrowUp, true, () => pickTool("replace"))}
               {menuItem("Boundary with next", faArrowsLeftRight, shiftable, () => pickTool("boundary"))}
+              {menuItem("Replace audio", faCloudArrowUp, true, () => pickTool("replace"))}
               {menuItem("Delete track", faTrashCan, true, () => {
                 setMenuOpen(false);
                 deleteTrack();
