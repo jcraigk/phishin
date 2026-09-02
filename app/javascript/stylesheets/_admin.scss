@@ -1133,8 +1133,17 @@
 
 .admin-art-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
+
+  .admin-art-edit {
+    display: contents;
+  }
+
+  .admin-art-edit-form {
+    display: contents;
+  }
 
   label {
     display: flex;
