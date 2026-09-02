@@ -1,9 +1,158 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
-import { adminPatch } from "./adminApi";
+import { adminDelete, adminGet, adminPatch, adminPost } from "./adminApi";
 import diffLines, { normalizeText } from "./diffLines";
+
+const ShowTagRow = ({ showTag, onSaved, onError }) => {
+  const [notes, setNotes] = useState(showTag.notes || "");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => setNotes(showTag.notes || ""), [showTag.notes]);
+
+  const saveNotes = async () => {
+    if (notes === (showTag.notes || "")) return;
+    setBusy(true);
+    onError(null);
+    try {
+      onSaved(await adminPatch(`/show_tags/${showTag.id}`, { notes }));
+    } catch (e) {
+      onError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const remove = async () => {
+    if (!window.confirm(`Remove the ${showTag.tag_name} tag from this show?`)) return;
+    setBusy(true);
+    onError(null);
+    try {
+      onSaved(await adminDelete(`/show_tags/${showTag.id}`));
+    } catch (e) {
+      onError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <li className="admin-tag-row">
+      <div className="admin-tag-row-header">
+        <span className="admin-tag-name">{showTag.tag_name}</span>
+        <input
+          type="text"
+          className="admin-tag-notes"
+          placeholder="Notes"
+          value={notes}
+          disabled={busy}
+          onChange={(e) => setNotes(e.target.value)}
+          onBlur={saveNotes}
+        />
+        <button
+          type="button"
+          className="admin-trash-button"
+          aria-label={`Remove ${showTag.tag_name} tag`}
+          title="Remove tag"
+          disabled={busy}
+          onClick={remove}
+        >
+          <FontAwesomeIcon icon={faTrashCan} />
+        </button>
+      </div>
+    </li>
+  );
+};
+
+const AddShowTag = ({ tags, onSaved, onError }) => {
+  const { show } = useContext(EditorContext);
+  const [tagId, setTagId] = useState("");
+  const [notes, setNotes] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const add = async () => {
+    if (tagId === "") return;
+    setBusy(true);
+    onError(null);
+    try {
+      onSaved(
+        await adminPost(`/shows/${show.date}/show_tags`, {
+          tag_id: Number(tagId),
+          notes,
+        })
+      );
+      setTagId("");
+      setNotes("");
+    } catch (e) {
+      onError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="admin-tag-add">
+      <select
+        aria-label="Tag"
+        value={tagId}
+        disabled={busy}
+        onChange={(e) => setTagId(e.target.value)}
+      >
+        <option value="">Add a tag...</option>
+        {tags.map((tag) => (
+          <option key={tag.id} value={tag.id}>
+            {tag.name}
+          </option>
+        ))}
+      </select>
+      <input
+        type="text"
+        className="admin-tag-notes"
+        placeholder="Notes"
+        value={notes}
+        disabled={busy}
+        onChange={(e) => setNotes(e.target.value)}
+      />
+      <button type="button" disabled={busy || tagId === ""} onClick={add}>
+        Add
+      </button>
+    </div>
+  );
+};
+
+const ShowTagsSection = () => {
+  const { show, setShow, setError } = useContext(EditorContext);
+  const [tags, setTags] = useState([]);
+
+  useEffect(() => {
+    adminGet("/tags")
+      .then((data) => setTags(data.tags))
+      .catch((e) => setError(e.message));
+  }, [setError]);
+
+  return (
+    <section className="admin-tags-tab">
+      <h3>
+        Show tags
+        <span className="admin-count">{show.show_tags.length}</span>
+      </h3>
+      {show.show_tags.length > 0 && (
+        <ul className="admin-tag-rows">
+          {show.show_tags.map((showTag) => (
+            <ShowTagRow
+              key={showTag.id}
+              showTag={showTag}
+              onSaved={setShow}
+              onError={setError}
+            />
+          ))}
+        </ul>
+      )}
+      <AddShowTag tags={tags} onSaved={setShow} onError={setError} />
+    </section>
+  );
+};
 
 const NotesTab = () => {
   const { show, setShow, setError } = useContext(EditorContext);
@@ -50,6 +199,8 @@ const NotesTab = () => {
 
   return (
     <div className="admin-notes-tab">
+      <ShowTagsSection />
+
       <div className="admin-field">
         <label htmlFor="admin-taper-notes">Taper notes</label>
         <textarea

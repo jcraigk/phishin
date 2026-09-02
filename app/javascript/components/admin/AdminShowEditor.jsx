@@ -6,7 +6,6 @@ import { useNavigate, useParams } from "react-router";
 import { adminGet, adminDelete } from "./adminApi";
 import TracksTab from "./TracksTab";
 import ArtTab from "./ArtTab";
-import TagsTab from "./TagsTab";
 import NotesTab from "./NotesTab";
 import ShowPanel from "./ShowPanel";
 import VenueControl from "./VenueControl";
@@ -15,7 +14,7 @@ import StagingEditor from "./StagingEditor";
 
 export const EditorContext = createContext(null);
 
-const TABS = ["Setlist", "Tags", "Notes", "Art"];
+const TABS = ["Setlist", "Show", "Art"];
 
 const AdminShowEditor = () => {
   const { date } = useParams();
@@ -55,9 +54,7 @@ const AdminShowEditor = () => {
   const tabCounts = show
     ? {
         Setlist: show.tracks.length,
-        Tags:
-          show.show_tags.length +
-          show.tracks.reduce((sum, t) => sum + t.track_tags.length, 0),
+        Show: show.show_tags.length,
       }
     : {};
 
@@ -180,8 +177,7 @@ const AdminShowEditor = () => {
             </nav>
             {tab === "Setlist" && <TracksTab />}
             {tab === "Art" && <ArtTab />}
-            {tab === "Tags" && <TagsTab />}
-            {tab === "Notes" && <NotesTab />}
+            {tab === "Show" && <NotesTab />}
               </>
         )}
       </div>

@@ -12,6 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import SongPicker from "./SongPicker";
+import TagEditor from "./TagEditor";
 import TrimPanel from "./TrimPanel";
 import ReplacePanel from "./ReplacePanel";
 import BoundaryPanel from "./BoundaryPanel";
@@ -37,6 +38,7 @@ const problemsFor = (track) => {
 const TrackRow = ({
   track,
   next,
+  tags,
   stagedOptions,
   onReposition,
   previewActive,
@@ -148,6 +150,17 @@ const TrackRow = ({
           }
         />
       </td>
+      <td className="admin-track-tags">
+        <button
+          type="button"
+          className={`admin-tag-toggle${tool === "tags" ? " active" : ""}`}
+          title="Edit tags"
+          aria-label={`Edit tags for ${track.title}`}
+          onClick={() => setTool((prev) => (prev === "tags" ? null : "tags"))}
+        >
+          <span className="admin-count">{track.track_tags.length}</span>
+        </button>
+      </td>
       <td className="admin-track-audio">
         {track.audio_status === "missing" ? (
           <select
@@ -252,13 +265,14 @@ const TrackRow = ({
         onClose={() => setTool(null)}
       />
     )}
-    {(tool === "trim" || tool === "boundary") && (
+    {(tool === "trim" || tool === "boundary" || tool === "tags") && (
       <tr className="admin-track-tool-row">
-        <td colSpan={6}>
+        <td colSpan={7}>
           {tool === "trim" && <TrimPanel key={`trim-${track.id}`} track={track} />}
           {tool === "boundary" && shiftable && (
             <BoundaryPanel key={`boundary-${track.id}`} track={track} next={next} />
           )}
+          {tool === "tags" && <TagEditor track={track} tags={tags} />}
         </td>
       </tr>
     )}

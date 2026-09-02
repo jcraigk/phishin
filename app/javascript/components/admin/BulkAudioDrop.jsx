@@ -217,7 +217,7 @@ const BulkAudioDrop = () => {
   return (
     <div className="admin-bulk-audio">
       <button type="button" onClick={() => setOpen(true)}>
-        <FontAwesomeIcon icon={faCloudArrowUp} /> Update audio
+        <FontAwesomeIcon icon={faCloudArrowUp} /> Audio
       </button>
 
       {open && !plan && (

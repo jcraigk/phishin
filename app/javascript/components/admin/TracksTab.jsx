@@ -10,8 +10,9 @@ import {
 import { EditorContext } from "./AdminShowEditor";
 import TrackRow from "./TrackRow";
 import BulkAudioDrop from "./BulkAudioDrop";
+import PnetCheckPanel from "./PnetCheckPanel";
 import useJobRunner from "./useJobRunner";
-import { adminPost, adminPut, pollJob } from "./adminApi";
+import { adminGet, adminPost, adminPut, pollJob } from "./adminApi";
 import { uploadFile } from "./DirectUploader";
 import SongPicker from "./SongPicker";
 import { formatDurationShow } from "../helpers/utils";
@@ -107,6 +108,7 @@ const TracksTab = () => {
   const [targetPosition, setTargetPosition] = useState(1);
   const [targetSet, setTargetSet] = useState("1");
   const [actionsSlot, setActionsSlot] = useState(null);
+  const [allTags, setAllTags] = useState([]);
   const [addSetOpen, setAddSetOpen] = useState(false);
   const [inserting, setInserting] = useState(false);
   const [insertTitle, setInsertTitle] = useState("");
@@ -120,6 +122,12 @@ const TracksTab = () => {
 
   useEffect(() => {
     setActionsSlot(document.getElementById("admin-tab-actions"));
+  }, []);
+
+  useEffect(() => {
+    adminGet("/tags")
+      .then((data) => setAllTags(data.tags))
+      .catch((e) => setError(e.message));
   }, []);
 
   const tracks = show.tracks;
@@ -355,7 +363,7 @@ const TracksTab = () => {
           setInserting(true);
         }}
       >
-        <FontAwesomeIcon icon={faPlus} /> Add track
+        <FontAwesomeIcon icon={faPlus} /> Track
       </button>
       <div className="admin-row-menu">
         <button
@@ -363,7 +371,7 @@ const TracksTab = () => {
           disabled={busy || addableSets.length === 0}
           onClick={() => setAddSetOpen(!addSetOpen)}
         >
-          <FontAwesomeIcon icon={faPlus} /> Add set
+          <FontAwesomeIcon icon={faPlus} /> Set
         </button>
         {addSetOpen && (
           <ul className="admin-row-menu-list">
@@ -418,7 +426,7 @@ const TracksTab = () => {
             return (
               <tbody key={headerKey} className="admin-set-group">
                 <tr className="admin-set-header">
-                  <th colSpan={6}>
+                  <th colSpan={7}>
                     {setName(group.set)}
                     {group.tracks.length > 0 && (
                       <span className="admin-set-duration">
@@ -456,6 +464,7 @@ const TracksTab = () => {
                     key={track.id}
                     track={track}
                     next={tracks[index + 1] || null}
+                    tags={allTags}
                     stagedOptions={show.staged_audio}
                     onReposition={() => openReposition(track)}
                     previewActive={preview.trackId === track.id}
@@ -470,6 +479,8 @@ const TracksTab = () => {
           })}
         </table>
       )}
+
+      <PnetCheckPanel />
 
       {inserting && (
         <div className="admin-modal-overlay">
