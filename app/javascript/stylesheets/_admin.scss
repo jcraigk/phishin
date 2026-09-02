@@ -2358,6 +2358,19 @@
   font-size: 0.85rem;
 }
 
+.admin-layout button.admin-tag-add-button {
+  padding: 0.2rem 0.4rem;
+  border: none !important;
+  background: none;
+  color: var(--text-gray) !important;
+
+  &:hover:not(:disabled) {
+    border: none !important;
+    background: none;
+    color: var(--list-item-link-color) !important;
+  }
+}
+
 .admin-layout button.admin-trash-button {
   padding: 0.25rem 0.45rem;
   border: none !important;
