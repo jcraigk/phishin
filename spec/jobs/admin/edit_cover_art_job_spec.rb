@@ -30,6 +30,16 @@ RSpec.describe Admin::EditCoverArtJob, :openai do
       .with("https://api.openai.com/v1/images/edits", any_args).once
   end
 
+  it "declares an image mimetype for the multipart image part" do
+    described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue")
+    expect(Typhoeus).to have_received(:post) do |_url, options|
+      expect(options[:headers]["Content-Type"]).to match(%r{multipart/form-data; boundary=})
+      expect(options[:body]).to include("name=\"image\"")
+      expect(options[:body]).to include("Content-Type: #{source_blob.reload.content_type}")
+      expect(source_blob.reload.content_type).to start_with("image/")
+    end
+  end
+
   it "keeps the source blob attached to nothing it did not own" do
     described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue")
     expect(ActiveStorage::Blob.exists?(source_blob.id)).to be(true)

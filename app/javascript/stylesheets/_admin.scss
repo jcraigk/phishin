@@ -1159,6 +1159,15 @@
   }
 }
 
+.admin-art-busy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  color: var(--text-gray);
+  font-size: 0.85rem;
+}
+
 .admin-tags-tab {
   h3 {
     margin: 1rem 0 0.5rem;

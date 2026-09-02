@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import MoonLoader from "react-spinners/MoonLoader";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminDelete, adminGet, adminPatch, adminPost } from "./adminApi";
@@ -76,7 +77,13 @@ const EditControl = ({ blobKey, label }) => {
           </button>
         </div>
       )}
-      {status && <span className="admin-audio-status">{status}</span>}
+      {busy ? (
+        <span className="admin-art-busy">
+          <MoonLoader color="#c7c8ca" size={18} /> {status || "Generating"}
+        </span>
+      ) : (
+        status && <span className="admin-audio-status">{status}</span>
+      )}
       {error && <p className="admin-error">{error}</p>}
     </div>
   );
@@ -344,7 +351,13 @@ const GenerateControls = () => {
         />
       </label>
       {uploading && <progress max="100" value={progress} />}
-      {status && <span className="admin-audio-status">{status}</span>}
+      {busy ? (
+        <span className="admin-art-busy">
+          <MoonLoader color="#c7c8ca" size={18} /> {status || "Generating"}
+        </span>
+      ) : (
+        status && <span className="admin-audio-status">{status}</span>
+      )}
       {(error || uploadError) && <p className="admin-error">{error || uploadError}</p>}
     </div>
   );

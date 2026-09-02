@@ -49,25 +49,38 @@ class CoverArtImageService < ApplicationService
 
   def edit_request
     blob = ActiveStorage::Blob.find_by!(key: source_blob_key)
-    Tempfile.create([ "cover_art_source_", ".png" ]) do |tmp|
-      tmp.binmode
-      tmp.write(blob.download)
-      tmp.rewind
-      return Typhoeus.post(
-        "https://api.openai.com/v1/images/edits",
-        headers: {
-          "Authorization" => "Bearer #{ENV.fetch("OPENAI_API_TOKEN")}"
-        },
-        body: {
-          model: "gpt-image-2",
-          prompt: edit_prompt,
-          n: "1",
-          size: "1024x1024",
-          quality: "high",
-          image: tmp
-        }
-      )
+    boundary = "PhishinCoverArt#{SecureRandom.hex(8)}"
+    Typhoeus.post(
+      "https://api.openai.com/v1/images/edits",
+      headers: {
+        "Authorization" => "Bearer #{ENV.fetch("OPENAI_API_TOKEN")}",
+        "Content-Type" => "multipart/form-data; boundary=#{boundary}"
+      },
+      body: edit_request_body(blob, boundary)
+    )
+  end
+
+  def edit_request_body(blob, boundary)
+    fields = {
+      "model" => "gpt-image-2",
+      "prompt" => edit_prompt,
+      "n" => "1",
+      "size" => "1024x1024",
+      "quality" => "high"
+    }
+    content_type = blob.content_type.presence || "image/png"
+    body = String.new(encoding: Encoding::BINARY)
+    fields.each do |name, value|
+      body << "--#{boundary}\r\n"
+      body << "Content-Disposition: form-data; name=\"#{name}\"\r\n\r\n"
+      body << value.to_s.b << "\r\n"
     end
+    body << "--#{boundary}\r\n"
+    body << "Content-Disposition: form-data; name=\"image\"; filename=\"#{blob.filename}\"\r\n"
+    body << "Content-Type: #{content_type}\r\n\r\n"
+    body << blob.download << "\r\n"
+    body << "--#{boundary}--\r\n"
+    body
   end
 
   def upload_candidate(b64)
