@@ -7,8 +7,8 @@ import {
   faCloudArrowUp,
   faCopy,
   faTrashCan,
-  faWandMagicSparkles,
 } from "@fortawesome/free-solid-svg-icons";
+import { faSparkles } from "./sparklesIcon";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminDelete, adminGet, adminPatch, adminPost } from "./adminApi";
@@ -70,7 +70,7 @@ const EditControl = ({ blobKey, label }) => {
         disabled={busy}
         onClick={() => setOpen(!open)}
       >
-        <FontAwesomeIcon icon={faWandMagicSparkles} /> {label}
+        <FontAwesomeIcon icon={faSparkles} /> {label}
       </button>
       {open && (
         <div className="admin-art-edit-form">
@@ -158,7 +158,7 @@ const CandidateCard = ({ candidate }) => {
         <button type="button" disabled={busy || removing} onClick={select}>
           <FontAwesomeIcon icon={faCheck} /> {busy ? "Applying..." : "Select"}
         </button>
-        <EditControl blobKey={candidate.blob_key} label="AI edit" />
+        <EditControl blobKey={candidate.blob_key} label="Edit" />
         <button
           type="button"
           className="admin-trash-button"
@@ -268,9 +268,9 @@ const PromptPanel = () => {
   return (
     <section className="admin-art-prompt">
       <div className="admin-field">
-        <label htmlFor="admin-art-prompt">Prompt</label>
         <textarea
           id="admin-art-prompt"
+          aria-label="Cover art prompt"
           rows={4}
           value={prompt}
           disabled={saving || busy}
@@ -323,8 +323,7 @@ const GenerateControls = () => {
   return (
     <div className="admin-art-controls">
       <button type="button" disabled={busy || uploading} onClick={generate}>
-        <FontAwesomeIcon icon={faWandMagicSparkles} />{" "}
-        {busy ? "Generating..." : "Generate candidate (paid)"}
+        <FontAwesomeIcon icon={faSparkles} /> {busy ? "Generating..." : "Generate"}
       </button>
       <label className="admin-art-upload">
         <FontAwesomeIcon icon={faCloudArrowUp} /> Upload image
@@ -371,7 +370,7 @@ const ArtTab = () => {
         <ImageCard url={art.current_url} alt="Current cover art">
           <span>Cover art</span>
           {art.current_blob_key && (
-            <EditControl blobKey={art.current_blob_key} label="AI edit current art" />
+            <EditControl blobKey={art.current_blob_key} label="Edit" />
           )}
         </ImageCard>
         <ImageCard url={art.album_cover_url} alt="Album cover composite">
