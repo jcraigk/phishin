@@ -31,7 +31,9 @@ const useJobRunner = () => {
       const { job_id: jobId } = await start();
       const job = await pollJob(jobId, {
         onUpdate: (j) => {
-          setStatus(j.message || j.status);
+          const raw = j.status || "";
+          const fallback = raw ? `${raw.charAt(0).toUpperCase()}${raw.slice(1)}...` : null;
+          setStatus(j.message || fallback);
           setProgress(j.progress ?? null);
         },
         signal: controller.signal,
