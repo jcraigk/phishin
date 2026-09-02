@@ -136,6 +136,8 @@ const TracksTab = () => {
         .map((t) => ({
           ...t,
           show_date: show.date,
+          venue_name: show.venue_name,
+          venue_slug: show.venue_slug,
           waveform_image_url: t.waveform_url,
           show_cover_art_urls: {
             small: show.cover_art_url,

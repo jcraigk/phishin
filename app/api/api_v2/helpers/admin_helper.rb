@@ -143,6 +143,7 @@ module ApiV2::Helpers::AdminHelper
       id: show.id,
       date: show.date.iso8601,
       venue_name: show.venue_name,
+      venue_slug: show.venue&.slug,
       published: show.published,
       audio_status: show.audio_status,
       tracks_count: show.tracks.count,
