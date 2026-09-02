@@ -1424,10 +1424,14 @@
   display: grid;
   align-items: center;
   gap: 0.75rem;
-  grid-template-columns: auto 8rem 6rem 1fr auto;
+  grid-template-columns: 4.5rem 8rem 6rem 1fr auto;
   padding: 0.45rem 0;
   border-bottom: 1px solid var(--track-divider);
   font-size: 0.9rem;
+
+  .admin-pill {
+    text-align: center;
+  }
 
   &:last-child {
     border-bottom: none;
