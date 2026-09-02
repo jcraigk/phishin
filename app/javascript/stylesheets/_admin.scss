@@ -1278,6 +1278,16 @@
   font-size: 0.85rem;
 }
 
+.admin-art-origin {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 0;
+  color: var(--text-gray);
+  font-style: italic;
+}
+
 .admin-art-edit-form {
   display: flex;
   gap: 0.4rem;

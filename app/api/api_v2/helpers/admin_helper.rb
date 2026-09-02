@@ -33,7 +33,8 @@ module ApiV2::Helpers::AdminHelper
         {
           blob_key: attachment.blob.key,
           url: "#{App.base_url}/blob/#{attachment.blob.key}.png",
-          cost: attachment.blob.metadata["cost"]
+          cost: attachment.blob.metadata["cost"],
+          prompt: attachment.blob.metadata["prompt"]
         }
       end
     }
