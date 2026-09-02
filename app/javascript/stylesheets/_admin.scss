@@ -1071,6 +1071,12 @@
   background-color: var(--card-bg);
 }
 
+.admin-art-tab h3 {
+  margin: 1rem 0 0.75rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
 .admin-art-pair {
   display: flex;
   flex-wrap: wrap;
