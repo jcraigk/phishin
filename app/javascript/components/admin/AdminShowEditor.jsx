@@ -51,13 +51,6 @@ const AdminShowEditor = () => {
     );
   }, []);
 
-  const tabCounts = show
-    ? {
-        Setlist: show.tracks.length,
-        Show: show.show_tags.length,
-      }
-    : {};
-
   if (!show) {
     return (
       <div className="admin-show-editor">
@@ -159,20 +152,16 @@ const AdminShowEditor = () => {
             <ShowPanel />
             <PublishPanel />
             <nav className="admin-tabs">
-              {TABS.map((t) => {
-                const count = tabCounts[t];
-                return (
-                  <button
-                    key={t}
-                    type="button"
-                    className={t === tab ? "active" : ""}
-                    onClick={() => setTab(t)}
-                  >
-                    {t}
-                    {count > 0 && <span className="admin-count">{count}</span>}
-                  </button>
-                );
-              })}
+              {TABS.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  className={t === tab ? "active" : ""}
+                  onClick={() => setTab(t)}
+                >
+                  {t}
+                </button>
+              ))}
               <div className="admin-tab-actions" id="admin-tab-actions" />
             </nav>
             {tab === "Setlist" && <TracksTab />}
