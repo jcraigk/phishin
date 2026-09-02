@@ -1,4 +1,6 @@
 import React, { useContext, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import PreviewPlayer from "./PreviewPlayer";
 import useJobRunner from "./useJobRunner";
@@ -56,7 +58,7 @@ const round = (value) => Math.round(value * 10) / 10;
 
 const seconds = (ms) => round((ms || 0) / 1000);
 
-const BoundaryPanel = ({ track, next }) => {
+const BoundaryPanel = ({ track, next, onClose }) => {
   const { show, reload, setGapsStale } = useContext(EditorContext);
   const [deltaS, setDeltaS] = useState(0);
   // null means "no edit yet, follow the stored title". The panel stays mounted
@@ -65,7 +67,7 @@ const BoundaryPanel = ({ track, next }) => {
   const [edits, setEdits] = useState({ first: null, second: null });
   const [previewUrls, setPreviewUrls] = useState([null, null]);
   const [previewedAt, setPreviewedAt] = useState(null);
-  const { run, busy, status, error } = useJobRunner();
+  const { run, cancel, busy, status, error } = useJobRunner();
 
   const firstSeconds = seconds(track.duration);
   const secondSeconds = seconds(next.duration);
@@ -245,6 +247,15 @@ const BoundaryPanel = ({ track, next }) => {
           disabled={busy || !inRange || delta === 0 || !previewCurrent || anyBlank}
         >
           Apply Shift
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            cancel();
+            if (onClose) onClose();
+          }}
+        >
+          <FontAwesomeIcon icon={faXmark} /> Cancel
         </button>
         {!inRange && (
           <span className="admin-audio-status">

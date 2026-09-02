@@ -46,6 +46,8 @@ const TrackRow = ({
   isActive,
   isPlaying,
   onPlay,
+  audioTool,
+  onAudioTool,
 }) => {
   const { show, setShow, setTrack, setError } = useContext(EditorContext);
   const [title, setTitle] = useState(track.title || "");
@@ -108,6 +110,13 @@ const TrackRow = ({
   const pickTool = (name) => {
     setMenuOpen(false);
     setTool((prev) => (prev === name ? null : name));
+  };
+
+  const audioName = audioTool?.trackId === track.id ? audioTool.name : null;
+
+  const pickAudioTool = (name) => {
+    setMenuOpen(false);
+    onAudioTool(track.id, name);
   };
 
   const toggleTags = () => setTool((prev) => (prev === "tags" ? null : "tags"));
@@ -263,8 +272,8 @@ const TrackRow = ({
                 setMenuOpen(false);
                 onReposition();
               })}
-              {menuItem("Trim", faScissors, hasAudio, () => pickTool("trim"))}
-              {menuItem("Boundary with next", faArrowsLeftRight, shiftable, () => pickTool("boundary"))}
+              {menuItem("Trim", faScissors, hasAudio, () => pickAudioTool("trim"))}
+              {menuItem("Move boundary", faArrowsLeftRight, shiftable, () => pickAudioTool("boundary"))}
               {menuItem("Replace audio", faCloudArrowUp, true, () => pickTool("replace"))}
               {menuItem("Delete track", faTrashCan, true, () => {
                 setMenuOpen(false);
@@ -282,12 +291,23 @@ const TrackRow = ({
         onClose={() => setTool(null)}
       />
     )}
-    {(tool === "trim" || tool === "boundary" || tool === "tags") && (
+    {(audioName || tool === "tags") && (
       <tr className="admin-track-tool-row">
         <td colSpan={8}>
-          {tool === "trim" && <TrimPanel key={`trim-${track.id}`} track={track} />}
-          {tool === "boundary" && shiftable && (
-            <BoundaryPanel key={`boundary-${track.id}`} track={track} next={next} />
+          {audioName === "trim" && (
+            <TrimPanel
+              key={`trim-${track.id}`}
+              track={track}
+              onClose={() => onAudioTool(track.id, "trim")}
+            />
+          )}
+          {audioName === "boundary" && shiftable && (
+            <BoundaryPanel
+              key={`boundary-${track.id}`}
+              track={track}
+              next={next}
+              onClose={() => onAudioTool(track.id, "boundary")}
+            />
           )}
           {tool === "tags" && <TagEditor track={track} tags={tags} />}
         </td>
