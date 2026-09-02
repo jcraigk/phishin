@@ -12,13 +12,15 @@ const useJobRunner = () => {
   const [progress, setProgress] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    // Hot reload re-runs this effect; without the reset a single edit would
+    // permanently mark the runner unmounted and drop every poll completion.
+    mountedRef.current = true;
+    return () => {
       mountedRef.current = false;
       if (controllerRef.current) controllerRef.current.abort();
-    },
-    []
-  );
+    };
+  }, []);
 
   const run = useCallback(async (start, onDone) => {
     setError(null);
