@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import MoonLoader from "react-spinners/MoonLoader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminDelete, adminGet, adminPatch, adminPost } from "./adminApi";
@@ -137,21 +137,29 @@ const CandidateCard = ({ candidate }) => {
             type="number"
             min="0"
             max="50"
+            step="1"
             value={zoom}
             disabled={busy}
-            onChange={(e) => setZoom(e.target.value)}
+            onChange={(e) => {
+              const digits = e.target.value.replace(/\D/g, "");
+              setZoom(digits === "" ? "" : String(Math.min(50, parseInt(digits, 10))));
+            }}
           />
         </label>
+      </div>
+      <div className="admin-art-actions">
         <button type="button" disabled={busy || removing} onClick={select}>
           {busy ? "Applying..." : "Select"}
         </button>
         <button
           type="button"
-          className="admin-danger"
+          className="admin-trash-button"
+          aria-label="Remove candidate"
+          title="Remove candidate"
           disabled={busy || removing}
           onClick={remove}
         >
-          {removing ? "Removing..." : "Remove"}
+          <FontAwesomeIcon icon={faTrashCan} />
         </button>
       </div>
       <EditControl blobKey={candidate.blob_key} label="AI edit" />
