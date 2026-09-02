@@ -50,9 +50,10 @@ class Admin::SelectCoverArtJob
   end
 
   def commit_prompt_snapshot(blob)
-    used_prompt = blob.metadata["prompt"]
-    return if used_prompt.blank?
-    @show.update!(cover_art_prompt: used_prompt)
+    base = blob.metadata["prompt"]
+    return if base.blank?
+    edits = Array(blob.metadata["edits"]).map { |edit| "edit: #{edit}" }
+    @show.update!(cover_art_prompt: ([ base ] + edits).join(" | "))
   end
 
   def build_album_cover

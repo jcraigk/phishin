@@ -90,6 +90,24 @@ RSpec.describe Admin::EditCoverArtJob, :openai do
       .to raise_error(StandardError, /child’s/)
   end
 
+  it "records the source prompt and edit chain on the candidate blob" do
+    source_blob.update!(
+      metadata: source_blob.metadata.merge("prompt" => "a red barn", "edits" => [ "bluer" ])
+    )
+    described_class.new.perform(show.id, admin_job.id, source_blob.key, "add stars")
+    metadata = show.reload.cover_art_candidates.first.blob.metadata
+    expect(metadata["prompt"]).to eq("a red barn")
+    expect(metadata["edits"]).to eq([ "bluer", "add stars" ])
+  end
+
+  it "falls back to the show's saved prompt when the source has none recorded" do
+    show.update!(cover_art_prompt: "the committed snapshot")
+    described_class.new.perform(show.id, admin_job.id, source_blob.key, "add stars")
+    metadata = show.reload.cover_art_candidates.first.blob.metadata
+    expect(metadata["prompt"]).to eq("the committed snapshot")
+    expect(metadata["edits"]).to eq([ "add stars" ])
+  end
+
   it "records the generation cost on the candidate blob" do
     allow(openai_response).to receive(:body).and_return(
       {

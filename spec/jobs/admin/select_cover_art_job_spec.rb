@@ -29,11 +29,16 @@ RSpec.describe Admin::SelectCoverArtJob do
       expect(show.reload.cover_art.blob).to eq(winner)
     end
 
-    it "commits the winner's prompt trail as the show's prompt snapshot" do
+    it "commits the winner's prompt and edit chain as the show's prompt snapshot" do
       show.update!(cover_art_prompt: "old snapshot")
-      winner.update!(metadata: winner.metadata.merge("prompt" => "new prompt | edit: bluer"))
+      winner.update!(
+        metadata: winner.metadata.merge(
+          "prompt" => "new prompt", "edits" => [ "bluer", "add stars" ]
+        )
+      )
       described_class.new.perform(show.id, admin_job.id, winner.key, 0)
-      expect(show.reload.cover_art_prompt).to eq("new prompt | edit: bluer")
+      expect(show.reload.cover_art_prompt)
+        .to eq("new prompt | edit: bluer | edit: add stars")
     end
 
     it "keeps the existing prompt snapshot when the winner has none recorded" do
