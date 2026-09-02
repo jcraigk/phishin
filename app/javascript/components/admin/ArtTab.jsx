@@ -113,13 +113,12 @@ const EditControl = ({ blobKey, label }) => {
 const CandidateCard = ({ candidate }) => {
   const { show, reload, setError } = useContext(EditorContext);
   const [zoom, setZoom] = useState("0");
-  const [previewZoom, setPreviewZoom] = useState(false);
   const [removing, setRemoving] = useState(false);
   const { run, busy, status, error } = useJobRunner();
 
   const zoomFactor = Math.min(50, Number(zoom) || 0) / 100;
   const imgStyle =
-    previewZoom && zoomFactor > 0
+    zoomFactor > 0
       ? { transform: `scale(${(1 / (1 - zoomFactor)).toFixed(4)})` }
       : undefined;
 
@@ -166,14 +165,6 @@ const CandidateCard = ({ candidate }) => {
               setZoom(digits === "" ? "" : String(Math.min(50, parseInt(digits, 10))));
             }}
           />
-        </label>
-        <label className="admin-zoom-preview">
-          <input
-            type="checkbox"
-            checked={previewZoom}
-            onChange={(e) => setPreviewZoom(e.target.checked)}
-          />
-          Preview
         </label>
       </div>
       <div className="admin-art-actions">
