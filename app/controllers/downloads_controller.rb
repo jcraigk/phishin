@@ -18,6 +18,7 @@ class DownloadsController < ApplicationController
     path = ActiveStorage::Blob.service.send(:path_for, file.key)
     return head(:not_found) unless File.exist?(path)
     add_cache_header
+    response.headers["Accept-Ranges"] = "bytes"
     serve_file path,
       content_type: file.content_type || "application/octet-stream",
       disposition: ActionDispatch::Http::ContentDisposition.format(disposition:, filename:)
