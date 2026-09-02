@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
 import MoonLoader from "react-spinners/MoonLoader";
 import { EditorContext } from "./AdminShowEditor";
 import WaveformScrubber from "./WaveformScrubber";
@@ -58,6 +58,7 @@ const TrimPanel = ({ track }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [previewedAt, setPreviewedAt] = useState(null);
   const [playhead, setPlayhead] = useState(0);
+  const [originalPlaying, setOriginalPlaying] = useState(false);
   const audioRef = useRef(null);
   const previewAudioRef = useRef(null);
   const { run, busy, status, error } = useJobRunner();
@@ -185,19 +186,29 @@ const TrimPanel = ({ track }) => {
         />
         {numberField("Fade in", fadeIn, setFadeIn)}
         {numberField("Fade out", fadeOut, setFadeOut)}
+        <button
+          type="button"
+          className="admin-trim-play"
+          onClick={() => {
+            const audio = audioRef.current;
+            if (!audio) return;
+            if (audio.paused) audio.play();
+            else audio.pause();
+          }}
+        >
+          <FontAwesomeIcon icon={originalPlaying ? faPause : faPlay} />
+        </button>
       </div>
 
-      <div className="admin-preview-player">
-        <audio
-          ref={audioRef}
-          controls
-          src={track.mp3_url}
-          onTimeUpdate={(e) => setPlayhead(e.target.currentTime)}
-        />
-        <span className="admin-preview-tag">Original</span>
-      </div>
+      <audio
+        ref={audioRef}
+        src={track.mp3_url}
+        onTimeUpdate={(e) => setPlayhead(e.target.currentTime)}
+        onPlay={() => setOriginalPlaying(true)}
+        onPause={() => setOriginalPlaying(false)}
+      />
 
-      <PreviewPlayer label="Preview" url={previewUrl} audioRef={previewAudioRef} />
+      <PreviewPlayer url={previewUrl} audioRef={previewAudioRef} />
 
       <div className="admin-audio-actions">
         <button type="button" onClick={applyTrim} disabled={busy || !previewCurrent}>
