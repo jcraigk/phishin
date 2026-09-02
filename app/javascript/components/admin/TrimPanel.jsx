@@ -103,14 +103,18 @@ const TrimPanel = ({ track, onClose }) => {
     else setValue(setTrimEnd)(round(Math.max(seconds, trimStart)));
   };
 
-  const renderPreview = () =>
-    run(
+  const modeRef = useRef("preview");
+
+  const renderPreview = () => {
+    modeRef.current = "preview";
+    return run(
       () => adminPost(`/tracks/${track.id}/trim_preview`, values),
       async (job) => {
         setPreviewUrl(await fetchJobAudio(job.id));
         setPreviewedAt(signature);
       }
     );
+  };
 
   const initialSignatureRef = useRef(signature);
   const dirtyRef = useRef(false);
@@ -129,6 +133,7 @@ const TrimPanel = ({ track, onClose }) => {
 
   const applyTrim = () => {
     if (!window.confirm(`Apply this trim to "${track.title}"? The original is backed up.`)) return;
+    modeRef.current = "apply";
     run(
       () => adminPost(`/tracks/${track.id}/trim_apply`, values),
       async () => {
@@ -230,7 +235,8 @@ const TrimPanel = ({ track, onClose }) => {
         </button>
         {status && (
           <span className="admin-audio-status">
-            <MoonLoader color="#c7c8ca" size={14} /> {status}
+            <MoonLoader color="#c7c8ca" size={14} />{" "}
+            {modeRef.current === "apply" ? "Applying..." : "Rendering preview..."}
           </span>
         )}
       </div>
