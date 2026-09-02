@@ -92,9 +92,11 @@ const EditControl = ({
         <button
           type="button"
           className={open ? "active" : ""}
+          title="AI edit"
           onClick={() => setOpen(!open)}
         >
-          <FontAwesomeIcon icon={faSparkles} /> {label}
+          <FontAwesomeIcon icon={faSparkles} />
+          {label ? <> {label}</> : null}
         </button>
       )}
       {open && (
@@ -224,12 +226,18 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingUpdate, onPendingEn
         )}
       </div>
       <div className="admin-art-actions">
-        <button type="button" disabled={busy || removing} onClick={select}>
-          <FontAwesomeIcon icon={faCheck} /> {busy ? "Applying..." : "Select"}
+        <button
+          type="button"
+          title="Select as cover art"
+          aria-label="Select as cover art"
+          disabled={busy || removing}
+          onClick={select}
+        >
+          <FontAwesomeIcon icon={faCheck} />
         </button>
         <EditControl
           blobKey={candidate.blob_key}
-          label="Edit"
+          label=""
           provenance={{ basePrompt, edits }}
           onPendingStart={onPendingStart}
           onPendingUpdate={onPendingUpdate}
