@@ -97,7 +97,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
 
   return (
     <div className="admin-audio-panel">
-      <h4>Boundary</h4>
+      <h4>Move Boundary</h4>
 
       <div
         ref={containerRef}
@@ -135,7 +135,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
       </div>
 
       <div className="admin-audio-fields">
-        <label className="admin-audio-field">
+        <label className="admin-audio-field is-narrow">
           <span>Shift seconds</span>
           <input
             type="number"
