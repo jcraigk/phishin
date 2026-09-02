@@ -5,6 +5,7 @@ import {
   faArrowsUpDown,
   faCloudArrowUp,
   faEllipsis,
+  faLink,
   faPause,
   faPlay,
   faScissors,
@@ -46,7 +47,7 @@ const TrackRow = ({
   isPlaying,
   onPlay,
 }) => {
-  const { setShow, setTrack, setError } = useContext(EditorContext);
+  const { show, setShow, setTrack, setError } = useContext(EditorContext);
   const [title, setTitle] = useState(track.title || "");
   const [busy, setBusy] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -110,6 +111,15 @@ const TrackRow = ({
   };
 
   const toggleTags = () => setTool((prev) => (prev === "tags" ? null : "tags"));
+
+  const copyUrl = async () => {
+    const url = `${window.location.origin}/${show.date}/${track.slug}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch (e) {
+      setError(`Could not copy URL: ${e.message}`);
+    }
+  };
 
   const groupedTags = track.track_tags
     .slice()
@@ -245,6 +255,10 @@ const TrackRow = ({
           </button>
           {menuOpen && (
             <ul className="admin-row-menu-list">
+              {menuItem("Copy URL", faLink, true, () => {
+                setMenuOpen(false);
+                copyUrl();
+              })}
               {menuItem("Reposition", faArrowsUpDown, true, () => {
                 setMenuOpen(false);
                 onReposition();
