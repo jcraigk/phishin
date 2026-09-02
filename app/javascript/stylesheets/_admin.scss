@@ -1232,7 +1232,16 @@
   }
 
   .admin-art-edit-form {
-    display: contents;
+    order: 1;
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .admin-art-busy,
+  .admin-art-edit .admin-error,
+  .admin-art-edit .admin-audio-status {
+    order: 2;
+    width: 100%;
   }
 
   label {
