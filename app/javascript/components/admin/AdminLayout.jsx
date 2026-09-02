@@ -17,7 +17,30 @@ const AdminLayout = () => {
     if (!isAdmin) navigate("/login");
   }, [isAdmin, navigate]);
 
+  // Only one thing plays at a time: an audio element starting pauses every
+  // other element and the bottom Player, which listens for the custom event.
+  useEffect(() => {
+    const onPlay = (e) => {
+      if (!(e.target instanceof HTMLMediaElement)) return;
+      document.querySelectorAll("audio").forEach((el) => {
+        if (el !== e.target && !el.paused) el.pause();
+      });
+      window.dispatchEvent(new Event("phishin:pause-player"));
+    };
+    document.addEventListener("play", onPlay, true);
+    return () => document.removeEventListener("play", onPlay, true);
+  }, []);
+
   if (!isAdmin) return null;
+
+  const handlePlayingChange = (playing) => {
+    setIsPlaying(playing);
+    if (playing) {
+      document.querySelectorAll("audio").forEach((el) => {
+        if (!el.paused) el.pause();
+      });
+    }
+  };
 
   const playTrack = (playlist, track, autoplay = true) => {
     setActivePlaylist(playlist);
@@ -41,7 +64,7 @@ const AdminLayout = () => {
           openAppModal={() => {}}
           shouldAutoplay={shouldAutoplay}
           setShouldAutoplay={setShouldAutoplay}
-          onPlayingChange={setIsPlaying}
+          onPlayingChange={handlePlayingChange}
           onClose={() => {
             setActiveTrack(null);
             setActivePlaylist([]);

@@ -42,6 +42,15 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     if (onPlayingChange) onPlayingChange(isPlaying);
   }, [isPlaying, onPlayingChange]);
 
+  // Lets other players (the admin audio tools) pause this one when they start.
+  useEffect(() => {
+    const onExternalPause = () => {
+      if (isPlaying) togglePlayPause();
+    };
+    window.addEventListener("phishin:pause-player", onExternalPause);
+    return () => window.removeEventListener("phishin:pause-player", onExternalPause);
+  }, [isPlaying, togglePlayPause]);
+
   useEffect(() => {
     if (onLoadingChange) onLoadingChange(isLoading);
   }, [isLoading, onLoadingChange]);

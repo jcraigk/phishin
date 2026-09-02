@@ -105,16 +105,26 @@ const TrimPanel = ({ track, onClose }) => {
 
   const modeRef = useRef("preview");
 
+  const autoPlayRef = useRef(false);
+
   const renderPreview = () => {
     modeRef.current = "preview";
     return run(
       () => adminPost(`/tracks/${track.id}/trim_preview`, values),
       async (job) => {
+        autoPlayRef.current = true;
         setPreviewUrl(await fetchJobAudio(job.id));
         setPreviewedAt(signature);
       }
     );
   };
+
+  useEffect(() => {
+    if (!previewUrl || !autoPlayRef.current) return;
+    autoPlayRef.current = false;
+    if (audioRef.current) audioRef.current.pause();
+    if (previewAudioRef.current) previewAudioRef.current.play();
+  }, [previewUrl]);
 
   const initialSignatureRef = useRef(signature);
   const dirtyRef = useRef(false);
