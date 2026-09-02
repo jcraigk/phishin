@@ -1274,8 +1274,12 @@
 
 .admin-art-cost {
   margin-left: auto;
-  color: var(--text-gray);
-  font-size: 0.85rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background-color: rgba(72, 199, 116, 0.18);
+  color: #6fdc95;
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
 .admin-art-origin {

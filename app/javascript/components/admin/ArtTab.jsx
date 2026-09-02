@@ -237,7 +237,6 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingUpdate, onPendingEn
         />
         <button
           type="button"
-          className="admin-trash-button"
           aria-label="Remove candidate"
           title="Remove candidate"
           disabled={busy || removing}
