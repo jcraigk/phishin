@@ -55,7 +55,6 @@ const Navbar = ({ user, handleLogout }) => {
     { path: "/faq", label: "FAQ", icon: faQuestionCircle },
     { path: "/api-docs", label: "API Docs", icon: faBook },
     { path: "/feeds/rss", label: "RSS Feed", icon: faRss, external: true },
-    { path: "/tagin-project", label: "Tagin' Project", icon: faTags },
     { path: "/contact-info", label: "Contact Info", icon: faAddressBook },
     { path: "/privacy", label: "Privacy Policy", icon: faUserShield },
     { path: "/terms", label: "Terms of Service", icon: faFileContract },

@@ -33,8 +33,8 @@ namespace :pnet do
     puts "Missing tracks: #{missing_tracks.join(', ')}" if missing_tracks.any?
   end
 
-  desc "Find teases in Phish.net setlist notes missing from the Tagin' Tease sheet " \
-       "(APPLY=true to append; DATE/DATES/YEAR/START_DATE/END_DATE/ALL to scope)"
+  desc "Find teases in Phish.net setlist notes missing from the database " \
+       "(APPLY=true to create tags; DATE/DATES/YEAR/START_DATE/END_DATE/ALL to scope)"
   task teases: :environment do
     opts = {
       date: ENV["DATE"],
@@ -52,8 +52,8 @@ namespace :pnet do
     TeaseSyncService.call(**opts)
   end
 
-  desc "Import teases from the Phish.net Tease Chart into the Tagin' Tease sheet " \
-       "(APPLY=true to append; YEAR/START_DATE/END_DATE/ALL to scope)"
+  desc "Import teases from the Phish.net Tease Chart into the database " \
+       "(APPLY=true to create tags; YEAR/START_DATE/END_DATE/ALL to scope)"
   task tease_chart: :environment do
     opts = {
       year: ENV["YEAR"],

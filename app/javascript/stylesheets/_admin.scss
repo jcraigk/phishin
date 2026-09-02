@@ -1343,6 +1343,26 @@
   }
 }
 
+.admin-pnet-check {
+  .admin-audio-note {
+    display: block;
+    margin: 0.4rem 0 0;
+  }
+}
+
+.admin-pnet-report {
+  max-width: 64rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-gray);
+  border-radius: $radius;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
 .admin-tag-rows {
   list-style: none;
   margin: 0 0 0.5rem;
@@ -1369,15 +1389,6 @@
 .admin-tag-name {
   min-width: 8rem;
   font-weight: 700;
-}
-
-.admin-tag-managed {
-  padding: 0.1rem 0.4rem;
-  border-radius: $radius;
-  background-color: var(--bg-blue);
-  color: var(--text-gray);
-  font-size: 0.75rem;
-  white-space: nowrap;
 }
 
 .admin-tag-notes {

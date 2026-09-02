@@ -6,7 +6,7 @@ import { adminDelete, adminPatch, adminPost } from "./adminApi";
 import { reasonText } from "./orphanReasons";
 import TimeInput from "./TimeInput";
 
-const TrackTagRow = ({ track, trackTag, managed, onSaved, onError }) => {
+const TrackTagRow = ({ track, trackTag, onSaved, onError }) => {
   const [notes, setNotes] = useState(trackTag.notes || "");
   const [transcript, setTranscript] = useState(trackTag.transcript || "");
   const [busy, setBusy] = useState(false);
@@ -64,7 +64,6 @@ const TrackTagRow = ({ track, trackTag, managed, onSaved, onError }) => {
     <li className="admin-tag-row">
       <div className="admin-tag-row-header">
         <span className="admin-tag-name">{trackTag.tag_name}</span>
-        {managed && <span className="admin-tag-managed">sheet-managed</span>}
         <input
           type="text"
           className="admin-tag-notes"
@@ -196,7 +195,7 @@ const AddTrackTag = ({ track, tags, onSaved, onError }) => {
   );
 };
 
-const TagEditor = ({ track, tags, taginTags }) => {
+const TagEditor = ({ track, tags }) => {
   const { setTrack } = useContext(EditorContext);
   const [error, setError] = useState(null);
 
@@ -211,7 +210,6 @@ const TagEditor = ({ track, tags, taginTags }) => {
               key={trackTag.id}
               track={track}
               trackTag={trackTag}
-              managed={taginTags.includes(trackTag.tag_name)}
               onSaved={setTrack}
               onError={setError}
             />

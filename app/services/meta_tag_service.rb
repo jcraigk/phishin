@@ -35,7 +35,6 @@ class MetaTagService < ApplicationService
     "/search" => "Search",
     "/settings" => "Settings",
     "/signup" => "Sign Up",
-    "/tagin-project" => "Tagin' Project",
     "/terms" => "Terms of Service",
     "/today" => "Today in History",
     "/top-shows" => "Top Shows",

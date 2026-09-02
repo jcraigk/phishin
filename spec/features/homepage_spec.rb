@@ -26,7 +26,6 @@ describe "Homepage", :js do
       click_on("INFO")
       expect(page).to have_link("FAQ", href: "/faq")
       expect(page).to have_link("API Docs", href: "/api-docs")
-      expect(page).to have_link("Tagin' Project", href: "/tagin-project")
       expect(page).to have_link("Contact Info", href: "/contact-info")
       expect(page).to have_link("Privacy Policy", href: "/privacy")
       expect(page).to have_link("Terms of Service", href: "/terms")

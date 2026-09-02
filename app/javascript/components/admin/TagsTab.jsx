@@ -1,12 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faChevronRight, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronDown,
+  faChevronRight,
+  faMagnifyingGlass,
+  faTrashCan,
+} from "@fortawesome/free-solid-svg-icons";
+import MoonLoader from "react-spinners/MoonLoader";
 import { EditorContext } from "./AdminShowEditor";
 import TagEditor from "./TagEditor";
-import TaginPanel from "./TaginPanel";
+import useJobRunner from "./useJobRunner";
 import { adminDelete, adminGet, adminPatch, adminPost } from "./adminApi";
 
-const ShowTagRow = ({ showTag, managed, onSaved, onError }) => {
+const ShowTagRow = ({ showTag, onSaved, onError }) => {
   const [notes, setNotes] = useState(showTag.notes || "");
   const [busy, setBusy] = useState(false);
 
@@ -42,7 +48,6 @@ const ShowTagRow = ({ showTag, managed, onSaved, onError }) => {
     <li className="admin-tag-row">
       <div className="admin-tag-row-header">
         <span className="admin-tag-name">{showTag.tag_name}</span>
-        {managed && <span className="admin-tag-managed">sheet-managed</span>}
         <input
           type="text"
           className="admin-tag-notes"
@@ -123,7 +128,42 @@ const AddShowTag = ({ tags, onSaved, onError }) => {
   );
 };
 
-const TrackTagBlock = ({ track, tags, taginTags }) => {
+const PnetCheckPanel = () => {
+  const { show } = useContext(EditorContext);
+  const [report, setReport] = useState(null);
+  const { run, busy, status, error } = useJobRunner();
+
+  const check = () => {
+    setReport(null);
+    run(
+      () => adminPost(`/shows/${show.date}/pnet_tag_check`),
+      (job) => setReport(job?.payload?.report || "No report produced.")
+    );
+  };
+
+  return (
+    <section className="admin-pnet-check">
+      <div className="admin-art-controls">
+        <button type="button" disabled={busy} onClick={check}>
+          <FontAwesomeIcon icon={faMagnifyingGlass} /> Check Phish.net
+        </button>
+        {busy && (
+          <span className="admin-art-busy">
+            <MoonLoader color="#c7c8ca" size={18} /> {status || "Checking..."}
+          </span>
+        )}
+      </div>
+      <p className="admin-audio-note">
+        Compares this show's Tease tags against Phish.net setlist notes and the
+        Tease Chart, then suggests additions and removals for manual review.
+      </p>
+      {error && <p className="admin-error">{error}</p>}
+      {report && <pre className="admin-pnet-report">{report}</pre>}
+    </section>
+  );
+};
+
+const TrackTagBlock = ({ track, tags }) => {
   const [open, setOpen] = useState(track.track_tags.length > 0);
 
   return (
@@ -142,7 +182,7 @@ const TrackTagBlock = ({ track, tags, taginTags }) => {
           {track.track_tags.length} tag{track.track_tags.length === 1 ? "" : "s"}
         </span>
       </button>
-      {open && <TagEditor track={track} tags={tags} taginTags={taginTags} />}
+      {open && <TagEditor track={track} tags={tags} />}
     </li>
   );
 };
@@ -150,15 +190,11 @@ const TrackTagBlock = ({ track, tags, taginTags }) => {
 const TagsTab = () => {
   const { show, setShow } = useContext(EditorContext);
   const [tags, setTags] = useState([]);
-  const [taginTags, setTaginTags] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     adminGet("/tags")
-      .then((data) => {
-        setTags(data.tags);
-        setTaginTags(data.tagin_tags || []);
-      })
+      .then((data) => setTags(data.tags))
       .catch((e) => setError(e.message));
   }, []);
 
@@ -175,7 +211,6 @@ const TagsTab = () => {
             <ShowTagRow
               key={showTag.id}
               showTag={showTag}
-              managed={taginTags.includes(showTag.tag_name)}
               onSaved={setShow}
               onError={setError}
             />
@@ -187,17 +222,12 @@ const TagsTab = () => {
       <h3>Track tags</h3>
       <ul className="admin-tag-tracks">
         {show.tracks.map((track) => (
-          <TrackTagBlock
-            key={track.id}
-            track={track}
-            tags={tags}
-            taginTags={taginTags}
-          />
+          <TrackTagBlock key={track.id} track={track} tags={tags} />
         ))}
       </ul>
 
-      <h3>Spreadsheet sync</h3>
-      <TaginPanel />
+      <h3>Phish.net check</h3>
+      <PnetCheckPanel />
     </div>
   );
 };

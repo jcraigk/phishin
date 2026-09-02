@@ -73,16 +73,3 @@ SET_NAMES = {
   "E2" => "Encore 2",
   "E3" => "Encore 3"
 }.freeze
-TAGIN_TAGS = [
-  "A Cappella",
-  "Alt Lyric",
-  "Alt Rig",
-  "Alt Version",
-  "Audience",
-  "Banter",
-  "Guest",
-  "Narration",
-  "Signal",
-  "Tease",
-  "Unfinished"
-].freeze

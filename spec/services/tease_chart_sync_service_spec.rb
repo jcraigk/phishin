@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe TeaseChartSyncService do
   subject(:service) { described_class.new(year: "2025") }
 
+  let!(:tease_tag) { create(:tag, name: "Tease") }
   let!(:show) { create(:show, date: "2025-12-31") }
   let!(:yem) { create(:track, show:, title: "You Enjoy Myself", position: 1) }
   let!(:hood) { create(:track, show:, title: "Harry Hood", position: 2) }
@@ -10,7 +11,6 @@ RSpec.describe TeaseChartSyncService do
   let(:chart_rows) do
     [ [ "Norwegian Wood", "The Beatles", "1", "2025-12-31 Hood" ] ]
   end
-  let(:sheet_rows) { [] }
   let(:songs) do
     [
       { "song" => "Harry Hood", "abbr" => "Hood" },
@@ -26,10 +26,7 @@ RSpec.describe TeaseChartSyncService do
 
   before do
     allow(ENV).to receive(:fetch).and_call_original
-    allow(ENV).to receive(:fetch).with("TAGIN_GSHEET_ID").and_return("sheet-id")
     allow(ENV).to receive(:fetch).with("PNET_API_KEY").and_return("pnet-key")
-    allow(GoogleSpreadsheetFetcher).to receive(:call).and_return(sheet_rows)
-    allow(GoogleSpreadsheetAppender).to receive(:call)
     allow(Typhoeus).to receive(:get) do |url|
       body = if url.include?("tease-chart")
                chart_html(chart_rows)
@@ -40,19 +37,17 @@ RSpec.describe TeaseChartSyncService do
     end
   end
 
-  it "proposes a row for a chart occurrence missing from the sheet" do
+  it "proposes a tag for a chart occurrence missing from the database" do
     service.call
 
-    expect(service.proposed_rows).to eq([
-      [ "https://phish.in/2025-12-31/#{hood.slug}", "", "", "Norwegian Wood by The Beatles", "", described_class::DEV_NOTE ]
-    ])
+    expect(service.proposed_rows)
+      .to eq([ { track: hood, note: "Norwegian Wood by The Beatles" } ])
   end
 
   it "resolves abbreviated song labels to the right track in the show" do
     service.call
 
-    expect(service.proposed_rows.first.first).to include(hood.slug)
-    expect(service.proposed_rows.first.first).not_to include(yem.slug)
+    expect(service.proposed_rows.first[:track]).to eq(hood)
   end
 
   it "unescapes HTML entities in abbreviations" do
@@ -64,13 +59,13 @@ RSpec.describe TeaseChartSyncService do
 
     it "omits the artist suffix" do
       service.call
-      expect(service.proposed_rows.first[3]).to eq("Meatstick")
+      expect(service.proposed_rows.first[:note]).to eq("Meatstick")
     end
   end
 
-  context "when the sheet already lists the tease" do
-    let(:sheet_rows) do
-      [ { "URL" => "https://phish.in/2025-12-31/#{hood.slug}", "Notes" => "Norwegian Wood by The Beatles" } ]
+  context "when the database already has the tease" do
+    before do
+      create(:track_tag, tag: tease_tag, track: hood, notes: "Norwegian Wood by The Beatles")
     end
 
     it "skips it" do
@@ -81,10 +76,11 @@ RSpec.describe TeaseChartSyncService do
     end
   end
 
-  context "when the sheet spells the tease slightly differently" do
+  context "when the existing tag spells the tease slightly differently" do
     let(:chart_rows) { [ [ "Tequila", "The Champs", "1", "2025-12-31 Hood" ] ] }
-    let(:sheet_rows) do
-      [ { "URL" => "https://phish.in/2025-12-31/#{hood.slug}", "Notes" => "Tequilla by The Champs" } ]
+
+    before do
+      create(:track_tag, tag: tease_tag, track: hood, notes: "Tequilla by The Champs")
     end
 
     it "still proposes it, since the titles differ" do
@@ -101,8 +97,7 @@ RSpec.describe TeaseChartSyncService do
     it "places the tease on the sandwich" do
       service.call
 
-      expect(service.proposed_rows.first.first).to include(sandwich.slug)
-      expect(service.proposed_rows.first.first).not_to include(reprise.slug)
+      expect(service.proposed_rows.first[:track]).to eq(sandwich)
     end
   end
 
@@ -111,13 +106,13 @@ RSpec.describe TeaseChartSyncService do
     let!(:tweezer) { create(:track, show:, title: "Tweezer", position: 3) }
     let!(:tweezer2) { create(:track, show:, title: "Tweezer", position: 4) }
 
-    it "proposes the earlier one when neither is in the sheet" do
+    it "proposes the earlier one when neither is tagged" do
       service.call
-      expect(service.proposed_rows.first.first).to include("/#{tweezer.slug}")
+      expect(service.proposed_rows.first[:track]).to eq(tweezer)
     end
 
-    context "when the sheet already has the tease on the later one" do
-      let(:sheet_rows) { [ { "URL" => "https://phish.in/2025-12-31/#{tweezer2.slug}", "Notes" => "Buffalo Bill" } ] }
+    context "when the later one already has the tease tag" do
+      before { create(:track_tag, tag: tease_tag, track: tweezer2, notes: "Buffalo Bill") }
 
       it "treats it as covered" do
         service.call
@@ -133,7 +128,7 @@ RSpec.describe TeaseChartSyncService do
       [ [ "Norwegian Wood", "The Beatles", "2", "2025-12-31 Hood, 2025-12-31 Hood" ] ]
     end
 
-    it "proposes only one row" do
+    it "proposes only one tag" do
       service.call
       expect(service.proposed_rows.size).to eq(1)
     end
@@ -144,7 +139,7 @@ RSpec.describe TeaseChartSyncService do
 
     it "does not repeat the artist in the note" do
       service.call
-      expect(service.proposed_rows.first[3]).to eq("Fire by Ohio Players")
+      expect(service.proposed_rows.first[:note]).to eq("Fire by Ohio Players")
     end
   end
 
@@ -153,7 +148,7 @@ RSpec.describe TeaseChartSyncService do
 
     it "keeps the parenthetical" do
       service.call
-      expect(service.proposed_rows.first[3]).to eq("Norwegian Wood (This Bird Has Flown) by The Beatles")
+      expect(service.proposed_rows.first[:note]).to eq("Norwegian Wood (This Bird Has Flown) by The Beatles")
     end
   end
 
@@ -162,31 +157,31 @@ RSpec.describe TeaseChartSyncService do
 
     it "omits the artist rather than writing \"by 1\"" do
       service.call
-      expect(service.proposed_rows.first[3]).to eq("Hanky Panky")
+      expect(service.proposed_rows.first[:note]).to eq("Hanky Panky")
     end
   end
 
-context "when the chart page is served as raw bytes" do
-  let(:chart_rows) do
-    [ [ "Entrance of the Gladiators", "Julius Fu\u010D\u00EDk", "1", "2025-12-31 Hood" ] ]
+  context "when the chart page is served as raw bytes" do
+    let(:chart_rows) do
+      [ [ "Entrance of the Gladiators", "Julius Fučík", "1", "2025-12-31 Hood" ] ]
+    end
+
+    it "decodes accented characters instead of double-encoding them" do
+      service.call
+      expect(service.proposed_rows.first[:note]).to eq("Entrance of the Gladiators by Julius Fučík")
+    end
   end
 
-  it "decodes accented characters instead of double-encoding them" do
-    service.call
-    expect(service.proposed_rows.first[3]).to eq("Entrance of the Gladiators by Julius Fu\u010D\u00EDk")
+  context "when the chart has irrecoverably lost characters" do
+    let(:chart_rows) { [ [ "Single Ladies (Put a Ring on It)", "Beyonc�", "1", "2025-12-31 Hood" ] ] }
+
+    it "substitutes the known correct spelling" do
+      service.call
+      expect(service.proposed_rows.first[:note]).to eq("Single Ladies (Put a Ring on It) by Beyoncé")
+    end
   end
-end
 
-context "when the chart has irrecoverably lost characters" do
-  let(:chart_rows) { [ [ "Single Ladies (Put a Ring on It)", "Beyonc\uFFFD", "1", "2025-12-31 Hood" ] ] }
-
-  it "substitutes the known correct spelling" do
-    service.call
-    expect(service.proposed_rows.first[3]).to eq("Single Ladies (Put a Ring on It) by Beyonc\u00E9")
-  end
-end
-
-context "when the chart lists no song label" do
+  context "when the chart lists no song label" do
     let(:chart_rows) { [ [ "Norwegian Wood", "The Beatles", "1", "2025-12-31" ] ] }
 
     it "records it as unmatched" do
@@ -225,16 +220,17 @@ context "when the chart lists no song label" do
   end
 
   describe "applying" do
-    it "does not write during a dry run" do
-      service.call
-      expect(GoogleSpreadsheetAppender).not_to have_received(:call)
+    it "does not create tags during a dry run" do
+      expect { service.call }.not_to change(TrackTag, :count)
     end
 
-    it "appends proposed rows when applying" do
-      described_class.call(year: "2025", apply: true)
-
-      expect(GoogleSpreadsheetAppender).to have_received(:call)
-        .with("sheet-id", described_class::APPEND_RANGE, anything)
+    it "creates tease tags when applying" do
+      expect { described_class.call(year: "2025", apply: true) }
+        .to change(TrackTag, :count).by(1)
+      track_tag = TrackTag.last
+      expect(track_tag.track).to eq(hood)
+      expect(track_tag.tag).to eq(tease_tag)
+      expect(track_tag.notes).to eq("Norwegian Wood by The Beatles")
     end
   end
 end
