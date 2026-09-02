@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
@@ -131,7 +132,12 @@ const AddShowTag = ({ tags, onSaved, onError }) => {
 const PnetCheckPanel = () => {
   const { show } = useContext(EditorContext);
   const [report, setReport] = useState(null);
+  const [actionsSlot, setActionsSlot] = useState(null);
   const { run, busy, status, error } = useJobRunner();
+
+  useEffect(() => {
+    setActionsSlot(document.getElementById("admin-tab-actions"));
+  }, []);
 
   const check = () => {
     setReport(null);
@@ -141,22 +147,20 @@ const PnetCheckPanel = () => {
     );
   };
 
+  const button = (
+    <button type="button" disabled={busy} onClick={check}>
+      <FontAwesomeIcon icon={faMagnifyingGlass} /> Check Phish.net
+    </button>
+  );
+
   return (
     <section className="admin-pnet-check">
-      <div className="admin-art-controls">
-        <button type="button" disabled={busy} onClick={check}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} /> Check Phish.net
-        </button>
-        {busy && (
-          <span className="admin-art-busy">
-            <MoonLoader color="#c7c8ca" size={18} /> {status || "Checking..."}
-          </span>
-        )}
-      </div>
-      <p className="admin-audio-note">
-        Compares this show's Tease tags against Phish.net setlist notes and the
-        Tease Chart, then suggests additions and removals for manual review.
-      </p>
+      {actionsSlot && createPortal(button, actionsSlot)}
+      {busy && (
+        <span className="admin-art-busy">
+          <MoonLoader color="#c7c8ca" size={18} /> {status || "Checking..."}
+        </span>
+      )}
       {error && <p className="admin-error">{error}</p>}
       {report && <pre className="admin-pnet-report">{report}</pre>}
     </section>
@@ -233,7 +237,6 @@ const TagsTab = () => {
         ))}
       </ul>
 
-      <h3>Phish.net check</h3>
       <PnetCheckPanel />
     </div>
   );
