@@ -22,9 +22,18 @@ RSpec.describe Admin::PnetTagCheckJob do
     )
   end
 
+  let(:show_info) do
+    instance_double(
+      ShowImporter::ShowInfo,
+      songs: { 1 => "Harry Hood", 2 => "Ghost" },
+      sets: { 1 => "1", 2 => "2" }
+    )
+  end
+
   before do
     allow(TeaseChartSyncService).to receive(:new).and_return(chart_service)
     allow(TeaseSyncService).to receive(:new).and_return(notes_service)
+    allow(ShowImporter::ShowInfo).to receive(:new).and_return(show_info)
   end
 
   it "runs both sources as dry runs scoped to the show" do
@@ -45,6 +54,32 @@ RSpec.describe Admin::PnetTagCheckJob do
     expect(report).to include("Fuego")
     expect(report).to include("Kashmir by Led Zeppelin")
     expect(report).to include("Ghost: Manteca (no track matched)")
+  end
+
+  it "reports Phish.net setlist songs missing from the show" do
+    described_class.new.perform(show.id, admin_job.id)
+    expect(admin_job.reload.payload["report"]).to include("Missing here: Ghost (Set 2)")
+  end
+
+  it "reports set mismatches against Phish.net" do
+    track.update!(set: "2")
+    described_class.new.perform(show.id, admin_job.id)
+    expect(admin_job.reload.payload["report"])
+      .to include("Set mismatch: Harry Hood is Set 2 here, Set 1 on Phish.net")
+  end
+
+  it "reports local tracks Phish.net does not list" do
+    create(:track, show:, title: "Secret Jam", position: 2, set: "1")
+    described_class.new.perform(show.id, admin_job.id)
+    expect(admin_job.reload.payload["report"])
+      .to include("Not on Phish.net: Secret Jam (Set 1)")
+  end
+
+  it "reports nothing for a matching setlist" do
+    create(:track, show:, title: "Ghost", position: 2, set: "2")
+    described_class.new.perform(show.id, admin_job.id)
+    expect(admin_job.reload.payload["report"])
+      .to include("Setlist conflicts with Phish.net:\n  (none)")
   end
 
   it "completes the admin job" do
