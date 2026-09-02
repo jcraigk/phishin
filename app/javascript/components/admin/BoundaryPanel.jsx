@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faPause, faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
 import MoonLoader from "react-spinners/MoonLoader";
 import { EditorContext } from "./AdminShowEditor";
 import PreviewPlayer from "./PreviewPlayer";
@@ -21,7 +21,16 @@ const BoundaryPanel = ({ track, next, onClose }) => {
   const [previewUrls, setPreviewUrls] = useState([null, null]);
   const [previewedAt, setPreviewedAt] = useState(null);
   const [dragging, setDragging] = useState(false);
+  const [playhead, setPlayhead] = useState(0);
+  const [playing, setPlaying] = useState(false);
   const containerRef = useRef(null);
+  const firstAudioRef = useRef(null);
+  const secondAudioRef = useRef(null);
+  const firstPreviewRef = useRef(null);
+  const secondPreviewRef = useRef(null);
+  const suppressClickRef = useRef(false);
+  const cancelledRef = useRef(false);
+  const modeRef = useRef("preview");
   const { run, cancel, busy, status, error, setError } = useJobRunner();
 
   const firstSeconds = seconds(track.duration);
@@ -37,8 +46,6 @@ const BoundaryPanel = ({ track, next, onClose }) => {
     setPreviewUrls([null, null]);
     setPreviewedAt(null);
   };
-
-  const cancelledRef = useRef(false);
 
   const changeDelta = (value) => {
     setDeltaS(round(value));
@@ -58,8 +65,46 @@ const BoundaryPanel = ({ track, next, onClose }) => {
     changeDelta(Math.min(Math.max(raw, low), high));
   };
 
-  const renderPreview = () =>
-    run(
+  const syncPlaying = () =>
+    setPlaying(
+      Boolean(
+        (firstAudioRef.current && !firstAudioRef.current.paused) ||
+          (secondAudioRef.current && !secondAudioRef.current.paused)
+      )
+    );
+
+  const seekTo = (combined) => {
+    const first = firstAudioRef.current;
+    const second = secondAudioRef.current;
+    if (!first || !second) return;
+    const wasPlaying = !first.paused || !second.paused;
+    if (combined < firstSeconds) {
+      second.pause();
+      first.currentTime = combined;
+      if (wasPlaying) first.play();
+    } else {
+      first.pause();
+      second.currentTime = combined - firstSeconds;
+      if (wasPlaying) second.play();
+    }
+    setPlayhead(combined);
+  };
+
+  const togglePlay = () => {
+    const first = firstAudioRef.current;
+    const second = secondAudioRef.current;
+    if (!first || !second) return;
+    if (!first.paused || !second.paused) {
+      first.pause();
+      second.pause();
+      return;
+    }
+    (playhead < firstSeconds ? first : second).play();
+  };
+
+  const renderPreview = () => {
+    modeRef.current = "preview";
+    return run(
       () => adminPost(`/tracks/${track.id}/shift_boundary_preview`, { delta_s: delta }),
       async (job) => {
         const [first, second] = await Promise.all([
@@ -70,6 +115,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
         setPreviewedAt(delta);
       }
     );
+  };
 
   useEffect(() => {
     if (busy || previewCurrent || error || cancelledRef.current) return undefined;
@@ -83,6 +129,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
       `Move the boundary between "${track.title}" and "${next.title}" by ` +
       `${delta.toFixed(1)}s? Both original audio files are backed up.`;
     if (!window.confirm(message)) return;
+    modeRef.current = "apply";
     run(
       () => adminPost(`/tracks/${track.id}/shift_boundary_apply`, { delta_s: delta }),
       async () => {
@@ -105,8 +152,18 @@ const BoundaryPanel = ({ track, next, onClose }) => {
         onMouseMove={(e) => {
           if (dragging) dragTo(e.clientX);
         }}
-        onMouseUp={() => setDragging(false)}
+        onMouseUp={() => {
+          if (dragging) suppressClickRef.current = true;
+          setDragging(false);
+        }}
         onMouseLeave={() => setDragging(false)}
+        onClick={(e) => {
+          if (suppressClickRef.current) {
+            suppressClickRef.current = false;
+            return;
+          }
+          seekTo(secondsAt(e.clientX));
+        }}
       >
         <div className="admin-boundary-waves">
           <img
@@ -122,6 +179,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
             draggable={false}
           />
         </div>
+        <div className="wf-playhead" style={{ left: `${(playhead / total) * 100}%` }} />
         <div
           className="wf-marker"
           style={{ left: boundaryPercent, background: "var(--blue)" }}
@@ -135,7 +193,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
       </div>
 
       <div className="admin-audio-fields">
-        <label className="admin-audio-field is-narrow">
+        <label className="admin-audio-field is-medium">
           <span>Shift seconds</span>
           <input
             type="number"
@@ -147,10 +205,48 @@ const BoundaryPanel = ({ track, next, onClose }) => {
             onChange={(e) => changeDelta(Number(e.target.value))}
           />
         </label>
+        <button type="button" className="admin-trim-play" onClick={togglePlay}>
+          <FontAwesomeIcon icon={playing ? faPause : faPlay} />
+        </button>
       </div>
 
-      <PreviewPlayer label={`End of "${track.title}"`} url={previewUrls[0]} />
-      <PreviewPlayer label={`Start of "${next.title}"`} url={previewUrls[1]} />
+      <audio
+        ref={firstAudioRef}
+        src={track.mp3_url}
+        onTimeUpdate={(e) => setPlayhead(e.target.currentTime)}
+        onPlay={() => setPlaying(true)}
+        onPause={syncPlaying}
+        onEnded={() => {
+          const second = secondAudioRef.current;
+          if (!second) return;
+          second.currentTime = 0;
+          second.play();
+        }}
+      />
+      <audio
+        ref={secondAudioRef}
+        src={next.mp3_url}
+        onTimeUpdate={(e) => setPlayhead(firstSeconds + e.target.currentTime)}
+        onPlay={() => setPlaying(true)}
+        onPause={syncPlaying}
+      />
+
+      <PreviewPlayer
+        label={`End of "${track.title}"`}
+        url={previewUrls[0]}
+        audioRef={firstPreviewRef}
+        onEnded={() => {
+          const second = secondPreviewRef.current;
+          if (!second) return;
+          second.currentTime = 0;
+          second.play();
+        }}
+      />
+      <PreviewPlayer
+        label={`Start of "${next.title}"`}
+        url={previewUrls[1]}
+        audioRef={secondPreviewRef}
+      />
 
       <div className="admin-audio-actions">
         <button
@@ -177,7 +273,8 @@ const BoundaryPanel = ({ track, next, onClose }) => {
         )}
         {status && (
           <span className="admin-audio-status">
-            <MoonLoader color="#c7c8ca" size={14} /> {status}
+            <MoonLoader color="#c7c8ca" size={14} />{" "}
+            {modeRef.current === "apply" ? "Applying..." : "Rendering preview..."}
           </span>
         )}
       </div>
