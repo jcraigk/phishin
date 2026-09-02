@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import MoonLoader from "react-spinners/MoonLoader";
 import { EditorContext } from "./AdminShowEditor";
 import WaveformScrubber from "./WaveformScrubber";
 import PreviewPlayer from "./PreviewPlayer";
@@ -193,19 +194,20 @@ const TrimPanel = ({ track }) => {
           src={track.mp3_url}
           onTimeUpdate={(e) => setPlayhead(e.target.currentTime)}
         />
+        <span className="admin-preview-tag">Original</span>
       </div>
 
-      <PreviewPlayer
-        label="Preview - this exact audio will be committed"
-        url={previewUrl}
-        audioRef={previewAudioRef}
-      />
+      <PreviewPlayer label="Preview" url={previewUrl} audioRef={previewAudioRef} />
 
       <div className="admin-audio-actions">
         <button type="button" onClick={applyTrim} disabled={busy || !previewCurrent}>
           <FontAwesomeIcon icon={faCheck} /> Apply
         </button>
-        {status && <span className="admin-audio-status">{status}</span>}
+        {status && (
+          <span className="admin-audio-status">
+            <MoonLoader color="#c7c8ca" size={14} /> {status}
+          </span>
+        )}
       </div>
 
       {error && <p className="admin-error">{error}</p>}
