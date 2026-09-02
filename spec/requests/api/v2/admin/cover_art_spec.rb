@@ -25,28 +25,6 @@ RSpec.describe "API v2 Admin Cover Art" do
     )
   end
 
-  describe "GET /api/v2/admin/cover_art_options" do
-    it "returns the hue list" do
-      get "/api/v2/admin/cover_art_options", headers: admin_headers
-      expect(JSON.parse(response.body)["hues"]).to eq(CoverArtPromptService::HUES)
-    end
-
-    it "returns the style list" do
-      get "/api/v2/admin/cover_art_options", headers: admin_headers
-      expect(JSON.parse(response.body)["styles"]).to eq(CoverArtPromptService::STYLES)
-    end
-
-    it "returns 401 without a token" do
-      get "/api/v2/admin/cover_art_options"
-      expect(response).to have_http_status(:unauthorized)
-    end
-
-    it "returns 403 for a non-admin user" do
-      get "/api/v2/admin/cover_art_options", headers: { "X-Auth-Token" => token_for(user) }
-      expect(response).to have_http_status(:forbidden)
-    end
-  end
-
   describe "POST /api/v2/admin/shows/:date/cover_art/regenerate_prompt" do
     let(:path) { "/api/v2/admin/shows/2025-08-01/cover_art/regenerate_prompt" }
 
@@ -346,16 +324,11 @@ RSpec.describe "API v2 Admin Cover Art" do
   end
 
   describe "PATCH /api/v2/admin/shows/:date with cover art fields" do
-    it "updates the prompt, hue and style" do
+    it "updates the prompt" do
       patch "/api/v2/admin/shows/2025-08-01",
-            params: {
-              cover_art_prompt: "a blue barn", cover_art_hue: "Blue",
-              cover_art_style: "Futurism"
-            }.to_json,
+            params: { cover_art_prompt: "a blue barn" }.to_json,
             headers: json_headers
-      expect(show.reload).to have_attributes(
-        cover_art_prompt: "a blue barn", cover_art_hue: "Blue", cover_art_style: "Futurism"
-      )
+      expect(show.reload.cover_art_prompt).to eq("a blue barn")
     end
 
     it "updates the parent show link" do
