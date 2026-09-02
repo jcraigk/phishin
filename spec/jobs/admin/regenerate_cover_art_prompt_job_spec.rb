@@ -12,7 +12,7 @@ RSpec.describe Admin::RegenerateCoverArtPromptJob, :openai do
       Typhoeus::Response,
       success?: true,
       body: {
-        choices: [ { message: { content: categories.to_json } } ]
+        content: [ { type: "text", text: categories.to_json } ]
       }.to_json
     )
   end
