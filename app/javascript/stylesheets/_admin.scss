@@ -1377,6 +1377,21 @@
 }
 
 
+.admin-pnet-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0.5rem 0 1rem;
+
+  .admin-art-busy {
+    margin-top: 0;
+  }
+
+  progress {
+    width: 100%;
+  }
+}
+
 .admin-pnet-report {
   max-width: 64rem;
   margin-top: 0.75rem;
