@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import MoonLoader from "react-spinners/MoonLoader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -6,6 +7,7 @@ import {
   faCheck,
   faCloudArrowUp,
   faTrashCan,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { faSparkles } from "./sparklesIcon";
 import { EditorContext } from "./AdminShowEditor";
@@ -174,8 +176,9 @@ const CandidateCard = ({ candidate }) => {
   );
 };
 
-const PromptPanel = ({ draft, setDraft }) => {
+const NewPromptModal = ({ onClose, onSubmit }) => {
   const { show } = useContext(EditorContext);
+  const [draft, setDraft] = useState(show.cover_art.prompt || "");
   const [suggestions, setSuggestions] = useState(null);
   const { run, busy, status, error } = useJobRunner();
 
@@ -191,54 +194,76 @@ const PromptPanel = ({ draft, setDraft }) => {
   const append = (text) =>
     setDraft((prev) => (prev.trim() === "" ? text : `${prev.trim()} ${text}`));
 
-  return (
-    <section className="admin-art-prompt">
-      <div className="admin-field">
+  return createPortal(
+    <div className="admin-modal-overlay" onClick={busy ? undefined : onClose}>
+      <div
+        className="admin-modal admin-modal-wide"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3>New prompt</h3>
         <textarea
-          id="admin-art-prompt"
           aria-label="Prompt for a new image"
           placeholder="Prompt for a new image"
-          rows={3}
+          rows={4}
           value={draft}
           disabled={busy}
           onChange={(e) => setDraft(e.target.value)}
         />
+        <div className="admin-art-suggest-row">
+          <button type="button" disabled={busy} onClick={suggest}>
+            <FontAwesomeIcon icon={faArrowsRotate} /> Suggest prompt
+          </button>
+          {busy && (
+            <span className="admin-art-busy">
+              <MoonLoader color="#c7c8ca" size={18} /> {status || "Suggesting"}
+            </span>
+          )}
+        </div>
+        {suggestions && (
+          <dl className="admin-art-suggestions">
+            {Object.entries(suggestions).map(([category, items]) => (
+              <div key={category}>
+                <dt>{category.replace(/_/g, " ")}</dt>
+                <dd>
+                  {items.map((item) => (
+                    <button key={item} type="button" onClick={() => append(item)}>
+                      {item}
+                    </button>
+                  ))}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        {error && <p className="admin-error">{error}</p>}
+        <div className="admin-modal-actions">
+          <button
+            type="button"
+            disabled={busy || draft.trim() === ""}
+            onClick={() => onSubmit(draft.trim())}
+          >
+            <FontAwesomeIcon icon={faCheck} /> Generate
+          </button>
+          <button type="button" disabled={busy} onClick={onClose}>
+            <FontAwesomeIcon icon={faXmark} /> Cancel
+          </button>
+        </div>
       </div>
-      <button type="button" disabled={busy} onClick={suggest}>
-        <FontAwesomeIcon icon={faArrowsRotate} /> {busy ? "Suggesting..." : "Suggest prompt"}
-      </button>
-      {suggestions && (
-        <dl className="admin-art-suggestions">
-          {Object.entries(suggestions).map(([category, items]) => (
-            <div key={category}>
-              <dt>{category.replace(/_/g, " ")}</dt>
-              <dd>
-                {items.map((item) => (
-                  <button key={item} type="button" onClick={() => append(item)}>
-                    {item}
-                  </button>
-                ))}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      )}
-      {status && <span className="admin-audio-status">{status}</span>}
-      {error && <p className="admin-error">{error}</p>}
-    </section>
+    </div>,
+    document.querySelector(".admin-layout") || document.body
   );
 };
 
-const GenerateControls = ({ draft }) => {
+const GenerateControls = ({ onGenerate, generating }) => {
   const { show, reload } = useContext(EditorContext);
+  const [modalOpen, setModalOpen] = useState(false);
   const [progress, setProgress] = useState(null);
   const [uploadError, setUploadError] = useState(null);
-  const { run, busy, status, error } = useJobRunner();
 
-  const generate = () => {
+  const generate = (prompt) => {
     if (!window.confirm(GENERATE_CONFIRM)) return;
-    const body = draft.trim() === "" ? {} : { prompt: draft.trim() };
-    run(() => adminPost(`/shows/${show.date}/cover_art/generate`, body), () => reload());
+    setModalOpen(false);
+    onGenerate(prompt);
   };
 
   const upload = async (file) => {
@@ -260,15 +285,19 @@ const GenerateControls = ({ draft }) => {
 
   return (
     <div className="admin-art-controls">
-      <button type="button" disabled={busy || uploading} onClick={generate}>
-        <FontAwesomeIcon icon={faSparkles} /> {busy ? "Generating..." : "Generate"}
+      <button
+        type="button"
+        disabled={generating || uploading}
+        onClick={() => setModalOpen(true)}
+      >
+        <FontAwesomeIcon icon={faSparkles} /> New prompt
       </button>
       <label className="admin-art-upload">
         <FontAwesomeIcon icon={faCloudArrowUp} /> Upload image
         <input
           type="file"
           accept="image/*"
-          disabled={busy || uploading}
+          disabled={generating || uploading}
           onChange={(e) => {
             const file = e.target.files[0];
             // Allow re-selecting the same filename after a failed upload
@@ -278,14 +307,10 @@ const GenerateControls = ({ draft }) => {
         />
       </label>
       {uploading && <progress max="100" value={progress} />}
-      {busy ? (
-        <span className="admin-art-busy">
-          <MoonLoader color="#c7c8ca" size={18} /> {status || "Generating"}
-        </span>
-      ) : (
-        status && <span className="admin-audio-status">{status}</span>
+      {uploadError && <p className="admin-error">{uploadError}</p>}
+      {modalOpen && (
+        <NewPromptModal onClose={() => setModalOpen(false)} onSubmit={generate} />
       )}
-      {(error || uploadError) && <p className="admin-error">{error || uploadError}</p>}
     </div>
   );
 };
@@ -300,14 +325,24 @@ const ArtImage = ({ url, alt }) =>
   );
 
 const ArtEditor = ({ runNote }) => {
-  const { show } = useContext(EditorContext);
-  const [draft, setDraft] = useState("");
+  const { show, reload } = useContext(EditorContext);
+  const { run, busy: generating, status: genStatus, error: genError } = useJobRunner();
   const art = show.cover_art;
   const note =
     runNote ||
     ((art.child_dates || []).length > 0
       ? `This art is shared with a run. Applying a candidate also updates ${art.child_dates.join(", ")}.`
       : null);
+
+  const generate = (prompt) =>
+    run(
+      () =>
+        adminPost(
+          `/shows/${show.date}/cover_art/generate`,
+          prompt ? { prompt } : {}
+        ),
+      () => reload()
+    );
 
   return (
     <div className="admin-art-tab">
@@ -324,18 +359,25 @@ const ArtEditor = ({ runNote }) => {
         )}
       </section>
 
-      <PromptPanel draft={draft} setDraft={setDraft} />
-
-      <GenerateControls draft={draft} />
+      <GenerateControls onGenerate={generate} generating={generating} />
 
       <h3>Candidates</h3>
-      {art.candidates.length === 0 ? (
+      {genError && <p className="admin-error">{genError}</p>}
+      {art.candidates.length === 0 && !generating ? (
         <p>No candidates yet. Generate or upload one.</p>
       ) : (
         <div className="admin-art-grid">
           {art.candidates.map((candidate) => (
             <CandidateCard key={candidate.blob_key} candidate={candidate} />
           ))}
+          {generating && (
+            <figure className="admin-art-card admin-art-pending">
+              <div className="admin-art-empty">
+                <MoonLoader color="#c7c8ca" size={28} />
+              </div>
+              <figcaption>{genStatus || "Generating..."}</figcaption>
+            </figure>
+          )}
         </div>
       )}
     </div>
