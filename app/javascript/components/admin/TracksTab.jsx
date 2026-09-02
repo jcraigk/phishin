@@ -402,7 +402,7 @@ const TracksTab = () => {
             return (
               <tbody key={headerKey} className="admin-set-group">
                 <tr className="admin-set-header">
-                  <th colSpan={8}>
+                  <th colSpan={6}>
                     {setName(group.set)}
                     {group.tracks.length > 0 && (
                       <span className="admin-set-duration">
