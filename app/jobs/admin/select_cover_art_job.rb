@@ -13,6 +13,7 @@ class Admin::SelectCoverArtJob
     @admin_job.run! do
       blob = candidate_blob(blob_key)
       attach_cover_art(blob, zoom.to_i)
+      commit_prompt_snapshot(blob)
       build_album_cover
       embed_id3_tags
       propagate_to_children
@@ -46,6 +47,12 @@ class Admin::SelectCoverArtJob
       file.flush
       @show.attach_cover_art_by_path(file.path, zoom:)
     end
+  end
+
+  def commit_prompt_snapshot(blob)
+    used_prompt = blob.metadata["prompt"]
+    return if used_prompt.blank?
+    @show.update!(cover_art_prompt: used_prompt)
   end
 
   def build_album_cover

@@ -19,22 +19,28 @@ RSpec.describe Admin::RegenerateCoverArtPromptJob, :openai do
 
   before { allow(Typhoeus).to receive(:post).and_return(chat_response) }
 
-  it "writes a prompt onto the show" do
+  it "does not change the saved prompt on the show" do
+    show.update!(cover_art_prompt: "the committed snapshot")
     described_class.new.perform(show.id, admin_job.id)
-    expect(show.reload.cover_art_prompt).to be_present
+    expect(show.reload.cover_art_prompt).to eq("the committed snapshot")
   end
 
-  it "writes a hue and style from the known lists" do
+  it "records a suggested prompt on the job payload" do
     described_class.new.perform(show.id, admin_job.id)
-    expect(show.reload).to have_attributes(
-      cover_art_hue: be_in(CoverArtPromptService::HUES),
-      cover_art_style: be_in(CoverArtPromptService::STYLES)
-    )
+    expect(admin_job.reload.payload["prompt"]).to include("a pigeon")
   end
 
-  it "records the resulting prompt on the job payload" do
+  it "records a hue and style from the known lists on the job payload" do
     described_class.new.perform(show.id, admin_job.id)
-    expect(admin_job.reload.payload["prompt"]).to eq(show.reload.cover_art_prompt)
+    expect(admin_job.reload.payload["hue"]).to be_in(CoverArtPromptService::HUES)
+    expect(admin_job.reload.payload["style"]).to be_in(CoverArtPromptService::STYLES)
+  end
+
+  it "records the category suggestions on the job payload" do
+    described_class.new.perform(show.id, admin_job.id)
+    suggestions = admin_job.reload.payload["suggestions"]
+    expect(suggestions.keys).to match_array(CoverArtPromptService::CATEGORIES)
+    expect(suggestions["animals"]).to eq([ "a pigeon" ])
   end
 
   it "completes the admin job" do

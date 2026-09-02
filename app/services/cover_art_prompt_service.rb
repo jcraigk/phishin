@@ -1,5 +1,6 @@
 class CoverArtPromptService < ApplicationService
   param :show
+  option :dry_run, default: -> { false }
 
   HUES = %w[
     Red Orange Yellow Green Blue Purple
@@ -107,11 +108,11 @@ class CoverArtPromptService < ApplicationService
     Respond only with the JSON object containing the keys and values for the categories. Do not include any other information or formatting characters in your response such as backticks or the token "json".
   TXT
   def call
-    if show == run_kickoff_show
+    if dry_run
+      { prompt: new_prompt, hue:, style:, suggestions: chatgpt_response }
+    elsif show == run_kickoff_show
       generate_new_prompt
       print_response_hints
-      # puts @chatgpt_response
-      # puts @new_prompt
     else
       defer_to_kickoff_show
     end
