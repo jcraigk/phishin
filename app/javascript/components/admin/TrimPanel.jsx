@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import WaveformScrubber from "./WaveformScrubber";
 import PreviewPlayer from "./PreviewPlayer";
@@ -106,6 +108,19 @@ const TrimPanel = ({ track }) => {
       }
     );
 
+  const initialSignatureRef = useRef(signature);
+  const dirtyRef = useRef(false);
+
+  useEffect(() => {
+    if (!dirtyRef.current) {
+      if (signature === initialSignatureRef.current) return undefined;
+      dirtyRef.current = true;
+    }
+    if (busy || previewCurrent) return undefined;
+    const timer = setTimeout(renderPreview, 800);
+    return () => clearTimeout(timer);
+  }, [signature, busy, previewCurrent]);
+
   const applyTrim = () => {
     if (!window.confirm(`Apply this trim to "${track.title}"? The original is backed up.`)) return;
     run(
@@ -172,7 +187,6 @@ const TrimPanel = ({ track }) => {
       </div>
 
       <div className="admin-preview-player">
-        <span className="admin-preview-label">Original</span>
         <audio
           ref={audioRef}
           controls
@@ -192,7 +206,7 @@ const TrimPanel = ({ track }) => {
           Render Preview
         </button>
         <button type="button" onClick={applyTrim} disabled={busy || !previewCurrent}>
-          Apply Trim
+          <FontAwesomeIcon icon={faCheck} /> Apply
         </button>
         {previewUrl && !previewCurrent && (
           <span className="admin-audio-status">
