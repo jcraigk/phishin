@@ -123,20 +123,24 @@ const TrackRow = ({
   return (
     <>
     <tr className="admin-track-row">
-      <td className="admin-track-position">{track.position}</td>
-      <td className="admin-track-disclosure">
-        <button
-          type="button"
-          className="admin-tag-disclosure"
-          aria-label={`Toggle tags for ${track.title}`}
-          title="Tags"
-          onClick={() => setTool((prev) => (prev === "tags" ? null : "tags"))}
-        >
-          <FontAwesomeIcon
-            icon={tool === "tags" ? faChevronDown : faChevronRight}
-            fixedWidth
-          />
-        </button>
+      <td
+        className="admin-track-disclosure"
+        role="button"
+        tabIndex={0}
+        title="Edit tags"
+        aria-label={`Toggle tags for ${track.title}`}
+        onClick={() => setTool((prev) => (prev === "tags" ? null : "tags"))}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") setTool((prev) => (prev === "tags" ? null : "tags"));
+        }}
+      >
+        <span className="admin-track-position">{track.position}</span>
+        <FontAwesomeIcon
+          className="admin-tag-chevron"
+          icon={tool === "tags" ? faChevronDown : faChevronRight}
+          fixedWidth
+        />
+        <span className="admin-count">{track.track_tags.length}</span>
       </td>
       <td className="admin-track-validity">
         {problems.length > 0 && (
@@ -165,20 +169,6 @@ const TrackRow = ({
             patchTrack({ song_ids: songs.map((s) => s.id) })
           }
         />
-      </td>
-      <td className="admin-track-tags">
-        <span
-          className={`admin-count admin-tag-toggle${tool === "tags" ? " active" : ""}`}
-          role="button"
-          tabIndex={0}
-          title="Edit tags"
-          onClick={() => setTool((prev) => (prev === "tags" ? null : "tags"))}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") setTool((prev) => (prev === "tags" ? null : "tags"));
-          }}
-        >
-          {track.track_tags.length}
-        </span>
       </td>
       <td className="admin-track-audio">
         {track.audio_status === "missing" ? (
@@ -286,7 +276,7 @@ const TrackRow = ({
     )}
     {(tool === "trim" || tool === "boundary" || tool === "tags") && (
       <tr className="admin-track-tool-row">
-        <td colSpan={8}>
+        <td colSpan={6}>
           {tool === "trim" && <TrimPanel key={`trim-${track.id}`} track={track} />}
           {tool === "boundary" && shiftable && (
             <BoundaryPanel key={`boundary-${track.id}`} track={track} next={next} />

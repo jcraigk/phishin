@@ -725,10 +725,30 @@
     text-align: right;
   }
 
-  .admin-track-position,
   .admin-track-validity {
     text-align: right;
     white-space: nowrap;
+  }
+
+  .admin-track-disclosure {
+    white-space: nowrap;
+    cursor: pointer;
+
+    .admin-track-position {
+      display: inline-block;
+      min-width: 1.5rem;
+      text-align: right;
+    }
+
+    .admin-tag-chevron {
+      margin: 0 0.4rem;
+      color: var(--text-gray);
+      font-size: 0.95rem;
+    }
+
+    &:hover .admin-tag-chevron {
+      color: var(--list-item-link-color);
+    }
   }
 
   .admin-track-title {
@@ -746,18 +766,6 @@
     min-width: 11rem;
   }
 
-  .admin-track-disclosure button {
-    padding: 0.2rem 0.3rem;
-    border: none;
-    background: transparent;
-    color: var(--text-gray);
-    font-size: 0.75rem;
-    cursor: pointer;
-
-    &:hover {
-      color: var(--list-item-link-color);
-    }
-  }
 
   .admin-track-audio {
     width: 30%;
@@ -1373,22 +1381,6 @@
   margin-top: 1rem;
 }
 
-.admin-track-tags {
-  width: 2.75rem;
-  text-align: center;
-}
-
-.admin-tag-toggle {
-  cursor: pointer;
-
-  &:hover {
-    filter: brightness(1.2);
-  }
-
-  &.active {
-    box-shadow: 0 0 0 2px var(--text-gray);
-  }
-}
 
 .admin-pnet-report {
   max-width: 64rem;
