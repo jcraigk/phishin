@@ -176,10 +176,11 @@ const TrackTagBlock = ({ track, tags }) => {
         <span className="admin-tag-disclosure">
           <FontAwesomeIcon icon={open ? faChevronDown : faChevronRight} fixedWidth />
         </span>
-        <span className="admin-audio-position">{track.position}</span>
-        <span className="admin-audio-title">{track.title}</span>
-        <span className="admin-audio-duration">
-          {track.track_tags.length} tag{track.track_tags.length === 1 ? "" : "s"}
+        <span className="admin-audio-title">
+          {track.title}
+          {track.track_tags.length > 0 && (
+            <span className="admin-count">{track.track_tags.length}</span>
+          )}
         </span>
       </button>
       {open && <TagEditor track={track} tags={tags} />}
@@ -202,7 +203,12 @@ const TagsTab = () => {
     <div className="admin-tags-tab">
       {error && <p className="admin-error">{error}</p>}
 
-      <h3>Show tags</h3>
+      <h3>
+        Show tags
+        {show.show_tags.length > 0 && (
+          <span className="admin-count">{show.show_tags.length}</span>
+        )}
+      </h3>
       {show.show_tags.length === 0 ? (
         <p className="admin-audio-status">No tags on this show.</p>
       ) : (
@@ -219,7 +225,14 @@ const TagsTab = () => {
       )}
       <AddShowTag tags={tags} onSaved={setShow} onError={setError} />
 
-      <h3>Track tags</h3>
+      <h3>
+        Track tags
+        {show.tracks.reduce((sum, t) => sum + t.track_tags.length, 0) > 0 && (
+          <span className="admin-count">
+            {show.tracks.reduce((sum, t) => sum + t.track_tags.length, 0)}
+          </span>
+        )}
+      </h3>
       <ul className="admin-tag-tracks">
         {show.tracks.map((track) => (
           <TrackTagBlock key={track.id} track={track} tags={tags} />
