@@ -70,6 +70,25 @@ main.with-player {
     display: block;
   }
 
+  .player-close-button {
+    background-color: var(--control-gray);
+    border-radius: 50%;
+    font-size: 1.1rem;
+    padding: 0.25rem 0.6rem;
+    color: var(--text-gray);
+    box-shadow: 0 0px 10px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: -20px;
+    right: 1.5rem;
+    cursor: pointer;
+    display: none;
+    z-index: 101;
+  }
+
+  &:hover .player-close-button {
+    display: block;
+  }
+
   .fade-in {
     opacity: 1;
     transition: opacity 2s ease-in;

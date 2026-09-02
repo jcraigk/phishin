@@ -32,16 +32,23 @@ const AdminLayout = () => {
           <Outlet />
         </main>
       </div>
-      <Player
-        activePlaylist={activePlaylist}
-        activeTrack={activeTrack}
-        setActiveTrack={setActiveTrack}
-        customPlaylist={null}
-        openAppModal={() => {}}
-        shouldAutoplay={shouldAutoplay}
-        setShouldAutoplay={setShouldAutoplay}
-        onPlayingChange={setIsPlaying}
-      />
+      {activeTrack && (
+        <Player
+          activePlaylist={activePlaylist}
+          activeTrack={activeTrack}
+          setActiveTrack={setActiveTrack}
+          customPlaylist={null}
+          openAppModal={() => {}}
+          shouldAutoplay={shouldAutoplay}
+          setShouldAutoplay={setShouldAutoplay}
+          onPlayingChange={setIsPlaying}
+          onClose={() => {
+            setActiveTrack(null);
+            setActivePlaylist([]);
+            setIsPlaying(false);
+          }}
+        />
+      )}
     </AdminPlayerContext.Provider>
   );
 };
