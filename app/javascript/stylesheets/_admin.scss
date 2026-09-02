@@ -1293,10 +1293,19 @@
   gap: 0.4rem;
   margin-top: 0.4rem;
 
-  input[type="text"] {
+  input[type="text"],
+  textarea {
     flex: 1;
     min-width: 0;
   }
+
+  textarea {
+    font-size: 1rem;
+  }
+}
+
+.admin-art-current .admin-art-edit {
+  width: 100%;
 }
 
 .admin-art-busy {
