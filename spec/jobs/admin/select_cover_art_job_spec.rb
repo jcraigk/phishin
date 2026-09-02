@@ -29,6 +29,19 @@ RSpec.describe Admin::SelectCoverArtJob do
       expect(show.reload.cover_art.blob).to eq(winner)
     end
 
+    it "commits the winner's prompt trail as the show's prompt snapshot" do
+      show.update!(cover_art_prompt: "old snapshot")
+      winner.update!(metadata: winner.metadata.merge("prompt" => "new prompt | edit: bluer"))
+      described_class.new.perform(show.id, admin_job.id, winner.key, 0)
+      expect(show.reload.cover_art_prompt).to eq("new prompt | edit: bluer")
+    end
+
+    it "keeps the existing prompt snapshot when the winner has none recorded" do
+      show.update!(cover_art_prompt: "old snapshot")
+      described_class.new.perform(show.id, admin_job.id, winner.key, 0)
+      expect(show.reload.cover_art_prompt).to eq("old snapshot")
+    end
+
     it "clears every candidate" do
       described_class.new.perform(show.id, admin_job.id, winner.key, 0)
       expect(show.reload.cover_art_candidates.count).to eq(0)

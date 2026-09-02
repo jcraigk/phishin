@@ -22,13 +22,17 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
           end
 
           desc "Generate a cover art candidate", hidden: true
+          params do
+            optional :prompt, type: String
+          end
           post :generate do
             show = admin_show
-            if show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?
+            if params[:prompt].blank? && show.cover_art_prompt.blank? &&
+               show.cover_art_parent_show_id.blank?
               error!({ message: "Set a cover art prompt first" }, 422)
             end
             job = AdminJob.create!(kind: "cover_art_generate", show:)
-            Admin::GenerateCoverArtJob.perform_async(show.id, job.id)
+            Admin::GenerateCoverArtJob.perform_async(show.id, job.id, params[:prompt].presence)
             status 201
             { job_id: job.id }
           end

@@ -174,61 +174,62 @@ const CandidateCard = ({ candidate }) => {
   );
 };
 
-const PromptPanel = () => {
-  const { show, setShow, reload } = useContext(EditorContext);
-  const art = show.cover_art;
-  const [prompt, setPrompt] = useState(art.prompt || "");
-  const [saveError, setSaveError] = useState(null);
-  const [saving, setSaving] = useState(false);
+const PromptPanel = ({ draft, setDraft }) => {
+  const { show } = useContext(EditorContext);
+  const [suggestions, setSuggestions] = useState(null);
   const { run, busy, status, error } = useJobRunner();
 
-  useEffect(() => setPrompt(art.prompt || ""), [art.prompt]);
+  const suggest = () =>
+    run(
+      () => adminPost(`/shows/${show.date}/cover_art/regenerate_prompt`),
+      (job) => {
+        if (job?.payload?.prompt) setDraft(job.payload.prompt);
+        setSuggestions(job?.payload?.suggestions || null);
+      }
+    );
 
-  const patchArt = async (body) => {
-    setSaveError(null);
-    setSaving(true);
-    try {
-      setShow(await adminPatch(`/shows/${show.date}`, body));
-    } catch (e) {
-      setSaveError(e.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const savePrompt = () => {
-    if (prompt === (art.prompt || "")) return;
-    patchArt({ cover_art_prompt: prompt });
-  };
+  const append = (text) =>
+    setDraft((prev) => (prev.trim() === "" ? text : `${prev.trim()} ${text}`));
 
   return (
     <section className="admin-art-prompt">
       <div className="admin-field">
         <textarea
           id="admin-art-prompt"
-          aria-label="Cover art prompt"
-          rows={4}
-          value={prompt}
-          disabled={saving || busy}
-          onChange={(e) => setPrompt(e.target.value)}
-          onBlur={savePrompt}
+          aria-label="Prompt for a new image"
+          placeholder="Prompt for a new image"
+          rows={3}
+          value={draft}
+          disabled={busy}
+          onChange={(e) => setDraft(e.target.value)}
         />
       </div>
-
-      <button
-        type="button"
-        disabled={saving || busy}
-        onClick={() => run(() => adminPost(`/shows/${show.date}/cover_art/regenerate_prompt`), () => reload())}
-      >
-        <FontAwesomeIcon icon={faArrowsRotate} /> {busy ? "Regenerating..." : "Regenerate prompt"}
+      <button type="button" disabled={busy} onClick={suggest}>
+        <FontAwesomeIcon icon={faArrowsRotate} /> {busy ? "Suggesting..." : "Suggest prompt"}
       </button>
+      {suggestions && (
+        <dl className="admin-art-suggestions">
+          {Object.entries(suggestions).map(([category, items]) => (
+            <div key={category}>
+              <dt>{category.replace(/_/g, " ")}</dt>
+              <dd>
+                {items.map((item) => (
+                  <button key={item} type="button" onClick={() => append(item)}>
+                    {item}
+                  </button>
+                ))}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
       {status && <span className="admin-audio-status">{status}</span>}
-      {(error || saveError) && <p className="admin-error">{error || saveError}</p>}
+      {error && <p className="admin-error">{error}</p>}
     </section>
   );
 };
 
-const GenerateControls = () => {
+const GenerateControls = ({ draft }) => {
   const { show, reload } = useContext(EditorContext);
   const [progress, setProgress] = useState(null);
   const [uploadError, setUploadError] = useState(null);
@@ -236,7 +237,8 @@ const GenerateControls = () => {
 
   const generate = () => {
     if (!window.confirm(GENERATE_CONFIRM)) return;
-    run(() => adminPost(`/shows/${show.date}/cover_art/generate`), () => reload());
+    const body = draft.trim() === "" ? {} : { prompt: draft.trim() };
+    run(() => adminPost(`/shows/${show.date}/cover_art/generate`, body), () => reload());
   };
 
   const upload = async (file) => {
@@ -288,8 +290,18 @@ const GenerateControls = () => {
   );
 };
 
+const ArtImage = ({ url, alt }) =>
+  url ? (
+    <a href={url} target="_blank" rel="noreferrer" title="Open full size">
+      <img src={url} alt={alt} />
+    </a>
+  ) : (
+    <div className="admin-art-empty">None</div>
+  );
+
 const ArtEditor = ({ runNote }) => {
   const { show } = useContext(EditorContext);
+  const [draft, setDraft] = useState("");
   const art = show.cover_art;
   const note =
     runNote ||
@@ -302,20 +314,19 @@ const ArtEditor = ({ runNote }) => {
       {note && <p className="admin-run-note">{note}</p>}
 
       <section className="admin-art-current">
-        <ImageCard url={art.current_url} alt="Current cover art">
-          <span>Cover art</span>
-          {art.current_blob_key && (
-            <EditControl blobKey={art.current_blob_key} label="Edit" />
-          )}
-        </ImageCard>
-        <ImageCard url={art.album_cover_url} alt="Album cover composite">
-          <span>Album cover</span>
-        </ImageCard>
+        <div className="admin-art-pair">
+          <ArtImage url={art.current_url} alt="Current cover art" />
+          <ArtImage url={art.album_cover_url} alt="Album cover composite" />
+        </div>
+        {art.prompt && <p className="admin-art-snapshot">{art.prompt}</p>}
+        {art.current_blob_key && (
+          <EditControl blobKey={art.current_blob_key} label="Edit" />
+        )}
       </section>
 
-      <PromptPanel />
+      <PromptPanel draft={draft} setDraft={setDraft} />
 
-      <GenerateControls />
+      <GenerateControls draft={draft} />
 
       <h3>Candidates</h3>
       {art.candidates.length === 0 ? (

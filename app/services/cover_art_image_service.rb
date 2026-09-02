@@ -3,6 +3,7 @@ class CoverArtImageService < ApplicationService
   option :dry_run, default: -> { false }
   option :source_blob_key, default: -> { nil }
   option :edit_prompt, default: -> { nil }
+  option :prompt_override, default: -> { nil }
 
   def call
     generate_and_save_cover_art
@@ -25,9 +26,20 @@ class CoverArtImageService < ApplicationService
     raise "Failed to generate cover art: #{response.body}" unless response.success?
 
     result = JSON.parse(response.body)
-    url = upload_candidate(result["data"].first["b64_json"])
+    url = upload_candidate(result["data"].first["b64_json"], prompt_trail)
     show.attach_cover_art_by_url(url) unless dry_run
     url
+  end
+
+  def generation_prompt
+    prompt_override.presence || show.cover_art_prompt
+  end
+
+  def prompt_trail
+    return generation_prompt unless editing?
+    source_blob = ActiveStorage::Blob.find_by(key: source_blob_key)
+    base = source_blob&.metadata&.dig("prompt").presence || show.cover_art_prompt
+    [ base, "edit: #{edit_prompt}" ].compact.join(" | ")
   end
 
   def generate_request
@@ -39,7 +51,7 @@ class CoverArtImageService < ApplicationService
       },
       body: {
         model: "gpt-image-2",
-        prompt: show.cover_art_prompt,
+        prompt: generation_prompt,
         n: 1,
         size: "1024x1024",
         quality: "high"
@@ -83,11 +95,12 @@ class CoverArtImageService < ApplicationService
     body
   end
 
-  def upload_candidate(b64)
+  def upload_candidate(b64, used_prompt)
     blob = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new(Base64.decode64(b64)),
       filename: "cover_art_candidate_#{SecureRandom.hex}.png",
-      content_type: "image/png"
+      content_type: "image/png",
+      metadata: used_prompt.present? ? { "prompt" => used_prompt } : {}
     )
     "#{App.base_url}/blob/#{blob.key}.png"
   end

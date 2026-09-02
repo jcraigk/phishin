@@ -6,12 +6,12 @@ class Admin::RegenerateCoverArtPromptJob
     admin_job = AdminJob.find(admin_job_id)
 
     admin_job.run! do
-      CoverArtPromptService.call(show)
-      show.reload
+      result = CoverArtPromptService.call(show, dry_run: true)
       admin_job.payload.merge!(
-        "prompt" => show.cover_art_prompt,
-        "hue" => show.cover_art_hue,
-        "style" => show.cover_art_style
+        "prompt" => result[:prompt],
+        "hue" => result[:hue],
+        "style" => result[:style],
+        "suggestions" => result[:suggestions].transform_keys(&:to_s)
       )
       admin_job.save!
     end
