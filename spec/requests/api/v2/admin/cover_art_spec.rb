@@ -132,7 +132,8 @@ RSpec.describe "API v2 Admin Cover Art" do
         [ {
           "blob_key" => blob.key,
           "url" => "#{App.base_url}/blob/#{blob.key}.png",
-          "cost" => nil
+          "cost" => nil,
+          "prompt" => nil
         } ]
       )
     end

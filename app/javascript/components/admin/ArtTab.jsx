@@ -148,8 +148,18 @@ const CandidateCard = ({ candidate }) => {
     );
   };
 
+  const editIndex = (candidate.prompt || "").lastIndexOf("| edit:");
+  const origin = !candidate.prompt
+    ? "Uploaded"
+    : editIndex >= 0
+      ? `Edit: ${candidate.prompt.slice(editIndex + 7).trim()}`
+      : candidate.prompt;
+
   return (
     <ImageCard url={candidate.url} alt="Cover art candidate" imgStyle={imgStyle}>
+      <p className="admin-art-origin" title={candidate.prompt || "Uploaded"}>
+        {origin}
+      </p>
       <div className="admin-art-actions">
         <label>
           Zoom %
