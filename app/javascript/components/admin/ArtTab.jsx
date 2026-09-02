@@ -5,7 +5,6 @@ import {
   faArrowsRotate,
   faCheck,
   faCloudArrowUp,
-  faCopy,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { faSparkles } from "./sparklesIcon";
@@ -13,7 +12,6 @@ import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminDelete, adminGet, adminPatch, adminPost } from "./adminApi";
 import { uploadFile } from "./DirectUploader";
-import FilterSelect from "./FilterSelect";
 
 const SELECT_CONFIRM =
   "Sets cover art, composites the album cover, and re-embeds ID3 tags on all tracks. Continue?";
@@ -176,68 +174,6 @@ const CandidateCard = ({ candidate }) => {
   );
 };
 
-// Where this show's art comes from: its own generated or uploaded image, or a
-// straight copy of another show's art. The two paths are exclusive, so picking
-// a source date hides the prompt and generation controls entirely.
-const SourcePicker = ({ dates }) => {
-  const { show, setShow, reload } = useContext(EditorContext);
-  const art = show.cover_art;
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(null);
-  const { run, busy, status, error } = useJobRunner();
-
-  const parent = dates.find((d) => d.id === art.parent_show_id) || null;
-
-  const setParent = async (id) => {
-    setSaveError(null);
-    setSaving(true);
-    try {
-      setShow(await adminPatch(`/shows/${show.date}`, { cover_art_parent_show_id: id }));
-    } catch (e) {
-      setSaveError(e.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const copyFromParent = () =>
-    run(() => adminPost(`/shows/${show.date}/cover_art/generate`), () => reload());
-
-  return (
-    <section className="admin-art-source">
-      <div className="admin-field">
-        <label htmlFor="admin-art-source">Art source</label>
-        <FilterSelect
-          id="admin-art-source"
-          value={parent ? `${parent.date} - ${parent.venue_name}` : "This show's own art"}
-          placeholder="Filter shows by date or venue"
-          options={[
-            { id: null, label: "This show's own art (generate or upload)" },
-            ...dates
-              .filter((d) => d.id !== show.id)
-              .map((d) => ({ id: d.id, label: `${d.date} - ${d.venue_name}` })),
-          ]}
-          disabled={saving || busy}
-          onSelect={(option) => setParent(option.id)}
-        />
-      </div>
-      {parent && (
-        <div className="admin-art-actions">
-          <button type="button" disabled={busy || saving} onClick={copyFromParent}>
-            <FontAwesomeIcon icon={faCopy} />{" "}
-            {busy ? "Copying..." : `Copy art from ${parent.date}`}
-          </button>
-          <span className="admin-audio-note">
-            Reuses that show's art as a candidate. No image is generated.
-          </span>
-        </div>
-      )}
-      {status && <span className="admin-audio-status">{status}</span>}
-      {(error || saveError) && <p className="admin-error">{error || saveError}</p>}
-    </section>
-  );
-};
-
 const PromptPanel = () => {
   const { show, setShow, reload } = useContext(EditorContext);
   const art = show.cover_art;
@@ -352,20 +288,19 @@ const GenerateControls = () => {
   );
 };
 
-const ArtTab = () => {
-  const { show, setError } = useContext(EditorContext);
-  const [dates, setDates] = useState(null);
+const ArtEditor = ({ runNote }) => {
+  const { show } = useContext(EditorContext);
   const art = show.cover_art;
-  const reusing = art.parent_show_id != null;
-
-  useEffect(() => {
-    adminGet("/shows/dates")
-      .then((data) => setDates(data.shows))
-      .catch((e) => setError(e.message));
-  }, [setError]);
+  const note =
+    runNote ||
+    ((art.child_dates || []).length > 0
+      ? `This art is shared with a run. Applying a candidate also updates ${art.child_dates.join(", ")}.`
+      : null);
 
   return (
     <div className="admin-art-tab">
+      {note && <p className="admin-run-note">{note}</p>}
+
       <section className="admin-art-current">
         <ImageCard url={art.current_url} alt="Current cover art">
           <span>Cover art</span>
@@ -378,11 +313,9 @@ const ArtTab = () => {
         </ImageCard>
       </section>
 
-      {dates && <SourcePicker dates={dates} />}
+      <PromptPanel />
 
-      {!reusing && <PromptPanel />}
-
-      {!reusing && <GenerateControls />}
+      <GenerateControls />
 
       <h3>Candidates</h3>
       {art.candidates.length === 0 ? (
@@ -396,6 +329,52 @@ const ArtTab = () => {
       )}
     </div>
   );
+};
+
+// A show in a run defers its art to the run's first show, so the tab edits the
+// parent's art in place; selecting a candidate there propagates to all children.
+const ParentArtEditor = ({ parentDate }) => {
+  const outer = useContext(EditorContext);
+  const [parentShow, setParentShow] = useState(null);
+
+  const load = async () => {
+    try {
+      setParentShow(await adminGet(`/shows/${parentDate}`));
+    } catch (e) {
+      outer.setError(e.message);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, [parentDate]);
+
+  if (!parentShow) return null;
+
+  return (
+    <EditorContext.Provider
+      value={{
+        show: parentShow,
+        setShow: setParentShow,
+        setError: outer.setError,
+        reload: async () => {
+          await load();
+          await outer.reload();
+        },
+      }}
+    >
+      <ArtEditor
+        runNote={`This show is part of a run that shares cover art. You are editing the run's art (kept on ${parentDate}); applying a candidate updates every show in the run.`}
+      />
+    </EditorContext.Provider>
+  );
+};
+
+const ArtTab = () => {
+  const { show } = useContext(EditorContext);
+  const parentDate = show.cover_art.parent_show_date;
+  if (parentDate) return <ParentArtEditor parentDate={parentDate} />;
+  return <ArtEditor />;
 };
 
 export default ArtTab;

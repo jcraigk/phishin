@@ -1102,8 +1102,23 @@
 }
 
 .admin-art-prompt {
-  max-width: 40rem;
+  max-width: 64rem;
   margin-bottom: 1rem;
+
+  textarea {
+    width: 100%;
+    font-size: 1.05rem;
+  }
+}
+
+.admin-run-note {
+  max-width: 64rem;
+  margin: 0 0 1rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--blue);
+  border-radius: $radius;
+  background-color: var(--bg-blue);
+  color: var(--blue);
 }
 
 .admin-art-controls {

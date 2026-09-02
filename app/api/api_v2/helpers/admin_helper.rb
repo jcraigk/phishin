@@ -26,6 +26,8 @@ module ApiV2::Helpers::AdminHelper
       hue: show.cover_art_hue,
       style: show.cover_art_style,
       parent_show_id: show.cover_art_parent_show_id,
+      parent_show_date: Show.find_by(id: show.cover_art_parent_show_id)&.date&.to_s,
+      child_dates: Show.where(cover_art_parent_show_id: show.id).order(:date).pluck(:date).map(&:to_s),
       current_url: show.cover_art.attached? ? show.cover_art_urls[:large] : nil,
       current_blob_key: show.cover_art.attached? ? show.cover_art.blob.key : nil,
       album_cover_url: show.album_cover.attached? ? show.album_cover_url : nil,
