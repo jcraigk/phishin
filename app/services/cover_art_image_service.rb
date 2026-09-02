@@ -108,7 +108,8 @@ class CoverArtImageService < ApplicationService
       "size" => "1024x1024",
       "quality" => "high"
     }
-    content_type = blob.content_type.presence || "image/png"
+    content_type =
+      blob.content_type.to_s.start_with?("image/") ? blob.content_type : "image/png"
     body = String.new(encoding: Encoding::BINARY)
     fields.each do |name, value|
       body << "--#{boundary}\r\n"
