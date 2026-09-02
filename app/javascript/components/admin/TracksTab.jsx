@@ -109,7 +109,13 @@ const TracksTab = () => {
   const [actionsSlot, setActionsSlot] = useState(null);
   const [allTags, setAllTags] = useState([]);
   const [addSetOpen, setAddSetOpen] = useState(false);
+  const [audioTool, setAudioTool] = useState(null);
   const addSetMenuRef = useRef(null);
+
+  const toggleAudioTool = (trackId, name) =>
+    setAudioTool((prev) =>
+      prev && prev.trackId === trackId && prev.name === name ? null : { trackId, name }
+    );
   const [inserting, setInserting] = useState(false);
   const [insertTitle, setInsertTitle] = useState("");
   const [insertPosition, setInsertPosition] = useState(1);
@@ -401,6 +407,8 @@ const TracksTab = () => {
                     isActive={activeTrack?.id === track.id}
                     isPlaying={activeTrack?.id === track.id && isPlaying}
                     onPlay={() => playRow(track)}
+                    audioTool={audioTool}
+                    onAudioTool={toggleAudioTool}
                   />
                 ))}
               </tbody>

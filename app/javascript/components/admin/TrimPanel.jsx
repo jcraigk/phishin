@@ -48,7 +48,7 @@ const TimeField = ({ label, value, onCommit, disabled }) => {
   );
 };
 
-const TrimPanel = ({ track }) => {
+const TrimPanel = ({ track, onClose }) => {
   const { reload } = useContext(EditorContext);
   const duration = (track.duration || 0) / 1000;
   const [trimStart, setTrimStart] = useState(0);
@@ -218,17 +218,16 @@ const TrimPanel = ({ track }) => {
         <button type="button" onClick={applyTrim} disabled={busy || !previewCurrent}>
           <FontAwesomeIcon icon={faCheck} /> Apply
         </button>
-        {busy && (
-          <button
-            type="button"
-            onClick={() => {
-              cancelledRef.current = true;
-              cancel();
-            }}
-          >
-            <FontAwesomeIcon icon={faXmark} /> Cancel
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => {
+            cancelledRef.current = true;
+            cancel();
+            if (onClose) onClose();
+          }}
+        >
+          <FontAwesomeIcon icon={faXmark} /> Cancel
+        </button>
         {status && (
           <span className="admin-audio-status">
             <MoonLoader color="#c7c8ca" size={14} /> {status}
