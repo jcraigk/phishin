@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
   faPlus,
+  faTrashCan,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
@@ -366,6 +367,17 @@ const TracksTab = () => {
                 <tr className="admin-set-header">
                   <th colSpan={8}>
                     {setName(group.set)}
+                    {group.tracks.length === 0 && (
+                      <button
+                        type="button"
+                        className="admin-trash-button admin-set-dismiss"
+                        onClick={() =>
+                          setPendingSets((prev) => prev.filter((s) => s !== group.set))
+                        }
+                      >
+                        <FontAwesomeIcon icon={faTrashCan} />
+                      </button>
+                    )}
                     {group.tracks.length > 0 && (
                       <span className="admin-set-duration">
                         {formatDurationShow(
