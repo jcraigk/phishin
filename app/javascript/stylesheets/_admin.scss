@@ -942,6 +942,21 @@
   }
 }
 
+.admin-preview-scrubber {
+  flex: 1;
+  max-width: 24rem;
+  height: 0.55rem;
+  border-radius: $radius;
+  background: var(--control-gray);
+  cursor: pointer;
+
+  .admin-preview-scrubber-fill {
+    height: 100%;
+    border-radius: $radius;
+    background: var(--blue);
+  }
+}
+
 .admin-preview-tag {
   padding: 0.15rem 0.5rem;
   border-radius: $radius;

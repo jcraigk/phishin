@@ -26,6 +26,8 @@ const BoundaryPanel = ({ track, next, onClose }) => {
   const [playing, setPlaying] = useState(false);
   const [previewPlaying, setPreviewPlaying] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
+  const [previewTime, setPreviewTime] = useState(0);
+  const [previewDurations, setPreviewDurations] = useState([null, null]);
   const containerRef = useRef(null);
   const firstAudioRef = useRef(null);
   const secondAudioRef = useRef(null);
@@ -126,7 +128,9 @@ const BoundaryPanel = ({ track, next, onClose }) => {
   // boundary crossing is sample-accurate instead of two chained elements.
   useEffect(() => {
     if (!previewUrls[0] || !previewUrls[1]) return undefined;
-    const engine = new GaplessEngine(new WebAudioBackend());
+    let disposed = false;
+    const backend = new WebAudioBackend();
+    const engine = new GaplessEngine(backend);
     engine.onPlayChange = (isPlaying) => {
       setPreviewPlaying(isPlaying);
       if (isPlaying) {
@@ -136,15 +140,27 @@ const BoundaryPanel = ({ track, next, onClose }) => {
         window.dispatchEvent(new Event("phishin:pause-player"));
       }
     };
-    engine.onTrackChange = (index) => setPreviewIndex(index);
+    engine.onTrackChange = (index) => {
+      setPreviewIndex(index);
+      setPreviewTime(0);
+    };
+    engine.onTime = (time) => setPreviewTime(time);
     engine.load(previewUrls.map((url) => ({ url, offset: 0, end: null })));
     engineRef.current = engine;
     setPreviewIndex(0);
+    setPreviewTime(0);
+    setPreviewDurations([null, null]);
+    Promise.all([backend.buffer(0), backend.buffer(1)])
+      .then((buffers) => {
+        if (!disposed) setPreviewDurations(buffers.map((b) => b.duration));
+      })
+      .catch(() => {});
     if (autoPlayRef.current) {
       autoPlayRef.current = false;
       engine.goto(0, { play: true });
     }
     return () => {
+      disposed = true;
       engine.destroy();
       engineRef.current = null;
       setPreviewPlaying(false);
@@ -157,6 +173,16 @@ const BoundaryPanel = ({ track, next, onClose }) => {
     if (!engine) return;
     if (previewPlaying && previewIndex === index) engine.pause();
     else engine.goto(index, { play: true });
+  };
+
+  const seekClip = (index, e) => {
+    const engine = engineRef.current;
+    const duration = previewDurations[index];
+    if (!engine || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const fraction = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+    if (previewIndex !== index) engine.goto(index);
+    engine.seek(fraction * duration);
   };
 
   // Any audio element starting elsewhere pauses the engine preview.
@@ -298,6 +324,22 @@ const BoundaryPanel = ({ track, next, onClose }) => {
                   icon={previewPlaying && previewIndex === index ? faPause : faPlay}
                 />
               </button>
+              <div
+                className="admin-preview-scrubber"
+                role="button"
+                onClick={(e) => seekClip(index, e)}
+              >
+                <div
+                  className="admin-preview-scrubber-fill"
+                  style={{
+                    width: `${
+                      previewIndex === index && previewDurations[index]
+                        ? Math.min(previewTime / previewDurations[index], 1) * 100
+                        : 0
+                    }%`,
+                  }}
+                />
+              </div>
               <span className="admin-preview-tag">{label}</span>
             </div>
           ))}
