@@ -5,7 +5,45 @@ import PreviewPlayer from "./PreviewPlayer";
 import useJobRunner from "./useJobRunner";
 import { adminPost, fetchJobAudio } from "./adminApi";
 
-const round = (value) => Math.round(value * 10) / 10;
+const round = (value) => Math.round(value * 100) / 100;
+
+const formatTime = (seconds) => {
+  const total = Math.max(seconds || 0, 0);
+  const minutes = Math.floor(total / 60);
+  const rest = total - minutes * 60;
+  return `${minutes}:${rest.toFixed(2).padStart(5, "0")}`;
+};
+
+const parseTime = (text) => {
+  const match = text.trim().match(/^(?:(\d+):)?(\d+(?:\.\d+)?)$/);
+  if (!match) return null;
+  return Number(match[1] || 0) * 60 + Number(match[2]);
+};
+
+const TimeField = ({ label, value, onCommit, disabled }) => {
+  const [draft, setDraft] = useState(null);
+  const commit = () => {
+    if (draft == null) return;
+    const parsed = parseTime(draft);
+    if (parsed != null) onCommit(parsed);
+    setDraft(null);
+  };
+  return (
+    <label className="admin-audio-field">
+      <span>{label}</span>
+      <input
+        type="text"
+        value={draft ?? formatTime(value)}
+        disabled={disabled}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") commit();
+        }}
+      />
+    </label>
+  );
+};
 
 const TrimPanel = ({ track }) => {
   const { reload } = useContext(EditorContext);
@@ -93,8 +131,22 @@ const TrimPanel = ({ track }) => {
       />
 
       <div className="admin-audio-fields">
-        {numberField("Trim start", trimStart, setTrimStart, { max: trimEnd })}
-        {numberField("Trim end", trimEnd, setTrimEnd, { max: round(duration) })}
+        <TimeField
+          label="Trim start"
+          value={trimStart}
+          disabled={busy}
+          onCommit={(seconds) =>
+            setValue(setTrimStart)(round(Math.min(Math.max(seconds, 0), trimEnd)))
+          }
+        />
+        <TimeField
+          label="Trim end"
+          value={trimEnd}
+          disabled={busy}
+          onCommit={(seconds) =>
+            setValue(setTrimEnd)(round(Math.min(Math.max(seconds, trimStart), duration)))
+          }
+        />
         {numberField("Fade in", fadeIn, setFadeIn)}
         {numberField("Fade out", fadeOut, setFadeOut)}
       </div>
