@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
   faPlus,
-  faTrashCan,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
@@ -289,29 +288,6 @@ const TracksTab = () => {
     commitOrder(ordered, sets);
   };
 
-  // Removing a set does not remove its tracks: they fold into the set above,
-  // or the one below when the removed set is first. Order never changes, so
-  // this is a pure set reassignment through the same reorder endpoint.
-  const removeSet = (group) => {
-    const groups = groupBySet(tracks);
-    const at = groups.findIndex((g) => g.set === group.set && g.tracks[0]?.index === group.tracks[0]?.index);
-    const neighbor = groups[at - 1] || groups[at + 1];
-    if (!neighbor) {
-      setError("The only set cannot be removed.");
-      return;
-    }
-    if (
-      !window.confirm(
-        `Remove ${setName(group.set)}? Its ${group.tracks.length} track${group.tracks.length === 1 ? "" : "s"} move to ${setName(neighbor.set)}.`
-      )
-    )
-      return;
-    const sets = Object.fromEntries(
-      group.tracks.map(({ track }) => [track.id, neighbor.set])
-    );
-    commitOrder(tracks, sets);
-  };
-
   // The new track takes the set of the track above its slot, since position
   // inside a set is what determines set membership now.
   const addTrack = async () => {
@@ -426,7 +402,7 @@ const TracksTab = () => {
             return (
               <tbody key={headerKey} className="admin-set-group">
                 <tr className="admin-set-header">
-                  <th colSpan={7}>
+                  <th colSpan={8}>
                     {setName(group.set)}
                     {group.tracks.length > 0 && (
                       <span className="admin-set-duration">
@@ -438,25 +414,6 @@ const TracksTab = () => {
                         )}
                       </span>
                     )}
-                    <button
-                      type="button"
-                      className="admin-trash-button admin-set-dismiss"
-                      aria-label={`Remove ${setName(group.set)}`}
-                      title={
-                        group.pending
-                          ? "Remove this empty set"
-                          : "Remove this set and fold its tracks into the neighboring set"
-                      }
-                      onClick={() =>
-                        group.pending
-                          ? setPendingSets((prev) =>
-                              prev.filter((set) => set !== group.set)
-                            )
-                          : removeSet(group)
-                      }
-                    >
-                      <FontAwesomeIcon icon={faTrashCan} />
-                    </button>
                   </th>
                 </tr>
                 {group.tracks.map(({ track, index }) => (
