@@ -1,7 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import MoonLoader from "react-spinners/MoonLoader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowsRotate,
+  faCheck,
+  faCloudArrowUp,
+  faCopy,
+  faTrashCan,
+  faWandMagicSparkles,
+} from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminDelete, adminGet, adminPatch, adminPost } from "./adminApi";
@@ -63,7 +70,7 @@ const EditControl = ({ blobKey, label }) => {
         disabled={busy}
         onClick={() => setOpen(!open)}
       >
-        {label}
+        <FontAwesomeIcon icon={faWandMagicSparkles} /> {label}
       </button>
       {open && (
         <div className="admin-art-edit-form">
@@ -149,8 +156,9 @@ const CandidateCard = ({ candidate }) => {
       </div>
       <div className="admin-art-actions">
         <button type="button" disabled={busy || removing} onClick={select}>
-          {busy ? "Applying..." : "Select"}
+          <FontAwesomeIcon icon={faCheck} /> {busy ? "Applying..." : "Select"}
         </button>
+        <EditControl blobKey={candidate.blob_key} label="AI edit" />
         <button
           type="button"
           className="admin-trash-button"
@@ -162,7 +170,6 @@ const CandidateCard = ({ candidate }) => {
           <FontAwesomeIcon icon={faTrashCan} />
         </button>
       </div>
-      <EditControl blobKey={candidate.blob_key} label="AI edit" />
       {status && <span className="admin-audio-status">{status}</span>}
       {error && <p className="admin-error">{error}</p>}
     </ImageCard>
@@ -217,6 +224,7 @@ const SourcePicker = ({ dates }) => {
       {parent && (
         <div className="admin-art-actions">
           <button type="button" disabled={busy || saving} onClick={copyFromParent}>
+            <FontAwesomeIcon icon={faCopy} />{" "}
             {busy ? "Copying..." : `Copy art from ${parent.date}`}
           </button>
           <span className="admin-audio-note">
@@ -230,7 +238,7 @@ const SourcePicker = ({ dates }) => {
   );
 };
 
-const PromptPanel = ({ options }) => {
+const PromptPanel = () => {
   const { show, setShow, reload } = useContext(EditorContext);
   const art = show.cover_art;
   const [prompt, setPrompt] = useState(art.prompt || "");
@@ -271,46 +279,12 @@ const PromptPanel = ({ options }) => {
         />
       </div>
 
-      <div className="admin-field">
-        <label htmlFor="admin-art-hue">Hue</label>
-        <select
-          id="admin-art-hue"
-          value={art.hue ?? ""}
-          disabled={saving || busy}
-          onChange={(e) => patchArt({ cover_art_hue: e.target.value })}
-        >
-          <option value="">No hue set</option>
-          {options.hues.map((hue) => (
-            <option key={hue} value={hue}>
-              {hue}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="admin-field">
-        <label htmlFor="admin-art-style">Style</label>
-        <select
-          id="admin-art-style"
-          value={art.style ?? ""}
-          disabled={saving || busy}
-          onChange={(e) => patchArt({ cover_art_style: e.target.value })}
-        >
-          <option value="">No style set</option>
-          {options.styles.map((style) => (
-            <option key={style} value={style}>
-              {style}
-            </option>
-          ))}
-        </select>
-      </div>
-
       <button
         type="button"
         disabled={saving || busy}
         onClick={() => run(() => adminPost(`/shows/${show.date}/cover_art/regenerate_prompt`), () => reload())}
       >
-        {busy ? "Regenerating..." : "Regenerate prompt"}
+        <FontAwesomeIcon icon={faArrowsRotate} /> {busy ? "Regenerating..." : "Regenerate prompt"}
       </button>
       {status && <span className="admin-audio-status">{status}</span>}
       {(error || saveError) && <p className="admin-error">{error || saveError}</p>}
@@ -349,10 +323,11 @@ const GenerateControls = () => {
   return (
     <div className="admin-art-controls">
       <button type="button" disabled={busy || uploading} onClick={generate}>
+        <FontAwesomeIcon icon={faWandMagicSparkles} />{" "}
         {busy ? "Generating..." : "Generate candidate (paid)"}
       </button>
       <label className="admin-art-upload">
-        Upload image
+        <FontAwesomeIcon icon={faCloudArrowUp} /> Upload image
         <input
           type="file"
           accept="image/*"
@@ -380,15 +355,11 @@ const GenerateControls = () => {
 
 const ArtTab = () => {
   const { show, setError } = useContext(EditorContext);
-  const [options, setOptions] = useState(null);
   const [dates, setDates] = useState(null);
   const art = show.cover_art;
   const reusing = art.parent_show_id != null;
 
   useEffect(() => {
-    adminGet("/cover_art_options")
-      .then(setOptions)
-      .catch((e) => setError(e.message));
     adminGet("/shows/dates")
       .then((data) => setDates(data.shows))
       .catch((e) => setError(e.message));
@@ -410,7 +381,7 @@ const ArtTab = () => {
 
       {dates && <SourcePicker dates={dates} />}
 
-      {!reusing && options && <PromptPanel options={options} />}
+      {!reusing && <PromptPanel />}
 
       {!reusing && <GenerateControls />}
 
