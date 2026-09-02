@@ -40,37 +40,50 @@ const ImageCard = ({ url, alt, imgStyle, children }) => (
   </figure>
 );
 
-const EditControl = ({ blobKey, label, multiline, provenance, onPendingStart, onPendingEnd }) => {
-  const { show, reload } = useContext(EditorContext);
+const jobStatusLine = (job) => {
+  if (job.message) return job.message;
+  const raw = job.status || "";
+  return raw ? `${raw.charAt(0).toUpperCase()}${raw.slice(1)}...` : null;
+};
+
+const EditControl = ({
+  blobKey,
+  label,
+  multiline,
+  provenance,
+  onPendingStart,
+  onPendingUpdate,
+  onPendingEnd,
+}) => {
+  const { show, reload, setError } = useContext(EditorContext);
   const [open, setOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
-  const { run, busy, status, error } = useJobRunner();
 
-  const submit = () => {
+  const submit = async () => {
     if (prompt.trim() === "") return;
     const text = prompt.trim();
+    setPrompt("");
+    setOpen(false);
     const pendingId = `${blobKey}-${Date.now()}`;
-    if (onPendingStart) {
-      onPendingStart({
-        id: pendingId,
-        basePrompt: provenance?.basePrompt || null,
-        edits: [...(provenance?.edits || []), text],
-      });
-    }
-    run(
-      () =>
-        adminPost(`/shows/${show.date}/cover_art/ai_edit`, {
-          source_blob_key: blobKey,
-          edit_prompt: text,
-        }),
-      async () => {
-        setPrompt("");
-        setOpen(false);
-        await reload();
-      }
-    ).then(() => {
-      if (onPendingEnd) onPendingEnd(pendingId);
+    onPendingStart({
+      id: pendingId,
+      basePrompt: provenance?.basePrompt || null,
+      edits: [...(provenance?.edits || []), text],
     });
+    try {
+      const { job_id: jobId } = await adminPost(
+        `/shows/${show.date}/cover_art/ai_edit`,
+        { source_blob_key: blobKey, edit_prompt: text }
+      );
+      await pollJob(jobId, {
+        onUpdate: (job) => onPendingUpdate(pendingId, jobStatusLine(job)),
+      });
+      await reload();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      onPendingEnd(pendingId);
+    }
   };
 
   return (
@@ -79,7 +92,6 @@ const EditControl = ({ blobKey, label, multiline, provenance, onPendingStart, on
         <button
           type="button"
           className={open ? "active" : ""}
-          disabled={busy}
           onClick={() => setOpen(!open)}
         >
           <FontAwesomeIcon icon={faSparkles} /> {label}
@@ -92,7 +104,6 @@ const EditControl = ({ blobKey, label, multiline, provenance, onPendingStart, on
               rows={3}
               placeholder="Describe the edit"
               value={prompt}
-              disabled={busy}
               onChange={(e) => setPrompt(e.target.value)}
             />
           ) : (
@@ -100,7 +111,6 @@ const EditControl = ({ blobKey, label, multiline, provenance, onPendingStart, on
               type="text"
               placeholder="Describe the edit"
               value={prompt}
-              disabled={busy}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") submit();
@@ -110,7 +120,7 @@ const EditControl = ({ blobKey, label, multiline, provenance, onPendingStart, on
           <button
             type="button"
             title="Run paid AI edit"
-            disabled={busy || prompt.trim() === ""}
+            disabled={prompt.trim() === ""}
             onClick={submit}
           >
             <FontAwesomeIcon icon={faCheck} />
@@ -119,7 +129,6 @@ const EditControl = ({ blobKey, label, multiline, provenance, onPendingStart, on
             <button
               type="button"
               title="Cancel"
-              disabled={busy}
               onClick={() => setOpen(false)}
             >
               <FontAwesomeIcon icon={faXmark} />
@@ -127,19 +136,11 @@ const EditControl = ({ blobKey, label, multiline, provenance, onPendingStart, on
           )}
         </div>
       )}
-      {busy ? (
-        <span className="admin-art-busy">
-          <MoonLoader color="#c7c8ca" size={18} /> {status || "Generating"}
-        </span>
-      ) : (
-        status && <span className="admin-audio-status">{status}</span>
-      )}
-      {error && <p className="admin-error">{error}</p>}
     </div>
   );
 };
 
-const CandidateCard = ({ candidate, onPendingStart, onPendingEnd }) => {
+const CandidateCard = ({ candidate, onPendingStart, onPendingUpdate, onPendingEnd }) => {
   const { show, reload, setError } = useContext(EditorContext);
   const [zoom, setZoom] = useState("0");
   const [removing, setRemoving] = useState(false);
@@ -231,6 +232,7 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingEnd }) => {
           label="Edit"
           provenance={{ basePrompt, edits }}
           onPendingStart={onPendingStart}
+          onPendingUpdate={onPendingUpdate}
           onPendingEnd={onPendingEnd}
         />
         <button
@@ -424,8 +426,10 @@ const ArtEditor = ({ runNote }) => {
 
   const currentParts = (art.prompt || "").split(/\s*\|\s*edit:\s*/);
 
-  const updatePending = (id, patch) =>
-    setPendingJobs((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+  const updatePendingStatus = (id, statusLine) =>
+    setPendingJobs((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, statusLine } : p))
+    );
   const removePending = (id) =>
     setPendingJobs((prev) => prev.filter((p) => p.id !== id));
   const startPendingEdit = (entry) =>
@@ -443,11 +447,7 @@ const ArtEditor = ({ runNote }) => {
         prompt ? { prompt } : {}
       );
       await pollJob(jobId, {
-        onUpdate: (j) => {
-          const raw = j.status || "";
-          const fallback = raw ? `${raw.charAt(0).toUpperCase()}${raw.slice(1)}...` : null;
-          updatePending(id, { statusLine: j.message || fallback });
-        },
+        onUpdate: (job) => updatePendingStatus(id, jobStatusLine(job)),
       });
       await reload();
     } catch (e) {
@@ -479,6 +479,7 @@ const ArtEditor = ({ runNote }) => {
               edits: currentParts.slice(1),
             }}
             onPendingStart={startPendingEdit}
+            onPendingUpdate={updatePendingStatus}
             onPendingEnd={removePending}
           />
         )}
@@ -496,6 +497,7 @@ const ArtEditor = ({ runNote }) => {
               key={candidate.blob_key}
               candidate={candidate}
               onPendingStart={startPendingEdit}
+              onPendingUpdate={updatePendingStatus}
               onPendingEnd={removePending}
             />
           ))}
