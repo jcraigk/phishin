@@ -112,7 +112,7 @@ class CoverArtPromptService < ApplicationService
   TXT
   def call
     if dry_run
-      { prompt: new_prompt, suggestions: chatgpt_response }
+      { prompt: new_prompt, suggestions: llm_response }
     elsif show == run_kickoff_show
       generate_new_prompt
       print_response_hints
@@ -126,7 +126,7 @@ class CoverArtPromptService < ApplicationService
   def new_prompt
     return @new_prompt if defined?(@new_prompt)
     num = rand < 0.3 ? 1 : 2
-    subjects = CATEGORIES.sample(num).map { chatgpt_response[it.to_sym].sample }.join(" and ")
+    subjects = CATEGORIES.sample(num).map { llm_response[it.to_sym].sample }.join(" and ")
     @new_prompt =
       "Create an image featuring #{subjects} " \
       "in the style of #{style} with a #{hue} hue."
@@ -134,7 +134,7 @@ class CoverArtPromptService < ApplicationService
 
   def print_response_hints
     txt = CATEGORIES.map do |category|
-      "#{category.upcase} " + chatgpt_response[category.to_sym].sample(3).join(", ")
+      "#{category.upcase} " + llm_response[category.to_sym].sample(3).join(", ")
     end.join(" / ")
     puts txt
   end
@@ -184,41 +184,38 @@ class CoverArtPromptService < ApplicationService
     @style ||= STYLES.sample
   end
 
-  def chatgpt_response
-    return @chatgpt_response if defined?(@chatgpt_response)
+  def llm_response
+    return @llm_response if defined?(@llm_response)
 
     prompt = BASE_PROMPT.dup
     prompt += "\nThe songs played at this show were: #{song_list}"
     prompt += "\n\nThe time and place is #{show.venue_name}, #{show.venue.location} on #{show.date}"
-    # puts prompt
 
     response = Typhoeus.post(
-      "https://api.openai.com/v1/chat/completions",
+      "https://api.anthropic.com/v1/messages",
       headers: {
-        "Authorization" => "Bearer #{openai_api_token}",
+        "x-api-key" => anthropic_api_token,
+        "anthropic-version" => "2023-06-01",
         "Content-Type" => "application/json"
       },
       body: {
-        model: "gpt-4o",
-        messages: [
-          { role: "system",
-content: "You are a generalized expert in knowledge about points of interest." },
-          { role: "user", content: prompt }
-        ]
+        model: "claude-opus-5",
+        max_tokens: 4096,
+        system: "You are a generalized expert in knowledge about points of interest.",
+        messages: [ { role: "user", content: prompt } ]
       }.to_json
     )
+    raise "Failed to get response from Claude: #{response.body}" unless response.success?
 
-    if response.success?
-      response = JSON[response.body]["choices"].first["message"]["content"]
-      @chatgpt_response = JSON.parse(response, symbolize_names: true)
-    else
-      raise "Failed to get response from ChatGPT: #{response.body}"
-    end
+    result = JSON.parse(response.body)
+    text = result["content"].find { |block| block["type"] == "text" }&.dig("text")
+    raise "No text block in Anthropic response: #{result['content'].inspect}" if text.blank?
 
-    @chatgpt_response
+    json_match = text.match(/```(?:json)?\s*(.*?)\s*```/m)
+    @llm_response = JSON.parse(json_match ? json_match[1] : text, symbolize_names: true)
   end
 
-  def openai_api_token
-    @openai_api_token ||= ENV.fetch("OPENAI_API_TOKEN")
+  def anthropic_api_token
+    @anthropic_api_token ||= ENV.fetch("ANTHROPIC_API_KEY")
   end
 end
