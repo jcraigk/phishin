@@ -1090,7 +1090,7 @@
     display: block;
     width: 16rem;
     max-width: 100%;
-    border-radius: $radius;
+    border-radius: 4px;
   }
 }
 
@@ -1166,7 +1166,7 @@
     display: block;
     width: 100%;
     max-width: 16rem;
-    border-radius: $radius;
+    border-radius: 4px;
   }
 
   figcaption {
@@ -1265,11 +1265,17 @@
 .admin-art-frame {
   display: block;
   overflow: hidden;
-  border-radius: $radius;
+  border-radius: 4px;
 
   img {
     transition: transform 0.15s ease;
   }
+}
+
+.admin-art-cost {
+  margin-left: auto;
+  color: var(--text-gray);
+  font-size: 0.85rem;
 }
 
 .admin-art-edit-form {

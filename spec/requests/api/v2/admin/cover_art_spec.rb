@@ -129,7 +129,11 @@ RSpec.describe "API v2 Admin Cover Art" do
       post path, params: { signed_id: blob.signed_id }.to_json, headers: json_headers
       candidates = JSON.parse(response.body).dig("cover_art", "candidates")
       expect(candidates).to eq(
-        [ { "blob_key" => blob.key, "url" => "#{App.base_url}/blob/#{blob.key}.png" } ]
+        [ {
+          "blob_key" => blob.key,
+          "url" => "#{App.base_url}/blob/#{blob.key}.png",
+          "cost" => nil
+        } ]
       )
     end
 

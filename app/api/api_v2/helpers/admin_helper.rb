@@ -32,7 +32,8 @@ module ApiV2::Helpers::AdminHelper
       candidates: show.cover_art_candidates_attachments.includes(:blob).map do |attachment|
         {
           blob_key: attachment.blob.key,
-          url: "#{App.base_url}/blob/#{attachment.blob.key}.png"
+          url: "#{App.base_url}/blob/#{attachment.blob.key}.png",
+          cost: attachment.blob.metadata["cost"]
         }
       end
     }

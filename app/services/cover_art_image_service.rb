@@ -5,6 +5,10 @@ class CoverArtImageService < ApplicationService
   option :edit_prompt, default: -> { nil }
   option :prompt_override, default: -> { nil }
 
+  TEXT_INPUT_RATE = 5.0 / 1_000_000
+  IMAGE_INPUT_RATE = 8.0 / 1_000_000
+  IMAGE_OUTPUT_RATE = 30.0 / 1_000_000
+
   def call
     generate_and_save_cover_art
   end
@@ -23,12 +27,30 @@ class CoverArtImageService < ApplicationService
     end
 
     response = editing? ? edit_request : generate_request
-    raise "Failed to generate cover art: #{response.body}" unless response.success?
+    unless response.success?
+      raise "Failed to generate cover art: #{safe_body(response)}"
+    end
 
-    result = JSON.parse(response.body)
-    url = upload_candidate(result["data"].first["b64_json"], prompt_trail)
+    result = JSON.parse(safe_body(response))
+    url = upload_candidate(
+      result["data"].first["b64_json"], prompt_trail, usage_cost(result["usage"])
+    )
     show.attach_cover_art_by_url(url) unless dry_run
     url
+  end
+
+  def usage_cost(usage)
+    return nil if usage.blank?
+    details = usage["input_tokens_details"] || {}
+    text_in = details["text_tokens"] || usage["input_tokens"] || 0
+    image_in = details["image_tokens"] || 0
+    out = usage["output_tokens"] || 0
+    (text_in * TEXT_INPUT_RATE + image_in * IMAGE_INPUT_RATE + out * IMAGE_OUTPUT_RATE)
+      .round(4)
+  end
+
+  def safe_body(response)
+    response.body.to_s.dup.force_encoding(Encoding::UTF_8).scrub
   end
 
   def generation_prompt
@@ -95,12 +117,15 @@ class CoverArtImageService < ApplicationService
     body
   end
 
-  def upload_candidate(b64, used_prompt)
+  def upload_candidate(b64, used_prompt, cost)
+    metadata = {}
+    metadata["prompt"] = used_prompt if used_prompt.present?
+    metadata["cost"] = cost if cost.present?
     blob = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new(Base64.decode64(b64)),
       filename: "cover_art_candidate_#{SecureRandom.hex}.png",
       content_type: "image/png",
-      metadata: used_prompt.present? ? { "prompt" => used_prompt } : {}
+      metadata:
     )
     "#{App.base_url}/blob/#{blob.key}.png"
   end
