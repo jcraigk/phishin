@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -108,6 +108,7 @@ const TracksTab = () => {
   const [actionsSlot, setActionsSlot] = useState(null);
   const [allTags, setAllTags] = useState([]);
   const [addSetOpen, setAddSetOpen] = useState(false);
+  const addSetMenuRef = useRef(null);
   const [inserting, setInserting] = useState(false);
   const [insertTitle, setInsertTitle] = useState("");
   const [insertPosition, setInsertPosition] = useState(1);
@@ -120,6 +121,17 @@ const TracksTab = () => {
   useEffect(() => {
     setActionsSlot(document.getElementById("admin-tab-actions"));
   }, []);
+
+  useEffect(() => {
+    if (!addSetOpen) return undefined;
+    const onDocumentClick = (e) => {
+      if (addSetMenuRef.current && !addSetMenuRef.current.contains(e.target)) {
+        setAddSetOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDocumentClick);
+    return () => document.removeEventListener("mousedown", onDocumentClick);
+  }, [addSetOpen]);
 
   useEffect(() => {
     adminGet("/tags")
@@ -291,7 +303,7 @@ const TracksTab = () => {
       >
         <FontAwesomeIcon icon={faPlus} /> Track
       </button>
-      <div className="admin-row-menu">
+      <div className="admin-row-menu" ref={addSetMenuRef}>
         <button
           type="button"
           disabled={busy || addableSets.length === 0}
