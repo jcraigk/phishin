@@ -906,6 +906,10 @@
   input {
     width: 6rem;
   }
+
+  &.is-narrow input {
+    width: 3.5rem;
+  }
 }
 
 .admin-preview-player {

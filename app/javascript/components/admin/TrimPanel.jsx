@@ -98,7 +98,7 @@ const TrimPanel = ({ track }) => {
   };
 
   const numberField = (label, value, setter, extra = {}) => (
-    <label className="admin-audio-field">
+    <label className="admin-audio-field is-narrow">
       <span>{label}</span>
       <input
         type="number"
