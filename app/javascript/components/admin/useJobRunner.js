@@ -54,7 +54,11 @@ const useJobRunner = () => {
     }
   }, []);
 
-  return { run, busy, status, progress, error, setError };
+  const cancel = useCallback(() => {
+    if (controllerRef.current) controllerRef.current.abort();
+  }, []);
+
+  return { run, cancel, busy, status, progress, error, setError };
 };
 
 export default useJobRunner;
