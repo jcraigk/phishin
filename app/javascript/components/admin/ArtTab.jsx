@@ -166,6 +166,11 @@ const CandidateCard = ({ candidate }) => {
             }}
           />
         </label>
+        {candidate.cost != null && (
+          <span className="admin-art-cost" title="Generation cost">
+            ${Number(candidate.cost).toFixed(2)}
+          </span>
+        )}
       </div>
       <div className="admin-art-actions">
         <button type="button" disabled={busy || removing} onClick={select}>

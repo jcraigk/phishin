@@ -81,4 +81,28 @@ RSpec.describe Admin::EditCoverArtJob, :openai do
       .to raise_error(StandardError, /Failed to generate cover art/)
     expect(admin_job.reload.status).to eq("failed")
   end
+
+  it "reports API errors whose body is binary with non-ascii characters" do
+    allow(openai_response).to receive_messages(
+      success?: false, body: "bad prompt: child’s".b
+    )
+    expect { described_class.new.perform(show.id, admin_job.id, source_blob.key, "blue") }
+      .to raise_error(StandardError, /child’s/)
+  end
+
+  it "records the generation cost on the candidate blob" do
+    allow(openai_response).to receive(:body).and_return(
+      {
+        data: [ { b64_json: Base64.strict_encode64(image_bytes) } ],
+        usage: {
+          input_tokens: 400,
+          input_tokens_details: { text_tokens: 100, image_tokens: 300 },
+          output_tokens: 6000
+        }
+      }.to_json
+    )
+    described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue")
+    cost = show.reload.cover_art_candidates.first.blob.metadata["cost"]
+    expect(cost).to be_within(0.0001).of(0.1829)
+  end
 end
