@@ -205,13 +205,9 @@ const TagsTab = () => {
 
       <h3>
         Show tags
-        {show.show_tags.length > 0 && (
-          <span className="admin-count">{show.show_tags.length}</span>
-        )}
+        <span className="admin-count">{show.show_tags.length}</span>
       </h3>
-      {show.show_tags.length === 0 ? (
-        <p className="admin-audio-status">No tags on this show.</p>
-      ) : (
+      {show.show_tags.length > 0 && (
         <ul className="admin-tag-rows">
           {show.show_tags.map((showTag) => (
             <ShowTagRow
@@ -227,11 +223,9 @@ const TagsTab = () => {
 
       <h3>
         Track tags
-        {show.tracks.reduce((sum, t) => sum + t.track_tags.length, 0) > 0 && (
-          <span className="admin-count">
-            {show.tracks.reduce((sum, t) => sum + t.track_tags.length, 0)}
-          </span>
-        )}
+        <span className="admin-count">
+          {show.tracks.reduce((sum, t) => sum + t.track_tags.length, 0)}
+        </span>
       </h3>
       <ul className="admin-tag-tracks">
         {show.tracks.map((track) => (
