@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -7,6 +7,7 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
+import { AdminPlayerContext } from "./AdminLayout";
 import TrackRow from "./TrackRow";
 import BulkAudioDrop from "./BulkAudioDrop";
 import PnetCheckPanel from "./PnetCheckPanel";
@@ -15,8 +16,6 @@ import { adminGet, adminPost, adminPut, pollJob } from "./adminApi";
 import { uploadFile } from "./DirectUploader";
 import SongPicker from "./SongPicker";
 import { formatDurationShow } from "../helpers/utils";
-import { GaplessEngine } from "../player/GaplessEngine";
-import { WebAudioBackend } from "../player/WebAudioBackend";
 
 const GapBanner = () => {
   const { show, setGapsStale } = useContext(EditorContext);
@@ -116,8 +115,7 @@ const TracksTab = () => {
   const [insertFile, setInsertFile] = useState(null);
   const [insertProgress, setInsertProgress] = useState(null);
 
-  const previewEngine = useRef(null);
-  const [preview, setPreview] = useState({ trackId: null, playing: false, time: 0 });
+  const { playTrack, activeTrack, isPlaying } = useContext(AdminPlayerContext);
 
   useEffect(() => {
     setActionsSlot(document.getElementById("admin-tab-actions"));
@@ -131,81 +129,31 @@ const TracksTab = () => {
 
   const tracks = show.tracks;
 
-  const playable = useMemo(
-    () => tracks.filter((t) => t.mp3_url && t.audio_status !== "missing"),
-    [tracks]
+  const playerTracks = useMemo(
+    () =>
+      tracks
+        .filter((t) => t.mp3_url && t.audio_status !== "missing")
+        .map((t) => ({
+          ...t,
+          show_date: show.date,
+          waveform_image_url: t.waveform_url,
+          show_cover_art_urls: {
+            small: show.cover_art_url,
+            medium: show.cover_art_url,
+            large: show.cover_art?.current_url,
+          },
+        })),
+    [tracks, show.date, show.cover_art_url, show.cover_art?.current_url]
   );
-  const playableRef = useRef(playable);
-  playableRef.current = playable;
-  const playableKey = playable.map((t) => t.mp3_url).join("|");
 
-  useEffect(() => {
-    if (playableKey === "") return undefined;
-    const engine = new GaplessEngine(new WebAudioBackend());
-    engine.onTime = (seconds, index) =>
-      setPreview((prev) => ({
-        ...prev,
-        time: seconds,
-        trackId: playableRef.current[index]?.id ?? null,
-      }));
-    engine.onTrackChange = (index) =>
-      setPreview((prev) => ({
-        ...prev,
-        time: 0,
-        trackId: playableRef.current[index]?.id ?? null,
-      }));
-    engine.onPlayChange = (playing) =>
-      setPreview((prev) => ({ ...prev, playing }));
-    engine.load(
-      playableRef.current.map((t) => ({ url: t.mp3_url, offset: 0, end: null }))
-    );
-    previewEngine.current = engine;
-    setPreview({ trackId: null, playing: false, time: 0 });
-    return () => {
-      engine.destroy();
-      previewEngine.current = null;
-    };
-  }, [playableKey]);
-
-  useEffect(() => {
-    const onKeyDown = (e) => {
-      if (e.code !== "Space") return;
-      const tag = e.target.tagName;
-      if (
-        tag === "INPUT" ||
-        tag === "TEXTAREA" ||
-        tag === "SELECT" ||
-        tag === "BUTTON" ||
-        e.target.isContentEditable
-      ) return;
-      const engine = previewEngine.current;
-      if (!engine || preview.trackId === null) return;
-      e.preventDefault();
-      engine.toggle();
-    };
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [preview.trackId]);
-
-  const togglePreview = (track) => {
-    const engine = previewEngine.current;
-    if (!engine) return;
-    if (preview.trackId === track.id) {
-      engine.toggle();
+  const playRow = (track) => {
+    const target = playerTracks.find((t) => t.id === track.id);
+    if (!target) return;
+    if (activeTrack?.id === track.id) {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
     } else {
-      engine.goto(playable.findIndex((t) => t.id === track.id), { play: true });
+      playTrack(playerTracks, target);
     }
-  };
-
-  const seekPreview = (track, seconds) => {
-    const engine = previewEngine.current;
-    if (!engine) return;
-    if (preview.trackId !== track.id) {
-      engine.goto(playable.findIndex((t) => t.id === track.id), {
-        play: preview.playing,
-      });
-    }
-    engine.seek(seconds);
   };
 
   // The payload does not say which staged file backs an attached track, so the
@@ -402,7 +350,7 @@ const TracksTab = () => {
             return (
               <tbody key={headerKey} className="admin-set-group">
                 <tr className="admin-set-header">
-                  <th colSpan={6}>
+                  <th colSpan={8}>
                     {setName(group.set)}
                     {group.tracks.length > 0 && (
                       <span className="admin-set-duration">
@@ -424,11 +372,9 @@ const TracksTab = () => {
                     tags={allTags}
                     stagedOptions={show.staged_audio}
                     onReposition={() => openReposition(track)}
-                    previewActive={preview.trackId === track.id}
-                    previewPlaying={preview.trackId === track.id && preview.playing}
-                    previewTime={preview.time}
-                    onTogglePreview={() => togglePreview(track)}
-                    onSeekPreview={(seconds) => seekPreview(track, seconds)}
+                    isActive={activeTrack?.id === track.id}
+                    isPlaying={activeTrack?.id === track.id && isPlaying}
+                    onPlay={() => playRow(track)}
                   />
                 ))}
               </tbody>

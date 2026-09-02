@@ -6,7 +6,7 @@
   .admin-content {
     max-width: 90rem;
     margin: 0 auto;
-    padding: 1.5rem 2.5rem 4rem;
+    padding: 1.5rem 2.5rem 10rem;
   }
 }
 
@@ -697,27 +697,6 @@
     align-items: center;
     justify-content: flex-end;
     gap: 0.4rem;
-
-    .admin-row-waveform {
-      position: relative;
-      flex: 1;
-      min-width: 8rem;
-      height: 30px;
-      cursor: pointer;
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-    }
-
-    .admin-row-waveform-progress {
-      position: absolute;
-      inset: 0;
-      mask-size: 100% 100%;
-      mask-repeat: no-repeat;
-      mask-mode: alpha;
-      -webkit-mask-size: 100% 100%;
-      -webkit-mask-repeat: no-repeat;
-      pointer-events: none;
-    }
   }
 
   .admin-track-duration {
@@ -725,29 +704,27 @@
     text-align: right;
   }
 
+  .admin-track-position,
   .admin-track-validity {
     text-align: right;
     white-space: nowrap;
   }
 
-  .admin-track-disclosure {
-    white-space: nowrap;
-    cursor: pointer;
-
-    .admin-track-position {
-      display: inline-block;
-      min-width: 1.5rem;
-      text-align: right;
+  .admin-track-tag-badges {
+    .tag-badges-container {
+      cursor: pointer;
     }
 
-    .admin-tag-chevron {
-      margin: 0 0.4rem;
+    .admin-tag-add-button {
+      padding: 0.2rem 0.4rem;
+      border: none;
+      background: transparent;
       color: var(--text-gray);
-      font-size: 0.95rem;
-    }
+      cursor: pointer;
 
-    &:hover .admin-tag-chevron {
-      color: var(--list-item-link-color);
+      &:hover {
+        color: var(--list-item-link-color);
+      }
     }
   }
 
@@ -767,8 +744,11 @@
   }
 
 
-  .admin-track-audio {
+  .admin-track-tag-badges {
     width: 30%;
+  }
+
+  .admin-track-audio {
     white-space: nowrap;
     text-align: right;
   }
