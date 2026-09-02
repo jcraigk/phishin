@@ -264,7 +264,7 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
         className="admin-modal admin-modal-wide"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3>New prompt</h3>
+        <h3>New Prompt</h3>
         <textarea
           aria-label="Prompt for a new image"
           placeholder="Prompt for a new image"
@@ -275,7 +275,7 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
         />
         <div className="admin-art-suggest-row">
           <button type="button" disabled={busy} onClick={suggest}>
-            <FontAwesomeIcon icon={faArrowsRotate} /> Suggest prompt
+            <FontAwesomeIcon icon={faArrowsRotate} /> Generate prompt
           </button>
           {busy && (
             <span className="admin-art-busy">
@@ -306,7 +306,7 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
             disabled={busy || draft.trim() === ""}
             onClick={() => onSubmit(draft.trim())}
           >
-            <FontAwesomeIcon icon={faCheck} /> Generate
+            <FontAwesomeIcon icon={faCheck} /> Submit
           </button>
           <button type="button" disabled={busy} onClick={onClose}>
             <FontAwesomeIcon icon={faXmark} /> Cancel
