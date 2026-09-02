@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faPause, faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
 import MoonLoader from "react-spinners/MoonLoader";
+import { GaplessEngine } from "../player/GaplessEngine";
+import { WebAudioBackend } from "../player/WebAudioBackend";
 import { EditorContext } from "./AdminShowEditor";
-import PreviewPlayer from "./PreviewPlayer";
 import useJobRunner from "./useJobRunner";
 import { adminPost, fetchJobAudio } from "./adminApi";
 
@@ -23,11 +24,11 @@ const BoundaryPanel = ({ track, next, onClose }) => {
   const [dragging, setDragging] = useState(false);
   const [playhead, setPlayhead] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [previewPlaying, setPreviewPlaying] = useState(false);
   const containerRef = useRef(null);
   const firstAudioRef = useRef(null);
   const secondAudioRef = useRef(null);
-  const firstPreviewRef = useRef(null);
-  const secondPreviewRef = useRef(null);
+  const engineRef = useRef(null);
   const suppressClickRef = useRef(false);
   const cancelledRef = useRef(false);
   const modeRef = useRef("preview");
@@ -120,13 +121,42 @@ const BoundaryPanel = ({ track, next, onClose }) => {
     );
   };
 
+  // The two rendered sides play through the site's gapless engine so the
+  // boundary crossing is sample-accurate instead of two chained elements.
   useEffect(() => {
-    if (!previewUrls[0] || !autoPlayRef.current) return;
-    autoPlayRef.current = false;
-    if (firstAudioRef.current) firstAudioRef.current.pause();
-    if (secondAudioRef.current) secondAudioRef.current.pause();
-    if (firstPreviewRef.current) firstPreviewRef.current.play();
+    if (!previewUrls[0] || !previewUrls[1]) return undefined;
+    const engine = new GaplessEngine(new WebAudioBackend());
+    engine.onPlayChange = (isPlaying) => {
+      setPreviewPlaying(isPlaying);
+      if (isPlaying) {
+        document.querySelectorAll("audio").forEach((el) => {
+          if (!el.paused) el.pause();
+        });
+        window.dispatchEvent(new Event("phishin:pause-player"));
+      }
+    };
+    engine.load(previewUrls.map((url) => ({ url, offset: 0, end: null })));
+    engineRef.current = engine;
+    if (autoPlayRef.current) {
+      autoPlayRef.current = false;
+      engine.goto(0, { play: true });
+    }
+    return () => {
+      engine.destroy();
+      engineRef.current = null;
+      setPreviewPlaying(false);
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
   }, [previewUrls]);
+
+  // Any audio element starting elsewhere pauses the engine preview.
+  useEffect(() => {
+    const onPlay = (e) => {
+      if (e.target instanceof HTMLMediaElement && engineRef.current) engineRef.current.pause();
+    };
+    document.addEventListener("play", onPlay, true);
+    return () => document.removeEventListener("play", onPlay, true);
+  }, []);
 
   useEffect(() => {
     if (busy || previewCurrent || error || cancelledRef.current) return undefined;
@@ -242,22 +272,23 @@ const BoundaryPanel = ({ track, next, onClose }) => {
         onPause={syncPlaying}
       />
 
-      <PreviewPlayer
-        label={`End of "${track.title}"`}
-        url={previewUrls[0]}
-        audioRef={firstPreviewRef}
-        onEnded={() => {
-          const second = secondPreviewRef.current;
-          if (!second) return;
-          second.currentTime = 0;
-          second.play();
-        }}
-      />
-      <PreviewPlayer
-        label={`Start of "${next.title}"`}
-        url={previewUrls[1]}
-        audioRef={secondPreviewRef}
-      />
+      {previewUrls[0] && previewUrls[1] && (
+        <div className="admin-preview-player">
+          <button
+            type="button"
+            className="admin-trim-play"
+            onClick={() => {
+              const engine = engineRef.current;
+              if (!engine) return;
+              if (previewPlaying) engine.pause();
+              else engine.goto(0, { play: true });
+            }}
+          >
+            <FontAwesomeIcon icon={previewPlaying ? faPause : faPlay} />
+          </button>
+          <span className="admin-preview-tag">Preview</span>
+        </div>
+      )}
 
       <div className="admin-audio-actions">
         <button
