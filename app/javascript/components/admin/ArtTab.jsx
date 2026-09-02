@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import MoonLoader from "react-spinners/MoonLoader";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminDelete, adminGet, adminPatch, adminPost } from "./adminApi";
@@ -72,8 +74,13 @@ const EditControl = ({ blobKey, label }) => {
             disabled={busy}
             onChange={(e) => setPrompt(e.target.value)}
           />
-          <button type="button" disabled={busy || prompt.trim() === ""} onClick={submit}>
-            {busy ? "Editing..." : "Run paid AI edit"}
+          <button
+            type="button"
+            title="Run paid AI edit"
+            disabled={busy || prompt.trim() === ""}
+            onClick={submit}
+          >
+            <FontAwesomeIcon icon={faCheck} />
           </button>
         </div>
       )}
