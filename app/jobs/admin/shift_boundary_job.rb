@@ -1,5 +1,6 @@
 class Admin::ShiftBoundaryJob
   include Sidekiq::Job
+  include LameEncoding
 
   MIN_PART_S = 1.0
   PREVIEW_WINDOW_S = 5.0
@@ -63,6 +64,8 @@ class Admin::ShiftBoundaryJob
   end
 
   def show = first.show
+
+  def label = "#{show.date} #{first.title}"
 
   def find_second!
     @second = show.tracks.find_by(position: first.position + 1)
@@ -135,12 +138,16 @@ class Admin::ShiftBoundaryJob
   def render_sides
     FileUtils.mkdir_p(output_dir)
     if apply?
-      render(TrackSplitService.filters(start_s: 0.0, end_s: cut_s), side_paths[0])
-      render(TrackSplitService.filters(start_s: cut_s), side_paths[1])
+      render_side_via_lame(TrackSplitService.filters(start_s: 0.0, end_s: cut_s), side_paths[0])
+      render_side_via_lame(TrackSplitService.filters(start_s: cut_s), side_paths[1])
     else
       render(TrackSplitService.filters(start_s: [ cut_s - PREVIEW_WINDOW_S, 0.0 ].max, end_s: cut_s), side_paths[0])
       render(TrackSplitService.filters(start_s: cut_s, end_s: [ cut_s + PREVIEW_WINDOW_S, total_duration_s ].min), side_paths[1])
     end
+  end
+
+  def render_side_via_lame(filters, out_path)
+    render_via_lame(out_path, [ "-i", @joined_path, "-af", filters.join(",") ])
   end
 
   def render(filters, out_path)
