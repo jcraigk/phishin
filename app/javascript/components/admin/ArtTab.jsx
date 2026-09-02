@@ -46,7 +46,7 @@ const ImageCard = ({ url, alt, imgStyle, children }) => (
   </figure>
 );
 
-const EditControl = ({ blobKey, label }) => {
+const EditControl = ({ blobKey, label, multiline }) => {
   const { show, reload } = useContext(EditorContext);
   const [open, setOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
@@ -71,23 +71,35 @@ const EditControl = ({ blobKey, label }) => {
 
   return (
     <div className="admin-art-edit">
-      <button
-        type="button"
-        className={open ? "active" : ""}
-        disabled={busy}
-        onClick={() => setOpen(!open)}
-      >
-        <FontAwesomeIcon icon={faSparkles} /> {label}
-      </button>
+      {!(multiline && open) && (
+        <button
+          type="button"
+          className={open ? "active" : ""}
+          disabled={busy}
+          onClick={() => setOpen(!open)}
+        >
+          <FontAwesomeIcon icon={faSparkles} /> {label}
+        </button>
+      )}
       {open && (
         <div className="admin-art-edit-form">
-          <input
-            type="text"
-            placeholder="Describe the edit"
-            value={prompt}
-            disabled={busy}
-            onChange={(e) => setPrompt(e.target.value)}
-          />
+          {multiline ? (
+            <textarea
+              rows={3}
+              placeholder="Describe the edit"
+              value={prompt}
+              disabled={busy}
+              onChange={(e) => setPrompt(e.target.value)}
+            />
+          ) : (
+            <input
+              type="text"
+              placeholder="Describe the edit"
+              value={prompt}
+              disabled={busy}
+              onChange={(e) => setPrompt(e.target.value)}
+            />
+          )}
           <button
             type="button"
             title="Run paid AI edit"
@@ -96,6 +108,16 @@ const EditControl = ({ blobKey, label }) => {
           >
             <FontAwesomeIcon icon={faCheck} />
           </button>
+          {multiline && (
+            <button
+              type="button"
+              title="Cancel"
+              disabled={busy}
+              onClick={() => setOpen(false)}
+            >
+              <FontAwesomeIcon icon={faXmark} />
+            </button>
+          )}
         </div>
       )}
       {busy ? (
@@ -383,7 +405,7 @@ const ArtEditor = ({ runNote }) => {
         </div>
         {art.prompt && <p className="admin-art-snapshot">{art.prompt}</p>}
         {art.current_blob_key && (
-          <EditControl blobKey={art.current_blob_key} label="Edit" />
+          <EditControl blobKey={art.current_blob_key} label="Edit" multiline />
         )}
       </section>
 
