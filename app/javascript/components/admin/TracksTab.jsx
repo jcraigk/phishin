@@ -507,7 +507,7 @@ const TracksTab = () => {
             </label>
             <div className="admin-modal-actions">
               <button type="button" disabled={busy} onClick={applyReposition}>
-                <FontAwesomeIcon icon={faCheck} /> Move
+                <FontAwesomeIcon icon={faCheck} /> Apply
               </button>
               <button type="button" onClick={() => setRepositioning(null)}>
                 <FontAwesomeIcon icon={faXmark} /> Cancel
