@@ -50,12 +50,12 @@ const PnetCheckPanel = () => {
             >
               <h3>Phish.net Check</h3>
               {busy && (
-                <>
+                <div className="admin-pnet-progress">
                   <span className="admin-art-busy">
                     <MoonLoader color="#c7c8ca" size={18} /> {status || "Checking..."}
                   </span>
-                  {progress !== null && <progress max="100" value={progress} />}
-                </>
+                  <progress max="100" value={progress ?? 0} />
+                </div>
               )}
               {error && <p className="admin-error">{error}</p>}
               {report && <pre className="admin-pnet-report">{report}</pre>}
