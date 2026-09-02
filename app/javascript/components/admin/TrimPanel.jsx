@@ -236,7 +236,7 @@ const TrimPanel = ({ track, onClose }) => {
         {status && (
           <span className="admin-audio-status">
             <MoonLoader color="#c7c8ca" size={14} />{" "}
-            {modeRef.current === "apply" ? "Applying..." : "Rendering preview..."}
+            {modeRef.current === "apply" ? "Applying..." : "Rendering..."}
           </span>
         )}
       </div>
