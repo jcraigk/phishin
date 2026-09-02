@@ -102,6 +102,8 @@ const BoundaryPanel = ({ track, next, onClose }) => {
     (playhead < firstSeconds ? first : second).play();
   };
 
+  const autoPlayRef = useRef(false);
+
   const renderPreview = () => {
     modeRef.current = "preview";
     return run(
@@ -111,11 +113,20 @@ const BoundaryPanel = ({ track, next, onClose }) => {
           fetchJobAudio(job.id, 0),
           fetchJobAudio(job.id, 1),
         ]);
+        autoPlayRef.current = true;
         setPreviewUrls([first, second]);
         setPreviewedAt(delta);
       }
     );
   };
+
+  useEffect(() => {
+    if (!previewUrls[0] || !autoPlayRef.current) return;
+    autoPlayRef.current = false;
+    if (firstAudioRef.current) firstAudioRef.current.pause();
+    if (secondAudioRef.current) secondAudioRef.current.pause();
+    if (firstPreviewRef.current) firstPreviewRef.current.play();
+  }, [previewUrls]);
 
   useEffect(() => {
     if (busy || previewCurrent || error || cancelledRef.current) return undefined;
