@@ -1,6 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faPause, faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRotateLeft,
+  faCheck,
+  faPause,
+  faPlay,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import MoonLoader from "react-spinners/MoonLoader";
 import { GaplessEngine } from "../player/GaplessEngine";
 import { WebAudioBackend } from "../player/WebAudioBackend";
@@ -323,6 +329,16 @@ const BoundaryPanel = ({ track, next, onClose }) => {
                 <FontAwesomeIcon
                   icon={previewPlaying && previewIndex === index ? faPause : faPlay}
                 />
+              </button>
+              <button
+                type="button"
+                className="admin-trim-play"
+                onClick={() => {
+                  const engine = engineRef.current;
+                  if (engine) engine.goto(index, { play: true });
+                }}
+              >
+                <FontAwesomeIcon icon={faArrowRotateLeft} />
               </button>
               <div
                 className="admin-preview-scrubber"
