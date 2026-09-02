@@ -1,5 +1,5 @@
 class AdminFixture
-  DATES = %w[1992-07-11 1990-12-28 1993-04-13].freeze
+  DATES = %w[1992-07-11 1990-12-28 1993-04-13 1998-10-17 1998-10-18].freeze
   SNAPSHOT_DIR = Rails.root.join("tmp/admin_fixture")
 
   class << self

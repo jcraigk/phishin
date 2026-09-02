@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import WaveformScrubber from "./WaveformScrubber";
 import PreviewPlayer from "./PreviewPlayer";
@@ -56,7 +56,27 @@ const TrimPanel = ({ track }) => {
   const [previewedAt, setPreviewedAt] = useState(null);
   const [playhead, setPlayhead] = useState(0);
   const audioRef = useRef(null);
+  const previewAudioRef = useRef(null);
   const { run, busy, status, error } = useJobRunner();
+
+  useEffect(() => {
+    // Capture phase so this wins over the bottom Player's own space handler.
+    const onKeyDown = (e) => {
+      if (e.key !== " " || e.shiftKey) return;
+      const active = document.activeElement;
+      if (["INPUT", "TEXTAREA", "SELECT"].includes(active?.tagName) || active?.isContentEditable) return;
+      const players = [previewAudioRef.current, audioRef.current].filter(Boolean);
+      if (players.length === 0) return;
+      const target =
+        players.find((p) => !p.paused) || players.find((p) => p.currentTime > 0) || players[0];
+      e.preventDefault();
+      e.stopPropagation();
+      if (target.paused) target.play();
+      else target.pause();
+    };
+    window.addEventListener("keydown", onKeyDown, true);
+    return () => window.removeEventListener("keydown", onKeyDown, true);
+  }, []);
 
   const values = { trim_start: trimStart, trim_end: trimEnd, fade_in: fadeIn, fade_out: fadeOut };
   const signature = JSON.stringify(values);
@@ -164,6 +184,7 @@ const TrimPanel = ({ track }) => {
       <PreviewPlayer
         label="Preview - this exact audio will be committed"
         url={previewUrl}
+        audioRef={previewAudioRef}
       />
 
       <div className="admin-audio-actions">
