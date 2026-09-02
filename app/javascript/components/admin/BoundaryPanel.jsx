@@ -25,6 +25,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
   const [playhead, setPlayhead] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [previewPlaying, setPreviewPlaying] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
   const containerRef = useRef(null);
   const firstAudioRef = useRef(null);
   const secondAudioRef = useRef(null);
@@ -135,8 +136,10 @@ const BoundaryPanel = ({ track, next, onClose }) => {
         window.dispatchEvent(new Event("phishin:pause-player"));
       }
     };
+    engine.onTrackChange = (index) => setPreviewIndex(index);
     engine.load(previewUrls.map((url) => ({ url, offset: 0, end: null })));
     engineRef.current = engine;
+    setPreviewIndex(0);
     if (autoPlayRef.current) {
       autoPlayRef.current = false;
       engine.goto(0, { play: true });
@@ -148,6 +151,13 @@ const BoundaryPanel = ({ track, next, onClose }) => {
       previewUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [previewUrls]);
+
+  const togglePreviewClip = (index) => {
+    const engine = engineRef.current;
+    if (!engine) return;
+    if (previewPlaying && previewIndex === index) engine.pause();
+    else engine.goto(index, { play: true });
+  };
 
   // Any audio element starting elsewhere pauses the engine preview.
   useEffect(() => {
@@ -273,21 +283,25 @@ const BoundaryPanel = ({ track, next, onClose }) => {
       />
 
       {previewUrls[0] && previewUrls[1] && (
-        <div className="admin-preview-player">
-          <button
-            type="button"
-            className="admin-trim-play"
-            onClick={() => {
-              const engine = engineRef.current;
-              if (!engine) return;
-              if (previewPlaying) engine.pause();
-              else engine.goto(0, { play: true });
-            }}
-          >
-            <FontAwesomeIcon icon={previewPlaying ? faPause : faPlay} />
-          </button>
-          <span className="admin-preview-tag">Preview</span>
-        </div>
+        <>
+          {[
+            `End of "${track.title}"`,
+            `Start of "${next.title}"`,
+          ].map((label, index) => (
+            <div className="admin-preview-player" key={label}>
+              <button
+                type="button"
+                className="admin-trim-play"
+                onClick={() => togglePreviewClip(index)}
+              >
+                <FontAwesomeIcon
+                  icon={previewPlaying && previewIndex === index ? faPause : faPlay}
+                />
+              </button>
+              <span className="admin-preview-tag">{label}</span>
+            </div>
+          ))}
+        </>
       )}
 
       <div className="admin-audio-actions">
