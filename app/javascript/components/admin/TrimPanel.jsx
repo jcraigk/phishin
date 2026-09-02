@@ -202,17 +202,9 @@ const TrimPanel = ({ track }) => {
       />
 
       <div className="admin-audio-actions">
-        <button type="button" onClick={renderPreview} disabled={busy}>
-          Render Preview
-        </button>
         <button type="button" onClick={applyTrim} disabled={busy || !previewCurrent}>
           <FontAwesomeIcon icon={faCheck} /> Apply
         </button>
-        {previewUrl && !previewCurrent && (
-          <span className="admin-audio-status">
-            Values changed. Render a new preview before applying.
-          </span>
-        )}
         {status && <span className="admin-audio-status">{status}</span>}
       </div>
 
