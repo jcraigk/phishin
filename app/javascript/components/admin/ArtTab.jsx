@@ -13,17 +13,11 @@ import {
 import { faSparkles } from "./sparklesIcon";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
-import { adminDelete, adminGet, adminPatch, adminPost } from "./adminApi";
+import { adminDelete, adminGet, adminPost, pollJob } from "./adminApi";
 import { uploadFile } from "./DirectUploader";
 
 const SELECT_CONFIRM =
   "Sets cover art, composites the album cover, and re-embeds ID3 tags on all tracks. Continue?";
-
-const GENERATE_CONFIRM =
-  "Generating an image calls the paid image API and bills your account. Continue?";
-
-const EDIT_CONFIRM =
-  "An AI edit calls the paid image API and bills your account. Continue?";
 
 // Candidate and cover art images come from the public /blob/:key and cover art
 // variant routes, so a plain img tag works: no auth header, no object URLs.
@@ -46,7 +40,7 @@ const ImageCard = ({ url, alt, imgStyle, children }) => (
   </figure>
 );
 
-const EditControl = ({ blobKey, label, multiline }) => {
+const EditControl = ({ blobKey, label, multiline, provenance, onPendingStart, onPendingEnd }) => {
   const { show, reload } = useContext(EditorContext);
   const [open, setOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
@@ -54,19 +48,29 @@ const EditControl = ({ blobKey, label, multiline }) => {
 
   const submit = () => {
     if (prompt.trim() === "") return;
-    if (!window.confirm(EDIT_CONFIRM)) return;
+    const text = prompt.trim();
+    const pendingId = `${blobKey}-${Date.now()}`;
+    if (onPendingStart) {
+      onPendingStart({
+        id: pendingId,
+        basePrompt: provenance?.basePrompt || null,
+        edits: [...(provenance?.edits || []), text],
+      });
+    }
     run(
       () =>
         adminPost(`/shows/${show.date}/cover_art/ai_edit`, {
           source_blob_key: blobKey,
-          edit_prompt: prompt.trim(),
+          edit_prompt: text,
         }),
       async () => {
         setPrompt("");
         setOpen(false);
         await reload();
       }
-    );
+    ).then(() => {
+      if (onPendingEnd) onPendingEnd(pendingId);
+    });
   };
 
   return (
@@ -135,7 +139,7 @@ const EditControl = ({ blobKey, label, multiline }) => {
   );
 };
 
-const CandidateCard = ({ candidate }) => {
+const CandidateCard = ({ candidate, onPendingStart, onPendingEnd }) => {
   const { show, reload, setError } = useContext(EditorContext);
   const [zoom, setZoom] = useState("0");
   const [removing, setRemoving] = useState(false);
@@ -222,7 +226,13 @@ const CandidateCard = ({ candidate }) => {
         <button type="button" disabled={busy || removing} onClick={select}>
           <FontAwesomeIcon icon={faCheck} /> {busy ? "Applying..." : "Select"}
         </button>
-        <EditControl blobKey={candidate.blob_key} label="Edit" />
+        <EditControl
+          blobKey={candidate.blob_key}
+          label="Edit"
+          provenance={{ basePrompt, edits }}
+          onPendingStart={onPendingStart}
+          onPendingEnd={onPendingEnd}
+        />
         <button
           type="button"
           className="admin-trash-button"
@@ -318,14 +328,13 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
   );
 };
 
-const GenerateControls = ({ onGenerate, generating }) => {
+const GenerateControls = ({ onGenerate }) => {
   const { show, reload } = useContext(EditorContext);
   const [modalOpen, setModalOpen] = useState(false);
   const [progress, setProgress] = useState(null);
   const [uploadError, setUploadError] = useState(null);
 
   const generate = (prompt) => {
-    if (!window.confirm(GENERATE_CONFIRM)) return;
     setModalOpen(false);
     onGenerate(prompt);
   };
@@ -349,11 +358,7 @@ const GenerateControls = ({ onGenerate, generating }) => {
 
   return (
     <div className="admin-art-controls">
-      <button
-        type="button"
-        disabled={generating || uploading}
-        onClick={() => setModalOpen(true)}
-      >
+      <button type="button" disabled={uploading} onClick={() => setModalOpen(true)}>
         <FontAwesomeIcon icon={faPenToSquare} /> New prompt
       </button>
       <label className="admin-art-upload">
@@ -361,7 +366,7 @@ const GenerateControls = ({ onGenerate, generating }) => {
         <input
           type="file"
           accept="image/*"
-          disabled={generating || uploading}
+          disabled={uploading}
           onChange={(e) => {
             const file = e.target.files[0];
             // Allow re-selecting the same filename after a failed upload
@@ -388,9 +393,28 @@ const ArtImage = ({ url, alt }) =>
     <div className="admin-art-empty">None</div>
   );
 
+const PendingCard = ({ basePrompt, edits, statusLine }) => (
+  <figure className="admin-art-card admin-art-pending">
+    <div className="admin-art-empty">
+      <MoonLoader color="#c7c8ca" size={28} />
+    </div>
+    <figcaption>
+      <div className="admin-art-origin">
+        {basePrompt && <p title={basePrompt}>{basePrompt}</p>}
+        {(edits || []).map((edit, index) => (
+          <p key={index} className="admin-art-origin-edit" title={edit}>
+            Edit {index + 1}: {edit}
+          </p>
+        ))}
+      </div>
+      <span className="admin-audio-status">{statusLine}</span>
+    </figcaption>
+  </figure>
+);
+
 const ArtEditor = ({ runNote }) => {
-  const { show, reload } = useContext(EditorContext);
-  const { run, busy: generating, status: genStatus, error: genError } = useJobRunner();
+  const { show, reload, setError } = useContext(EditorContext);
+  const [pendingJobs, setPendingJobs] = useState([]);
   const art = show.cover_art;
   const note =
     runNote ||
@@ -398,15 +422,42 @@ const ArtEditor = ({ runNote }) => {
       ? `This art is shared with a run. Applying a candidate also updates ${art.child_dates.join(", ")}.`
       : null);
 
-  const generate = (prompt) =>
-    run(
-      () =>
-        adminPost(
-          `/shows/${show.date}/cover_art/generate`,
-          prompt ? { prompt } : {}
-        ),
-      () => reload()
-    );
+  const currentParts = (art.prompt || "").split(/\s*\|\s*edit:\s*/);
+
+  const updatePending = (id, patch) =>
+    setPendingJobs((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+  const removePending = (id) =>
+    setPendingJobs((prev) => prev.filter((p) => p.id !== id));
+  const startPendingEdit = (entry) =>
+    setPendingJobs((prev) => [...prev, { ...entry, statusLine: "Editing..." }]);
+
+  const generate = async (prompt) => {
+    const id = `gen-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    setPendingJobs((prev) => [
+      ...prev,
+      { id, basePrompt: prompt || art.prompt, edits: [], statusLine: "Queued..." },
+    ]);
+    try {
+      const { job_id: jobId } = await adminPost(
+        `/shows/${show.date}/cover_art/generate`,
+        prompt ? { prompt } : {}
+      );
+      await pollJob(jobId, {
+        onUpdate: (j) => {
+          const raw = j.status || "";
+          const fallback = raw ? `${raw.charAt(0).toUpperCase()}${raw.slice(1)}...` : null;
+          updatePending(id, { statusLine: j.message || fallback });
+        },
+      });
+      await reload();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      removePending(id);
+    }
+  };
+
+  const showGrid = art.candidates.length > 0 || pendingJobs.length > 0;
 
   return (
     <div className="admin-art-tab">
@@ -419,29 +470,43 @@ const ArtEditor = ({ runNote }) => {
         </div>
         {art.prompt && <p className="admin-art-snapshot">{art.prompt}</p>}
         {art.current_blob_key && (
-          <EditControl blobKey={art.current_blob_key} label="Edit" multiline />
+          <EditControl
+            blobKey={art.current_blob_key}
+            label="Edit"
+            multiline
+            provenance={{
+              basePrompt: currentParts[0] || null,
+              edits: currentParts.slice(1),
+            }}
+            onPendingStart={startPendingEdit}
+            onPendingEnd={removePending}
+          />
         )}
       </section>
 
-      <GenerateControls onGenerate={generate} generating={generating} />
+      <GenerateControls onGenerate={generate} />
 
       <h3>Candidates</h3>
-      {genError && <p className="admin-error">{genError}</p>}
-      {art.candidates.length === 0 && !generating ? (
+      {!showGrid ? (
         <p>No candidates yet. Generate or upload one.</p>
       ) : (
         <div className="admin-art-grid">
           {art.candidates.map((candidate) => (
-            <CandidateCard key={candidate.blob_key} candidate={candidate} />
+            <CandidateCard
+              key={candidate.blob_key}
+              candidate={candidate}
+              onPendingStart={startPendingEdit}
+              onPendingEnd={removePending}
+            />
           ))}
-          {generating && (
-            <figure className="admin-art-card admin-art-pending">
-              <div className="admin-art-empty">
-                <MoonLoader color="#c7c8ca" size={28} />
-              </div>
-              <figcaption>{genStatus || "Generating..."}</figcaption>
-            </figure>
-          )}
+          {pendingJobs.map((pending) => (
+            <PendingCard
+              key={pending.id}
+              basePrompt={pending.basePrompt}
+              edits={pending.edits}
+              statusLine={pending.statusLine}
+            />
+          ))}
         </div>
       )}
     </div>
