@@ -103,7 +103,7 @@ const VenueControl = () => {
       {!show.venue_name && <span className="admin-attention">No venue set</span>}
 
       {newVenue && (
-        <div className="admin-modal-overlay" onClick={() => setNewVenue(null)}>
+        <div className="admin-modal-overlay">
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>New Venue</h3>
             {Object.keys(FIELD_LABELS).map((field) => (

@@ -38,7 +38,7 @@ const ReplacePanel = ({ track, onClose }) => {
   };
 
   return createPortal(
-    <div className="admin-modal-overlay" onClick={working ? undefined : onClose}>
+    <div className="admin-modal-overlay">
       <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
         <h3>Replace Audio</h3>
         <input

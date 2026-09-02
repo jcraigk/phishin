@@ -278,7 +278,7 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
     setDraft((prev) => (prev.trim() === "" ? text : `${prev.trim()} ${text}`));
 
   return createPortal(
-    <div className="admin-modal-overlay" onClick={busy ? undefined : onClose}>
+    <div className="admin-modal-overlay">
       <div
         className="admin-modal admin-modal-wide"
         onClick={(e) => e.stopPropagation()}

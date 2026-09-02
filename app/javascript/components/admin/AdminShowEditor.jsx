@@ -109,7 +109,7 @@ const AdminShowEditor = () => {
           </button>
         </header>
         {error && (
-          <div className="admin-modal-overlay" onClick={() => setError(null)}>
+          <div className="admin-modal-overlay">
             <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
               <h3>Error</h3>
               <p className="admin-error admin-modal-message">{error}</p>
@@ -122,7 +122,7 @@ const AdminShowEditor = () => {
           </div>
         )}
         {confirmingDelete && (
-          <div className="admin-modal-overlay" onClick={() => setConfirmingDelete(false)}>
+          <div className="admin-modal-overlay">
             <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
               <h3>Delete {show.date}?</h3>
               <p className="admin-empty">

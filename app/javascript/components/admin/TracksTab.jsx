@@ -472,7 +472,7 @@ const TracksTab = () => {
       )}
 
       {inserting && (
-        <div className="admin-modal-overlay" onClick={() => setInserting(false)}>
+        <div className="admin-modal-overlay">
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Add Track</h3>
             <label className="admin-modal-field">
@@ -532,7 +532,7 @@ const TracksTab = () => {
       )}
 
       {repositioning && (
-        <div className="admin-modal-overlay" onClick={() => setRepositioning(null)}>
+        <div className="admin-modal-overlay">
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Reposition &quot;{repositioning.title}&quot;</h3>
             <label className="admin-modal-field">

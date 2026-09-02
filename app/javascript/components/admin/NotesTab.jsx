@@ -91,7 +91,7 @@ const NotesTab = () => {
       </div>
 
       {pending && (
-        <div className="admin-modal-overlay" onClick={cancelPending}>
+        <div className="admin-modal-overlay">
           <div
             className="admin-modal admin-modal-wide"
             onClick={(e) => e.stopPropagation()}
