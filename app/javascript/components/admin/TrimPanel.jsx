@@ -61,7 +61,7 @@ const TrimPanel = ({ track }) => {
   const [originalPlaying, setOriginalPlaying] = useState(false);
   const audioRef = useRef(null);
   const previewAudioRef = useRef(null);
-  const { run, busy, status, error } = useJobRunner();
+  const { run, busy, status, error, setError } = useJobRunner();
 
   useEffect(() => {
     // Capture phase so this wins over the bottom Player's own space handler.
@@ -93,6 +93,7 @@ const TrimPanel = ({ track }) => {
 
   const setValue = (setter) => (value) => {
     setter(value);
+    setError(null);
     clearPreview();
   };
 
@@ -118,10 +119,11 @@ const TrimPanel = ({ track }) => {
       if (signature === initialSignatureRef.current) return undefined;
       dirtyRef.current = true;
     }
-    if (busy || previewCurrent) return undefined;
+    if (busy || previewCurrent || error) return undefined;
+    if (trimStart + Math.max(duration - trimEnd, 0) < 0.5) return undefined;
     const timer = setTimeout(renderPreview, 800);
     return () => clearTimeout(timer);
-  }, [signature, busy, previewCurrent]);
+  }, [signature, busy, previewCurrent, error]);
 
   const applyTrim = () => {
     if (!window.confirm(`Apply this trim to "${track.title}"? The original is backed up.`)) return;

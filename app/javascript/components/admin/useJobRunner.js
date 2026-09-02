@@ -49,6 +49,10 @@ const useJobRunner = () => {
       return job;
     } catch (e) {
       if (!isPollAbort(e) && mountedRef.current) setError(e.message);
+      if (mountedRef.current) {
+        setStatus(null);
+        setProgress(null);
+      }
       return null;
     } finally {
       if (controllerRef.current === controller) controllerRef.current = null;
