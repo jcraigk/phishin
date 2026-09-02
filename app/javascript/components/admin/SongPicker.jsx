@@ -156,7 +156,7 @@ const SongPicker = ({ value, onChange }) => {
         </ul>
       )}
       {creating && (
-        <div className="admin-modal-overlay" onClick={() => setCreating(null)}>
+        <div className="admin-modal-overlay">
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>New Song</h3>
             <label className="admin-modal-field">

@@ -221,7 +221,7 @@ const BulkAudioDrop = () => {
       </button>
 
       {open && !plan && (
-        <div className="admin-modal-overlay" onClick={close}>
+        <div className="admin-modal-overlay">
           <div className="admin-modal admin-modal-wide" onClick={(e) => e.stopPropagation()}>
             <h3>Update Audio</h3>
             {!uploading && !preparing && (
@@ -312,7 +312,7 @@ const BulkAudioDrop = () => {
       )}
 
       {plan && (
-        <div className="admin-modal-overlay" onClick={close}>
+        <div className="admin-modal-overlay">
         <div className="admin-modal admin-modal-wide admin-bulk-plan" onClick={(e) => e.stopPropagation()}>
           <h3>Update Audio</h3>
 
