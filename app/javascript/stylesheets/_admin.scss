@@ -731,14 +731,32 @@
     white-space: nowrap;
   }
 
+  .admin-track-title {
+    width: 18%;
+  }
+
   .admin-track-title input {
     width: 100%;
-    min-width: 12rem;
+    min-width: 9rem;
   }
 
   .admin-track-songs {
     position: relative;
-    min-width: 14rem;
+    width: 24%;
+    min-width: 11rem;
+  }
+
+  .admin-track-disclosure button {
+    padding: 0.2rem 0.3rem;
+    border: none;
+    background: transparent;
+    color: var(--text-gray);
+    font-size: 0.75rem;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--list-item-link-color);
+    }
   }
 
   .admin-track-audio {
@@ -1360,17 +1378,14 @@
   text-align: center;
 }
 
-.admin-layout .admin-tag-toggle {
-  padding: 0.1rem;
-  border: none;
-  background: transparent;
+.admin-tag-toggle {
   cursor: pointer;
 
-  &:hover .admin-count {
+  &:hover {
     filter: brightness(1.2);
   }
 
-  &.active .admin-count {
+  &.active {
     box-shadow: 0 0 0 2px var(--text-gray);
   }
 }

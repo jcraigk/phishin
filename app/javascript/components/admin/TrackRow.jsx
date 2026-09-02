@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowsLeftRight,
   faArrowsUpDown,
+  faChevronDown,
+  faChevronRight,
   faCloudArrowUp,
   faEllipsis,
   faPause,
@@ -122,6 +124,20 @@ const TrackRow = ({
     <>
     <tr className="admin-track-row">
       <td className="admin-track-position">{track.position}</td>
+      <td className="admin-track-disclosure">
+        <button
+          type="button"
+          className="admin-tag-disclosure"
+          aria-label={`Toggle tags for ${track.title}`}
+          title="Tags"
+          onClick={() => setTool((prev) => (prev === "tags" ? null : "tags"))}
+        >
+          <FontAwesomeIcon
+            icon={tool === "tags" ? faChevronDown : faChevronRight}
+            fixedWidth
+          />
+        </button>
+      </td>
       <td className="admin-track-validity">
         {problems.length > 0 && (
           <span
@@ -151,15 +167,18 @@ const TrackRow = ({
         />
       </td>
       <td className="admin-track-tags">
-        <button
-          type="button"
-          className={`admin-tag-toggle${tool === "tags" ? " active" : ""}`}
+        <span
+          className={`admin-count admin-tag-toggle${tool === "tags" ? " active" : ""}`}
+          role="button"
+          tabIndex={0}
           title="Edit tags"
-          aria-label={`Edit tags for ${track.title}`}
           onClick={() => setTool((prev) => (prev === "tags" ? null : "tags"))}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") setTool((prev) => (prev === "tags" ? null : "tags"));
+          }}
         >
-          <span className="admin-count">{track.track_tags.length}</span>
-        </button>
+          {track.track_tags.length}
+        </span>
       </td>
       <td className="admin-track-audio">
         {track.audio_status === "missing" ? (
@@ -267,7 +286,7 @@ const TrackRow = ({
     )}
     {(tool === "trim" || tool === "boundary" || tool === "tags") && (
       <tr className="admin-track-tool-row">
-        <td colSpan={7}>
+        <td colSpan={8}>
           {tool === "trim" && <TrimPanel key={`trim-${track.id}`} track={track} />}
           {tool === "boundary" && shiftable && (
             <BoundaryPanel key={`boundary-${track.id}`} track={track} next={next} />
