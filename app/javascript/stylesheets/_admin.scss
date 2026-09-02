@@ -1237,7 +1237,23 @@
   }
 
   input[type="number"] {
-    width: 4rem;
+    width: 3rem;
+  }
+
+  input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    accent-color: var(--blue);
+  }
+}
+
+.admin-art-frame {
+  display: block;
+  overflow: hidden;
+  border-radius: $radius;
+
+  img {
+    transition: transform 0.15s ease;
   }
 }
 

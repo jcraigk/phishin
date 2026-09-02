@@ -6,6 +6,7 @@ import {
   faArrowsRotate,
   faCheck,
   faCloudArrowUp,
+  faPenToSquare,
   faTrashCan,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
@@ -26,11 +27,17 @@ const EDIT_CONFIRM =
 
 // Candidate and cover art images come from the public /blob/:key and cover art
 // variant routes, so a plain img tag works: no auth header, no object URLs.
-const ImageCard = ({ url, alt, children }) => (
+const ImageCard = ({ url, alt, imgStyle, children }) => (
   <figure className="admin-art-card">
     {url ? (
-      <a href={url} target="_blank" rel="noreferrer" title="Open full size">
-        <img src={url} alt={alt} />
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        title="Open full size"
+        className="admin-art-frame"
+      >
+        <img src={url} alt={alt} style={imgStyle} />
       </a>
     ) : (
       <div className="admin-art-empty">None</div>
@@ -106,8 +113,15 @@ const EditControl = ({ blobKey, label }) => {
 const CandidateCard = ({ candidate }) => {
   const { show, reload, setError } = useContext(EditorContext);
   const [zoom, setZoom] = useState("0");
+  const [previewZoom, setPreviewZoom] = useState(false);
   const [removing, setRemoving] = useState(false);
   const { run, busy, status, error } = useJobRunner();
+
+  const zoomFactor = Math.min(50, Number(zoom) || 0) / 100;
+  const imgStyle =
+    previewZoom && zoomFactor > 0
+      ? { transform: `scale(${(1 / (1 - zoomFactor)).toFixed(4)})` }
+      : undefined;
 
   const remove = async () => {
     if (!window.confirm("Remove this candidate?")) return;
@@ -136,7 +150,7 @@ const CandidateCard = ({ candidate }) => {
   };
 
   return (
-    <ImageCard url={candidate.url} alt="Cover art candidate">
+    <ImageCard url={candidate.url} alt="Cover art candidate" imgStyle={imgStyle}>
       <div className="admin-art-actions">
         <label>
           Zoom %
@@ -152,6 +166,14 @@ const CandidateCard = ({ candidate }) => {
               setZoom(digits === "" ? "" : String(Math.min(50, parseInt(digits, 10))));
             }}
           />
+        </label>
+        <label className="admin-zoom-preview">
+          <input
+            type="checkbox"
+            checked={previewZoom}
+            onChange={(e) => setPreviewZoom(e.target.checked)}
+          />
+          Preview
         </label>
       </div>
       <div className="admin-art-actions">
@@ -290,7 +312,7 @@ const GenerateControls = ({ onGenerate, generating }) => {
         disabled={generating || uploading}
         onClick={() => setModalOpen(true)}
       >
-        <FontAwesomeIcon icon={faSparkles} /> New prompt
+        <FontAwesomeIcon icon={faPenToSquare} /> New prompt
       </button>
       <label className="admin-art-upload">
         <FontAwesomeIcon icon={faCloudArrowUp} /> Upload image
