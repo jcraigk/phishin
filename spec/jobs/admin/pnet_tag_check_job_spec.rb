@@ -75,6 +75,31 @@ RSpec.describe Admin::PnetTagCheckJob do
       .to include("Not on Phish.net: Secret Jam (Set 1)")
   end
 
+  it "matches sandwich tracks through their songs" do
+    hyhu = create(:song, title: "Hold Your Head Up")
+    brain = create(:song, title: "If I Only Had a Brain")
+    create(
+      :track,
+      show:, title: "HYHU > If I Only Had a Brain > HYHU",
+      position: 2, set: "2", songs: [ hyhu, brain ]
+    )
+    allow(show_info).to receive_messages(
+      songs: {
+        1 => "Harry Hood",
+        2 => "Hold Your Head Up",
+        3 => "If I Only Had a Brain",
+        4 => "Hold Your Head Up"
+      },
+      sets: { 1 => "1", 2 => "2", 3 => "2", 4 => "2" }
+    )
+
+    described_class.new.perform(show.id, admin_job.id)
+
+    report = admin_job.reload.payload["report"]
+    expect(report).not_to include("Missing here: Hold Your Head Up")
+    expect(report).not_to include("Not on Phish.net: HYHU")
+  end
+
   it "reports nothing for a matching setlist" do
     create(:track, show:, title: "Ghost", position: 2, set: "2")
     described_class.new.perform(show.id, admin_job.id)

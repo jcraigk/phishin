@@ -57,8 +57,12 @@ class Admin::PnetTagCheckJob
     pnet = info.songs.keys.sort.map do |position|
       { title: info.songs[position], set: info.sets[position] }
     end
-    local = show.tracks.order(:position).map do |track|
-      { title: track.title, set: track.set.to_s.upcase }
+    local = show.tracks.includes(:songs).order(:position).map do |track|
+      {
+        title: track.title,
+        set: track.set.to_s.upcase,
+        songs: track.songs.map(&:title)
+      }
     end
     compare_setlists(pnet, local)
   rescue ShowImporter::ShowInfo::NotFoundError
@@ -67,29 +71,33 @@ class Admin::PnetTagCheckJob
 
   def compare_setlists(pnet, local)
     lines = []
-    remaining = local.dup
+    used = Array.new(local.size, false)
     pnet.each do |entry|
-      at = remaining.index { |t| covers?(t[:title], entry[:title]) }
+      at = local.each_index.find { |i| !used[i] && covers?(local[i], entry[:title]) } ||
+           local.each_index.find { |i| covers?(local[i], entry[:title]) }
       if at.nil?
         lines << "Missing here: #{entry[:title]} (#{set_label(entry[:set])})"
         next
       end
-      match = remaining.delete_at(at)
+      used[at] = true
+      match = local[at]
       if entry[:set].present? && match[:set] != entry[:set]
         lines << "Set mismatch: #{match[:title]} is #{set_label(match[:set])} here, " \
                  "#{set_label(entry[:set])} on Phish.net"
       end
     end
-    remaining.each do |track|
+    local.each_with_index do |track, i|
+      next if used[i]
       lines << "Not on Phish.net: #{track[:title]} (#{set_label(track[:set])})"
     end
-    lines
+    lines.uniq
   end
 
-  def covers?(local_title, pnet_title)
-    a = normalize(local_title)
-    b = normalize(pnet_title)
-    a == b || a.include?(b)
+  def covers?(track, pnet_title)
+    target = normalize(pnet_title)
+    title = normalize(track[:title])
+    return true if title == target || title.include?(target)
+    track[:songs].any? { |song| normalize(song) == target }
   end
 
   def normalize(title)
