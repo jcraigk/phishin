@@ -7,12 +7,20 @@ class ApiV2::Admin::Taggings < ApiV2::Admin::Base
     desc "List all tags", hidden: true
     get :tags do
       {
-        tags: Tag.order(:name).map { |tag| { id: tag.id, name: tag.name, group: tag.group } },
-        tagin_tags: TAGIN_TAGS
+        tags: Tag.order(:name).map { |tag| { id: tag.id, name: tag.name, group: tag.group } }
       }
     end
 
     resource :shows do
+      desc "Check Phish.net sources for tag suggestions", hidden: true
+      post ":date/pnet_tag_check", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        show = admin_show
+        job = AdminJob.create!(kind: "pnet_tag_check", show:)
+        Admin::PnetTagCheckJob.perform_async(show.id, job.id)
+        status 201
+        { job_id: job.id }
+      end
+
       desc "Add a show tag", hidden: true
       params do
         requires :tag_id, type: Integer

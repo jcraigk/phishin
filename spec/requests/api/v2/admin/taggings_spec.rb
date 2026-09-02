@@ -45,9 +45,21 @@ RSpec.describe "API v2 Admin Taggings" do
       expect(entry).to include(id: tag.id, name: "SBD", group: tag.group)
     end
 
-    it "reports the sheet-managed tag names so the UI can flag them" do
-      get "/api/v2/admin/tags", headers: admin_headers
-      expect(json[:tagin_tags]).to eq(TAGIN_TAGS)
+  end
+
+  describe "POST /api/v2/admin/shows/:date/pnet_tag_check" do
+    it "enqueues a check job" do
+      expect {
+        post "/api/v2/admin/shows/#{show.date}/pnet_tag_check", headers: admin_headers
+      }.to change(Admin::PnetTagCheckJob.jobs, :size).by(1)
+      expect(response).to have_http_status(:created)
+      expect(json[:job_id]).to eq(AdminJob.last.id)
+      expect(AdminJob.last.kind).to eq("pnet_tag_check")
+    end
+
+    it "returns 401 without a token" do
+      post "/api/v2/admin/shows/#{show.date}/pnet_tag_check"
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 

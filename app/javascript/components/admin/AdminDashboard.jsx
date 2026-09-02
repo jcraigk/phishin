@@ -7,24 +7,21 @@ import {
   faCompactDisc,
   faListCheck,
   faSpinner,
-  faTableList,
   faTags,
 } from "@fortawesome/free-solid-svg-icons";
 import { adminGet } from "./adminApi";
-import TaginPanel from "./TaginPanel";
 import OrphanQueue from "./OrphanQueue";
 
 const KIND_LABELS = {
   bulk_replace_audio: "bulk audio",
   commit_staging: "commit staging",
   ingest: "ingest",
+  pnet_tag_check: "pnet check",
   recompute_gaps: "recompute gaps",
   shift_boundary_apply: "boundary shift",
   shift_boundary_preview: "boundary preview",
   split_preview: "split preview",
   trim_preview: "trim preview",
-  tagin_drift: "tag drift",
-  tagin_sync: "tag sync",
 };
 
 const UNITS = [
@@ -178,10 +175,6 @@ const AdminDashboard = () => {
 
         <Card title="Tags Awaiting Review" icon={faClipboardList} count={orphanCount}>
           <OrphanQueue />
-        </Card>
-
-        <Card title="Tag Sheet" icon={faTableList}>
-          <TaginPanel />
         </Card>
       </div>
     </div>

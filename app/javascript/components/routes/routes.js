@@ -34,7 +34,6 @@ import PrivacyPolicy from "../pages/PrivacyPolicy";
 import RequestPasswordReset from "../pages/RequestPasswordReset";
 import ResetPassword from "../pages/ResetPassword";
 import Signup from "../pages/Signup";
-import TaginProject from "../pages/TaginProject";
 import TermsOfService from "../pages/TermsOfService";
 import Settings from "../pages/Settings";
 
@@ -86,10 +85,6 @@ const routes = (props) => [
       {
         path: "/privacy",
         element: <PrivacyPolicy />
-      },
-      {
-        path: "/tagin-project",
-        element: <TaginProject />
       },
       {
         path: "/terms",

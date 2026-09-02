@@ -2,10 +2,6 @@ require "nokogiri"
 
 class TeaseChartSyncService < ApplicationService
   CHART_URL = "https://phish.net/tease-chart".freeze
-  SHEET_RANGE = "Tease!A1:G5000".freeze
-  APPEND_RANGE = "Tease!A:F".freeze
-  UNMATCHED_RANGE = "UNMATCHED TEASES!A:E".freeze
-  DEV_NOTE = "Imported from Phish.net Tease Chart".freeze
   # The chart page has a few names whose accented bytes are already lost upstream
   # (they arrive as U+FFFD), so they cannot be repaired by re-decoding.
   LOST_CHARACTER_FIXES = {
@@ -40,8 +36,7 @@ class TeaseChartSyncService < ApplicationService
     print_summary
     return unless apply
 
-    append_rows if proposed_rows.any?
-    append_unmatched if unmatched.any?
+    create_track_tags if proposed_rows.any?
   end
 
   private
@@ -98,16 +93,15 @@ class TeaseChartSyncService < ApplicationService
       return log("  skip: #{occ[:date]} #{track.title} - #{note}")
     end
 
-    row = [ sheet_url(track), "", "", note, "", DEV_NOTE ]
     # The chart can list the same tease twice for one show (e.g. two teases in one
-    # jam); they collapse to one track URL, so keep a single row.
-    if @proposed_rows.any? { |r| r[0] == row[0] && normalize_note(r[3]) == normalize_note(note) }
+    # jam); they collapse to one track, so keep a single proposal.
+    if @proposed_rows.any? { |p| p[:track].id == track.id && normalize_note(p[:note]) == normalize_note(note) }
       @skipped_existing += 1
       return log("  skip (duplicate in batch): #{occ[:date]} #{track.title} - #{note}")
     end
 
     log("  propose: #{occ[:date]} #{track.title} - #{note}")
-    @proposed_rows << row
+    @proposed_rows << { track:, note: }
   end
 
   def record_unmatched(occ, reason)
@@ -168,16 +162,15 @@ class TeaseChartSyncService < ApplicationService
   end
 
   def load_existing_rows
-    GoogleSpreadsheetFetcher.call(sheet_id, SHEET_RANGE, headers: true)
-      .each_with_object(Hash.new { |h, k| h[k] = [] }) do |row, hash|
-        key = track_key(row["URL"])
-        next if key.blank?
-        hash[key] << normalize_note(row["Notes"].to_s)
-      end
+    TrackTag.joins(:tag).where(tags: { name: "Tease" })
+            .includes(track: :show)
+            .each_with_object(Hash.new { |h, k| h[k] = [] }) do |track_tag, hash|
+      hash[track_key_for(track_tag.track)] << normalize_note(track_tag.notes.to_s)
+    end
   end
 
   def already_covered?(track, note)
-    existing = @existing[track_key(sheet_url(track))]
+    existing = @existing[track_key_for(track)]
     return false if existing.blank?
 
     candidate = normalize_note(note)
@@ -189,21 +182,8 @@ class TeaseChartSyncService < ApplicationService
     end
   end
 
-  def track_key(url)
-    return nil if url.blank?
-    segments = URI.parse(url.strip).path.split("/")
-    return nil if segments.size < 2
-    segments.last(2).join("/")
-  rescue URI::InvalidURIError
-    nil
-  end
-
-  # Derive the slug rather than trusting track.slug: a local database dump can
-  # predate a slug-format change (e.g. you-enjoy-myself -> yem) and would then
-  # write URLs that do not resolve in production.
-  def sheet_url(track)
-    slug = TrackSlugGenerator.call(track)
-    "#{Rails.configuration.production_base_url}/#{track.show.date}/#{slug}"
+  def track_key_for(track)
+    "#{track.show.date}/#{TrackSlugGenerator.call(track)}"
   end
 
   def normalize(str)
@@ -214,29 +194,20 @@ class TeaseChartSyncService < ApplicationService
     CGI.unescapeHTML(str.to_s).downcase.gsub(/[[:punct:]]/, "").squish
   end
 
-  def append_rows
-    proposed_rows.each_slice(500) do |batch|
-      GoogleSpreadsheetAppender.call(sheet_id, APPEND_RANGE, batch)
+  def create_track_tags
+    tag = Tag.find_by!(name: "Tease")
+    proposed_rows.each do |proposal|
+      TrackTag.create!(tag:, track: proposal[:track], notes: proposal[:note])
     end
-    puts "Appended #{proposed_rows.size} row(s) to the Tease tab."
-    puts "Run `bin/rails tagin:sync` to pull them into the database."
-  end
-
-  def append_unmatched
-    rows = unmatched.map { |e| [ e[:date], e[:song], e[:note], e[:reason], DEV_NOTE ] }
-    rows.each_slice(500) { |batch| GoogleSpreadsheetAppender.call(sheet_id, UNMATCHED_RANGE, batch) }
-    puts "Appended #{rows.size} row(s) to the UNMATCHED TEASES tab."
-  rescue Google::Apis::ClientError => e
-    raise unless e.message.to_s.match?(/unable to parse range|not found/i)
-    puts "\nCould not write unmatched rows: no 'UNMATCHED TEASES' tab found."
+    puts "Created #{proposed_rows.size} Tease tag(s)."
   end
 
   def print_summary
-    puts "\nProposed rows: #{proposed_rows.size}"
-    proposed_rows.first(40).each { |row| puts "  #{row[0]} - #{row[3]}" }
+    puts "\nProposed tags: #{proposed_rows.size}"
+    proposed_rows.first(40).each { |p| puts "  #{track_key_for(p[:track])} - #{p[:note]}" }
     puts "  ... and #{proposed_rows.size - 40} more" if proposed_rows.size > 40
 
-    puts "\nAlready in sheet (skipped): #{skipped_existing}"
+    puts "\nAlready tagged (skipped): #{skipped_existing}"
 
     if unmatched.any?
       puts "\nUnmatched (#{unmatched.size}):"
@@ -246,15 +217,11 @@ class TeaseChartSyncService < ApplicationService
       end
     end
 
-    puts "\nDry run. Re-run with APPLY=true to append these rows." if !apply && proposed_rows.any?
+    puts "\nDry run. Re-run with APPLY=true to create these tags." if !apply && proposed_rows.any?
   end
 
   def log(message)
     puts message if verbose
-  end
-
-  def sheet_id
-    @sheet_id ||= ENV.fetch("TAGIN_GSHEET_ID")
   end
 
   def pnet_api_key

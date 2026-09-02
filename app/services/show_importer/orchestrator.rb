@@ -94,17 +94,14 @@ class ShowImporter::Orchestrator
 
   private
 
-  # Teases live in the Tagin' spreadsheet, so append any the setlist notes
-  # describe and then pull the sheet's Tease rows into the database. A failure
-  # here must not abort an otherwise successful import.
+  # A failure here must not abort an otherwise successful import.
   def sync_teases
-    puts "Scanning setlist notes for teases..."
-    service = TeaseSyncService.new(date: show.date.to_s, apply: true)
-    service.call
-    return if service.proposed_rows.none?
-
-    data = GoogleSpreadsheetFetcher.call(ENV.fetch("TAGIN_GSHEET_ID"), "Tease!A1:G5000", headers: true)
-    TrackTagSyncService.call("Tease", data.select { |row| row["URL"].to_s.include?("/#{show.date}/") })
+    puts "Scanning Phish.net setlist notes for teases..."
+    TeaseSyncService.new(date: show.date.to_s, apply: true).call
+    puts "Checking the Phish.net Tease Chart..."
+    TeaseChartSyncService.new(
+      start_date: show.date.to_s, end_date: show.date.to_s, apply: true
+    ).call
   rescue StandardError => e
     puts "⚠️  Tease sync failed (#{e.class}: #{e.message}); continuing import."
   end

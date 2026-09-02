@@ -6,7 +6,6 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   add "/contact-info"
   add "/faq"
   add "/privacy"
-  add "/tagin-project"
   add "/terms"
 
   # Auth

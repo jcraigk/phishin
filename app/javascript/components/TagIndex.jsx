@@ -9,7 +9,7 @@ export const tagIndexLoader = async () => {
 };
 
 import React from "react";
-import { useLoaderData, Link } from "react-router";
+import { useLoaderData } from "react-router";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tags from "./Tags";
@@ -21,8 +21,9 @@ const TagIndex = () => {
     <div className="sidebar-content">
       <h1 className="sidebar-title">Content Tags</h1>
       <p className="sidebar-detail hidden-mobile">
-        Tags are used to annotate and highlight content. The tag associations seen here have been pulled from various Phish.net projects as well as crowd-sourcing through the{" "}
-        <Link to="/tagin-project">Tagin' Project</Link>.
+        Tags are used to annotate and highlight content. The tag associations seen
+        here have been pulled from various Phish.net projects as well as
+        crowd-sourcing from the Phish community.
       </p>
     </div>
   );

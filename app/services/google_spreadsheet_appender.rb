@@ -17,7 +17,8 @@ class GoogleSpreadsheetAppender < ApplicationService
 
   SCOPE_ERROR = <<~MSG.freeze
     The stored GOOGLE_SPREADSHEET_CREDS refresh token is read-only.
-    Run `bin/rails tagin:authorize` locally, then set the printed JSON as
+    Run GoogleSheetsAuthorizer.call(scope: Google::Apis::SheetsV4::AUTH_SPREADSHEETS,
+    force_interactive: true) in a local console, then set the printed JSON as
     GOOGLE_SPREADSHEET_CREDS (locally and in production) before appending.
   MSG
 

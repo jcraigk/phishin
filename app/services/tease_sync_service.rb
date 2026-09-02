@@ -1,8 +1,4 @@
 class TeaseSyncService < ApplicationService
-  SHEET_RANGE = "Tease!A1:G5000".freeze
-  APPEND_RANGE = "Tease!A:F".freeze
-  UNMATCHED_RANGE = "UNMATCHED TEASES!A:E".freeze
-  DEV_NOTE = "Imported from Phish.net setlist notes".freeze
   SONG_ALIASES = {
     "2001" => "Also Sprach Zarathustra"
   }.freeze
@@ -45,8 +41,7 @@ class TeaseSyncService < ApplicationService
     print_summary
     return unless apply
 
-    append_rows if proposed_rows.any?
-    append_unmatched if unmatched.any?
+    create_track_tags if proposed_rows.any?
   end
 
   private
@@ -77,13 +72,12 @@ class TeaseSyncService < ApplicationService
   end
 
   def load_existing_rows
-    GoogleSpreadsheetFetcher.call(sheet_id, SHEET_RANGE, headers: true)
-      .each_with_object(Hash.new { |h, k| h[k] = [] }) do |row, hash|
-        key = track_key(row["URL"])
-        next if key.blank?
-        original = row["Notes"].to_s.strip
-        hash[key] << { original:, normalized: normalize(original) }
-      end
+    TrackTag.joins(:tag).where(tags: { name: "Tease" })
+            .includes(track: :show)
+            .each_with_object(Hash.new { |h, k| h[k] = [] }) do |track_tag, hash|
+      original = track_tag.notes.to_s.strip
+      hash[track_key_for(track_tag.track)] << { original:, normalized: normalize(original) }
+    end
   end
 
   def process_show(show)
@@ -91,12 +85,12 @@ class TeaseSyncService < ApplicationService
     return @skipped += 1 if notes.blank? || !notes.match?(/teas|quot/i)
 
     teases = analyze_with_claude(notes, show)
-    teases.reject { |tease| tease["in_sheet"] }.each { |tease| evaluate_tease(show, tease) }
+    teases.reject { |tease| tease["already_tagged"] }.each { |tease| evaluate_tease(show, tease) }
     record_unconfirmed(show, teases)
   end
 
-  # Sheet rows for a scanned show that the notes never mention. Not errors --
-  # taper-sourced and Tease Chart rows legitimately never appear in setlist notes --
+  # Tagged teases for a scanned show that the notes never mention. Not errors --
+  # taper-sourced and Tease Chart entries legitimately never appear in setlist notes --
   # but worth surfacing so they can be spot-checked.
   def record_unconfirmed(show, teases)
     found = teases.filter_map { |tease| normalize(tease["tease"].to_s).presence }
@@ -133,7 +127,7 @@ class TeaseSyncService < ApplicationService
     end
 
     log("  propose: #{track.title} - #{note}")
-    @proposed_rows << [ sheet_url(track), "", "", note, "", DEV_NOTE ]
+    @proposed_rows << { track:, note: }
   end
 
   # Phish.net's song catalog is authoritative for original artist; the model's
@@ -164,7 +158,7 @@ class TeaseSyncService < ApplicationService
   end
 
   def already_covered?(track, note)
-    existing = @existing[track_key(track.url)]
+    existing = @existing[track_key_for(track)]
     return false if existing.blank?
 
     candidate = normalize(note)
@@ -177,24 +171,8 @@ class TeaseSyncService < ApplicationService
     end
   end
 
-  # The sheet is keyed by production URLs, so never write a local/ngrok host into it.
-  # Derive the slug rather than trusting track.slug: a local database dump can
-  # predate a slug-format change (e.g. you-enjoy-myself -> yem) and would then
-  # write URLs that do not resolve in production.
-  def sheet_url(track)
-    slug = TrackSlugGenerator.call(track)
-    "#{Rails.configuration.production_base_url}/#{track.show.date}/#{slug}"
-  end
-
-  # Sheet URLs use the production host; Track#url uses the configured host.
-  # Key on the date/slug path so lookups match in every environment.
-  def track_key(url)
-    return nil if url.blank?
-    segments = URI.parse(url.strip).path.split("/")
-    return nil if segments.size < 2
-    segments.last(2).join("/")
-  rescue URI::InvalidURIError
-    nil
+  def track_key_for(track)
+    "#{track.show.date}/#{TrackSlugGenerator.call(track)}"
   end
 
   def tease_title(note)
@@ -286,7 +264,7 @@ class TeaseSyncService < ApplicationService
       performed show count. Skip any sentence describing the soundcheck.
 
       Respond with strict JSON only, no prose and no code fence:
-      {"teases": [{"song": "<performed song>", "tease": "<teased song title>", "artist": "<original artist or null>", "in_sheet": <true|false>}]}
+      {"teases": [{"song": "<performed song>", "tease": "<teased song title>", "artist": "<original artist or null>", "already_tagged": <true|false>}]}
 
       Rules:
       - "song" must be the song the tease occurred in, matching a title from the provided setlist when possible.
@@ -294,8 +272,8 @@ class TeaseSyncService < ApplicationService
         Phish original. Take it from a parenthetical in the notes when present; otherwise give
         your best guess (it is verified against Phish.net's song catalog afterward).
       - List EVERY tease the notes describe, including ones already present in the
-        "Existing tease rows" section. Mark each with "in_sheet": true when it matches an
-        existing row (comparing on the teased song title, ignoring an omitted "by Artist"
+        "Existing tease tags" section. Mark each with "already_tagged": true when it matches
+        an existing tag (comparing on the teased song title, ignoring an omitted "by Artist"
         suffix and punctuation differences) and false otherwise.
       - Handle phrasings such as: "X contained Y teases", "X contained Y and Z teases",
         "Trey teased Y in X, Z in W, and Q in V", "a Y tease in X", "X included a Y tease from Page",
@@ -311,7 +289,7 @@ class TeaseSyncService < ApplicationService
       Setlist:
       #{show.tracks.sort_by(&:position).map(&:title).join("\n")}
 
-      Existing tease rows:
+      Existing tease tags:
       #{existing_rows_for(show).presence || 'none'}
 
       Setlist notes:
@@ -326,28 +304,17 @@ class TeaseSyncService < ApplicationService
       .join("\n")
   end
 
-  def append_rows
-    GoogleSpreadsheetAppender.call(sheet_id, APPEND_RANGE, proposed_rows)
-    puts "Appended #{proposed_rows.size} row(s). Run `bin/rails tagin:sync` to pull them into the database."
-  end
-
-  # Teases whose song has no phish.in track go to a separate tab so the Tease tab
-  # only ever holds rows that tagin:sync can actually resolve to a track.
-  def append_unmatched
-    rows = unmatched.map do |e|
-      [ e[:date], e[:song], format_note(e[:tease], e[:artist]), "no phish.in track", DEV_NOTE ]
+  def create_track_tags
+    tag = Tag.find_by!(name: "Tease")
+    proposed_rows.each do |proposal|
+      TrackTag.create!(tag:, track: proposal[:track], notes: proposal[:note])
     end
-    GoogleSpreadsheetAppender.call(sheet_id, UNMATCHED_RANGE, rows)
-    puts "Appended #{rows.size} row(s) to the UNMATCHED TEASES tab."
-  rescue Google::Apis::ClientError => e
-    raise unless e.message.to_s.match?(/unable to parse range|not found/i)
-    puts "\nCould not write unmatched rows: no 'UNMATCHED TEASES' tab found."
-    unmatched.each { |e| puts "  #{e[:date]} / #{e[:song]} / #{format_note(e[:tease], e[:artist])}" }
+    puts "Created #{proposed_rows.size} Tease tag(s)."
   end
 
   def print_summary
-    puts "\nProposed rows: #{proposed_rows.size}"
-    proposed_rows.each { |row| puts "  #{row[0]} - #{row[3]}" }
+    puts "\nProposed tags: #{proposed_rows.size}"
+    proposed_rows.each { |p| puts "  #{track_key_for(p[:track])} - #{p[:note]}" }
 
     if unmatched.any?
       puts "\nUnmatched songs (no track found):"
@@ -360,14 +327,14 @@ class TeaseSyncService < ApplicationService
     end
 
     if unconfirmed.any?
-      puts "\nIn sheet but not in Phish.net notes (#{unconfirmed.size}) - review, not necessarily wrong:"
+      puts "\nTagged but not in Phish.net notes (#{unconfirmed.size}) - review, not necessarily wrong:"
       unconfirmed.each { |entry| puts "  #{entry}" }
     end
 
     puts "\nSkipped shows (no notes or no teases): #{@skipped}"
     puts "Tokens: #{@input_tokens.to_fs(:delimited)} input, #{@output_tokens.to_fs(:delimited)} output"
     puts "Cost:   $#{format_cost(total_cost)}"
-    puts "\nDry run. Re-run with APPLY=true to append these rows." if !apply && proposed_rows.any?
+    puts "\nDry run. Re-run with APPLY=true to create these tags." if !apply && proposed_rows.any?
   end
 
   def token_cost(input, output)
@@ -385,10 +352,6 @@ class TeaseSyncService < ApplicationService
   def log(message)
     return unless verbose
     @pbar ? @pbar.log(message) : puts(message)
-  end
-
-  def sheet_id
-    @sheet_id ||= ENV.fetch("TAGIN_GSHEET_ID")
   end
 
   def pnet_api_key
