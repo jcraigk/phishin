@@ -790,6 +790,7 @@
   border-radius: $radius;
   background-color: var(--bg-gray);
   user-select: none;
+  cursor: pointer;
 
   img {
     display: block;
@@ -904,11 +905,11 @@
   color: var(--text-gray);
 
   input {
-    width: 6rem;
+    width: 4.75rem;
   }
 
   &.is-narrow input {
-    width: 3.5rem;
+    width: 2.75rem;
   }
 }
 
