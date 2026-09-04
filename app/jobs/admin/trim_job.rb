@@ -15,6 +15,7 @@ class Admin::TrimJob
         trim_end: opts[:trim_end].to_f,
         fade_in: opts[:fade_in].to_f,
         fade_out: opts[:fade_out].to_f,
+        tail_pad: opts.fetch(:tail_pad, AudioEdgeTrimService::PREVIEW_PAD_S).to_f,
         min_cut: MIN_CUT_S,
         dry_run: !apply,
         edge_previews: !apply,

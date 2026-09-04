@@ -94,7 +94,7 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       error!({ message: "Track has no audio" }, 422) unless track.mp3_audio.attached?
       job = AdminJob.create!(kind:, track:, show: track.show)
       opts = declared(params, include_missing: false)
-             .slice(:trim_start, :trim_end, :fade_in, :fade_out).to_json
+             .slice(:trim_start, :trim_end, :fade_in, :fade_out, :tail_pad).to_json
       Admin::TrimJob.perform_async(track.id, job.id, opts, apply)
       status 201
       { job_id: job.id }

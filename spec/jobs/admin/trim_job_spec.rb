@@ -52,6 +52,13 @@ RSpec.describe Admin::TrimJob do
       expect(probe_duration(paths[1])).to be_within(0.2).of(8.0)
     end
 
+    it "widens the tail clip by the requested pad" do
+      padded = { trim_start: 0.0, trim_end: 20.0, fade_in: 0.2, fade_out: 6.0, tail_pad: 4.5 }.to_json
+      described_class.new.perform(track.id, admin_job.id, padded, false)
+      paths = admin_job.reload.payload["audio_paths"]
+      expect(probe_duration(paths[1])).to be_within(0.2).of(10.5)
+    end
+
     it "keeps preview audio readable after the job completes" do
       described_class.new.perform(track.id, admin_job.id, opts, false)
       path = admin_job.reload.payload["audio_paths"].first
