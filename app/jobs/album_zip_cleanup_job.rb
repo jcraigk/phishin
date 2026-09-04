@@ -20,7 +20,7 @@ class AlbumZipCleanupJob
       break unless attachment
 
       byte_size = oldest_blob.byte_size
-      attachment.destroy
+      attachment.purge
       total_size -= byte_size
     end
   end

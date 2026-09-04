@@ -3,10 +3,19 @@ require "zip"
 class AlbumZipJob
   include Sidekiq::Job
 
+  sidekiq_options retry: 3
+
+  MIN_FREE_DISK = 25.gigabytes
+  RETRY_DELAY = 30.minutes
+  STALE_TEMPFILE_AGE = 1.hour
+
   attr_reader :show_id
 
   def perform(show_id)
     @show_id = show_id
+
+    sweep_stale_tempfiles
+    return self.class.perform_in(RETRY_DELAY, show_id) if disk_too_full?
 
     AlbumZipCleanupJob.new.perform
 
@@ -15,6 +24,24 @@ class AlbumZipJob
   end
 
   private
+
+  def disk_too_full?
+    free_disk_bytes < MIN_FREE_DISK
+  end
+
+  def free_disk_bytes
+    out, status = Open3.capture2("df", "-Pk", Dir.tmpdir)
+    return MIN_FREE_DISK unless status.success?
+    out.lines.last.split[3].to_i * 1024
+  end
+
+  def sweep_stale_tempfiles
+    Dir.glob(File.join(Dir.tmpdir, "album-zip-*")).each do |path|
+      File.delete(path) if File.file?(path) && File.mtime(path) < STALE_TEMPFILE_AGE.ago
+    rescue Errno::ENOENT
+      nil
+    end
+  end
 
   def create_and_attach_album_zip
     Tempfile.open([ "album-zip-#{show_id}", ".zip" ]) do |temp_zip| # rubocop:disable Metrics/BlockLength
