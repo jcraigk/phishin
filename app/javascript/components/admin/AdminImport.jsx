@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import MoonLoader from "react-spinners/MoonLoader";
 import { adminGet, adminPost, adminPatch, pollJob, isPollAbort } from "./adminApi";
 import { uploadFile, collectFiles, isStagingSource } from "./DirectUploader";
 
@@ -384,7 +385,9 @@ const AdminImport = () => {
           </header>
           <div className="admin-card-body admin-import-step">
             <progress max="100" value={jobStatus?.progress ?? 0} />
-            <p>{jobStatus?.message}</p>
+            <p className="admin-import-status">
+              <MoonLoader color="#c7c8ca" size={16} /> {jobStatus?.message || "Starting..."}
+            </p>
           </div>
         </section>
       )}
