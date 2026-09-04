@@ -14,9 +14,19 @@ class Admin::ArchiveItem
 
   attr_reader :identifier
 
+  def self.parse_identifier(input)
+    text = input.to_s.strip
+    text[%r{archive\.org/(?:details|download)/([A-Za-z0-9._-]+)}, 1] || text
+  end
+
   def initialize(identifier)
-    @identifier = identifier.to_s.strip
+    @identifier = self.class.parse_identifier(identifier)
     raise ArgumentError, "invalid archive.org identifier" unless @identifier.match?(IDENTIFIER)
+  end
+
+  def date
+    raw = metadata.dig("metadata", "date").to_s[/\d{4}-\d{2}-\d{2}/]
+    raw || identifier[/\d{4}-\d{2}-\d{2}/]
   end
 
   def files

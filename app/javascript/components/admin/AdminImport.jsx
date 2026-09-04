@@ -31,6 +31,7 @@ const AdminImport = () => {
   const [shows, setShows] = useState(null);
   const [step, setStep] = useState("pick");
   const [archiveItem, setArchiveItem] = useState("");
+  const [archiveUrl, setArchiveUrl] = useState("");
   const [files, setFiles] = useState([]);
   const [dragging, setDragging] = useState(false);
   const [taperNotes, setTaperNotes] = useState("");
@@ -100,6 +101,24 @@ const AdminImport = () => {
 
   const hasAudio = lookup?.exists && lookup.show.tracks_count > 0;
   const needsStaging = lookup && (!lookup.exists || lookup.show.tracks_count === 0);
+
+  // One paste does everything: the server reads the show date off the item,
+  // creates the draft if needed, and stages the lossless files in the
+  // background with the item description as taper notes.
+  const importFromArchive = async () => {
+    setError(null);
+    setStarting(true);
+    try {
+      const res = await adminPost("/shows/archive_import", { url: archiveUrl.trim() });
+      setDate(res.date);
+      setStep("ingesting");
+      setJobId(res.job_id);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setStarting(false);
+    }
+  };
 
   const proceedToShow = async () => {
     setError(null);
@@ -197,6 +216,29 @@ const AdminImport = () => {
               <h2>Open or Import a Show</h2>
             </header>
             <div className="admin-card-body">
+              <div className="admin-pick-row">
+                <label htmlFor="admin-import-archive-url">Archive.org URL</label>
+                <input
+                  id="admin-import-archive-url"
+                  type="text"
+                  className="admin-archive-url"
+                  placeholder="https://archive.org/details/..."
+                  value={archiveUrl}
+                  onChange={(e) => setArchiveUrl(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && archiveUrl.trim() !== "" && !starting) {
+                      importFromArchive();
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={importFromArchive}
+                  disabled={archiveUrl.trim() === "" || starting}
+                >
+                  <FontAwesomeIcon icon={faCloudArrowUp} /> Import
+                </button>
+              </div>
               <div className="admin-pick-row">
                 <label htmlFor="admin-import-date">Show date</label>
                 <input
