@@ -115,14 +115,20 @@ const ClipPlayer = ({ label, url, audioRef }) => {
   );
 };
 
+const DEFAULT_FADE_IN = 0.2;
+const DEFAULT_FADE_OUT = 6.0;
+const DEFAULT_DELAY = 2.5;
+
 const TrimPanel = ({ track, onClose }) => {
   const { reload } = useContext(EditorContext);
   const duration = (track.duration || 0) / 1000;
   const [trimStart, setTrimStart] = useState(0);
-  const [trimEnd, setTrimEnd] = useState(round(duration));
-  const [fadeIn, setFadeIn] = useState(0.2);
-  const [fadeOut, setFadeOut] = useState(6.0);
-  const [delay, setDelay] = useState(2.5);
+  const [trimEnd, setTrimEnd] = useState(() =>
+    round(Math.max(duration - (DEFAULT_DELAY + DEFAULT_FADE_OUT), 0))
+  );
+  const [fadeIn, setFadeIn] = useState(DEFAULT_FADE_IN);
+  const [fadeOut, setFadeOut] = useState(DEFAULT_FADE_OUT);
+  const [delay, setDelay] = useState(DEFAULT_DELAY);
   const [previewUrls, setPreviewUrls] = useState([null, null]);
   const [previewedAt, setPreviewedAt] = useState(null);
   const [playhead, setPlayhead] = useState(0);
@@ -286,29 +292,33 @@ const TrimPanel = ({ track, onClose }) => {
       />
 
       <div className="admin-audio-fields">
-        <TimeField
-          label="Trim start"
-          value={trimStart}
-          disabled={busy}
-          onCommit={(seconds) =>
-            setValue(setTrimStart, "head")(round(Math.min(Math.max(seconds, 0), trimEnd)))
-          }
-        />
-        <TimeField
-          label="Music end"
-          value={trimEnd}
-          disabled={busy}
-          onCommit={(seconds) =>
-            setValue(setTrimEnd, "tail")(
-              round(
-                Math.min(Math.max(seconds, trimStart), Math.max(duration - fadeTail, trimStart))
+        <div className="admin-audio-group">
+          <TimeField
+            label="Trim start"
+            value={trimStart}
+            disabled={busy}
+            onCommit={(seconds) =>
+              setValue(setTrimStart, "head")(round(Math.min(Math.max(seconds, 0), trimEnd)))
+            }
+          />
+          {numberField("Fade in", fadeIn, setFadeIn, "head")}
+        </div>
+        <div className="admin-audio-group">
+          <TimeField
+            label="Music end"
+            value={trimEnd}
+            disabled={busy}
+            onCommit={(seconds) =>
+              setValue(setTrimEnd, "tail")(
+                round(
+                  Math.min(Math.max(seconds, trimStart), Math.max(duration - fadeTail, trimStart))
+                )
               )
-            )
-          }
-        />
-        {numberField("Fade in", fadeIn, setFadeIn, "head")}
-        {numberField("Delay", delay, setDelay, "tail")}
-        {numberField("Fade out", fadeOut, setFadeOut, "tail")}
+            }
+          />
+          {numberField("Delay", delay, setDelay, "tail")}
+          {numberField("Fade out", fadeOut, setFadeOut, "tail")}
+        </div>
         <button
           type="button"
           className="admin-trim-play"
