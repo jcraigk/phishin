@@ -85,7 +85,11 @@ const AdminImport = () => {
     pollJob(jobId, { onUpdate: setJobStatus, signal: controller.signal })
       .then(() => navigate(`/admin/shows/${date}`))
       .catch((e) => {
-        if (!isPollAbort(e)) setError(e.message);
+        if (isPollAbort(e)) return;
+        setError(e.message);
+        setJobId(null);
+        setJobStatus(null);
+        setStep("pick");
       });
 
     return () => controller.abort();
@@ -384,6 +388,7 @@ const AdminImport = () => {
             <h2>Staging {date}</h2>
           </header>
           <div className="admin-card-body admin-import-step">
+            {jobStatus?.payload?.headline && <p>{jobStatus.payload.headline}</p>}
             <progress max="100" value={jobStatus?.progress ?? 0} />
             <p className="admin-import-status">
               <MoonLoader color="#c7c8ca" size={16} /> {jobStatus?.message || "Starting..."}

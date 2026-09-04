@@ -80,7 +80,7 @@ class Admin::ArchiveItem
     url = format(DOWNLOAD_URL, identifier, URI::RFC2396_PARSER.escape(name))
     tmp = "#{dest}.part"
     3.times do |attempt|
-      break if system("curl", "-sfL", "--retry", "2", "-o", tmp, url)
+      break if system("curl", "-sfL", "--globoff", "--retry", "2", "-o", tmp, url)
       if attempt == 2
         FileUtils.rm_f(tmp)
         raise DownloadError, "download of #{name} failed after 3 attempts"

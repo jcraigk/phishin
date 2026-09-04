@@ -61,7 +61,9 @@ class Admin::IngestStagingJob
   end
 
   def fetch_archive(identifier)
-    progress(5, "Fetching #{identifier} from archive.org")
+    @admin_job.payload["headline"] = "Downloading #{identifier} from archive.org"
+    @admin_job.save!
+    progress(5, "Fetching file list")
     item = Admin::ArchiveItem.new(identifier)
     item.download_to(@dir.incoming) do |name, index, total|
       pct = 5 + (index.to_f / total * 55).round
