@@ -14,6 +14,7 @@ class AudioEdgeTrimService < ApplicationService
   option :min_cut, default: -> { MIN_CUT_S }
   option :dry_run, default: -> { false }
   option :edge_previews, default: -> { false }
+  option :tail_pad, default: -> { PREVIEW_PAD_S }
   option :admin_job, default: -> { nil }
 
   MIN_CUT_S = 5.0
@@ -126,7 +127,7 @@ class AudioEdgeTrimService < ApplicationService
 
   def head_len = [ fade_in + PREVIEW_PAD_S, kept_s ].min
 
-  def tail_len = [ fade_out + PREVIEW_PAD_S, kept_s ].min
+  def tail_len = [ fade_out + tail_pad, kept_s ].min
 
   def render_edge_previews
     FileUtils.mkdir_p(OUTPUT_DIR)

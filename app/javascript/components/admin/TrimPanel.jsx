@@ -122,6 +122,7 @@ const TrimPanel = ({ track, onClose }) => {
   const [trimEnd, setTrimEnd] = useState(round(duration));
   const [fadeIn, setFadeIn] = useState(0.2);
   const [fadeOut, setFadeOut] = useState(6.0);
+  const [delay, setDelay] = useState(2.5);
   const [previewUrls, setPreviewUrls] = useState([null, null]);
   const [previewedAt, setPreviewedAt] = useState(null);
   const [playhead, setPlayhead] = useState(0);
@@ -155,10 +156,21 @@ const TrimPanel = ({ track, onClose }) => {
     return () => window.removeEventListener("keydown", onKeyDown, true);
   }, []);
 
-  const values = { trim_start: trimStart, trim_end: trimEnd, fade_in: fadeIn, fade_out: fadeOut };
+  // The end marker is where the music stops; the committed audio keeps `delay`
+  // seconds beyond it and then fades for `fadeOut`, so the real trim point
+  // sent to the server sits delay + fadeOut past the marker.
+  const fadeTail = delay + fadeOut;
+  const trimEndParam = round(Math.min(trimEnd + fadeTail, duration));
+  const values = {
+    trim_start: trimStart,
+    trim_end: trimEndParam,
+    fade_in: fadeIn,
+    fade_out: fadeOut,
+    tail_pad: round(delay + 2),
+  };
   const signature = JSON.stringify(values);
   const previewCurrent = previewedAt === signature;
-  const cutSeconds = trimStart + Math.max(duration - trimEnd, 0);
+  const cutSeconds = trimStart + Math.max(duration - trimEndParam, 0);
 
   const clearPreview = () => {
     setPreviewUrls([null, null]);
@@ -175,7 +187,10 @@ const TrimPanel = ({ track, onClose }) => {
 
   const moveMarker = (name, seconds) => {
     if (name === "start") setValue(setTrimStart, "head")(round(Math.min(seconds, trimEnd)));
-    else setValue(setTrimEnd, "tail")(round(Math.max(seconds, trimStart)));
+    else
+      setValue(setTrimEnd, "tail")(
+        round(Math.min(Math.max(seconds, trimStart), Math.max(duration - fadeTail, trimStart)))
+      );
   };
 
   const modeRef = useRef("preview");
@@ -280,14 +295,19 @@ const TrimPanel = ({ track, onClose }) => {
           }
         />
         <TimeField
-          label="Trim end"
+          label="Music end"
           value={trimEnd}
           disabled={busy}
           onCommit={(seconds) =>
-            setValue(setTrimEnd, "tail")(round(Math.min(Math.max(seconds, trimStart), duration)))
+            setValue(setTrimEnd, "tail")(
+              round(
+                Math.min(Math.max(seconds, trimStart), Math.max(duration - fadeTail, trimStart))
+              )
+            )
           }
         />
         {numberField("Fade in", fadeIn, setFadeIn, "head")}
+        {numberField("Delay", delay, setDelay, "tail")}
         {numberField("Fade out", fadeOut, setFadeOut, "tail")}
         <button
           type="button"
@@ -314,7 +334,7 @@ const TrimPanel = ({ track, onClose }) => {
       {trimStart > 0 && (
         <ClipPlayer label="Fade in" url={previewUrls[0]} audioRef={headPreviewRef} />
       )}
-      {trimEnd < duration - 0.1 && (
+      {trimEndParam < duration - 0.1 && (
         <ClipPlayer label="Fade out" url={previewUrls[1]} audioRef={tailPreviewRef} />
       )}
 

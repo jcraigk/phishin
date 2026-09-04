@@ -25,6 +25,7 @@ module ApiV2::Helpers::SharedParams
     requires :trim_end, type: Float
     optional :fade_in, type: Float, default: 0.2
     optional :fade_out, type: Float, default: 6.0
+    optional :tail_pad, type: Float, default: 2.0
   end
 
   params :shift_boundary_params do
