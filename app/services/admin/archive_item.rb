@@ -51,7 +51,8 @@ class Admin::ArchiveItem
 
   def download_to(dir)
     FileUtils.mkdir_p(dir)
-    files.map do |file|
+    files.each_with_index.map do |file, index|
+      yield(file["name"], index, files.size) if block_given?
       dest = File.join(dir, File.basename(file["name"]))
       fetch(file["name"], dest)
       dest

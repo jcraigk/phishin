@@ -358,6 +358,13 @@
   color: var(--error-red);
 }
 
+.admin-import-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-gray);
+}
+
 .admin-import-step {
   max-width: 40rem;
 

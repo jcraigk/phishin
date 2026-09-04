@@ -63,7 +63,10 @@ class Admin::IngestStagingJob
   def fetch_archive(identifier)
     progress(5, "Fetching #{identifier} from archive.org")
     item = Admin::ArchiveItem.new(identifier)
-    item.download_to(@dir.incoming)
+    item.download_to(@dir.incoming) do |name, index, total|
+      pct = 5 + (index.to_f / total * 55).round
+      progress(pct, "Downloading #{index + 1}/#{total}: #{File.basename(name)}")
+    end
     @show.update!(staging_source_url: item.details_url)
     item.description
   end
