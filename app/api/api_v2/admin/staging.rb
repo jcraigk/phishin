@@ -15,12 +15,13 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
         item = Admin::ArchiveItem.new(params[:url])
         date = item.date
         error!({ message: "Could not find a date on that archive.org item" }, 422) if date.blank?
-        show = Show.find_by(date:) ||
-               Show.create!(date:, published: false, audio_status: "missing")
+        show = Show.find_by(date:)
+        created = show.nil?
+        show ||= Show.create!(date:, published: false, audio_status: "missing")
         error!({ message: "Show #{date} is already published" }, 422) if show.published?
         error!({ message: "Show #{date} already has tracks" }, 422) if show.tracks.exists?
         job = AdminJob.create!(kind: "ingest", show:)
-        Admin::IngestStagingJob.perform_async(show.id, job.id, [], item.identifier)
+        Admin::IngestStagingJob.perform_async(show.id, job.id, [], item.identifier, created)
         status 201
         { job_id: job.id, date: }
       rescue Admin::ArchiveItem::NotFoundError, ArgumentError => e
