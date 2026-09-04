@@ -13,9 +13,11 @@ class AudioEdgeTrimService < ApplicationService
   option :fade_out, default: -> { 6.0 }
   option :min_cut, default: -> { MIN_CUT_S }
   option :dry_run, default: -> { false }
+  option :edge_previews, default: -> { false }
   option :admin_job, default: -> { nil }
 
   MIN_CUT_S = 5.0
+  PREVIEW_PAD_S = 2.0
   OUTPUT_DIR = Rails.root.join("tmp/audio_trims")
 
   class Error < StandardError; end
@@ -42,7 +44,11 @@ class AudioEdgeTrimService < ApplicationService
 
     download_original
     ensure_meaningful_cut
-    render_trimmed
+    if dry_run && edge_previews
+      render_edge_previews
+    else
+      render_trimmed
+    end
 
     unless dry_run
       backup_original
@@ -110,6 +116,35 @@ class AudioEdgeTrimService < ApplicationService
     render_via_lame(output_path, [ "-i", @original.path, "-af", filters.join(",") ])
   end
 
+  def head_path
+    @head_path ||= OUTPUT_DIR.join("#{track.show.date}_#{track.slug}_trim_head.mp3")
+  end
+
+  def tail_path
+    @tail_path ||= OUTPUT_DIR.join("#{track.show.date}_#{track.slug}_trim_tail.mp3")
+  end
+
+  def head_len = [ fade_in + PREVIEW_PAD_S, kept_s ].min
+
+  def tail_len = [ fade_out + PREVIEW_PAD_S, kept_s ].min
+
+  def render_edge_previews
+    FileUtils.mkdir_p(OUTPUT_DIR)
+    render_preview(filters + TrackSplitService.filters(start_s: 0.0, end_s: head_len), head_path)
+    render_preview(
+      filters + TrackSplitService.filters(start_s: [ kept_s - tail_len, 0.0 ].max),
+      tail_path
+    )
+  end
+
+  def render_preview(chain, out_path)
+    _out, err, status = Open3.capture3(
+      "ffmpeg", "-y", "-v", "error", "-i", @original.path,
+      "-af", chain.join(","), "-b:a", "192k", out_path.to_s
+    )
+    raise Error, "ffmpeg failed for #{label}: #{err}" unless status.success?
+  end
+
   def backup_original
     @backup_path = AudioBackup.store_file(@original.path, track:, operation: "trim")
   end
@@ -134,15 +169,18 @@ class AudioEdgeTrimService < ApplicationService
   def kept_s = kept_end - trim_start
 
   def result
-    {
+    base = {
       track_id: track.id,
       label:,
-      output_path: output_path.to_s,
-      backup_path: @backup_path&.to_s,
       old_duration_s: duration_s.round(1),
       kept_s: kept_s.round(1),
       cut_s: cut_s.round(1),
       applied: !dry_run
     }
+    if dry_run && edge_previews
+      base.merge(preview_paths: [ head_path.to_s, tail_path.to_s ])
+    else
+      base.merge(output_path: output_path.to_s, backup_path: @backup_path&.to_s)
+    end
   end
 end
