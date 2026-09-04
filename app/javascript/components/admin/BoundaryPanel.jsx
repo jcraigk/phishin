@@ -61,7 +61,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
     setDeltaS(round(value));
     setError(null);
     cancelledRef.current = false;
-    clearPreview();
+    setPreviewedAt(null);
   };
 
   const secondsAt = (clientX) => {
