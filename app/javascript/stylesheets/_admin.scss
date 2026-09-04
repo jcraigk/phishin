@@ -2007,6 +2007,14 @@
     background-color: var(--control-gray);
     color: var(--list-item-link-color);
   }
+
+  .admin-archive-url {
+    width: 26rem;
+  }
+
+  + .admin-pick-row {
+    margin-top: 0.75rem;
+  }
 }
 
 .admin-pick-note {

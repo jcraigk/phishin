@@ -7,6 +7,26 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
 
   namespace :admin do
     resource :shows do
+      desc "Ingest an archive.org item, deriving the show date from it", hidden: true
+      params do
+        requires :url, type: String
+      end
+      post "archive_import" do
+        item = Admin::ArchiveItem.new(params[:url])
+        date = item.date
+        error!({ message: "Could not find a date on that archive.org item" }, 422) if date.blank?
+        show = Show.find_by(date:) ||
+               Show.create!(date:, published: false, audio_status: "missing")
+        error!({ message: "Show #{date} is already published" }, 422) if show.published?
+        error!({ message: "Show #{date} already has tracks" }, 422) if show.tracks.exists?
+        job = AdminJob.create!(kind: "ingest", show:)
+        Admin::IngestStagingJob.perform_async(show.id, job.id, [], item.identifier)
+        status 201
+        { job_id: job.id, date: }
+      rescue Admin::ArchiveItem::NotFoundError, ArgumentError => e
+        error!({ message: e.message }, 422)
+      end
+
       desc "Ingest a show into lossless staging", hidden: true
       params do
         optional :signed_ids, type: Array[String], default: []
