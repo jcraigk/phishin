@@ -53,6 +53,68 @@ const TimeField = ({ label, value, onCommit, disabled }) => {
   );
 };
 
+const ClipPlayer = ({ label, url, audioRef }) => {
+  const [playing, setPlaying] = useState(false);
+  const [time, setTime] = useState(0);
+  const [clipDuration, setClipDuration] = useState(null);
+
+  if (!url) return null;
+
+  return (
+    <div className="admin-preview-player">
+      <audio
+        src={url}
+        ref={audioRef}
+        onTimeUpdate={(e) => setTime(e.target.currentTime)}
+        onLoadedMetadata={(e) => setClipDuration(e.target.duration)}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+      />
+      <button
+        type="button"
+        className="admin-trim-play"
+        onClick={() => {
+          const audio = audioRef.current;
+          if (!audio) return;
+          if (audio.paused) audio.play();
+          else audio.pause();
+        }}
+      >
+        <FontAwesomeIcon icon={playing ? faPause : faPlay} />
+      </button>
+      <button
+        type="button"
+        className="admin-trim-play"
+        onClick={() => {
+          const audio = audioRef.current;
+          if (!audio) return;
+          audio.currentTime = 0;
+          audio.play();
+        }}
+      >
+        <FontAwesomeIcon icon={faArrowRotateLeft} />
+      </button>
+      <div
+        className="admin-preview-scrubber"
+        role="button"
+        onClick={(e) => {
+          const audio = audioRef.current;
+          if (!audio || !clipDuration) return;
+          const rect = e.currentTarget.getBoundingClientRect();
+          const fraction = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+          audio.currentTime = fraction * clipDuration;
+        }}
+      >
+        <div
+          className="admin-preview-scrubber-fill"
+          style={{ width: `${clipDuration ? Math.min(time / clipDuration, 1) * 100 : 0}%` }}
+        />
+      </div>
+      <span className="admin-preview-tag">{label}</span>
+    </div>
+  );
+};
+
 const TrimPanel = ({ track, onClose }) => {
   const { reload } = useContext(EditorContext);
   const duration = (track.duration || 0) / 1000;
@@ -60,15 +122,14 @@ const TrimPanel = ({ track, onClose }) => {
   const [trimEnd, setTrimEnd] = useState(round(duration));
   const [fadeIn, setFadeIn] = useState(0.2);
   const [fadeOut, setFadeOut] = useState(6.0);
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const [previewUrls, setPreviewUrls] = useState([null, null]);
   const [previewedAt, setPreviewedAt] = useState(null);
   const [playhead, setPlayhead] = useState(0);
   const [originalPlaying, setOriginalPlaying] = useState(false);
-  const [previewPlaying, setPreviewPlaying] = useState(false);
-  const [previewTime, setPreviewTime] = useState(0);
-  const [previewDuration, setPreviewDuration] = useState(null);
   const audioRef = useRef(null);
-  const previewAudioRef = useRef(null);
+  const headPreviewRef = useRef(null);
+  const tailPreviewRef = useRef(null);
+  const lastEditedRef = useRef("tail");
   const { run, cancel, busy, status, error, setError } = useJobRunner();
 
   useEffect(() => {
@@ -77,7 +138,11 @@ const TrimPanel = ({ track, onClose }) => {
       if (e.key !== " " || e.shiftKey) return;
       const active = document.activeElement;
       if (["INPUT", "TEXTAREA", "SELECT"].includes(active?.tagName) || active?.isContentEditable) return;
-      const players = [previewAudioRef.current, audioRef.current].filter(Boolean);
+      const players = [
+        headPreviewRef.current,
+        tailPreviewRef.current,
+        audioRef.current,
+      ].filter(Boolean);
       if (players.length === 0) return;
       const target =
         players.find((p) => !p.paused) || players.find((p) => p.currentTime > 0) || players[0];
@@ -93,51 +158,57 @@ const TrimPanel = ({ track, onClose }) => {
   const values = { trim_start: trimStart, trim_end: trimEnd, fade_in: fadeIn, fade_out: fadeOut };
   const signature = JSON.stringify(values);
   const previewCurrent = previewedAt === signature;
+  const cutSeconds = trimStart + Math.max(duration - trimEnd, 0);
 
   const clearPreview = () => {
-    setPreviewUrl(null);
+    setPreviewUrls([null, null]);
     setPreviewedAt(null);
   };
 
-  const setValue = (setter) => (value) => {
+  const setValue = (setter, side) => (value) => {
     setter(value);
+    if (side) lastEditedRef.current = side;
     setError(null);
     cancelledRef.current = false;
     clearPreview();
   };
 
   const moveMarker = (name, seconds) => {
-    if (name === "start") setValue(setTrimStart)(round(Math.min(seconds, trimEnd)));
-    else setValue(setTrimEnd)(round(Math.max(seconds, trimStart)));
+    if (name === "start") setValue(setTrimStart, "head")(round(Math.min(seconds, trimEnd)));
+    else setValue(setTrimEnd, "tail")(round(Math.max(seconds, trimStart)));
   };
 
   const modeRef = useRef("preview");
 
-  const autoPlayRef = useRef(false);
+  const autoPlayRef = useRef(null);
 
   const renderPreview = () => {
     modeRef.current = "preview";
     return run(
       () => adminPost(`/tracks/${track.id}/trim_preview`, values),
       async (job) => {
-        autoPlayRef.current = true;
-        setPreviewUrl(await fetchJobAudio(job.id));
+        const [head, tail] = await Promise.all([
+          fetchJobAudio(job.id, 0),
+          fetchJobAudio(job.id, 1),
+        ]);
+        autoPlayRef.current = lastEditedRef.current;
+        setPreviewUrls([head, tail]);
         setPreviewedAt(signature);
       }
     );
   };
 
   useEffect(() => {
-    if (!previewUrl) return undefined;
-    setPreviewTime(0);
-    setPreviewDuration(null);
-    if (autoPlayRef.current) {
-      autoPlayRef.current = false;
+    if (!previewUrls[0]) return undefined;
+    const side = autoPlayRef.current;
+    autoPlayRef.current = null;
+    if (side) {
       if (audioRef.current) audioRef.current.pause();
-      if (previewAudioRef.current) previewAudioRef.current.play();
+      const target = side === "head" ? headPreviewRef.current : tailPreviewRef.current;
+      if (target) target.play();
     }
-    return () => URL.revokeObjectURL(previewUrl);
-  }, [previewUrl]);
+    return () => previewUrls.forEach((url) => url && URL.revokeObjectURL(url));
+  }, [previewUrls]);
 
   const initialSignatureRef = useRef(signature);
   const dirtyRef = useRef(false);
@@ -149,7 +220,7 @@ const TrimPanel = ({ track, onClose }) => {
       dirtyRef.current = true;
     }
     if (busy || previewCurrent || error || cancelledRef.current) return undefined;
-    if (trimStart + Math.max(duration - trimEnd, 0) < 0.5) return undefined;
+    if (cutSeconds < 0.5) return undefined;
     const timer = setTimeout(renderPreview, 800);
     return () => clearTimeout(timer);
   }, [signature, busy, previewCurrent, error]);
@@ -166,7 +237,7 @@ const TrimPanel = ({ track, onClose }) => {
     );
   };
 
-  const numberField = (label, value, setter, extra = {}) => (
+  const numberField = (label, value, setter, side, extra = {}) => (
     <label className="admin-audio-field is-narrow">
       <span>{label}</span>
       <input
@@ -175,7 +246,7 @@ const TrimPanel = ({ track, onClose }) => {
         min="0"
         value={value}
         disabled={busy}
-        onChange={(e) => setValue(setter)(Number(e.target.value))}
+        onChange={(e) => setValue(setter, side)(Number(e.target.value))}
         {...extra}
       />
     </label>
@@ -205,7 +276,7 @@ const TrimPanel = ({ track, onClose }) => {
           value={trimStart}
           disabled={busy}
           onCommit={(seconds) =>
-            setValue(setTrimStart)(round(Math.min(Math.max(seconds, 0), trimEnd)))
+            setValue(setTrimStart, "head")(round(Math.min(Math.max(seconds, 0), trimEnd)))
           }
         />
         <TimeField
@@ -213,11 +284,11 @@ const TrimPanel = ({ track, onClose }) => {
           value={trimEnd}
           disabled={busy}
           onCommit={(seconds) =>
-            setValue(setTrimEnd)(round(Math.min(Math.max(seconds, trimStart), duration)))
+            setValue(setTrimEnd, "tail")(round(Math.min(Math.max(seconds, trimStart), duration)))
           }
         />
-        {numberField("Fade in", fadeIn, setFadeIn)}
-        {numberField("Fade out", fadeOut, setFadeOut)}
+        {numberField("Fade in", fadeIn, setFadeIn, "head")}
+        {numberField("Fade out", fadeOut, setFadeOut, "tail")}
         <button
           type="button"
           className="admin-trim-play"
@@ -240,66 +311,11 @@ const TrimPanel = ({ track, onClose }) => {
         onPause={() => setOriginalPlaying(false)}
       />
 
-      {previewUrl && (
-        <div className="admin-preview-player">
-          <audio
-            src={previewUrl}
-            ref={previewAudioRef}
-            onTimeUpdate={(e) => setPreviewTime(e.target.currentTime)}
-            onLoadedMetadata={(e) => setPreviewDuration(e.target.duration)}
-            onPlay={() => setPreviewPlaying(true)}
-            onPause={() => setPreviewPlaying(false)}
-          />
-          <button
-            type="button"
-            className="admin-trim-play"
-            onClick={() => {
-              const audio = previewAudioRef.current;
-              if (!audio) return;
-              if (audio.paused) audio.play();
-              else audio.pause();
-            }}
-          >
-            <FontAwesomeIcon icon={previewPlaying ? faPause : faPlay} />
-          </button>
-          <button
-            type="button"
-            className="admin-trim-play"
-            onClick={() => {
-              const audio = previewAudioRef.current;
-              if (!audio) return;
-              audio.currentTime = 0;
-              audio.play();
-            }}
-          >
-            <FontAwesomeIcon icon={faArrowRotateLeft} />
-          </button>
-          <div
-            className="admin-preview-scrubber"
-            role="button"
-            onClick={(e) => {
-              const audio = previewAudioRef.current;
-              if (!audio || !previewDuration) return;
-              const rect = e.currentTarget.getBoundingClientRect();
-              const fraction = Math.min(
-                Math.max((e.clientX - rect.left) / rect.width, 0),
-                1
-              );
-              audio.currentTime = fraction * previewDuration;
-            }}
-          >
-            <div
-              className="admin-preview-scrubber-fill"
-              style={{
-                width: `${
-                  previewDuration
-                    ? Math.min(previewTime / previewDuration, 1) * 100
-                    : 0
-                }%`,
-              }}
-            />
-          </div>
-        </div>
+      {trimStart > 0 && (
+        <ClipPlayer label="Fade in" url={previewUrls[0]} audioRef={headPreviewRef} />
+      )}
+      {trimEnd < duration - 0.1 && (
+        <ClipPlayer label="Fade out" url={previewUrls[1]} audioRef={tailPreviewRef} />
       )}
 
       <div className="admin-audio-actions">
@@ -320,6 +336,11 @@ const TrimPanel = ({ track, onClose }) => {
           <span className="admin-audio-status">
             <MoonLoader color="#c7c8ca" size={14} />{" "}
             {modeRef.current === "apply" ? "Applying..." : "Rendering..."}
+          </span>
+        )}
+        {cutSeconds > 0 && cutSeconds < 0.5 && (
+          <span className="admin-audio-status">
+            Only {cutSeconds.toFixed(2)}s would be cut; at least 0.5s is required.
           </span>
         )}
       </div>

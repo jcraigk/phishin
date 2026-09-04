@@ -17,10 +17,17 @@ class Admin::TrimJob
         fade_out: opts[:fade_out].to_f,
         min_cut: MIN_CUT_S,
         dry_run: !apply,
+        edge_previews: !apply,
         admin_job:
       )
       admin_job.payload["audio_paths"] =
-        [ AdminJobAudio.store(admin_job, result[:output_path]) ]
+        if apply
+          [ AdminJobAudio.store(admin_job, result[:output_path]) ]
+        else
+          result[:preview_paths].each_with_index.map do |path, index|
+            AdminJobAudio.store(admin_job, path, index:)
+          end
+        end
       admin_job.save!
     end
   end
