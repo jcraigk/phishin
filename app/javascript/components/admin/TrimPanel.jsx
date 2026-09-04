@@ -183,12 +183,14 @@ const TrimPanel = ({ track, onClose }) => {
     setPreviewedAt(null);
   };
 
+  // Stale clips stay visible and playable while a replacement renders; only
+  // previewedAt resets so Apply stays disabled until the new render lands.
   const setValue = (setter, side) => (value) => {
     setter(value);
     if (side) lastEditedRef.current = side;
     setError(null);
     cancelledRef.current = false;
-    clearPreview();
+    setPreviewedAt(null);
   };
 
   const moveMarker = (name, seconds) => {
