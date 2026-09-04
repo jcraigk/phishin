@@ -82,7 +82,13 @@ const AdminImport = () => {
     if (!jobId) return undefined;
     const controller = new AbortController();
 
-    pollJob(jobId, { onUpdate: setJobStatus, signal: controller.signal })
+    // Archive downloads can run far past the default poll cap; give staging
+    // ingests two hours before declaring the job lost.
+    pollJob(jobId, {
+      onUpdate: setJobStatus,
+      signal: controller.signal,
+      timeoutMs: 2 * 60 * 60 * 1000,
+    })
       .then(() => navigate(`/admin/shows/${date}`))
       .catch((e) => {
         if (isPollAbort(e)) return;
