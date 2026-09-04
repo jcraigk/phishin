@@ -1,6 +1,8 @@
 class Admin::IngestStagingJob
   include Sidekiq::Job
 
+  sidekiq_options retry: 0
+
   AUDIO_EXTENSIONS = StagedSource::FORMATS.freeze
   ARCHIVE_EXTENSIONS = %w[zip rar 7z tar tgz].freeze
   PROXY_BITRATE = "128k".freeze
@@ -8,11 +10,22 @@ class Admin::IngestStagingJob
   class Error < StandardError; end
   class NoAudioError < Error; end
 
-  def perform(show_id, admin_job_id, signed_ids, archive_item)
+  def perform(show_id, admin_job_id, signed_ids, archive_item, discard_show_on_failure = false)
     @show = Show.find(show_id)
     @admin_job = AdminJob.find(admin_job_id)
     @dir = Admin::StagingDir.new(@show)
 
+    begin
+      run_ingest(signed_ids, archive_item)
+    rescue StandardError
+      discard_empty_draft if discard_show_on_failure
+      raise
+    end
+  end
+
+  private
+
+  def run_ingest(signed_ids, archive_item)
     @admin_job.run! do
       raise Error, "Show #{@show.date} already has tracks" if @show.tracks.exists?
       @show.staged_tracks.destroy_all
@@ -32,7 +45,16 @@ class Admin::IngestStagingJob
     end
   end
 
-  private
+  def discard_empty_draft
+    @show.reload
+    return if @show.published? || @show.tracks.exists?
+    @admin_job.update!(show_id: nil)
+    @show.staged_tracks.destroy_all
+    @show.staged_sources.destroy_all
+    @show.destroy!
+  rescue StandardError
+    nil
+  end
 
   def progress(pct, message)
     @admin_job.update!(progress: pct, message:)
