@@ -3,7 +3,7 @@ class Admin::ArchiveItem
   DOWNLOAD_URL = "https://archive.org/download/%s/%s".freeze
   DETAILS_URL = "https://archive.org/details/%s".freeze
 
-  LOSSLESS = [ "Flac", "Shorten", "WAVE", "AIFF" ].freeze
+  LOSSLESS = [ "Flac", "24bit Flac", "Shorten", "WAVE", "AIFF", "Apple Lossless Audio" ].freeze
   LOSSY = [ "VBR MP3", "MP3", "64Kbps MP3", "128Kbps MP3" ].freeze
 
   IDENTIFIER = /\A[A-Za-z0-9._-]+\z/
