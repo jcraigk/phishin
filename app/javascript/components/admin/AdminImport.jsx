@@ -295,7 +295,11 @@ const AdminImport = () => {
                       </span>
                       <span className="admin-show-status">
                         {!show.published && <span className="admin-pill">draft</span>}
-                        <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
+                        {show.staged && show.tracks_count === 0 ? (
+                          <span className="admin-pill is-staged">staged</span>
+                        ) : (
+                          <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
+                        )}
                       </span>
                       <span className="admin-show-meta">
                         {show.tracks_count} {show.tracks_count === 1 ? "track" : "tracks"}

@@ -146,6 +146,7 @@ module ApiV2::Helpers::AdminHelper
       venue_slug: show.venue&.slug,
       published: show.published,
       audio_status: show.audio_status,
+      staged: show.staged_sources.exists?,
       tracks_count: show.tracks.count,
       duration: show.duration,
       cover_art_url: show.cover_art_urls[:small],

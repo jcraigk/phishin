@@ -88,7 +88,11 @@ const DraftRow = ({ show }) => {
     <li className="admin-draft-row" onClick={() => navigate(`/admin/shows/${show.date}`)}>
       <Link className="admin-draft-date" to={`/admin/shows/${show.date}`}>{show.date}</Link>
       <span className="admin-draft-venue">{show.venue_name || "Venue not set"}</span>
-      <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
+      {show.staged && show.tracks_count === 0 ? (
+        <span className="admin-pill is-staged">staged</span>
+      ) : (
+        <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
+      )}
       <span className="admin-draft-tracks">
         {show.tracks_count} {show.tracks_count === 1 ? "track" : "tracks"}
       </span>

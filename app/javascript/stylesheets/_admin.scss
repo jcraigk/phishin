@@ -307,6 +307,11 @@
     background-color: var(--bg-red);
     color: var(--error-red);
   }
+
+  &.is-staged {
+    background-color: rgba(72, 199, 116, 0.18);
+    color: #6fdc95;
+  }
 }
 
 .admin-draft-list {
