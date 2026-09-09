@@ -31,6 +31,12 @@ RSpec.describe GuestTagSyncService do
     expect { described_class.new(date: "1995-10-31", dry_run: false).call }.not_to change(TrackTag, :count)
   end
 
+  it "skips tracks that already have a Guest tag with different wording" do
+    create(:track_tag, track:, tag:, notes: "David Grippo on saxophone")
+
+    expect { service.call }.not_to change(TrackTag, :count)
+  end
+
   describe "band members are not guests" do
     [
       "Fish on trombone",

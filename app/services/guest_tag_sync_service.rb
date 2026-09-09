@@ -136,7 +136,7 @@ class GuestTagSyncService < ApplicationService
     track = find_track(show, song)
     return @unmatched << "#{show.date}: #{song} - #{notes}" if track.blank?
 
-    if TrackTag.exists?(track:, tag: guest_tag, notes:)
+    if TrackTag.exists?(track:, tag: guest_tag)
       @existing << "#{show.date}: #{track.title}"
       return
     end
