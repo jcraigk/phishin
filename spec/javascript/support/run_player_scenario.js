@@ -156,6 +156,93 @@ const scenarios = {
     streamElement().emit("timeupdate");
     return { log, events };
   },
+
+  async "backend streams an undecoded track"() {
+    const backend = new WebAudioBackend();
+    const loading = [];
+    backend.onLoading = (value) => loading.push(value);
+    backend.load([{ url: "a.mp3", offset: 0, end: null }]);
+    backend.play(0, 12);
+    const el = streamElement();
+    el.readyState = 1;
+    el.emit("loadedmetadata");
+    el.currentTime = 12;
+    el.emit("playing");
+    el.currentTime = 15;
+    return { log, loading, position: backend.position(), playing: backend.isPlaying() };
+  },
+
+  async "backend hands off to the buffer when decoded"() {
+    const backend = new WebAudioBackend();
+    backend.load([{ url: "a.mp3", offset: 0, end: null }, { url: "b.mp3", offset: 0, end: null }]);
+    const playing = backend.play(0, 0);
+    const el = streamElement();
+    el.readyState = 1;
+    el.emit("loadedmetadata");
+    el.emit("playing");
+    backend.ctx.currentTime = 2;
+    el.currentTime = 7;
+    releaseFetch();
+    await playing;
+    const afterHandoff = { streaming: backend.current.streaming === true, position: round(backend.position()) };
+    await sleep(250);
+    return { log, afterHandoff, pausedLater: el.paused };
+  },
+
+  async "backend skips the element for a decoded track"() {
+    const backend = new WebAudioBackend();
+    backend.load([{ url: "a.mp3", offset: 0, end: null }]);
+    releaseFetch();
+    await backend.play(0, 0);
+    const trackPlays = () => log.filter((entry) => entry[0] === "element.play" && entry[1] === "a.mp3").length;
+    const playsBefore = trackPlays();
+    await backend.play(0, 100);
+    const playsAfter = trackPlays();
+    return { log, playsBefore, playsAfter };
+  },
+
+  async "backend pause while streaming stops the element"() {
+    const backend = new WebAudioBackend();
+    backend.load([{ url: "a.mp3", offset: 0, end: null }]);
+    backend.play(0, 0);
+    backend.pause();
+    return { log, paused: streamElement().paused, position: backend.position() };
+  },
+
+  async "backend advances when the element ends before decode"() {
+    const backend = new WebAudioBackend();
+    const advances = [];
+    backend.onAdvance = (index) => advances.push(index);
+    backend.load([{ url: "a.mp3", offset: 0, end: null }, { url: "b.mp3", offset: 3, end: null }]);
+    backend.play(0, 0);
+    streamElement().emit("ended");
+    return { log, advances };
+  },
+
+  async "backend ends a streamed excerpt at its end"() {
+    const backend = new WebAudioBackend();
+    const advances = [];
+    backend.onAdvance = (index) => advances.push(index);
+    backend.load([{ url: "a.mp3", offset: 0, end: 50 }, { url: "b.mp3", offset: 0, end: null }]);
+    backend.play(0, 0);
+    const el = streamElement();
+    el.currentTime = 49;
+    el.emit("timeupdate");
+    const advancesBeforeEnd = advances.slice();
+    el.currentTime = 50.2;
+    el.emit("timeupdate");
+    return { log, advancesBeforeEnd, advances };
+  },
+
+  async "backend reports an element error"() {
+    const backend = new WebAudioBackend();
+    const errors = [];
+    backend.onError = (error) => errors.push(error.message);
+    backend.load([{ url: "a.mp3", offset: 0, end: null }]);
+    backend.play(0, 0);
+    streamElement().emit("error");
+    return { log, errors, playing: backend.isPlaying() };
+  },
 };
 
 const run = scenarios[scenarioName];
@@ -163,4 +250,7 @@ if (!run) {
   console.error(`unknown scenario: ${scenarioName}`);
   process.exit(1);
 }
-run().then((result) => console.log(JSON.stringify(result)));
+run().then((result) => console.log(JSON.stringify(result))).catch((error) => {
+  console.error(error.stack);
+  process.exit(1);
+});

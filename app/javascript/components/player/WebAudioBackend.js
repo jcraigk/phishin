@@ -1,15 +1,21 @@
 import { SessionKeeper } from "./SessionKeeper";
+import { ElementStream } from "./ElementStream";
+import { handoffPlan } from "./handoffPlan";
 
-// Decodes the current and next track only and starts the next
-// AudioBufferSourceNode on the AudioContext clock at the exact moment the
-// current one ends, so joints are sample-accurate and unaffected by timer
-// throttling in background tabs.
+// Plays decoded buffers on the AudioContext clock and starts the next track's
+// AudioBufferSourceNode at the exact moment the current one ends, so joints are
+// sample-accurate and unaffected by timer throttling in background tabs. A
+// track that has not been decoded yet streams through an audio element first
+// so playback starts before the whole file arrives; the decoded buffer takes
+// over with a short crossfade once it lands.
 export class WebAudioBackend {
   constructor() {
     this.ctx = null;
     this.keeper = new SessionKeeper();
+    this.stream = null;
     this.tracks = [];
     this.buffers = new Map();
+    this.decoded = new Map();
     this.current = null;
     this.scheduled = null;
     this.playToken = 0;
@@ -23,6 +29,7 @@ export class WebAudioBackend {
     this.stopSources();
     this.tracks = tracks;
     this.buffers.clear();
+    this.decoded.clear();
   }
 
   context() {
@@ -38,6 +45,36 @@ export class WebAudioBackend {
     return this.ctx;
   }
 
+  streamer() {
+    if (!this.stream) {
+      const stream = new ElementStream(this.context());
+      stream.onPlaying = () => {
+        if (this.current?.streaming) this.onLoading(false);
+      };
+      stream.onWaiting = () => {
+        if (this.current?.streaming) this.onLoading(true);
+      };
+      stream.onTimeUpdate = (seconds) => {
+        const playing = this.current;
+        if (!playing?.streaming) return;
+        const { end } = this.tracks[playing.index];
+        if (end && seconds >= end) this.handleEnded(playing);
+      };
+      stream.onEnded = () => {
+        if (this.current?.streaming) this.handleEnded(this.current);
+      };
+      stream.onError = (error) => {
+        if (!this.current?.streaming) return;
+        this.playToken++;
+        this.stopSources();
+        this.onLoading(false);
+        this.onError(error);
+      };
+      this.stream = stream;
+    }
+    return this.stream;
+  }
+
   buffer(index) {
     if (!this.buffers.has(index)) {
       const { url } = this.tracks[index];
@@ -46,8 +83,14 @@ export class WebAudioBackend {
           if (!response.ok) throw new Error(`Failed to load ${url} (${response.status})`);
           return response.arrayBuffer();
         })
-        .then((data) => this.context().decodeAudioData(data));
-      promise.catch(() => this.buffers.delete(index));
+        .then((data) => this.context().decodeAudioData(data))
+        .then((buffer) => {
+          if (this.buffers.get(index) === promise) this.decoded.set(index, buffer);
+          return buffer;
+        });
+      promise.catch(() => {
+        if (this.buffers.get(index) === promise) this.buffers.delete(index);
+      });
       this.buffers.set(index, promise);
     }
     return this.buffers.get(index);
@@ -55,35 +98,67 @@ export class WebAudioBackend {
 
   prune(keep) {
     for (const index of Array.from(this.buffers.keys())) {
-      if (!keep.includes(index)) this.buffers.delete(index);
+      if (keep.includes(index)) continue;
+      this.buffers.delete(index);
+      this.decoded.delete(index);
     }
   }
 
   async play(index, position) {
-    // Both of these must happen synchronously inside the user gesture.
+    // The keeper, the context and the element's play() must all be called
+    // synchronously inside the user gesture.
     this.keeper.start();
     const ctx = this.context();
-    if (ctx.state !== "running") await ctx.resume();
-
     const token = ++this.playToken;
     this.stopSources();
+    this.prune([index, index + 1]);
+
+    const decoded = this.decoded.get(index);
+    if (decoded) {
+      if (ctx.state !== "running") await ctx.resume();
+      if (token !== this.playToken) return;
+      this.onLoading(false);
+      this.startSource(index, decoded, position, ctx.currentTime);
+      this.scheduleNext();
+      return;
+    }
+
     this.onLoading(true);
+    this.current = { index, streaming: true };
+    this.streamer().start(this.tracks[index].url, position);
+    if (ctx.state !== "running") ctx.resume();
 
     let buffer;
     try {
       buffer = await this.buffer(index);
     } catch (error) {
-      if (token === this.playToken) {
-        this.onLoading(false);
-        this.onError(error);
-      }
+      if (token === this.playToken) console.warn("Decode failed; the joint into the next track will not be gapless", error);
       return;
     }
-    if (token !== this.playToken) return;
+    if (token !== this.playToken || !this.current?.streaming) return;
+    this.handoff(index, buffer);
+  }
 
-    this.onLoading(false);
-    this.prune([index, index + 1]);
-    this.startSource(index, buffer, position, ctx.currentTime);
+  handoff(index, buffer) {
+    const ctx = this.context();
+    const stream = this.streamer();
+    const plan = handoffPlan({
+      now: ctx.currentTime,
+      position: stream.position(),
+      end: this.tracks[index].end,
+      duration: buffer.duration,
+    });
+    if (plan.length <= 0) return;
+
+    const { source, gain } = this.makeSource(buffer);
+    gain.gain.setValueAtTime(0, plan.at);
+    gain.gain.linearRampToValueAtTime(1, plan.at + plan.fade);
+    source.start(plan.at, plan.offset, plan.length);
+    stream.fadeOut(plan.at, plan.fade);
+
+    const playing = { index, source, gain, startedAt: plan.at, offset: plan.offset, length: plan.length };
+    source.onended = () => this.handleEnded(playing);
+    this.current = playing;
     this.scheduleNext();
   }
 
@@ -98,6 +173,9 @@ export class WebAudioBackend {
     this.pause();
     this.keeper.destroy();
     this.buffers.clear();
+    this.decoded.clear();
+    if (this.stream) this.stream.destroy();
+    this.stream = null;
     if (this.ctx) {
       this.ctx.close();
       this.ctx = null;
@@ -107,6 +185,7 @@ export class WebAudioBackend {
   position() {
     const playing = this.current;
     if (!playing) return null;
+    if (playing.streaming) return this.stream.position();
     const elapsed = this.context().currentTime - playing.startedAt;
     return playing.offset + Math.min(Math.max(elapsed, 0), playing.length);
   }
@@ -120,10 +199,10 @@ export class WebAudioBackend {
   }
 
   startSource(index, buffer, position, when) {
-    const source = this.makeSource(buffer);
+    const { source, gain } = this.makeSource(buffer);
     const length = Math.max(0, this.trackEnd(index, buffer) - position);
     source.start(when, position, length);
-    const playing = { index, source, startedAt: when, offset: position, length };
+    const playing = { index, source, gain, startedAt: when, offset: position, length };
     source.onended = () => this.handleEnded(playing);
     this.current = playing;
     return playing;
@@ -145,16 +224,17 @@ export class WebAudioBackend {
 
     const when = current.startedAt + current.length;
     const offset = this.tracks[nextIndex].offset;
-    const source = this.makeSource(buffer);
+    const { source, gain } = this.makeSource(buffer);
     const length = Math.max(0, this.trackEnd(nextIndex, buffer) - offset);
     source.start(when, offset, length);
-    const scheduled = { index: nextIndex, source, startedAt: when, offset, length };
+    const scheduled = { index: nextIndex, source, gain, startedAt: when, offset, length };
     source.onended = () => this.handleEnded(scheduled);
     this.scheduled = scheduled;
   }
 
   handleEnded(ended) {
     if (this.current !== ended) return;
+    if (ended.streaming) this.stream.pause();
 
     if (this.scheduled) {
       this.current = this.scheduled;
@@ -179,6 +259,10 @@ export class WebAudioBackend {
   stopSources() {
     for (const playing of [this.current, this.scheduled]) {
       if (!playing) continue;
+      if (playing.streaming) {
+        this.stream.pause();
+        continue;
+      }
       playing.source.onended = null;
       try {
         playing.source.stop();
@@ -186,16 +270,20 @@ export class WebAudioBackend {
         // Stopping a source that never started throws; nothing to clean up.
       }
       playing.source.disconnect();
+      playing.gain.disconnect();
     }
     this.current = null;
     this.scheduled = null;
   }
 
   makeSource(buffer) {
-    const source = this.context().createBufferSource();
+    const ctx = this.context();
+    const source = ctx.createBufferSource();
+    const gain = ctx.createGain();
     source.buffer = buffer;
-    source.connect(this.context().destination);
-    return source;
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    return { source, gain };
   }
 
   trackEnd(index, buffer) {
