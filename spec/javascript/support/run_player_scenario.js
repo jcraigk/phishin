@@ -72,8 +72,8 @@ let releaseFetch;
 const fetchGate = new Promise((resolve) => { releaseFetch = resolve; });
 global.window = { AudioContext: FakeContext };
 global.Audio = FakeAudio;
-global.fetch = (url) => {
-  log.push(["fetch", url]);
+global.fetch = (url, options) => {
+  log.push(["fetch", url, options?.priority || "auto"]);
   return fetchGate.then(() => ({ ok: true, arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)) }));
 };
 
@@ -294,6 +294,18 @@ const scenarios = {
     await sleep(0);
     const fetchesAfterPlaying = fetchCount();
     return { fetchesBeforePlaying, fetchesAfterPlaying };
+  },
+
+  async "backend prefetches the next track once the element is playing"() {
+    const backend = new WebAudioBackend();
+    backend.load([{ url: "a.mp3", offset: 0, end: null }, { url: "b.mp3", offset: 0, end: null }]);
+    backend.play(0, 0);
+    const el = streamElement();
+    el.readyState = 1;
+    el.emit("loadedmetadata");
+    el.emit("playing");
+    await sleep(0);
+    return { fetches: log.filter((entry) => entry[0] === "fetch").map((entry) => entry.slice(1)) };
   },
 
   async "backend pause before playing abandons the decode"() {

@@ -79,10 +79,10 @@ export class WebAudioBackend {
     return this.stream;
   }
 
-  buffer(index) {
+  buffer(index, { priority = "auto" } = {}) {
     if (!this.buffers.has(index)) {
       const { url } = this.tracks[index];
-      const promise = fetch(url)
+      const promise = fetch(url, { priority })
         .then((response) => {
           if (!response.ok) throw new Error(`Failed to load ${url} (${response.status})`);
           return response.arrayBuffer();
@@ -149,13 +149,24 @@ export class WebAudioBackend {
 
     let buffer;
     try {
-      buffer = await this.buffer(index);
+      const decoding = this.buffer(index);
+      this.prefetchNext(index);
+      buffer = await decoding;
     } catch (error) {
       if (token === this.playToken) console.warn("Decode failed; the joint into the next track will not be gapless", error);
       return;
     }
     if (token !== this.playToken || !this.current?.streaming) return;
     this.handoff(index, buffer);
+  }
+
+  // The next track's decode starts alongside this one's, at low priority so
+  // it yields to the current stream and decode, so a skip to the end of a
+  // track that has only just started still finds a decoded buffer to join.
+  prefetchNext(index) {
+    const next = index + 1;
+    if (next >= this.tracks.length) return;
+    this.buffer(next, { priority: "low" }).catch(() => {});
   }
 
   handoff(index, buffer) {

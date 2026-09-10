@@ -104,6 +104,11 @@ RSpec.describe "WebAudioBackend" do # rubocop:disable RSpec/DescribeClass
     expect(result.values_at("fetchesBeforePlaying", "fetchesAfterPlaying")).to eq([ 0, 1 ])
   end
 
+  it "prefetches the next track at low priority once the element is playing" do
+    result = scenario("backend prefetches the next track once the element is playing")
+    expect(result["fetches"]).to eq([ [ "a.mp3", "auto" ], [ "b.mp3", "low" ] ])
+  end
+
   it "abandons the decode fetch when paused before the element starts playing" do
     result = scenario("backend pause before playing abandons the decode")
     expect(result["fetches"]).to eq(0)
