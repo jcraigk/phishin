@@ -53,12 +53,28 @@ RSpec.describe "WebAudioBackend" do # rubocop:disable RSpec/DescribeClass
     it "schedules the next track once on the buffer path" do
       expect(source_starts(result).length).to eq(2)
     end
+
+    it "ramps the buffer gain in over the fade" do
+      expect(result["log"]).to include([ "gain.ramp", 1, 2.15 ])
+    end
   end
 
   it "plays a decoded track from its buffer without the element" do
     result = scenario("backend skips the element for a decoded track")
     expect(result.values_at("playsBefore", "playsAfter")).to eq([ 1, 1 ])
     expect(source_starts(result).last[2]).to eq(100)
+    disconnects = result["log"].select { |entry| entry == [ "disconnect" ] }
+    expect(disconnects.length).to be >= 2
+  end
+
+  it "clears loading after a stall once the buffer hands off" do
+    result = scenario("backend clears loading at handoff")
+    expect(result["loading"]).to eq([ true, false, true, false ])
+  end
+
+  it "leaves no context behind when destroyed before the decode arrives" do
+    result = scenario("backend destroy before decode leaves no context")
+    expect(result["ctx"]).to be(true)
   end
 
   it "pauses the element and reports no position when paused mid-stream" do

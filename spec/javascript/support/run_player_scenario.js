@@ -22,7 +22,7 @@ const streamElement = () => elements.find((el) => el.crossOrigin === "anonymous"
 class FakeParam {
   constructor(value) { this.value = value; }
   setValueAtTime(value) { this.value = value; return this; }
-  linearRampToValueAtTime(value) { this.value = value; return this; }
+  linearRampToValueAtTime(value, time) { this.value = value; log.push(["gain.ramp", value, round(time)]); return this; }
   cancelScheduledValues() { return this; }
   cancelAndHoldAtTime() { return this; }
 }
@@ -30,7 +30,7 @@ class FakeParam {
 class FakeNode {
   constructor() { this.gain = new FakeParam(1); }
   connect() {}
-  disconnect() {}
+  disconnect() { log.push(["disconnect"]); }
 }
 
 class FakeSource extends FakeNode {
@@ -242,6 +242,32 @@ const scenarios = {
     backend.play(0, 0);
     streamElement().emit("error");
     return { log, errors, playing: backend.isPlaying() };
+  },
+
+  async "backend clears loading at handoff"() {
+    const backend = new WebAudioBackend();
+    const loading = [];
+    backend.onLoading = (value) => loading.push(value);
+    backend.load([{ url: "a.mp3", offset: 0, end: null }]);
+    const playing = backend.play(0, 0);
+    const el = streamElement();
+    el.readyState = 1;
+    el.emit("loadedmetadata");
+    el.emit("playing");
+    el.emit("waiting");
+    releaseFetch();
+    await playing;
+    return { loading };
+  },
+
+  async "backend destroy before decode leaves no context"() {
+    const backend = new WebAudioBackend();
+    backend.load([{ url: "a.mp3", offset: 0, end: null }]);
+    backend.play(0, 0);
+    backend.destroy();
+    releaseFetch();
+    await sleep(20);
+    return { ctx: backend.ctx === null };
   },
 };
 

@@ -83,7 +83,10 @@ export class WebAudioBackend {
           if (!response.ok) throw new Error(`Failed to load ${url} (${response.status})`);
           return response.arrayBuffer();
         })
-        .then((data) => this.context().decodeAudioData(data))
+        .then((data) => {
+          if (!this.ctx) throw new Error("Player destroyed");
+          return this.ctx.decodeAudioData(data);
+        })
         .then((buffer) => {
           if (this.buffers.get(index) === promise) this.decoded.set(index, buffer);
           return buffer;
@@ -159,6 +162,7 @@ export class WebAudioBackend {
     const playing = { index, source, gain, startedAt: plan.at, offset: plan.offset, length: plan.length };
     source.onended = () => this.handleEnded(playing);
     this.current = playing;
+    this.onLoading(false);
     this.scheduleNext();
   }
 
