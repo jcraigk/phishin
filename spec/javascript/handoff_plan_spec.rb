@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "handoffPlan", type: :helper do
+RSpec.describe "handoffPlan" do # rubocop:disable RSpec/DescribeClass
   def plan(args)
     extractor = Rails.root.join("spec/javascript/support/extract_handoff_plan.js")
     source = Rails.root.join("app/javascript/components/player/handoffPlan.js")
