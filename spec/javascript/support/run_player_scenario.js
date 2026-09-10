@@ -24,6 +24,7 @@ class FakeParam {
   setValueAtTime(value) { this.value = value; return this; }
   linearRampToValueAtTime(value) { this.value = value; return this; }
   cancelScheduledValues() { return this; }
+  cancelAndHoldAtTime() { return this; }
 }
 
 class FakeNode {
@@ -108,11 +109,40 @@ const scenarios = {
     const ctx = new FakeContext();
     const stream = new ElementStream(ctx);
     stream.start("a.mp3", 0);
+    const el = streamElement();
+    el.readyState = 1;
+    el.emit("loadedmetadata");
+    el.emit("playing");
     ctx.currentTime = 1;
     stream.fadeOut(1.1, 0.05);
     const pausedImmediately = streamElement().paused;
     await sleep(250);
     return { log, pausedImmediately, pausedLater: streamElement().paused, active: stream.active };
+  },
+
+  async "stream fade out then restart keeps playing"() {
+    const ctx = new FakeContext();
+    const stream = new ElementStream(ctx);
+    stream.start("a.mp3", 0);
+    const el = streamElement();
+    el.readyState = 1;
+    el.emit("loadedmetadata");
+    el.emit("playing");
+    ctx.currentTime = 1;
+    stream.fadeOut(1.1, 0.05);
+    stream.pause();
+    stream.start("a.mp3", 5);
+    el.emit("seeked");
+    el.emit("playing");
+    await sleep(250);
+    return { log, paused: streamElement().paused, active: stream.active, gain: stream.gain.gain.value };
+  },
+
+  async "stream fade out before opening pauses immediately"() {
+    const stream = new ElementStream(new FakeContext());
+    stream.start("a.mp3", 0);
+    stream.fadeOut(1.1, 0.05);
+    return { log, paused: streamElement().paused };
   },
 
   async "stream ignores events once paused"() {

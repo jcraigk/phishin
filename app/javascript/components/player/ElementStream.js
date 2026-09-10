@@ -20,6 +20,7 @@ export class ElementStream {
     this.pendingSeek = null;
     this.active = false;
     this.opened = false;
+    this.fadeTimer = null;
     this.onPlaying = () => {};
     this.onWaiting = () => {};
     this.onTimeUpdate = () => {};
@@ -53,6 +54,7 @@ export class ElementStream {
 
   // Must be called synchronously inside the user gesture that starts playback.
   start(url, position) {
+    this.clearFadeTimer();
     this.active = true;
     this.opened = false;
     this.mute();
@@ -93,22 +95,39 @@ export class ElementStream {
   }
 
   pause() {
+    this.clearFadeTimer();
     this.active = false;
     this.mute();
     this.element.pause();
   }
 
+  clearFadeTimer() {
+    if (this.fadeTimer === null) return;
+    clearTimeout(this.fadeTimer);
+    this.fadeTimer = null;
+  }
+
   // Ramps to silence on the context clock while the decoded buffer ramps in,
   // then pauses the element once the ramp is over unless it was restarted.
+  // If the gain never opened there is nothing audible to fade, so pause now.
   fadeOut(at, duration) {
     this.active = false;
+    if (!this.opened) {
+      this.element.pause();
+      return;
+    }
     const gain = this.gain.gain;
-    gain.cancelScheduledValues(at);
-    gain.setValueAtTime(1, at);
+    if (typeof gain.cancelAndHoldAtTime === "function") {
+      gain.cancelAndHoldAtTime(at);
+    } else {
+      gain.cancelScheduledValues(at);
+      gain.setValueAtTime(1, at);
+    }
     gain.linearRampToValueAtTime(0, at + duration);
     const wait = Math.max(0, at + duration - this.ctx.currentTime) * 1000 + 20;
-    setTimeout(() => {
-      if (!this.active) this.element.pause();
+    this.fadeTimer = setTimeout(() => {
+      this.fadeTimer = null;
+      this.element.pause();
     }, wait);
   }
 

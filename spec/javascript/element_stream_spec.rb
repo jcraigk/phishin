@@ -35,6 +35,15 @@ RSpec.describe "ElementStream" do # rubocop:disable RSpec/DescribeClass
     expect(result.values_at("pausedImmediately", "pausedLater", "active")).to eq([ false, true, false ])
   end
 
+  it "keeps playing when restarted during a fade out" do
+    result = scenario("stream fade out then restart keeps playing")
+    expect(result.values_at("paused", "active", "gain")).to eq([ false, true, 1 ])
+  end
+
+  it "pauses immediately when fading out before the gain has opened" do
+    expect(scenario("stream fade out before opening pauses immediately")["paused"]).to be(true)
+  end
+
   it "stops reporting element events after pause" do
     expect(scenario("stream ignores events once paused")["events"]).to eq([])
   end
