@@ -99,7 +99,9 @@ class WidgetCompiler
     # The widgets are classic scripts, so the engine's ES modules are inlined
     # in dependency order with their import and export statements stripped.
     PLAYER_ENGINE_FILES = %w[
+      handoffPlan.js
       SessionKeeper.js
+      ElementStream.js
       WebAudioBackend.js
       GaplessEngine.js
       Gapless5Facade.js
