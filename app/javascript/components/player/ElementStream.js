@@ -101,6 +101,20 @@ export class ElementStream {
     this.element.pause();
   }
 
+  // Stops the element and drops its src so a paused element with preload
+  // auto cannot keep filling its buffer and competing for bandwidth with the
+  // decode fetch. A later start() with the same url reloads from scratch
+  // rather than seeking in place, since the src is gone.
+  release() {
+    this.clearFadeTimer();
+    this.active = false;
+    this.mute();
+    this.element.pause();
+    this.element.removeAttribute("src");
+    this.element.load();
+    this.url = null;
+  }
+
   clearFadeTimer() {
     if (this.fadeTimer === null) return;
     clearTimeout(this.fadeTimer);
@@ -108,12 +122,12 @@ export class ElementStream {
   }
 
   // Ramps to silence on the context clock while the decoded buffer ramps in,
-  // then pauses the element once the ramp is over unless it was restarted.
-  // If the gain never opened there is nothing audible to fade, so pause now.
+  // then releases the element once the ramp is over unless it was restarted.
+  // If the gain never opened there is nothing audible to fade, so release now.
   fadeOut(at, duration) {
     this.active = false;
     if (!this.opened) {
-      this.element.pause();
+      this.release();
       return;
     }
     const gain = this.gain.gain;
@@ -127,14 +141,12 @@ export class ElementStream {
     const wait = Math.max(0, at + duration - this.ctx.currentTime) * 1000 + 20;
     this.fadeTimer = setTimeout(() => {
       this.fadeTimer = null;
-      this.element.pause();
+      this.release();
     }, wait);
   }
 
   destroy() {
-    this.pause();
-    this.element.removeAttribute("src");
-    this.element.load();
+    this.release();
     this.gain.disconnect();
   }
 }

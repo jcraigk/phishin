@@ -120,7 +120,7 @@ const scenarios = {
     stream.fadeOut(1.1, 0.05);
     const pausedImmediately = streamElement().paused;
     await sleep(250);
-    return { log, pausedImmediately, pausedLater: streamElement().paused, active: stream.active };
+    return { log, pausedImmediately, pausedLater: streamElement().paused, active: stream.active, src: streamElement().src };
   },
 
   async "stream fade out then restart keeps playing"() {
@@ -145,7 +145,7 @@ const scenarios = {
     const stream = new ElementStream(new FakeContext());
     stream.start("a.mp3", 0);
     stream.fadeOut(1.1, 0.05);
-    return { log, paused: streamElement().paused };
+    return { log, paused: streamElement().paused, src: streamElement().src };
   },
 
   async "stream ignores events once paused"() {

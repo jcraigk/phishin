@@ -50,8 +50,10 @@ export class WebAudioBackend {
     if (!this.stream) {
       const stream = new ElementStream(this.context());
       stream.onPlaying = () => {
-        if (this.current?.streaming) this.onLoading(false);
-        this.releaseStreamStarted();
+        if (this.current?.streaming) {
+          this.onLoading(false);
+          this.releaseStreamStarted();
+        }
       };
       stream.onWaiting = () => {
         if (this.current?.streaming) this.onLoading(true);
