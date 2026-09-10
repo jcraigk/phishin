@@ -58,8 +58,9 @@ export const formatMonthDay = (dateString) => {
 };
 
 export const formatTime = (timeInSeconds) => {
-  const minutes = Math.floor(timeInSeconds / 60);
-  const seconds = Math.floor(timeInSeconds % 60).toString().padStart(2, "0");
+  const clamped = Number.isFinite(timeInSeconds) ? Math.max(0, timeInSeconds) : 0;
+  const minutes = Math.floor(clamped / 60);
+  const seconds = Math.floor(clamped % 60).toString().padStart(2, "0");
   return `${minutes}:${seconds}`;
 };
 
