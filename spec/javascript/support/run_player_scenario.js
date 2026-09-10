@@ -73,7 +73,10 @@ let releaseFetch;
 const fetchGate = new Promise((resolve) => { releaseFetch = resolve; });
 global.window = { AudioContext: FakeContext };
 global.Audio = FakeAudio;
-global.fetch = () => fetchGate.then(() => ({ ok: true, arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)) }));
+global.fetch = (url) => {
+  log.push(["fetch", url]);
+  return fetchGate.then(() => ({ ok: true, arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)) }));
+};
 
 const { ElementStream, WebAudioBackend } = eval(
   source + "\n({ ElementStream, WebAudioBackend: typeof WebAudioBackend === 'undefined' ? null : WebAudioBackend })"
@@ -192,8 +195,13 @@ const scenarios = {
   async "backend skips the element for a decoded track"() {
     const backend = new WebAudioBackend();
     backend.load([{ url: "a.mp3", offset: 0, end: null }]);
+    const playing = backend.play(0, 0);
+    const el = streamElement();
+    el.readyState = 1;
+    el.emit("loadedmetadata");
+    el.emit("playing");
     releaseFetch();
-    await backend.play(0, 0);
+    await playing;
     const trackPlays = () => log.filter((entry) => entry[0] === "element.play" && entry[1] === "a.mp3").length;
     const playsBefore = trackPlays();
     await backend.play(0, 100);
@@ -264,10 +272,40 @@ const scenarios = {
     const backend = new WebAudioBackend();
     backend.load([{ url: "a.mp3", offset: 0, end: null }]);
     backend.play(0, 0);
+    const el = streamElement();
+    el.readyState = 1;
+    el.emit("loadedmetadata");
+    el.emit("playing");
     backend.destroy();
     releaseFetch();
     await sleep(20);
     return { ctx: backend.ctx === null };
+  },
+
+  async "backend defers the decode fetch until the element is playing"() {
+    const backend = new WebAudioBackend();
+    backend.load([{ url: "a.mp3", offset: 0, end: null }]);
+    backend.play(0, 0);
+    const fetchCount = () => log.filter((entry) => entry[0] === "fetch").length;
+    const fetchesBeforePlaying = fetchCount();
+    const el = streamElement();
+    el.readyState = 1;
+    el.emit("loadedmetadata");
+    el.emit("playing");
+    await sleep(0);
+    const fetchesAfterPlaying = fetchCount();
+    return { fetchesBeforePlaying, fetchesAfterPlaying };
+  },
+
+  async "backend pause before playing abandons the decode"() {
+    const backend = new WebAudioBackend();
+    backend.load([{ url: "a.mp3", offset: 0, end: null }]);
+    backend.play(0, 0);
+    backend.pause();
+    streamElement().emit("playing");
+    await sleep(0);
+    const fetches = log.filter((entry) => entry[0] === "fetch").length;
+    return { fetches };
   },
 };
 

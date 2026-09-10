@@ -98,4 +98,14 @@ RSpec.describe "WebAudioBackend" do # rubocop:disable RSpec/DescribeClass
     expect(result["errors"]).to eq([ "Failed to stream a.mp3" ])
     expect(result["playing"]).to be(false)
   end
+
+  it "defers the decode fetch until the element starts playing" do
+    result = scenario("backend defers the decode fetch until the element is playing")
+    expect(result.values_at("fetchesBeforePlaying", "fetchesAfterPlaying")).to eq([ 0, 1 ])
+  end
+
+  it "abandons the decode fetch when paused before the element starts playing" do
+    result = scenario("backend pause before playing abandons the decode")
+    expect(result["fetches"]).to eq(0)
+  end
 end

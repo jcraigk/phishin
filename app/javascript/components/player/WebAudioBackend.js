@@ -19,6 +19,7 @@ export class WebAudioBackend {
     this.current = null;
     this.scheduled = null;
     this.playToken = 0;
+    this.streamStarted = null;
     this.onAdvance = () => {};
     this.onEnd = () => {};
     this.onLoading = () => {};
@@ -50,6 +51,7 @@ export class WebAudioBackend {
       const stream = new ElementStream(this.context());
       stream.onPlaying = () => {
         if (this.current?.streaming) this.onLoading(false);
+        this.releaseStreamStarted();
       };
       stream.onWaiting = () => {
         if (this.current?.streaming) this.onLoading(true);
@@ -99,6 +101,12 @@ export class WebAudioBackend {
     return this.buffers.get(index);
   }
 
+  releaseStreamStarted() {
+    if (!this.streamStarted) return;
+    this.streamStarted();
+    this.streamStarted = null;
+  }
+
   prune(keep) {
     for (const index of Array.from(this.buffers.keys())) {
       if (keep.includes(index)) continue;
@@ -128,8 +136,14 @@ export class WebAudioBackend {
 
     this.onLoading(true);
     this.current = { index, streaming: true };
+    // Wait for the element to actually start playing before also fetching the
+    // whole file for decode, so the two requests don't split the connection's
+    // bandwidth and delay first audio.
+    const started = new Promise((resolve) => { this.streamStarted = resolve; });
     this.streamer().start(this.tracks[index].url, position);
     if (ctx.state !== "running") ctx.resume();
+    await started;
+    if (token !== this.playToken || !this.current?.streaming) return;
 
     let buffer;
     try {
@@ -261,6 +275,7 @@ export class WebAudioBackend {
   }
 
   stopSources() {
+    this.releaseStreamStarted();
     for (const playing of [this.current, this.scheduled]) {
       if (!playing) continue;
       if (playing.streaming) {
