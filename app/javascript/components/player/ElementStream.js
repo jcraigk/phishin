@@ -130,13 +130,12 @@ export class ElementStream {
       this.release();
       return;
     }
+    // An explicit anchor at `at` is required: a ramp with no preceding event
+    // at or after the handoff moment would start from the last event in the
+    // past and fade the element out before the buffer has ramped in.
     const gain = this.gain.gain;
-    if (typeof gain.cancelAndHoldAtTime === "function") {
-      gain.cancelAndHoldAtTime(at);
-    } else {
-      gain.cancelScheduledValues(at);
-      gain.setValueAtTime(1, at);
-    }
+    gain.cancelScheduledValues(at);
+    gain.setValueAtTime(1, at);
     gain.linearRampToValueAtTime(0, at + duration);
     const wait = Math.max(0, at + duration - this.ctx.currentTime) * 1000 + 20;
     this.fadeTimer = setTimeout(() => {

@@ -21,10 +21,9 @@ const streamElement = () => elements.find((el) => el.crossOrigin === "anonymous"
 
 class FakeParam {
   constructor(value) { this.value = value; }
-  setValueAtTime(value) { this.value = value; return this; }
+  setValueAtTime(value, time) { this.value = value; log.push(["gain.set", value, round(time)]); return this; }
   linearRampToValueAtTime(value, time) { this.value = value; log.push(["gain.ramp", value, round(time)]); return this; }
   cancelScheduledValues() { return this; }
-  cancelAndHoldAtTime() { return this; }
 }
 
 class FakeNode {

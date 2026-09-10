@@ -35,6 +35,11 @@ RSpec.describe "ElementStream" do # rubocop:disable RSpec/DescribeClass
     expect(result.values_at("pausedImmediately", "pausedLater", "active")).to eq([ false, true, false ])
   end
 
+  it "holds full gain until the handoff moment and only then ramps to silence" do
+    result = scenario("stream fade out pauses the element after the ramp")
+    expect(result["log"]).to include([ "gain.set", 1, 1.1 ], [ "gain.ramp", 0, 1.15 ])
+  end
+
   it "releases the element's src once the fade has run" do
     result = scenario("stream fade out pauses the element after the ramp")
     expect(result["src"]).to eq("")
