@@ -44,7 +44,8 @@ class ChronologicalTrackNavigator < ApplicationService
   end
 
   def first_track_of_next_show
-    next_show = Show.where("date > ?", show.date)
+    next_show = Show.published
+                    .where("date > ?", show.date)
                     .with_audio
                     .order(:date)
                     .first
@@ -58,7 +59,8 @@ class ChronologicalTrackNavigator < ApplicationService
   end
 
   def last_track_of_previous_show
-    prev_show = Show.where("date < ?", show.date)
+    prev_show = Show.published
+                    .where("date < ?", show.date)
                     .with_audio
                     .order(date: :desc)
                     .first
@@ -73,7 +75,7 @@ class ChronologicalTrackNavigator < ApplicationService
 
   def first_track_in_library
     Track.joins(:show)
-         .merge(Show.with_audio)
+         .merge(Show.published.with_audio)
          .where.not(tracks: { set: EXCLUDED_SETS })
          .where.not(tracks: { audio_status: "missing" })
          .order("shows.date ASC, tracks.position ASC")
@@ -82,7 +84,7 @@ class ChronologicalTrackNavigator < ApplicationService
 
   def last_track_in_library
     Track.joins(:show)
-         .merge(Show.with_audio)
+         .merge(Show.published.with_audio)
          .where.not(tracks: { set: EXCLUDED_SETS })
          .where.not(tracks: { audio_status: "missing" })
          .order("shows.date DESC, tracks.position DESC")
@@ -96,7 +98,7 @@ class ChronologicalTrackNavigator < ApplicationService
   class << self
     def first_track
       Track.joins(:show)
-           .merge(Show.with_audio)
+           .merge(Show.published.with_audio)
            .where.not(tracks: { set: EXCLUDED_SETS })
            .where.not(tracks: { audio_status: "missing" })
            .order("shows.date ASC, tracks.position ASC")
@@ -105,7 +107,7 @@ class ChronologicalTrackNavigator < ApplicationService
 
     def last_track
       Track.joins(:show)
-           .merge(Show.with_audio)
+           .merge(Show.published.with_audio)
            .where.not(tracks: { set: EXCLUDED_SETS })
            .where.not(tracks: { audio_status: "missing" })
            .order("shows.date DESC, tracks.position DESC")
@@ -122,9 +124,9 @@ class ChronologicalTrackNavigator < ApplicationService
     def adjacent_show(show, direction:)
       case direction.to_sym
       when :next
-        Show.where("date > ?", show.date).with_audio.order(:date).first
+        Show.published.where("date > ?", show.date).with_audio.order(:date).first
       when :prev, :previous
-        Show.where("date < ?", show.date).with_audio.order(date: :desc).first
+        Show.published.where("date < ?", show.date).with_audio.order(date: :desc).first
       end
     end
   end

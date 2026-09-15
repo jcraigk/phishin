@@ -44,7 +44,21 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsndfile1-dev pkg-config google-chrome-stable
+        sudo apt-get install -y libsndfile1-dev pkg-config google-chrome-stable lame libarchive-tools imagemagick
+    - name: Install ffmpeg 8.1
+      run: |
+        curl -sSL https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n8.1-latest-linux64-gpl-8.1.tar.xz | tar -xJ -C /tmp
+        sudo install -m 0755 /tmp/ffmpeg-n8.1-latest-linux64-gpl-8.1/bin/ffmpeg /tmp/ffmpeg-n8.1-latest-linux64-gpl-8.1/bin/ffprobe /usr/local/bin/
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v5
+    - name: Tool versions
+      run: |
+        ffmpeg -version | head -1
+        ffprobe -version | head -1
+        lame --version | head -1
+        bsdtar --version
+        convert -version | head -1
+        uv --version
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:

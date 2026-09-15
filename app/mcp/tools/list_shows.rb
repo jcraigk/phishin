@@ -84,7 +84,7 @@ module Tools
       private
 
       def build_query(year, start_date, end_date, tour_slug, venue_slug)
-        shows = Show.includes(:venue, :tour)
+        shows = Show.published.includes(:venue, :tour)
 
         shows = shows.where("EXTRACT(YEAR FROM date) = ?", year) if year
         shows = shows.where("date >= ?", start_date) if start_date

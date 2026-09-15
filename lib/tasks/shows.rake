@@ -35,10 +35,12 @@ namespace :shows do
     puts "Track inserted"
   end
 
-  desc "Import show(s) using PNet API and local MP3 audio files"
+  desc "Import show(s) using PNet API and local MP3 audio files (prefer the web admin at /admin)"
   task import: :environment do
     require "#{Rails.root}/app/services/show_importer"
     include ActionView::Helpers::TextHelper
+
+    puts "ℹ️  The web admin panel (/admin) is the preferred way to import shows; this CLI remains for batch use."
 
     dates = Dir.entries(App.content_import_path).grep(/\d{4}\-\d{1,2}\-\d{1,2}\z/).sort
     next puts "❌ No shows found in #{App.content_import_path}" unless dates.any?
@@ -47,6 +49,10 @@ namespace :shows do
 
     puts "🚫 EXCLUDE_FROM_STATS set" if exclude_from_stats
     puts "📂 #{pluralize(dates.size, 'folder')} found"
-    dates.each { |date| ShowImporter::Cli.new(date, exclude_from_stats:) }
+    dates.each do |date|
+      ShowImporter::Cli.new(date, exclude_from_stats:)
+    rescue ShowImporter::ShowInfo::NotFoundError => e
+      puts "❌ #{e.message}"
+    end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_29_014210) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_12_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -41,6 +41,20 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_014210) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "admin_jobs", force: :cascade do |t|
+    t.datetime "cancel_requested_at"
+    t.datetime "created_at", null: false
+    t.string "kind", null: false
+    t.text "message"
+    t.jsonb "payload", default: {}, null: false
+    t.integer "progress", default: 0, null: false
+    t.integer "show_id"
+    t.string "status", default: "queued", null: false
+    t.integer "track_id"
+    t.datetime "updated_at", null: false
+    t.index ["show_id", "kind", "created_at"], name: "index_admin_jobs_on_show_id_and_kind_and_created_at"
   end
 
   create_table "announcements", force: :cascade do |t|
@@ -133,16 +147,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_014210) do
     t.text "admin_notes"
     t.datetime "album_zip_requested_at"
     t.string "audio_status", default: "complete", null: false
-    t.string "cover_art_hue"
     t.integer "cover_art_parent_show_id"
     t.text "cover_art_prompt"
-    t.string "cover_art_style"
     t.datetime "created_at", precision: nil, null: false
     t.date "date", null: false
     t.integer "duration", default: 0, null: false
     t.integer "likes_count", default: 0
     t.boolean "matches_pnet", default: false
     t.integer "performance_gap_value", default: 1
+    t.boolean "published", default: true, null: false
+    t.string "staging_source_url"
     t.integer "tags_count", default: 0
     t.text "taper_notes"
     t.integer "tour_id"
@@ -202,6 +216,36 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_014210) do
     t.index ["song_id"], name: "index_songs_tracks_on_song_id"
     t.index ["track_id", "song_id"], name: "index_songs_tracks_on_track_id_and_song_id", unique: true
     t.index ["track_id"], name: "index_songs_tracks_on_track_id"
+  end
+
+  create_table "staged_sources", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.decimal "duration_s", precision: 10, scale: 3, null: false
+    t.string "filename", null: false
+    t.string "format", null: false
+    t.decimal "offset_s", precision: 10, scale: 3, null: false
+    t.integer "position", null: false
+    t.integer "show_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["show_id", "position"], name: "index_staged_sources_on_show_id_and_position", unique: true
+  end
+
+  create_table "staged_tracks", force: :cascade do |t|
+    t.jsonb "combines", default: [], null: false
+    t.datetime "created_at", null: false
+    t.decimal "end_s", precision: 10, scale: 3, null: false
+    t.decimal "fade_in_s", precision: 6, scale: 2, default: "0.0", null: false
+    t.decimal "fade_out_s", precision: 6, scale: 2, default: "0.0", null: false
+    t.decimal "original_end_s", precision: 10, scale: 3
+    t.decimal "original_start_s", precision: 10, scale: 3
+    t.integer "position", null: false
+    t.string "set", default: "1", null: false
+    t.integer "show_id", null: false
+    t.integer "song_ids", default: [], null: false, array: true
+    t.decimal "start_s", precision: 10, scale: 3, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["show_id", "position"], name: "index_staged_tracks_on_show_id_and_position", unique: true
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
@@ -276,6 +320,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_014210) do
 
   create_table "users", id: :serial, force: :cascade do |t|
     t.integer "access_count_to_reset_password_page", default: 0
+    t.boolean "admin", default: false, null: false
     t.datetime "created_at", precision: nil, null: false
     t.string "crypted_password"
     t.string "email", limit: 255, default: "", null: false

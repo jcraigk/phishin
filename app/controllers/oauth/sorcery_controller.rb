@@ -46,6 +46,7 @@ class Oauth::SorceryController < ApplicationController
     session[:username] = user.username
     session[:username_updated_at] = user.username_updated_at
     session[:email] = user.email
+    session[:admin] = user.admin?
   end
 
   def jwt_for(user)

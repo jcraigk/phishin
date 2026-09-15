@@ -90,7 +90,9 @@ class ApiV2::Tracks < ApiV2::Base
     end
 
     def fetch_tracks
-      Track.includes(
+      Track.joins(:show)
+           .where(shows: { published: true })
+           .includes(
               :mp3_audio_attachment,
               :png_waveform_attachment,
               {
@@ -121,12 +123,14 @@ class ApiV2::Tracks < ApiV2::Base
     end
 
     def fetch_track_by_id
-      Track.includes(
-        :show,
-        :songs,
-        { track_tags: :tag },
-        :songs_tracks
-      ).find_by!(id: params[:id])
+      Track.joins(:show)
+           .where(shows: { published: true })
+           .includes(
+             :show,
+             :songs,
+             { track_tags: :tag },
+             :songs_tracks
+           ).find_by!(id: params[:id])
     end
 
 

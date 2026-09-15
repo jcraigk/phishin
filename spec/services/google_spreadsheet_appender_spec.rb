@@ -34,7 +34,7 @@ RSpec.describe GoogleSpreadsheetAppender do
       .and_raise(Google::Apis::ClientError.new("PERMISSION_DENIED: Request had insufficient authentication scopes."))
 
     expect { described_class.call("sheet-id", "Tease!A:F", rows) }
-      .to raise_error(Google::Apis::ClientError, /tagin:authorize/)
+      .to raise_error(Google::Apis::ClientError, /GoogleSheetsAuthorizer/)
   end
 
   it "re-raises unrelated client errors unchanged" do

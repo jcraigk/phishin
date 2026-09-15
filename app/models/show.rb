@@ -3,12 +3,14 @@ class Show < ApplicationRecord
   include ShowApiV1
   include HasAudioStatus
 
-  belongs_to :tour, counter_cache: true
-  belongs_to :venue, counter_cache: true
+  belongs_to :tour, counter_cache: true, optional: true
+  belongs_to :venue, counter_cache: true, optional: true
   has_many :tracks, dependent: :destroy
   has_many :likes, as: :likable, dependent: :destroy
   has_many :show_tags, dependent: :destroy
   has_many :tags, through: :show_tags
+  has_many :staged_sources, dependent: :destroy
+  has_many :staged_tracks, dependent: :destroy
 
   has_one_attached :cover_art do |attachable|
     attachable.variant :medium,
@@ -22,15 +24,18 @@ class Show < ApplicationRecord
     attachable.variant :id3, resize_to_limit: [ 600, 600 ]
   end
   has_one_attached :album_zip
+  has_many_attached :cover_art_candidates
 
   extend FriendlyId
   friendly_id :date
 
   validates :date, presence: true, uniqueness: true
+  validates :venue, :tour, presence: true, if: :published?
 
   before_validation :cache_venue_name
   after_create :increment_shows_with_audio_counter_caches
   after_destroy :decrement_shows_with_audio_counter_caches
+  after_destroy :remove_staging_dir
 
   scope :between_years, lambda { |year1, year2|
     date1 = Date.new(year1.to_i).beginning_of_year
@@ -47,29 +52,58 @@ class Show < ApplicationRecord
 
   scope :random, ->(amt = 1) { order(Arel.sql("RANDOM()")).limit(amt) }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
+  scope :published, -> { where(published: true) }
 
   delegate :name, to: :tour, prefix: true
 
   def self.previous_show_date(current_date, audio_status: "any")
-    where("date < ?", current_date)
+    published
+      .where("date < ?", current_date)
       .audio_status_filter(audio_status)
       .order(date: :desc)
       .pick(:date)
   end
 
   def self.next_show_date(current_date, audio_status: "any")
-    where("date > ?", current_date)
+    published
+      .where("date > ?", current_date)
       .audio_status_filter(audio_status)
       .order(date: :asc)
       .pick(:date)
   end
 
   def self.first_show_date(audio_status: "any")
-    audio_status_filter(audio_status).order(date: :asc).pick(:date)
+    published.audio_status_filter(audio_status).order(date: :asc).pick(:date)
   end
 
   def self.last_show_date(audio_status: "any")
-    audio_status_filter(audio_status).order(date: :desc).pick(:date)
+    published.audio_status_filter(audio_status).order(date: :desc).pick(:date)
+  end
+
+  def self.original_filename(blob)
+    blob.read_attribute(:filename)
+  end
+
+  def self.create_draft!(date)
+    create!(date:, published: false, audio_status: "missing")
+  end
+
+  def staging?
+    staged_sources.any?
+  end
+
+  def renumber_tracks!(ordered_ids = tracks.order(:position).pluck(:id))
+    transaction do
+      ordered_ids.each_with_index { |id, index| tracks.where(id:).update_all(position: -(index + 1)) }
+      tracks.where(position: ...0).update_all("position = -position")
+    end
+  end
+
+  def discard_staging!
+    staged_tracks.destroy_all
+    staged_sources.destroy_all
+    update!(staging_source_url: nil) if staging_source_url.present?
+    remove_staging_dir
   end
 
   def save_duration
@@ -115,6 +149,7 @@ class Show < ApplicationRecord
   private
 
   def cache_venue_name
+    return if venue.blank?
     return if venue_name.present?
     self.venue_name = venue.name_on(date)
   end
@@ -124,18 +159,22 @@ class Show < ApplicationRecord
     increment_shows_with_audio_counters
   end
 
+  def remove_staging_dir
+    Admin::StagingDir.new(self).remove!
+  end
+
   def decrement_shows_with_audio_counter_caches
     return unless has_audio?
     decrement_shows_with_audio_counters
   end
 
   def increment_shows_with_audio_counters
-    venue.increment!(:shows_with_audio_count)
-    tour.increment!(:shows_with_audio_count)
+    venue&.increment!(:shows_with_audio_count)
+    tour&.increment!(:shows_with_audio_count)
   end
 
   def decrement_shows_with_audio_counters
-    venue.decrement!(:shows_with_audio_count)
-    tour.decrement!(:shows_with_audio_count)
+    venue&.decrement!(:shows_with_audio_count)
+    tour&.decrement!(:shows_with_audio_count)
   end
 end

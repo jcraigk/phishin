@@ -34,7 +34,6 @@ import PrivacyPolicy from "../pages/PrivacyPolicy";
 import RequestPasswordReset from "../pages/RequestPasswordReset";
 import ResetPassword from "../pages/ResetPassword";
 import Signup from "../pages/Signup";
-import TaginProject from "../pages/TaginProject";
 import TermsOfService from "../pages/TermsOfService";
 import Settings from "../pages/Settings";
 
@@ -86,10 +85,6 @@ const routes = (props) => [
       {
         path: "/privacy",
         element: <PrivacyPolicy />
-      },
-      {
-        path: "/tagin-project",
-        element: <TaginProject />
       },
       {
         path: "/terms",
@@ -198,6 +193,61 @@ const routes = (props) => [
         path: "/cover-art",
         element: <CoverArtInspector />,
         loader: coverArtInspectorLoader,
+      },
+      {
+        path: "/admin",
+        loader: async () => {
+          const deny = () => {
+            throw new Response("Not Found", { status: 404 });
+          };
+          if (typeof window === "undefined" || !localStorage.getItem("jwt")) deny();
+          if (window.phishinAdminVerified) return null;
+          const { adminGet } = await import("../admin/adminApi");
+          try {
+            await adminGet("/jobs?limit=1");
+          } catch (e) {
+            if (e.status === 401 || e.status === 403) {
+              localStorage.setItem("admin", "false");
+              deny();
+            }
+          }
+          window.phishinAdminVerified = true;
+          return null;
+        },
+        lazy: async () => {
+          const { default: Component } = await import("../admin/AdminLayout");
+          return { Component };
+        },
+        children: [
+          {
+            index: true,
+            lazy: async () => {
+              const { default: Component } = await import("../admin/AdminDashboard");
+              return { Component };
+            },
+          },
+          {
+            path: "shows",
+            lazy: async () => {
+              const { default: Component } = await import("../admin/AdminShows");
+              return { Component };
+            },
+          },
+          {
+            path: "import",
+            lazy: async () => {
+              const { default: Component } = await import("../admin/AdminImport");
+              return { Component };
+            },
+          },
+          {
+            path: "shows/:date",
+            lazy: async () => {
+              const { default: Component } = await import("../admin/AdminShowEditor");
+              return { Component };
+            },
+          },
+        ],
       },
       {
         path: "*",

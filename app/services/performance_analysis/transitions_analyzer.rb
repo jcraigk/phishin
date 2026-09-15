@@ -69,6 +69,7 @@ module PerformanceAnalysis
           WHERE st.song_id = :song_id
             AND t.set NOT IN ('S', 'P')
             AND t.exclude_from_stats = FALSE
+            AND s.published = TRUE
             AND s.performance_gap_value > 0
         ),
         adjacent_tracks AS (
@@ -111,6 +112,7 @@ module PerformanceAnalysis
           WHERE st.song_id = :song_id
             AND t.set NOT IN ('S', 'P')
             AND t.exclude_from_stats = FALSE
+            AND s.published = TRUE
             AND s.performance_gap_value > 0
         ),
         adjacent_tracks AS (
@@ -199,6 +201,7 @@ module PerformanceAnalysis
           INNER JOIN shows s ON s.id = t.show_id
           WHERE t.set NOT IN ('S', 'P')
             AND t.exclude_from_stats = FALSE
+            AND s.published = TRUE
             AND s.performance_gap_value > 0
         ),
         track_pairs AS (
@@ -249,6 +252,7 @@ module PerformanceAnalysis
           INNER JOIN shows s ON s.id = t.show_id
           WHERE t.set NOT IN ('S', 'P')
             AND t.exclude_from_stats = FALSE
+            AND s.published = TRUE
             AND s.performance_gap_value > 0
         ),
         track_pairs AS (

@@ -28,4 +28,11 @@ class ApiV2::Entities::User < ApiV2::Entities::Base
       type: "String",
       desc: "Timestamp of when the user's username was last updated"
     }
+
+  expose \
+    :admin,
+    documentation: {
+      type: "Boolean",
+      desc: "Whether the user is an admin"
+    }
 end

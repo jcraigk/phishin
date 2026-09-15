@@ -35,7 +35,6 @@ class MetaTagService < ApplicationService
     "/search" => "Search",
     "/settings" => "Settings",
     "/signup" => "Sign Up",
-    "/tagin-project" => "Tagin' Project",
     "/terms" => "Terms of Service",
     "/today" => "Today in History",
     "/top-shows" => "Top Shows",
@@ -119,6 +118,7 @@ class MetaTagService < ApplicationService
   end
 
   def dynamic_route_title
+    return "Admin" if path == "/admin" || path.start_with?("/admin/")
     "Reset Password" if path.match?(/^\/reset-password\/.+/)
   end
 
@@ -171,7 +171,7 @@ class MetaTagService < ApplicationService
   end
 
   def show_data
-    show = Show.includes(:venue, :tracks).find_by(date:)
+    show = Show.published.includes(:venue, :tracks).find_by(date:)
     return not_found_meta unless show
 
     track = slug ? show.tracks.find_by(slug:) : nil
@@ -309,11 +309,11 @@ class MetaTagService < ApplicationService
   end
 
   def shows_in_year(year)
-    Show.where("EXTRACT(YEAR FROM date) = ?", year)
+    Show.published.where("EXTRACT(YEAR FROM date) = ?", year)
   end
 
   def shows_in_range(start_year, end_year)
-    Show.where("EXTRACT(YEAR FROM date) BETWEEN ? AND ?", start_year, end_year)
+    Show.published.where("EXTRACT(YEAR FROM date) BETWEEN ? AND ?", start_year, end_year)
   end
 
   def short_date(date)

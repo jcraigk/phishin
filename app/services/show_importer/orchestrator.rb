@@ -1,31 +1,26 @@
 class ShowImporter::Orchestrator
-  attr_reader :fm, :date, :show_found, :path, :show_info
+  attr_reader :fm, :date, :show_found, :path
 
-  SET_MAP = {
-    "3" => %w[III],
-    "E" => %w[E e I-e II-e III-e],
-    "2" => %w[II],
-    "1" => %w[I],
-    "S" => %w[(Check)]
-  }.freeze
-
-  def initialize(date, exclude_from_stats: false) # rubocop:disable Metrics/MethodLength
+  def initialize(date, exclude_from_stats: false)
     Track.attr_accessor(:filename)
 
     @date = date
     @path = "#{App.content_import_path}/#{date}"
-    @show_info = ShowImporter::ShowInfo.new(date)
-    @used_files = []
     @exclude_from_stats = exclude_from_stats
 
     analyze_filenames
 
     return if (@show_found = Show.find_by(date:).present?)
 
+    populate_tracks
     assign_venue
     assign_tour
     import_notes
-    populate_tracks
+  end
+
+  def show_info
+    return @matcher_result.show_info if @matcher_result
+    @show_info ||= ShowImporter::ShowInfo.new(date)
   end
 
   def show
@@ -48,11 +43,9 @@ class ShowImporter::Orchestrator
     pbar.finish
 
     InteractiveCoverArtService.call(Show.where(id: show.id))
-    DebutTagService.call(show)
-    LoreSyncService.call(date: show.date.to_s)
-    sync_teases
+    enrich_from_phishnet
     save_song_performance_data(show)
-    create_announcement
+    Announcement.announce_show!(show)
     clear_rails_cache
   end
 
@@ -99,19 +92,9 @@ class ShowImporter::Orchestrator
 
   private
 
-  # Teases live in the Tagin' spreadsheet, so append any the setlist notes
-  # describe and then pull the sheet's Tease rows into the database. A failure
-  # here must not abort an otherwise successful import.
-  def sync_teases
-    puts "Scanning setlist notes for teases..."
-    service = TeaseSyncService.new(date: show.date.to_s, apply: true)
-    service.call
-    return if service.proposed_rows.none?
-
-    data = GoogleSpreadsheetFetcher.call(ENV.fetch("TAGIN_GSHEET_ID"), "Tease!A1:G5000", headers: true)
-    TrackTagSyncService.call("Tease", data.select { |row| row["URL"].to_s.include?("/#{show.date}/") })
-  rescue StandardError => e
-    puts "⚠️  Tease sync failed (#{e.class}: #{e.message}); continuing import."
+  def enrich_from_phishnet
+    warnings = Admin::PhishnetEnrichment.call(show) { |message| puts "#{message}..." }
+    warnings.each { |warning| puts "⚠️  #{warning}; continuing import." }
   end
 
   def save_song_performance_data(show)
@@ -120,32 +103,16 @@ class ShowImporter::Orchestrator
     BustoutTagService.call(show)
   end
 
-  def create_announcement
-    show_name = "#{show.date} at #{show.venue_name}"
-    Announcement.create! \
-      title: "New content: #{show_name}",
-      description: "A new show has been added: #{show_name}",
-      url: "#{App.base_url}/#{show.date}"
-  end
-
   def analyze_filenames
     @fm = ShowImporter::FilenameMatcher.new(path)
   end
 
   def venue
-    @venue ||=
-      Venue.left_outer_joins(:venue_renames)
-           .where(
-             "(venues.name = :name OR venue_renames.name = :name) AND city = :city",
-             name: show_info.venue_name,
-             city: show_info.venue_city
-           ).first
+    @venue ||= @matcher_result&.venue
   end
 
   def tour
-    @tour ||=
-      Tour.where("starts_on <= :date AND ends_on >= :date", date:)
-          .first
+    @tour ||= @matcher_result&.tour
   end
 
   def assign_venue
@@ -193,65 +160,23 @@ class ShowImporter::Orchestrator
     track.show = show
     track.exclude_from_stats = true if @exclude_from_stats
     track.save!
-    track.mp3_audio.attach \
-      io: File.open("#{@fm.dir}/#{track.filename}"),
-      filename: track.friendly_filename,
-      content_type: "audio/mpeg"
-    track.process_mp3_audio
+    File.open("#{@fm.dir}/#{track.filename}") { |io| track.attach_mp3!(io) }
   end
 
   def populate_tracks
-    @tracks = []
-    @matches = @fm.matches.dup
-
-    show_info.songs.each do |position, title|
-      process_track(position, title)
-    end
+    @matcher_result = ShowImporter::Matcher.call(date:, filenames: fm.matches.keys)
+    @tracks = @matcher_result.tracks.map { |attrs| build_track(attrs) }
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def process_track(position, title)
-    set = show_info.sets[position]
-
-    if (match = fn_match?(title))
-      filename = match.first
-      song = match.second
-      track = Track.new(
-        set: set || musical_set_from_fn(filename),
-        position:,
-        title: song.title,
-        filename:
-      )
-      track.songs << song if song.present?
-    elsif (song = fm.find_song(title, exact: true))
-      track = Track.new(position:, title: song.title, set:)
-      track.songs << song
-    else
-      track = Track.new(position:, title:, set:)
-    end
-
-    @tracks << track
-  end
-  # rubocop:enable Metrics/MethodLength
-
-  def fn_match?(title)
-    unused_matches.find { |_k, v| !v.nil? && v.title.casecmp?(title) }.tap do |k, _v|
-      @used_files << k
-    end
-  end
-
-  def unused_matches
-    @matches.except(*@used_files)
-  end
-
-  def musical_set_from_fn(filename)
-    SET_MAP.each do |set, values|
-      values.each do |value|
-        return set if filename&.start_with?(value)
-      end
-    end
-
-    "1"
+  def build_track(attrs)
+    track = Track.new(
+      position: attrs[:position],
+      title: attrs[:title],
+      set: attrs[:set],
+      filename: attrs[:filename]
+    )
+    track.songs << Song.find(attrs[:song_id]) if attrs[:song_id]
+    track
   end
 
   def clear_rails_cache

@@ -3,7 +3,7 @@ import { useLocation } from "react-router";
 import { formatDate, parseTimeParam } from "../helpers/utils";
 import CoverArt from "../CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronUp, faChevronDown, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { usePlayer } from "../hooks/usePlayer";
 import { useMediaSession } from "../hooks/useMediaSession";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
@@ -12,7 +12,7 @@ import TrackInfo from "./TrackInfo";
 import ProgressBar from "./ProgressBar";
 import { useFeedback } from "../contexts/FeedbackContext";
 
-const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal, shouldAutoplay, setShouldAutoplay, onPlayingChange, onLoadingChange }) => {
+const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal, shouldAutoplay, setShouldAutoplay, onPlayingChange, onLoadingChange, onClose }) => {
   const location = useLocation();
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
   const { setNotice, setAlert } = useFeedback();
@@ -41,6 +41,15 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   useEffect(() => {
     if (onPlayingChange) onPlayingChange(isPlaying);
   }, [isPlaying, onPlayingChange]);
+
+  // Lets other players (the admin audio tools) pause this one when they start.
+  useEffect(() => {
+    const onExternalPause = () => {
+      if (isPlaying) togglePlayPause();
+    };
+    window.addEventListener("phishin:pause-player", onExternalPause);
+    return () => window.removeEventListener("phishin:pause-player", onExternalPause);
+  }, [isPlaying, togglePlayPause]);
 
   useEffect(() => {
     if (onLoadingChange) onLoadingChange(isLoading);
@@ -108,6 +117,11 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       >
         <FontAwesomeIcon icon={isPlayerCollapsed ? faChevronUp : faChevronDown} />
       </div>
+      {onClose && (
+        <div className="player-close-button" onClick={onClose}>
+          <FontAwesomeIcon icon={faXmark} />
+        </div>
+      )}
       <div className="top-row">
         <div className="left-half">
           <CoverArt

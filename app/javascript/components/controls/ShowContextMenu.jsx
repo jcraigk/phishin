@@ -6,7 +6,7 @@ import { useAudioFilter } from "../contexts/AudioFilterContext";
 import LikeButton from "./LikeButton";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight, faDownload, faClock, faChartGantt } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight, faDownload, faClock, faChartGantt, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { createShowTimelineModalContent, createTaperNotesModalContent } from "../helpers/modals";
 
 const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
@@ -201,6 +201,20 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             <FontAwesomeIcon icon={faExternalLinkAlt} className="icon" />
             Phish.net
           </a>
+
+          {user !== "anonymous" && user?.admin && (
+            <Link
+              className="dropdown-item"
+              to={`/admin/shows/${show.date}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                hideDropdown();
+              }}
+            >
+              <FontAwesomeIcon icon={faUserShield} className="icon" />
+              Edit in Admin
+            </Link>
+          )}
 
           {adjacentLinks && (
             <>

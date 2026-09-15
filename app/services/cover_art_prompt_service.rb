@@ -1,5 +1,6 @@
 class CoverArtPromptService < ApplicationService
   param :show
+  option :dry_run, default: -> { false }
 
   HUES = %w[
     Red Orange Yellow Green Blue Purple
@@ -11,11 +12,14 @@ class CoverArtPromptService < ApplicationService
     Apricot Mustard Tangerine Plum Gold
   ]
   STYLES = %w[
-    Futurism Wood-Burned Poster-Art
-    Ink-Drawing Illustration Nihonga
-    Watercolor Line-Art Geometric Low-Poly
-    Oil-Painting Technical-Drawing
-    Block-Prints Comic-Book Photograph Isometric-Drawing
+    Watercolor Gouache Oil-Painting Ink-Drawing Line-Art Charcoal-Sketch
+    Ukiyo-e Nihonga Art-Deco Art-Nouveau Bauhaus
+    Risograph Linocut Block-Prints Screen-Print
+    Pop-Art Psychedelic-Poster Vintage-Travel-Poster Comic-Book
+    Stained-Glass Mosaic Paper-Collage Papercut
+    Pixel-Art Low-Poly Isometric-Drawing Geometric
+    Cyberpunk Synthwave Photograph Macro-Photography
+    Claymation Felt-Craft Embroidery Wood-Burned
   ]
   CATEGORIES = %w[animals plants foods misc_objects time_concepts phish]
   BASE_PROMPT = <<~TXT
@@ -107,11 +111,11 @@ class CoverArtPromptService < ApplicationService
     Respond only with the JSON object containing the keys and values for the categories. Do not include any other information or formatting characters in your response such as backticks or the token "json".
   TXT
   def call
-    if show == run_kickoff_show
+    if dry_run
+      { prompt: new_prompt, suggestions: llm_response }
+    elsif show == run_kickoff_show
       generate_new_prompt
       print_response_hints
-      # puts @chatgpt_response
-      # puts @new_prompt
     else
       defer_to_kickoff_show
     end
@@ -122,15 +126,14 @@ class CoverArtPromptService < ApplicationService
   def new_prompt
     return @new_prompt if defined?(@new_prompt)
     num = rand < 0.3 ? 1 : 2
-    subjects = CATEGORIES.sample(num).map { chatgpt_response[it.to_sym].sample }.join(" and ")
-    @new_prompt =
-      "Create an image featuring #{subjects} " \
-      "in the style of #{style} with a #{hue} hue."
+    subjects = CATEGORIES.sample(num).map { llm_response[it.to_sym].sample }.join(" and ")
+    article = hue.match?(/\A[aeiou]/i) ? "an" : "a"
+    @new_prompt = "#{subjects.upcase_first} in the style of #{style} with #{article} #{hue} hue."
   end
 
   def print_response_hints
     txt = CATEGORIES.map do |category|
-      "#{category.upcase} " + chatgpt_response[category.to_sym].sample(3).join(", ")
+      "#{category.upcase} " + llm_response[category.to_sym].sample(3).join(", ")
     end.join(" / ")
     puts txt
   end
@@ -143,8 +146,6 @@ class CoverArtPromptService < ApplicationService
 
   def generate_new_prompt
     show.update! \
-      cover_art_style: style,
-      cover_art_hue: hue,
       cover_art_prompt: new_prompt,
       cover_art_parent_show_id: nil
   end
@@ -152,8 +153,6 @@ class CoverArtPromptService < ApplicationService
   def defer_to_kickoff_show
     show.update! \
       cover_art_parent_show_id: run_kickoff_show.id,
-      cover_art_style: run_kickoff_show.cover_art_style,
-      cover_art_hue: run_kickoff_show.cover_art_hue,
       cover_art_prompt: run_kickoff_show.cover_art_prompt
   end
 
@@ -176,76 +175,46 @@ class CoverArtPromptService < ApplicationService
     kickoff_show
   end
 
-  # Select a hue from our list, voiding repetition of the previous show's hue
   def hue
-    return @hue if defined?(@hue)
-    available_hues = HUES.dup
-    if prior_show&.cover_art_hue.present?
-      available_hues.delete(prior_show.cover_art_hue)
-    end
-    @hue = available_hues.sample
+    @hue ||= HUES.sample
   end
 
-
-  # Select a style from our list, avoiding repetition of the previous show's style
   def style
-    return @style if defined?(@style)
-    available_styles = STYLES.dup
-    if prior_show&.cover_art_style.present?
-      available_styles.delete(prior_show.cover_art_style)
-    end
-    @style = available_styles.sample
+    @style ||= STYLES.sample
   end
 
-  # Fetch the previous show not at same venue to avoid duplication
-  def prior_show
-    return @prior_show if defined?(@prior_show)
-
-    @prior_show =
-      Show.where("date < ?", show.date)
-          .where.not(venue: show.venue)
-          .order(date: :desc)
-          .first
-    # Loop to last show if no prior show found
-    @prior_show = Show.order(date: :desc).first if @prior_show.nil?
-    @prior_show
-  end
-
-  def chatgpt_response
-    return @chatgpt_response if defined?(@chatgpt_response)
+  def llm_response
+    return @llm_response if defined?(@llm_response)
 
     prompt = BASE_PROMPT.dup
     prompt += "\nThe songs played at this show were: #{song_list}"
     prompt += "\n\nThe time and place is #{show.venue_name}, #{show.venue.location} on #{show.date}"
-    # puts prompt
 
     response = Typhoeus.post(
-      "https://api.openai.com/v1/chat/completions",
+      "https://api.anthropic.com/v1/messages",
       headers: {
-        "Authorization" => "Bearer #{openai_api_token}",
+        "x-api-key" => anthropic_api_token,
+        "anthropic-version" => "2023-06-01",
         "Content-Type" => "application/json"
       },
       body: {
-        model: "gpt-4o",
-        messages: [
-          { role: "system",
-content: "You are a generalized expert in knowledge about points of interest." },
-          { role: "user", content: prompt }
-        ]
+        model: "claude-opus-5",
+        max_tokens: 4096,
+        system: "You are a generalized expert in knowledge about points of interest.",
+        messages: [ { role: "user", content: prompt } ]
       }.to_json
     )
+    raise "Failed to get response from Claude: #{response.body}" unless response.success?
 
-    if response.success?
-      response = JSON[response.body]["choices"].first["message"]["content"]
-      @chatgpt_response = JSON.parse(response, symbolize_names: true)
-    else
-      raise "Failed to get response from ChatGPT: #{response.body}"
-    end
+    result = JSON.parse(response.body)
+    text = result["content"].find { |block| block["type"] == "text" }&.dig("text")
+    raise "No text block in Anthropic response: #{result['content'].inspect}" if text.blank?
 
-    @chatgpt_response
+    json_match = text.match(/```(?:json)?\s*(.*?)\s*```/m)
+    @llm_response = JSON.parse(json_match ? json_match[1] : text, symbolize_names: true)
   end
 
-  def openai_api_token
-    @openai_api_token ||= ENV.fetch("OPENAI_API_TOKEN")
+  def anthropic_api_token
+    @anthropic_api_token ||= ENV.fetch("ANTHROPIC_API_KEY")
   end
 end

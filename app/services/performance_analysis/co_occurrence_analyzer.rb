@@ -74,7 +74,8 @@ module PerformanceAnalysis
     end
 
     def shows_with_song(song_id)
-      Show.joins(tracks: :songs)
+      Show.published
+          .joins(tracks: :songs)
           .where(songs: { id: song_id })
           .where.not(tracks: { set: EXCLUDED_SETS })
           .where("shows.performance_gap_value > 0")
@@ -83,7 +84,8 @@ module PerformanceAnalysis
     end
 
     def fetch_show_dates(show_ids)
-      Show.where(id: show_ids)
+      Show.published
+          .where(id: show_ids)
           .order(date: :desc)
           .limit(limit)
           .pluck(:date)

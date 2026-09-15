@@ -68,11 +68,7 @@ class BanterInsertService < ApplicationService
   end
 
   def source_duration_ms
-    out, _err, status = Open3.capture3(
-      "ffprobe", "-v", "error", "-show_entries", "format=duration",
-      "-of", "default=noprint_wrappers=1:nokey=1", source_path.to_s
-    )
-    status.success? ? (out.to_f * 1000).round : 0
+    (Admin::AudioProbe.read(source_path, "format=duration").to_f * 1000).round
   end
 
   # A FLAC is encoded to the catalog's LAME settings; an MP3 source (the

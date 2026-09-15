@@ -18,7 +18,8 @@ module PerformanceAnalysis
     private
 
     def analyze_state_frequency
-      state_counts = Show.joins(:venue)
+      state_counts = Show.published
+                         .joins(:venue)
                          .where("shows.performance_gap_value > 0")
                          .where(venues: { country: "USA" })
                          .group("venues.state")
@@ -34,7 +35,8 @@ module PerformanceAnalysis
       state = filters[:state]
       return { error: "state required" } unless state
 
-      shows_in_state = Show.joins(:venue)
+      shows_in_state = Show.published
+                           .joins(:venue)
                            .where(venues: { state: })
                            .where("shows.performance_gap_value > 0")
                            .pluck(:id)
@@ -45,9 +47,10 @@ module PerformanceAnalysis
                                    .pluck("songs.id")
                                    .uniq
 
-      all_played_songs = Track.joins(:songs)
+      all_played_songs = Track.joins(:show, :songs)
                               .where.not(set: EXCLUDED_SETS)
                               .where(exclude_from_stats: false)
+                              .where(shows: { published: true })
                               .select("DISTINCT songs.id")
                               .pluck("songs.id")
 
@@ -55,7 +58,8 @@ module PerformanceAnalysis
 
       songs = Song.where(id: never_played_ids)
                   .where.not(slug: EXCLUDED_SONGS)
-                  .joins(:tracks)
+                  .joins(tracks: :show)
+                  .where(shows: { published: true })
                   .group("songs.id", "songs.title", "songs.slug")
                   .having("COUNT(tracks.id) >= ?", 10)
                   .order("COUNT(tracks.id) DESC")
@@ -73,7 +77,8 @@ module PerformanceAnalysis
       state = filters[:state]
       return { error: "state required" } unless state
 
-      shows_in_state = Show.joins(:venue)
+      shows_in_state = Show.published
+                           .joins(:venue)
                            .where(venues: { state: })
                            .where("shows.performance_gap_value > 0")
                            .order(:date)

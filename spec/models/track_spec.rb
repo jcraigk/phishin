@@ -112,7 +112,18 @@ RSpec.describe Track do
   it 'invalidates < 1 song' do
     track.songs = []
     track.validate
-    expect(track.errors.attribute_names).to include(:songs)
+    expect(track.errors.full_messages).to include("Tracks must include at least one song")
+  end
+
+  it 'allows a blank title and no songs while the show is unpublished' do
+    draft = build(:track, show: create(:show, published: false), title: "", songs: [])
+    expect(draft).to be_valid
+  end
+
+  it 'requires a title once the show is published' do
+    track.title = ""
+    track.validate
+    expect(track.errors.attribute_names).to include(:title)
   end
 
   describe 'scopes' do
@@ -276,6 +287,19 @@ RSpec.describe Track do
 
     it 'provides #as_json_api' do
       expect(track.as_json_api).to eq(expected_as_json_api)
+    end
+  end
+
+  describe "songs requirement" do
+    it "allows zero songs on a draft show's track" do
+      show = create(:show, published: false)
+      track = build(:track, show:, songs: [])
+      expect(track).to be_valid
+    end
+
+    it "requires songs on a published show's track" do
+      track = build(:track, songs: [])
+      expect(track).not_to be_valid
     end
   end
 end

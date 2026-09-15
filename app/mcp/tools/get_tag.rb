@@ -55,7 +55,8 @@ module Tools
         )
 
         Rails.cache.fetch(cache_key) do
-          shows = Show.joins(:show_tags)
+          shows = Show.published
+                      .joins(:show_tags)
                       .where(show_tags: { tag_id: tag.id })
                       .includes(:venue, :tour)
 
@@ -87,8 +88,9 @@ module Tools
         )
 
         Rails.cache.fetch(cache_key) do
-          tracks = Track.joins(:track_tags)
+          tracks = Track.joins(:track_tags, :show)
                         .where(track_tags: { tag_id: tag.id })
+                        .where(shows: { published: true })
                         .includes(show: :venue)
 
           tracks = apply_track_sort(tracks, sort_by, sort_order)

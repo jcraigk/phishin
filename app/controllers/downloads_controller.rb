@@ -1,4 +1,6 @@
 class DownloadsController < ApplicationController
+  include ActiveStorage::FileServer
+
   def download_track
     raise ActiveRecord::RecordNotFound if track.blank?
     return head(:not_found) unless track.mp3_audio.attached?
@@ -13,19 +15,17 @@ class DownloadsController < ApplicationController
   private
 
   def send_file_response(file, disposition, filename)
+    path = ActiveStorage::Blob.service.send(:path_for, file.key)
+    return head(:not_found) unless File.exist?(path)
     add_cache_header
-    send_file \
-      ActiveStorage::Blob.service.send(:path_for, file.key),
-      type: file.content_type || "application/octet-stream",
-      disposition:,
-      filename:,
-      length: file.byte_size
-  rescue ActionController::MissingFile
-    head :not_found
+    response.headers["Accept-Ranges"] = "bytes"
+    serve_file path,
+      content_type: file.content_type || "application/octet-stream",
+      disposition: ActionDispatch::Http::ContentDisposition.format(disposition:, filename:)
   end
 
   def track
-    @track ||= Track.includes(show: :venue).find_by(id: params[:id])
+    @track ||= Track.joins(:show).merge(Show.published).includes(show: :venue).find_by(id: params[:id])
   end
 
   def blob

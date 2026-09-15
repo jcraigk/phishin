@@ -1,0 +1,410 @@
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCheck,
+  faPlus,
+  faTrashCan,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
+import AddSetMenu from "./AddSetMenu";
+import { SETS, setName, groupBySet, withPendingSets, addableSets as computeAddableSets } from "./sets";
+import { plural } from "./format";
+import { EditorContext } from "./AdminShowEditor";
+import { AdminPlayerContext } from "./AdminLayout";
+import TrackRow from "./TrackRow";
+import BulkAudioDrop from "./BulkAudioDrop";
+import PnetCheckPanel from "./PnetCheckPanel";
+import useJobRunner from "./useJobRunner";
+import { adminGet, adminPost, adminPut, pollJob } from "./adminApi";
+import { uploadFile } from "./DirectUploader";
+import SongPicker from "./SongPicker";
+import { formatDurationShow } from "../helpers/utils";
+import Modal from "./Modal";
+
+const GapBanner = () => {
+  const { show, setGapsStale } = useContext(EditorContext);
+  const { run, busy, status, error } = useJobRunner();
+
+  return (
+    <div className="admin-gap-banner">
+      <span>Set lists changed. Recompute gaps.</span>
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() =>
+          run(
+            () => adminPost(`/shows/${show.date}/recompute_gaps`),
+            () => setGapsStale(false)
+          )
+        }
+      >
+        Recompute Gaps
+      </button>
+      {status && <span className="admin-audio-status">{status}</span>}
+      {error && <span className="admin-error">{error}</span>}
+    </div>
+  );
+};
+
+const TracksTab = () => {
+  const { show, setShow, setError, gapsStale, reload } = useContext(EditorContext);
+  const [busy, setBusy] = useState(false);
+  const [pendingSets, setPendingSets] = useState([]);
+  const [repositioning, setRepositioning] = useState(null);
+  const [targetPosition, setTargetPosition] = useState(1);
+  const [targetSet, setTargetSet] = useState("1");
+  const [actionsSlot, setActionsSlot] = useState(null);
+  const [allTags, setAllTags] = useState([]);
+  const [audioTool, setAudioTool] = useState(null);
+
+  const toggleAudioTool = (trackId, name) =>
+    setAudioTool((prev) =>
+      prev && prev.trackId === trackId && prev.name === name ? null : { trackId, name }
+    );
+  const [inserting, setInserting] = useState(false);
+  const [insertTitle, setInsertTitle] = useState("");
+  const [insertPosition, setInsertPosition] = useState(1);
+  const [insertSongs, setInsertSongs] = useState([]);
+  const [insertFile, setInsertFile] = useState(null);
+  const [insertProgress, setInsertProgress] = useState(null);
+
+  const { playTrack, activeTrack, isPlaying } = useContext(AdminPlayerContext);
+
+  useEffect(() => {
+    setActionsSlot(document.getElementById("admin-tab-actions"));
+  }, []);
+
+  useEffect(() => {
+    adminGet("/tags")
+      .then((data) => setAllTags(data.tags))
+      .catch((e) => setError(e.message));
+  }, []);
+
+  const tracks = show.tracks;
+
+  const playerTracks = useMemo(
+    () =>
+      tracks
+        .filter((t) => t.mp3_url && t.audio_status !== "missing")
+        .map((t) => ({
+          ...t,
+          show_date: show.date,
+          venue_name: show.venue_name,
+          venue_slug: show.venue_slug,
+          waveform_image_url: t.waveform_url,
+          show_cover_art_urls: {
+            small: show.cover_art_url,
+            medium: show.cover_art_url,
+            large: show.cover_art?.current_url,
+          },
+        })),
+    [tracks, show.date, show.cover_art_url, show.cover_art?.current_url]
+  );
+
+  const playRow = (track) => {
+    const target = playerTracks.find((t) => t.id === track.id);
+    if (!target) return;
+    if (activeTrack?.id === track.id) {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    } else {
+      playTrack(playerTracks, target);
+    }
+  };
+
+  const missingAudioCount = tracks.filter(
+    (t) => t.audio_status === "missing"
+  ).length;
+
+  const commitOrder = async (ordered, sets) => {
+    setError(null);
+    setBusy(true);
+    try {
+      setShow(
+        await adminPut(`/shows/${show.date}/track_order`, {
+          track_ids: ordered.map((t) => t.id),
+          sets,
+        })
+      );
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const openReposition = (track) => {
+    setTargetPosition(track.position);
+    const choices = setChoicesFor(track, track.position);
+    setTargetSet(choices.includes(track.set) ? track.set : choices[0]);
+    setRepositioning(track);
+  };
+
+  const slotNeighbors = (track, position) => {
+    const ordered = tracks.filter((t) => t.id !== track.id);
+    ordered.splice(position - 1, 0, track);
+    const at = ordered.indexOf(track);
+    return { above: ordered[at - 1], below: ordered[at + 1] };
+  };
+
+  const setChoicesFor = (track, position) => {
+    const { above, below } = slotNeighbors(track, position);
+    const atBoundary = !above || !below || above.set !== below.set;
+    const choices = [
+      ...new Set(
+        [
+          above?.set,
+          below?.set,
+          ...(atBoundary ? pendingSets : []),
+        ].filter(Boolean)
+      ),
+    ];
+    if (choices.length === 0) return SETS;
+    return SETS.filter((set) => choices.includes(set));
+  };
+
+  const chooseTargetPosition = (position) => {
+    setTargetPosition(position);
+    const { above, below } = slotNeighbors(repositioning, position);
+    setTargetSet(above?.set || below?.set || repositioning.set);
+  };
+
+  const applyReposition = () => {
+    const track = repositioning;
+    setRepositioning(null);
+    setPendingSets((prev) => prev.filter((set) => set !== targetSet));
+    const from = tracks.indexOf(track);
+    const ordered = [...tracks];
+    ordered.splice(from, 1);
+    ordered.splice(targetPosition - 1, 0, track);
+    const sets = track.set === targetSet ? {} : { [track.id]: targetSet };
+    if (from === targetPosition - 1 && Object.keys(sets).length === 0) return;
+    commitOrder(ordered, sets);
+  };
+
+  const addTrack = async () => {
+    const position = insertPosition;
+    const set = tracks[position - 2]?.set || tracks[0]?.set || "1";
+    setError(null);
+    setBusy(true);
+    try {
+      const body = {
+        position,
+        title: insertTitle.trim(),
+        set,
+        song_ids: insertSongs.map((s) => s.id),
+      };
+      if (insertFile) {
+        setInsertProgress(0);
+        body.signed_id = await uploadFile(insertFile, setInsertProgress);
+        setInsertProgress(null);
+      }
+      const data = await adminPost(`/shows/${show.date}/tracks`, body);
+      setInserting(false);
+      setShow(data);
+      if (data.job_id) {
+        await pollJob(data.job_id);
+        await reload();
+      }
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setInsertProgress(null);
+      setBusy(false);
+    }
+  };
+
+  const addableSets = computeAddableSets(tracks, pendingSets);
+
+  const tabActions = (
+    <>
+      <button
+        type="button"
+        disabled={busy}
+        title="Add a track to the setlist"
+        onClick={() => {
+          setInsertTitle("");
+          setInsertPosition(tracks.length + 1);
+          setInsertSongs([]);
+          setInsertFile(null);
+          setInserting(true);
+        }}
+      >
+        <FontAwesomeIcon icon={faPlus} /> Track
+      </button>
+      <AddSetMenu
+        options={addableSets}
+        disabled={busy}
+        title="Add a set to the show"
+        onAdd={(set) => setPendingSets((prev) => [...prev, set])}
+      />
+      <BulkAudioDrop />
+    </>
+  );
+
+  return (
+    <div className="admin-tracks-tab">
+      {gapsStale && <GapBanner />}
+      {actionsSlot && createPortal(tabActions, actionsSlot)}
+      {missingAudioCount > 0 && (
+        <div className="admin-tracks-toolbar">
+          <span className="admin-staged-summary">
+            {`${plural(missingAudioCount, "track")} awaiting audio`}
+          </span>
+        </div>
+      )}
+
+      {tracks.length === 0 ? (
+        <p>This show has no tracks yet.</p>
+      ) : (
+        <table className="admin-tracks-table">
+          {withPendingSets(groupBySet(tracks), pendingSets).map((group) => {
+            const firstIndex =
+              group.tracks[0]?.index ?? group.dropIndex ?? tracks.length;
+            const headerKey = `set-${firstIndex}`;
+            return (
+              <tbody key={headerKey} className="admin-set-group">
+                <tr className="admin-set-header">
+                  <th colSpan={7}>
+                    {setName(group.set)}
+                    {group.tracks.length === 0 && (
+                      <button
+                        type="button"
+                        className="admin-trash-button admin-set-dismiss"
+                        onClick={() =>
+                          setPendingSets((prev) => prev.filter((s) => s !== group.set))
+                        }
+                      >
+                        <FontAwesomeIcon icon={faTrashCan} />
+                      </button>
+                    )}
+                    {group.tracks.length > 0 && (
+                      <span className="admin-set-duration">
+                        {formatDurationShow(
+                          group.tracks.reduce(
+                            (sum, { track }) => sum + (track.duration || 0),
+                            0
+                          )
+                        )}
+                      </span>
+                    )}
+                  </th>
+                </tr>
+                {group.tracks.map(({ track, index }) => (
+                  <TrackRow
+                    key={track.id}
+                    track={track}
+                    next={tracks[index + 1] || null}
+                    tags={allTags}
+                    onReposition={() => openReposition(track)}
+                    isActive={activeTrack?.id === track.id}
+                    isPlaying={activeTrack?.id === track.id && isPlaying}
+                    onPlay={() => playRow(track)}
+                    audioTool={audioTool}
+                    onAudioTool={toggleAudioTool}
+                  />
+                ))}
+              </tbody>
+            );
+          })}
+        </table>
+      )}
+
+      <PnetCheckPanel />
+
+      {inserting && (
+        <Modal title="Add Track">
+          <label className="admin-modal-field">
+            <span>Title</span>
+            <input
+              type="text"
+              value={insertTitle}
+              onChange={(e) => setInsertTitle(e.target.value)}
+            />
+          </label>
+          <label className="admin-modal-field">
+            <span>Position</span>
+            <select
+              value={insertPosition}
+              onChange={(e) => setInsertPosition(Number(e.target.value))}
+            >
+              {tracks.map((t, i) => (
+                <option key={t.id} value={i + 1}>
+                  {i + 1}. before {t.title}
+                </option>
+              ))}
+              <option value={tracks.length + 1}>
+                {tracks.length + 1}. (end of show)
+              </option>
+            </select>
+          </label>
+          <label className="admin-modal-field">
+            <span>Songs</span>
+            <SongPicker value={insertSongs} onChange={setInsertSongs} />
+          </label>
+          <label className="admin-modal-field">
+            <span>Audio file</span>
+            <input
+              type="file"
+              accept=".mp3,.flac,.shn,.wav,.aiff"
+              disabled={busy}
+              onChange={(e) => setInsertFile(e.target.files[0] || null)}
+            />
+          </label>
+          {insertProgress !== null && (
+            <progress className="admin-progress-bar" max="100" value={insertProgress} />
+          )}
+          <div className="admin-modal-actions">
+            <button
+              type="button"
+              disabled={busy || insertTitle.trim() === "" || insertSongs.length === 0}
+              onClick={addTrack}
+            >
+              <FontAwesomeIcon icon={faCheck} /> Add Track
+            </button>
+            <button type="button" onClick={() => setInserting(false)}>
+              <FontAwesomeIcon icon={faXmark} /> Cancel
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {repositioning && (
+        <Modal title={<>Reposition &quot;{repositioning.title}&quot;</>}>
+          <label className="admin-modal-field">
+            <span>Position</span>
+            <select
+              value={targetPosition}
+              onChange={(e) => chooseTargetPosition(Number(e.target.value))}
+            >
+              {tracks.map((t, i) => (
+                <option key={t.id} value={i + 1}>
+                  {i + 1}
+                  {t.id === repositioning.id ? ". (current)" : `. ${t.title}`}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="admin-modal-field">
+            <span>Set</span>
+            <select value={targetSet} onChange={(e) => setTargetSet(e.target.value)}>
+              {setChoicesFor(repositioning, targetPosition).map((set) => (
+                <option key={set} value={set}>{setName(set)}</option>
+              ))}
+            </select>
+          </label>
+          <div className="admin-modal-actions">
+            <button type="button" disabled={busy} onClick={applyReposition}>
+              <FontAwesomeIcon icon={faCheck} /> Apply
+            </button>
+            <button type="button" onClick={() => setRepositioning(null)}>
+              <FontAwesomeIcon icon={faXmark} /> Cancel
+            </button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+};
+
+export default TracksTab;

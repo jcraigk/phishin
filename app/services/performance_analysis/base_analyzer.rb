@@ -23,6 +23,7 @@ module PerformanceAnalysis
       scope = Track.joins(:show, :songs)
                    .where.not(tracks: { set: EXCLUDED_SETS })
                    .where(tracks: { exclude_from_stats: false })
+                   .where(shows: { published: true })
                    .where("shows.performance_gap_value > 0")
       apply_filters(scope)
     end

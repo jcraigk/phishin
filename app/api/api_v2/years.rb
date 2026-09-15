@@ -60,7 +60,7 @@ class ApiV2::Years < ApiV2::Base
     def years_data
       # Preload cover to avoid N+1 queries
       cover_art_dates = COVER_ART.values.compact
-      cover_art_shows = Show.includes(
+      cover_art_shows = Show.published.includes(
         :cover_art_attachment
       ).where(date: cover_art_dates).index_by(&:date)
 
@@ -110,7 +110,7 @@ class ApiV2::Years < ApiV2::Base
             COUNT(DISTINCT CASE WHEN audio_status IN ('complete', 'partial') THEN venue_id END) as venues_with_audio_count,
             COALESCE(SUM(duration), 0) as shows_duration
           FROM shows
-          WHERE (#{condition})
+          WHERE (#{condition}) AND published = true
         SQL
       end
 

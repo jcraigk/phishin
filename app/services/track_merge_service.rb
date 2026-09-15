@@ -158,7 +158,7 @@ class TrackMergeService < ApplicationService
   end
 
   def part_durations
-    @part_durations ||= @files.map { probe(it.path, "duration").to_f }
+    @part_durations ||= @files.map { probe(it.path, "format=duration").to_f }
   end
 
   def first_duration_s
@@ -175,12 +175,7 @@ class TrackMergeService < ApplicationService
 
 
   def probe(path, entry)
-    out, err, status = Open3.capture3(
-      "ffprobe", "-v", "error", "-show_entries", "format=#{entry}",
-      "-of", "csv=p=0", path
-    )
-    raise Error, "ffprobe failed for #{label}: #{err}" unless status.success?
-    out.strip
+    Admin::AudioProbe.read(path, entry) or raise Error, "ffprobe failed for #{label}"
   end
 
   def output_path

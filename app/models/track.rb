@@ -20,9 +20,10 @@ class Track < ApplicationRecord
     using: { tsearch: { any_word: true, normalization: 16 } }
   )
 
-  validates :position, :title, :set, presence: true
+  validates :position, :set, presence: true
   validates :position, uniqueness: { scope: :show_id }
-  validates :songs, length: { minimum: 1 }
+  validates :title, presence: true, if: :on_published_show?
+  validate :must_have_song, if: :on_published_show?
 
   before_save :generate_slug
   after_save :update_show_audio_status
@@ -84,6 +85,11 @@ class Track < ApplicationRecord
     WaveformImageService.call(self)
   end
 
+  def attach_mp3!(io)
+    mp3_audio.attach(io:, filename: friendly_filename, content_type: "audio/mpeg")
+    process_mp3_audio
+  end
+
   def process_mp3_audio
     return if missing_audio?
     save_duration
@@ -137,5 +143,13 @@ class Track < ApplicationRecord
 
   def decrement_tracks_with_audio_counters
     songs.each { |song| song.decrement!(:tracks_with_audio_count) }
+  end
+
+  def on_published_show?
+    show.nil? || show.published?
+  end
+
+  def must_have_song
+    errors.add(:base, "Tracks must include at least one song") if songs.empty?
   end
 end

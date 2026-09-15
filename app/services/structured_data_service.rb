@@ -47,7 +47,7 @@ class StructuredDataService < ApplicationService
   end
 
   def show_graphs
-    show = Show.includes(:venue, :tracks).find_by(date:)
+    show = Show.published.includes(:venue, :tracks).find_by(date:)
     return [] unless show
 
     track = slug ? show.tracks.find_by(slug:) : nil

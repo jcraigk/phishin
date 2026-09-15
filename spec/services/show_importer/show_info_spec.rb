@@ -63,4 +63,14 @@ RSpec.describe ShowImporter::ShowInfo do
       3 => "E"
     )
   end
+
+  context "when the date is not found on Phish.net" do
+    let(:response_body) { { data: [] }.to_json }
+
+    it "raises NotFoundError" do
+      expect { show_info }.to raise_error(
+        described_class::NotFoundError, "Date \"#{date}\" not found on Phish.net"
+      )
+    end
+  end
 end

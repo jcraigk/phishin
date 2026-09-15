@@ -13,15 +13,19 @@ const webpackConfig = (envSpecific) => {
   }
 
   let result;
-  // For HMR, need to separate the the client and server webpack configurations
-  if (process.env.WEBPACK_SERVE || process.env.CLIENT_BUNDLE_ONLY) {
-    // eslint-disable-next-line no-console
-    console.log('[React on Rails] Creating only the client bundles.');
-    result = clientConfig;
-  } else if (process.env.SERVER_BUNDLE_ONLY) {
+  // For HMR, need to separate the the client and server webpack configurations.
+  // SERVER_BUNDLE_ONLY is checked first: it is set per process (the Procfile's
+  // watcher), whereas CLIENT_BUNDLE_ONLY tends to live in .env for
+  // assets:precompile and would otherwise turn that watcher into a second
+  // client build fighting the dev server over manifest.json.
+  if (process.env.SERVER_BUNDLE_ONLY) {
     // eslint-disable-next-line no-console
     console.log('[React on Rails] Creating only the server bundle.');
     result = serverConfig;
+  } else if (process.env.WEBPACK_SERVE || process.env.CLIENT_BUNDLE_ONLY) {
+    // eslint-disable-next-line no-console
+    console.log('[React on Rails] Creating only the client bundles.');
+    result = clientConfig;
   } else {
     // default is the standard client and server build
     // eslint-disable-next-line no-console

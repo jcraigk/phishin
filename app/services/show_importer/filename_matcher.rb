@@ -1,8 +1,9 @@
 class ShowImporter::FilenameMatcher
   attr_reader :matches, :dir
 
-  def initialize(dir)
+  def initialize(dir = nil, filenames: nil)
     @dir = dir
+    @explicit_filenames = filenames
     @matches = {}
 
     match_filenames_with_songs
@@ -26,6 +27,8 @@ class ShowImporter::FilenameMatcher
   end
 
   def filenames
+    return @explicit_filenames if @explicit_filenames
+
     Dir.entries(dir).reject do |e|
       e.start_with?(".") || e =~ /.txt\z/
     end

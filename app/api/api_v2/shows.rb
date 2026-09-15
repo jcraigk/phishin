@@ -66,7 +66,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       success ApiV2::Entities::Show
     end
     get "random" do
-      show = Show.with_audio.order("RANDOM()").first
+      show = Show.published.with_audio.order("RANDOM()").first
       present \
         show,
         with: ApiV2::Entities::Show,
@@ -129,6 +129,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
                     },
                     { show_tags: :tag }
                   )
+                  .published
                   .on_day_of_year(date.month, date.day)
       shows = apply_audio_status_filter(shows, params[:audio_status])
       shows = apply_sort(shows, :date, :desc)
@@ -147,7 +148,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
     post "request_album_zip" do
-      show = Show.find_by!(date: params[:date])
+      show = Show.published.find_by!(date: params[:date])
       if show.album_zip.attached?
         error!({ message: "Album already generated" }, 409)
       elsif show.album_zip_requested_at.present?
@@ -175,7 +176,8 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     end
 
     def fetch_shows
-      Show.includes(
+      Show.published
+          .includes(
             :venue,
             :tour,
             :album_cover_attachment,
@@ -188,10 +190,8 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
           .then { |s| paginate_relation(s) }
     end
 
-
-
     def show_by_date
-      if params[:liked_by_user] && current_user
+      if (params[:liked_by_user] && current_user) || current_user&.admin?
         fetch_show_by_date
       else
         Rails.cache.fetch(cache_key_for_resource("shows", params[:date])) { fetch_show_by_date }
@@ -204,19 +204,19 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     end
 
     def fetch_show_by_date
-      Show.includes(
-            :venue,
-            { cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } } },
-            tracks: [
-              :mp3_audio_attachment,
-              :png_waveform_attachment,
-              { track_tags: :tag },
-              :songs,
-              :songs_tracks
-            ],
-            show_tags: :tag
-          )
-          .find_by!(date: params[:date])
+      scope = current_user&.admin? ? Show.all : Show.published
+      scope.includes(
+        :venue,
+        { cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } } },
+        tracks: [
+          :mp3_audio_attachment,
+          :png_waveform_attachment,
+          { track_tags: :tag },
+          :songs,
+          :songs_tracks
+        ],
+        show_tags: :tag
+      ).find_by!(date: params[:date])
     end
 
     def apply_filter(shows)

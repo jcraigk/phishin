@@ -100,9 +100,9 @@ RSpec.describe GaplessTrimService do
     # rather than relying on the fixture to expose it.
     it "does not read the length from the container" do
       service = described_class.new(track, tail_cut:, dry_run: true)
-      allow(service).to receive(:probe).and_call_original
+      allow(Admin::AudioProbe).to receive(:read).and_call_original
       service.call
-      expect(service).not_to have_received(:probe).with("duration")
+      expect(Admin::AudioProbe).not_to have_received(:read).with(anything, "format=duration")
     end
   end
 
