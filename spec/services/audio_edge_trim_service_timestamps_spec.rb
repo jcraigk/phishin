@@ -43,9 +43,9 @@ RSpec.describe AudioEdgeTrimService do
       expect(track_tag.reload.ends_at_second).to eq(22)
     end
 
-    it "leaves the tag unorphaned" do
+    it "keeps the tag" do
       result
-      expect(track_tag.reload.orphaned_at).to be_nil
+      expect(TrackTag.exists?(track_tag.id)).to be(true)
     end
 
     it "moves the jam start with it" do
@@ -68,24 +68,9 @@ RSpec.describe AudioEdgeTrimService do
       create(:track_tag, track:, tag:, starts_at_second: 20, ends_at_second: 25)
     end
 
-    it "orphans the tag rather than deleting it" do
+    it "removes the tag, since the audio under it is gone" do
       result
-      expect(TrackTag.exists?(track_tag.id)).to be(true)
-    end
-
-    it "keeps the tag's original start" do
-      result
-      expect(track_tag.reload.starts_at_second).to eq(20)
-    end
-
-    it "keeps the tag's original end" do
-      result
-      expect(track_tag.reload.ends_at_second).to eq(25)
-    end
-
-    it "flags it with a reason" do
-      result
-      expect(track_tag.reload.orphan_reason).to eq("past_new_end")
+      expect(TrackTag.exists?(track_tag.id)).to be(false)
     end
   end
 

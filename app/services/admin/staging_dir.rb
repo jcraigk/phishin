@@ -23,6 +23,8 @@ class Admin::StagingDir
 
   def timeline = root.join("timeline.flac")
 
+  def peaks = root.join("peaks.bin")
+
   def source_path(source)
     sources_dir.join(format("%03d-%s", source.position, source.filename))
   end

@@ -24,7 +24,6 @@ class Show < ApplicationRecord
     attachable.variant :id3, resize_to_limit: [ 600, 600 ]
   end
   has_one_attached :album_zip
-  has_many_attached :staged_audio
   has_many_attached :cover_art_candidates
 
   extend FriendlyId
@@ -36,6 +35,7 @@ class Show < ApplicationRecord
   before_validation :cache_venue_name
   after_create :increment_shows_with_audio_counter_caches
   after_destroy :decrement_shows_with_audio_counter_caches
+  after_destroy :remove_staging_dir
 
   scope :between_years, lambda { |year1, year2|
     date1 = Date.new(year1.to_i).beginning_of_year
@@ -84,12 +84,26 @@ class Show < ApplicationRecord
     blob.read_attribute(:filename)
   end
 
-  def staged_audio_filenames
-    staged_audio_attachments.includes(:blob).map { |a| self.class.original_filename(a.blob) }
+  def self.create_draft!(date)
+    create!(date:, published: false, audio_status: "missing")
   end
 
   def staging?
-    staged_sources.exists?
+    staged_sources.any?
+  end
+
+  def renumber_tracks!(ordered_ids = tracks.order(:position).pluck(:id))
+    transaction do
+      ordered_ids.each_with_index { |id, index| tracks.where(id:).update_all(position: -(index + 1)) }
+      tracks.where(position: ...0).update_all("position = -position")
+    end
+  end
+
+  def discard_staging!
+    staged_tracks.destroy_all
+    staged_sources.destroy_all
+    update!(staging_source_url: nil) if staging_source_url.present?
+    remove_staging_dir
   end
 
   def save_duration
@@ -143,6 +157,10 @@ class Show < ApplicationRecord
   def increment_shows_with_audio_counter_caches
     return unless has_audio?
     increment_shows_with_audio_counters
+  end
+
+  def remove_staging_dir
+    Admin::StagingDir.new(self).remove!
   end
 
   def decrement_shows_with_audio_counter_caches

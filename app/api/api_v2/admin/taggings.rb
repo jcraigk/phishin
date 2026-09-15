@@ -13,12 +13,8 @@ class ApiV2::Admin::Taggings < ApiV2::Admin::Base
 
     resource :shows do
       desc "Check Phish.net sources for tag suggestions", hidden: true
-      post ":date/pnet_tag_check", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
-        show = admin_show
-        job = AdminJob.create!(kind: "pnet_tag_check", show:)
-        Admin::PnetTagCheckJob.perform_async(show.id, job.id)
-        status 201
-        { job_id: job.id }
+      post ":date/pnet_tag_check", requirements: DATE do
+        enqueue_job("pnet_tag_check", Admin::PnetTagCheckJob, show: admin_show)
       end
 
       desc "Add a show tag", hidden: true
@@ -26,7 +22,7 @@ class ApiV2::Admin::Taggings < ApiV2::Admin::Base
         requires :tag_id, type: Integer
         optional :notes, type: String
       end
-      post ":date/show_tags", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+      post ":date/show_tags", requirements: DATE do
         show = admin_show
         show.show_tags.create!(tag: Tag.find(params[:tag_id]), notes: params[:notes])
         status 201
@@ -79,13 +75,10 @@ class ApiV2::Admin::Taggings < ApiV2::Admin::Base
         optional :starts_at_second, type: Integer
         optional :ends_at_second, type: Integer
         optional :transcript, type: String
-        optional :orphaned, type: Boolean, values: [ false ]
       end
       patch ":id" do
         track_tag = TrackTag.find(params[:id])
         updates = declared(params, include_missing: false).except(:id).symbolize_keys
-        updates.delete(:orphaned)
-        updates.merge!(orphaned_at: nil, orphan_reason: nil) if params.key?(:orphaned)
         track_tag.update!(updates)
         track_payload(track_tag.track.reload)
       end

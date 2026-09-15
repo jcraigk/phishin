@@ -11,7 +11,7 @@ class TimestampShifter < ApplicationService
   def call
     @shifted = []
     @clamped = []
-    @orphaned = []
+    @removed = []
 
     ActiveRecord::Base.transaction do
       shift_track_tags
@@ -19,7 +19,7 @@ class TimestampShifter < ApplicationService
       shift_playlist_tracks
     end
 
-    { shifted: @shifted, clamped: @clamped, orphaned: @orphaned }
+    { shifted: @shifted, clamped: @clamped, removed: @removed }
   end
 
   private
@@ -42,8 +42,8 @@ class TimestampShifter < ApplicationService
     outcome = classify(track_tag.starts_at_second, track_tag.ends_at_second)
 
     case outcome[:verdict]
-    when :orphan
-      orphan_track_tag(track_tag, outcome[:reason])
+    when :remove
+      remove_track_tag(track_tag, outcome[:reason])
     else
       from = track_tag.starts_at_second
       track_tag.update!(
@@ -53,10 +53,10 @@ class TimestampShifter < ApplicationService
     end
   end
 
-  def orphan_track_tag(track_tag, reason)
+  def remove_track_tag(track_tag, reason)
     at = track_tag.starts_at_second || track_tag.ends_at_second
-    track_tag.update_columns(orphaned_at: Time.current, orphan_reason: reason)
-    @orphaned << {
+    track_tag.destroy!
+    @removed << {
       "type" => "TrackTag", "id" => track_tag.id, "at" => at, "reason" => reason
     }
   end
@@ -66,9 +66,9 @@ class TimestampShifter < ApplicationService
     return if jam.nil?
 
     outcome = classify(jam, nil)
-    if outcome[:verdict] == :orphan
+    if outcome[:verdict] == :remove
       track.update!(jam_starts_at_second: nil)
-      @orphaned << {
+      @removed << {
         "type" => "Track", "id" => track.id, "at" => jam,
         "reason" => outcome[:reason], "field" => "jam_starts_at_second"
       }
@@ -99,19 +99,19 @@ class TimestampShifter < ApplicationService
   def presence_of(second) = second.to_i.positive? ? second : nil
 
   def classify(starts, ends, clamp_only: false)
-    return { verdict: :orphan, reason: REASON_UNMAPPABLE } if unmappable?
+    return { verdict: :remove, reason: REASON_UNMAPPABLE } if unmappable?
 
     new_start = starts.nil? ? nil : starts + delta
     new_end = ends.nil? ? nil : ends + delta
 
     if new_start&.negative?
       return clamped_to_range(new_start, new_end) if clamp_only
-      return { verdict: :orphan, reason: REASON_BEFORE_START }
+      return { verdict: :remove, reason: REASON_BEFORE_START }
     end
 
     if max_s && new_start && new_start > max_s
       return clamped_to_range(new_start, new_end) if clamp_only
-      return { verdict: :orphan, reason: REASON_PAST_END }
+      return { verdict: :remove, reason: REASON_PAST_END }
     end
 
     if max_s && new_end && new_end > max_s

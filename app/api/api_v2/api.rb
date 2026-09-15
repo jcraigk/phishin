@@ -1,5 +1,4 @@
 class ApiV2::Api < ApiV2::Base
-  mount ApiV2::Admin::Audit
   mount ApiV2::Admin::Catalog
   mount ApiV2::Admin::CoverArt
   mount ApiV2::Admin::Jobs

@@ -75,36 +75,36 @@ RSpec.describe Admin::PnetTagCheckJob do
       .to include("Not on Phish.net: Secret Jam (Set 1)")
   end
 
-  it "matches sandwich tracks through their songs" do
-    hyhu = create(:song, title: "Hold Your Head Up")
-    brain = create(:song, title: "If I Only Had a Brain")
-    create(
-      :track,
-      show:, title: "HYHU > If I Only Had a Brain > HYHU",
-      position: 2, set: "2", songs: [ hyhu, brain ]
-    )
-    allow(show_info).to receive_messages(
-      songs: {
-        1 => "Harry Hood",
-        2 => "Hold Your Head Up",
-        3 => "If I Only Had a Brain",
-        4 => "Hold Your Head Up"
-      },
-      sets: { 1 => "1", 2 => "2", 3 => "2", 4 => "2" }
-    )
+  context "with a sandwich track" do
+    before do
+      hyhu = create(:song, title: "Hold Your Head Up")
+      brain = create(:song, title: "If I Only Had a Brain")
+      create(:track, show:, title: "HYHU > If I Only Had a Brain > HYHU", position: 2, set: "2", songs: [ hyhu, brain ])
+      allow(show_info).to receive_messages(
+        songs: { 1 => "Harry Hood", 2 => "Hold Your Head Up", 3 => "If I Only Had a Brain", 4 => "Hold Your Head Up" },
+        sets: { 1 => "1", 2 => "2", 3 => "2", 4 => "2" }
+      )
+    end
 
-    described_class.new.perform(show.id, admin_job.id)
-
-    report = admin_job.reload.payload["report"]
-    expect(report).not_to include("Missing here: Hold Your Head Up")
-    expect(report).not_to include("Not on Phish.net: HYHU")
+    it "matches the sandwich through its songs" do
+      described_class.new.perform(show.id, admin_job.id)
+      report = admin_job.reload.payload["report"]
+      expect(report).not_to include("Missing here: Hold Your Head Up")
+      expect(report).not_to include("Not on Phish.net: HYHU")
+    end
   end
 
-  it "reports nothing for a matching setlist" do
+  it "leaves out sections with nothing to report" do
     create(:track, show:, title: "Ghost", position: 2, set: "2")
     described_class.new.perform(show.id, admin_job.id)
-    expect(admin_job.reload.payload["report"])
-      .to include("Setlist conflicts with Phish.net:\n  (none)")
+    report = admin_job.reload.payload["report"]
+    expect(report).not_to include("Setlist conflicts with Phish.net")
+    expect(report).not_to include("(none)")
+  end
+
+  it "records what was checked so the panel can show it as a footer" do
+    described_class.new.perform(show.id, admin_job.id)
+    expect(admin_job.reload.payload["checked"]).to include("Setlist against Phish.net")
   end
 
   it "completes the admin job" do

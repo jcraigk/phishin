@@ -15,7 +15,6 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         optional :song_ids, type: Array[Integer]
         optional :jam_starts_at_second, type: Integer
         optional :exclude_from_stats, type: Boolean
-        optional :staged_attachment_id, type: Integer
       end
       patch ":id" do
         track = Track.find(params[:id])
@@ -26,15 +25,12 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
             track.songs = Song.where(id: updates.delete(:song_ids))
           end
 
-          attachment_id = updates.delete(:staged_attachment_id)
-
           if updates.key?(:title) && !track.show.published? && !updates.key?(:slug)
             track.title = updates.delete(:title)
             track.generate_slug(force: true)
           end
 
           track.update!(updates)
-          attach_staged_audio(track, attachment_id) if attachment_id
         end
 
         track_payload(track.reload)
@@ -69,10 +65,7 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       params { requires :signed_id, type: String }
       post ":id/replace_audio" do
         track = Track.find(params[:id])
-        job = AdminJob.create!(kind: "replace_audio", track:, show: track.show)
-        Admin::ReplaceAudioJob.perform_async(track.id, job.id, params[:signed_id])
-        status 201
-        { job_id: job.id }
+        enqueue_job("replace_audio", Admin::ReplaceAudioJob, show: track.show, track:, args: [ params[:signed_id] ])
       end
 
       desc "Delete a track", hidden: true
@@ -81,7 +74,7 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         show = track.show
         ActiveRecord::Base.transaction do
           track.destroy!
-          renumber(show)
+          show.renumber_tracks!
         end
         editor_payload(show.reload)
       end
@@ -92,12 +85,9 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
     def enqueue_trim(kind, apply)
       track = Track.find(params[:id])
       error!({ message: "Track has no audio" }, 422) unless track.mp3_audio.attached?
-      job = AdminJob.create!(kind:, track:, show: track.show)
       opts = declared(params, include_missing: false)
              .slice(:trim_start, :trim_end, :fade_in, :fade_out, :tail_pad).to_json
-      Admin::TrimJob.perform_async(track.id, job.id, opts, apply)
-      status 201
-      { job_id: job.id }
+      enqueue_job(kind, Admin::TrimJob, show: track.show, track:, args: [ opts, apply ])
     end
 
     def enqueue_shift_boundary(kind, apply)
@@ -108,24 +98,7 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         error!({ message: "Both tracks need audio to shift the boundary" }, 422)
       end
       ensure_delta_in_range!(track, following)
-      titles = boundary_titles
-
-      job = AdminJob.create!(kind:, track:, show: track.show)
-      Admin::ShiftBoundaryJob.perform_async(track.id, job.id, params[:delta_s], apply, titles)
-      status 201
-      { job_id: job.id, titles: }.compact
-    end
-
-    def boundary_titles
-      given = declared(params, include_missing: false)["titles"]
-      return nil if given.blank?
-      titles = given.to_h.transform_keys(&:to_s).slice("first", "second")
-                    .transform_values { it.is_a?(String) ? it.strip : it }
-      titles.each do |side, title|
-        next if title.present?
-        error!({ message: "Title for the #{side} track cannot be blank" }, 422)
-      end
-      titles.presence
+      enqueue_job(kind, Admin::ShiftBoundaryJob, show: track.show, track:, args: [ params[:delta_s], apply ])
     end
 
     def ensure_delta_in_range!(track, following)
@@ -137,22 +110,6 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         { message: "Boundary shift must be between #{low}s and #{high}s" },
         422
       )
-    end
-
-    def attach_staged_audio(track, attachment_id)
-      attachment = track.show.staged_audio_attachments.find(attachment_id)
-      track.mp3_audio.attach(attachment.blob)
-      track.update!(audio_status: "complete")
-      track.process_mp3_audio
-    end
-
-    def renumber(show)
-      show.tracks.order(:position).each.with_index(1) do |track, index|
-        track.update_columns(position: -index)
-      end
-      show.tracks.where(position: ...0).each do |track|
-        track.update_columns(position: -track.position)
-      end
     end
   end
 end

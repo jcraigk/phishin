@@ -24,6 +24,18 @@ RSpec.describe Admin::IngestStagingJob do
     dir.remove!
   end
 
+  it "assigns venue and tour from Phish.net" do
+    venue = create(:venue, name: "Deer Creek", city: "Noblesville")
+    tour = create(:tour, name: "Summer Tour 2024", starts_on: "2024-06-01", ends_on: "2024-08-31")
+    allow(Typhoeus).to receive(:get).and_return(
+      instance_double(Typhoeus::Response, code: 200, body: { data: [ { artistid: 1, position: 1, song: "Ghost", set: "1", venue: "Deer Creek", city: "Noblesville" } ] }.to_json)
+    )
+    show.update!(venue: nil, tour: nil)
+    described_class.new.perform(show.id, admin_job.id, [ upload("d1t01.flac", "audio/flac") ], nil)
+    expect(show.reload.venue).to eq(venue)
+    expect(show.tour).to eq(tour)
+  end
+
   def upload(name, content_type)
     ActiveStorage::Blob.create_and_upload!(
       io: File.open(fixtures.join(name)), filename: name, content_type:
@@ -43,6 +55,16 @@ RSpec.describe Admin::IngestStagingJob do
       tracks = show.staged_tracks.order(:position)
       expect(tracks.map { [ it.start_s.to_f, it.end_s.to_f ] }).to eq([ [ 0.0, 4.0 ], [ 4.0, 10.0 ] ])
       expect(tracks.map(&:title)).to eq([ "d1t01", "d1t02" ])
+    end
+
+    it "fades the show's outer edges and leaves the seam between tracks alone" do
+      described_class.new.perform(show.id, admin_job.id, [ upload("show.zip", "application/zip") ], nil)
+
+      first, second = show.staged_tracks.order(:position).to_a
+      expect(first.fade_in_s.to_f).to eq(0.2)
+      expect(first.fade_out_s.to_f).to eq(0)
+      expect(second.fade_in_s.to_f).to eq(0)
+      expect(second.fade_out_s.to_f).to eq(6.0)
     end
 
     it "builds the timeline and a proxy per lossless source" do
@@ -117,6 +139,22 @@ RSpec.describe Admin::IngestStagingJob do
       expect(show.taper_notes).to eq("From the item")
       expect(show.staged_sources.count).to eq(2)
     end
+  end
+
+  it "stops when cancelled and deletes everything it had imported" do
+    admin_job.request_cancel!
+    described_class.new.perform(show.id, admin_job.id, [ upload("show.zip", "application/zip") ], nil, true)
+    expect(admin_job.reload.status).to eq("cancelled")
+    expect(Show.exists?(show.id)).to be(false)
+    expect(Dir.exist?(dir.root)).to be(false)
+  end
+
+  it "keeps a pre-existing show when cancelled, clearing only the staging" do
+    admin_job.request_cancel!
+    described_class.new.perform(show.id, admin_job.id, [ upload("show.zip", "application/zip") ], nil)
+    expect(admin_job.reload.status).to eq("cancelled")
+    expect(show.reload.staged_sources).to be_empty
+    expect(Dir.exist?(dir.root)).to be(false)
   end
 
   it "fails when the show already has tracks" do

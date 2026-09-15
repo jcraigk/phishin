@@ -62,11 +62,8 @@ class BulkAudioMatcher < ApplicationService
 
   def duration_ms(blob)
     return nil unless blob.service.respond_to?(:path_for)
-    out, _err, status = Open3.capture3(
-      "ffprobe", "-v", "error", "-show_entries", "format=duration",
-      "-of", "csv=p=0", blob.service.path_for(blob.key)
-    )
-    status.success? ? (out.to_f * 1000).round : nil
+    seconds = Admin::AudioProbe.read(blob.service.path_for(blob.key), "format=duration")
+    seconds && (seconds.to_f * 1000).round
   end
 
   def unmatched_track_payloads

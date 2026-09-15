@@ -37,4 +37,26 @@ RSpec.describe StagedTrack do
     create(:staged_source, show:)
     expect(show.reload.staging?).to be(true)
   end
+
+  describe ".normalize_sets!" do
+    it "pulls a stray earlier set forward so sets run in order" do
+      %w[1 2 1 E].each_with_index do |set, i|
+        create(:staged_track, show:, position: i + 1, set:, start_s: i * 10, end_s: (i + 1) * 10)
+      end
+
+      described_class.normalize_sets!(show)
+
+      expect(show.staged_tracks.order(:position).pluck(:set)).to eq(%w[1 2 2 E])
+    end
+
+    it "leaves an ordered show alone" do
+      %w[S 1 1 E].each_with_index do |set, i|
+        create(:staged_track, show:, position: i + 1, set:, start_s: i * 10, end_s: (i + 1) * 10)
+      end
+
+      described_class.normalize_sets!(show)
+
+      expect(show.staged_tracks.order(:position).pluck(:set)).to eq(%w[S 1 1 E])
+    end
+  end
 end

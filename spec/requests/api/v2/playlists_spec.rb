@@ -163,6 +163,25 @@ RSpec.describe "API v2 Playlists" do
         expect(json[:entries].map { it[:track][:id] }).to contain_exactly(track1.id, track2.id)
       end
 
+      it "rejects tracks from unpublished shows" do
+        draft_track = create(:track, show: create(:show, published: false))
+        post_api_authed(
+          user,
+          "/playlists",
+          params: {
+            name: "Sneaky",
+            slug: "sneaky",
+            description: "Draft tracks",
+            published: false,
+            track_ids: [ draft_track.id ],
+            starts_at_second: [ 0 ],
+            ends_at_second: [ 10 ]
+          }
+        )
+
+        expect(response).to have_http_status(:not_found)
+      end
+
       it "returns a 422 error if the playlist is invalid" do
         post_api_authed(
           user,

@@ -4,6 +4,7 @@ import { faCheck, faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons"
 import { EditorContext } from "./AdminShowEditor";
 import { adminDelete, adminGet, adminPatch, adminPost } from "./adminApi";
 import diffLines, { normalizeText } from "./diffLines";
+import Modal from "./Modal";
 
 const ShowTagRow = ({ showTag, onSaved, onError }) => {
   const [notes, setNotes] = useState(showTag.notes || "");
@@ -242,38 +243,32 @@ const NotesTab = () => {
       </div>
 
       {pending && (
-        <div className="admin-modal-overlay">
-          <div
-            className="admin-modal admin-modal-wide"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3>Save {pending.label}?</h3>
-            <div className="admin-diff">
-              {diffLines(pending.stored, pending.current).map((line, i) =>
-                line.type === "skip" ? (
-                  <div key={i} className="admin-diff-skip">
-                    {line.count} unchanged {line.count === 1 ? "line" : "lines"}
-                  </div>
-                ) : (
-                  <div key={i} className={`admin-diff-line is-${line.type}`}>
-                    <span className="admin-diff-sign">
-                      {line.type === "add" ? "+" : line.type === "del" ? "-" : " "}
-                    </span>
-                    {line.text === "" ? " " : line.text}
-                  </div>
-                )
-              )}
-            </div>
-            <div className="admin-modal-actions">
-              <button type="button" disabled={busy} onClick={confirmPending}>
-                <FontAwesomeIcon icon={faCheck} /> Save
-              </button>
-              <button type="button" onClick={cancelPending}>
-                <FontAwesomeIcon icon={faXmark} /> Cancel
-              </button>
-            </div>
+        <Modal title={<>Save {pending.label}?</>} wide>
+          <div className="admin-diff">
+            {diffLines(pending.stored, pending.current).map((line, i) =>
+              line.type === "skip" ? (
+                <div key={i} className="admin-diff-skip">
+                  {line.count} unchanged {line.count === 1 ? "line" : "lines"}
+                </div>
+              ) : (
+                <div key={i} className={`admin-diff-line is-${line.type}`}>
+                  <span className="admin-diff-sign">
+                    {line.type === "add" ? "+" : line.type === "del" ? "-" : " "}
+                  </span>
+                  {line.text === "" ? " " : line.text}
+                </div>
+              )
+            )}
           </div>
-        </div>
+          <div className="admin-modal-actions">
+            <button type="button" disabled={busy} onClick={confirmPending}>
+              <FontAwesomeIcon icon={faCheck} /> Save
+            </button>
+            <button type="button" onClick={cancelPending}>
+              <FontAwesomeIcon icon={faXmark} /> Cancel
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   );

@@ -96,16 +96,9 @@ class Admin::SelectCoverArtJob
 
   def clear_candidates(winner_blob)
     @show.cover_art_candidates_attachments.reload.each do |attachment|
-      blob = attachment.blob
-      attachment.destroy
-      next if blob.id == winner_blob.id
-      purge_if_unreferenced(blob)
+      next attachment.destroy if attachment.blob_id == winner_blob.id
+      Admin::Blobs.detach(attachment)
     end
-  end
-
-  def purge_if_unreferenced(blob)
-    return if ActiveStorage::Attachment.where(blob_id: blob.id).exists?
-    blob.purge
   end
 
   def finalize

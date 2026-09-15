@@ -196,6 +196,24 @@ const routes = (props) => [
       },
       {
         path: "/admin",
+        loader: async () => {
+          const deny = () => {
+            throw new Response("Not Found", { status: 404 });
+          };
+          if (typeof window === "undefined" || !localStorage.getItem("jwt")) deny();
+          if (window.phishinAdminVerified) return null;
+          const { adminGet } = await import("../admin/adminApi");
+          try {
+            await adminGet("/jobs?limit=1");
+          } catch (e) {
+            if (e.status === 401 || e.status === 403) {
+              localStorage.setItem("admin", "false");
+              deny();
+            }
+          }
+          window.phishinAdminVerified = true;
+          return null;
+        },
         lazy: async () => {
           const { default: Component } = await import("../admin/AdminLayout");
           return { Component };
@@ -211,7 +229,7 @@ const routes = (props) => [
           {
             path: "shows",
             lazy: async () => {
-              const { default: Component } = await import("../admin/AdminImport");
+              const { default: Component } = await import("../admin/AdminShows");
               return { Component };
             },
           },

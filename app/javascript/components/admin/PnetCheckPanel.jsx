@@ -1,16 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGlobe, faXmark } from "@fortawesome/free-solid-svg-icons";
-import MoonLoader from "react-spinners/MoonLoader";
+import { faCircleCheck, faGlobe, faXmark } from "@fortawesome/free-solid-svg-icons";
+import Spinner from "./Spinner";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminPost } from "./adminApi";
+import Modal from "./Modal";
 
 const PnetCheckPanel = () => {
   const { show } = useContext(EditorContext);
   const [open, setOpen] = useState(false);
   const [report, setReport] = useState(null);
+  const [checked, setChecked] = useState([]);
   const [actionsSlot, setActionsSlot] = useState(null);
   const { run, cancel, busy, status, progress, error } = useJobRunner();
 
@@ -23,7 +25,10 @@ const PnetCheckPanel = () => {
     setOpen(true);
     run(
       () => adminPost(`/shows/${show.date}/pnet_tag_check`),
-      (job) => setReport(job?.payload?.report || "No report produced.")
+      (job) => {
+        setReport(job?.payload?.report || "No report produced.");
+        setChecked(job?.payload?.checked || []);
+      }
     );
   };
 
@@ -41,33 +46,36 @@ const PnetCheckPanel = () => {
   return (
     <>
       {actionsSlot && createPortal(button, actionsSlot)}
-      {open &&
-        createPortal(
-          <div className="admin-modal-overlay">
-            <div
-              className="admin-modal admin-modal-wide"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h3>Phish.net Check</h3>
-              {busy && (
-                <div className="admin-pnet-progress">
-                  <span className="admin-art-busy">
-                    <MoonLoader color="#c7c8ca" size={18} /> {status || "Checking..."}
-                  </span>
-                  <progress max="100" value={progress ?? 0} />
-                </div>
-              )}
-              {error && <p className="admin-error">{error}</p>}
-              {report && <pre className="admin-pnet-report">{report}</pre>}
-              <div className="admin-modal-actions">
-                <button type="button" onClick={close}>
-                  <FontAwesomeIcon icon={faXmark} /> {busy ? "Cancel" : "Close"}
-                </button>
-              </div>
+      {open && (
+        <Modal title="Phish.net Check" wide>
+          {busy && (
+            <div className="admin-pnet-progress">
+              <span className="admin-art-busy">
+                <Spinner size={18} /> {status || "Checking..."}
+              </span>
+              <progress max="100" value={progress ?? 0} />
             </div>
-          </div>,
-          document.querySelector(".admin-layout") || document.body
-        )}
+          )}
+          {error && <p className="admin-error">{error}</p>}
+          {report && (
+            report === "No conflicts." ? (
+              <p className="admin-pnet-report admin-pnet-clear">
+                <FontAwesomeIcon icon={faCircleCheck} /> No conflicts
+              </p>
+            ) : (
+              <div className="admin-pnet-report">{report}</div>
+            )
+          )}
+          {report && checked.length > 0 && (
+            <p className="admin-pnet-checked">Checked: {checked.join(" · ")}</p>
+          )}
+          <div className="admin-modal-actions">
+            <button type="button" onClick={close}>
+              <FontAwesomeIcon icon={faXmark} /> {busy ? "Cancel" : "Close"}
+            </button>
+          </div>
+        </Modal>
+      )}
     </>
   );
 };

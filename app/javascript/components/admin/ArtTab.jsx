@@ -1,12 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import { createPortal } from "react-dom";
-import MoonLoader from "react-spinners/MoonLoader";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import Spinner from "./Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowsRotate,
   faCheck,
   faCloudArrowUp,
-  faPenToSquare,
+  faPencil,
+  faPlus,
   faTrashCan,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +14,8 @@ import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminDelete, adminGet, adminPost, pollJob } from "./adminApi";
 import { uploadFile } from "./DirectUploader";
+import { formatDate } from "../helpers/utils";
+import Modal from "./Modal";
 
 const SELECT_CONFIRM =
   "Sets cover art, composites the album cover, and re-embeds ID3 tags on all tracks. Continue?";
@@ -40,19 +41,11 @@ const ImageCard = ({ url, alt, imgStyle, children }) => (
   </figure>
 );
 
-const jobStatusLine = (job) => {
-  if (job.message) return job.message;
-  const raw = job.status || "";
-  return raw ? `${raw.charAt(0).toUpperCase()}${raw.slice(1)}...` : null;
-};
-
 const EditControl = ({
   blobKey,
   label,
-  multiline,
   provenance,
   onPendingStart,
-  onPendingUpdate,
   onPendingEnd,
 }) => {
   const { show, reload, setError } = useContext(EditorContext);
@@ -75,9 +68,7 @@ const EditControl = ({
         `/shows/${show.date}/cover_art/ai_edit`,
         { source_blob_key: blobKey, edit_prompt: text }
       );
-      await pollJob(jobId, {
-        onUpdate: (job) => onPendingUpdate(pendingId, jobStatusLine(job)),
-      });
+      await pollJob(jobId);
       await reload();
     } catch (e) {
       setError(e.message);
@@ -88,37 +79,27 @@ const EditControl = ({
 
   return (
     <div className="admin-art-edit">
-      {!(multiline && open) && (
-        <button
-          type="button"
-          className={open ? "active" : ""}
-          title="AI edit"
-          onClick={() => setOpen(!open)}
-        >
-          <FontAwesomeIcon icon={faSparkles} />
-          {label ? <> {label}</> : null}
-        </button>
-      )}
+      <button
+        type="button"
+        className={open ? "active" : ""}
+        title="AI edit"
+        onClick={() => setOpen(!open)}
+      >
+        <FontAwesomeIcon icon={faPencil} />
+        {label ? <> {label}</> : null}
+      </button>
       {open && (
         <div className="admin-art-edit-form">
-          {multiline ? (
-            <textarea
-              rows={3}
-              placeholder="Describe the edit"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-            />
-          ) : (
-            <input
-              type="text"
-              placeholder="Describe the edit"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") submit();
-              }}
-            />
-          )}
+          <input
+            type="text"
+            placeholder="Describe the edit"
+            autoFocus
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") submit();
+            }}
+          />
           <button
             type="button"
             title="Run paid AI edit"
@@ -127,22 +108,13 @@ const EditControl = ({
           >
             <FontAwesomeIcon icon={faCheck} />
           </button>
-          {multiline && (
-            <button
-              type="button"
-              title="Cancel"
-              onClick={() => setOpen(false)}
-            >
-              <FontAwesomeIcon icon={faXmark} />
-            </button>
-          )}
         </div>
       )}
     </div>
   );
 };
 
-const CandidateCard = ({ candidate, onPendingStart, onPendingUpdate, onPendingEnd }) => {
+const CandidateCard = ({ candidate, onPendingStart, onPendingEnd }) => {
   const { show, reload, setError } = useContext(EditorContext);
   const [zoom, setZoom] = useState("0");
   const [removing, setRemoving] = useState(false);
@@ -240,7 +212,6 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingUpdate, onPendingEn
           label=""
           provenance={{ basePrompt, edits }}
           onPendingStart={onPendingStart}
-          onPendingUpdate={onPendingUpdate}
           onPendingEnd={onPendingEnd}
         />
         <button
@@ -253,17 +224,25 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingUpdate, onPendingEn
           <FontAwesomeIcon icon={faTrashCan} />
         </button>
       </div>
-      {status && <span className="admin-audio-status">{status}</span>}
+      {busy && (
+        <span className="admin-art-busy">
+          <Spinner size={18} /> {status || "Applying..."}
+        </span>
+      )}
       {error && <p className="admin-error">{error}</p>}
     </ImageCard>
   );
 };
 
+// The service asks for ten ideas per category; half that is plenty to
+// pick from without pushing the modal off the screen.
+const SUGGESTIONS_PER_CATEGORY = 5;
+
 const NewPromptModal = ({ onClose, onSubmit }) => {
   const { show } = useContext(EditorContext);
   const [draft, setDraft] = useState(show.cover_art.prompt || "");
   const [suggestions, setSuggestions] = useState(null);
-  const { run, busy, status, error } = useJobRunner();
+  const { run, busy, error } = useJobRunner();
 
   const suggest = () =>
     run(
@@ -277,63 +256,54 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
   const append = (text) =>
     setDraft((prev) => (prev.trim() === "" ? text : `${prev.trim()} ${text}`));
 
-  return createPortal(
-    <div className="admin-modal-overlay">
-      <div
-        className="admin-modal admin-modal-wide"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h3>New Prompt</h3>
-        <textarea
-          aria-label="Prompt for a new image"
-          placeholder="Prompt for a new image"
-          rows={4}
-          value={draft}
-          disabled={busy}
-          onChange={(e) => setDraft(e.target.value)}
-        />
-        <div className="admin-art-suggest-row">
-          <button type="button" disabled={busy} onClick={suggest}>
-            <FontAwesomeIcon icon={faArrowsRotate} /> Generate prompt
-          </button>
-          {busy && (
-            <span className="admin-art-busy">
-              <MoonLoader color="#c7c8ca" size={18} /> {status || "Suggesting"}
-            </span>
-          )}
-        </div>
-        {suggestions && (
-          <dl className="admin-art-suggestions">
-            {Object.entries(suggestions).map(([category, items]) => (
-              <div key={category}>
-                <dt>{category.replace(/_/g, " ")}</dt>
-                <dd>
-                  {items.map((item) => (
-                    <button key={item} type="button" onClick={() => append(item)}>
-                      {item}
-                    </button>
-                  ))}
-                </dd>
-              </div>
-            ))}
-          </dl>
+  return (
+    <Modal title="New Prompt" wide>
+      <textarea
+        aria-label="Prompt for a new image"
+        placeholder="Prompt for a new image"
+        rows={2}
+        value={draft}
+        disabled={busy}
+        onChange={(e) => setDraft(e.target.value)}
+      />
+      {error && <p className="admin-error">{error}</p>}
+      <div className="admin-modal-actions">
+        <button
+          type="button"
+          disabled={busy || draft.trim() === ""}
+          onClick={() => onSubmit(draft.trim())}
+        >
+          <FontAwesomeIcon icon={faCheck} /> Submit
+        </button>
+        <button type="button" disabled={busy} onClick={suggest}>
+          <FontAwesomeIcon icon={faSparkles} /> {draft.trim() ? "Regenerate prompt" : "Generate prompt"}
+        </button>
+        <button type="button" disabled={busy} onClick={onClose}>
+          <FontAwesomeIcon icon={faXmark} /> Cancel
+        </button>
+        {busy && (
+          <span className="admin-art-busy">
+            <Spinner size={18} /> Generating...
+          </span>
         )}
-        {error && <p className="admin-error">{error}</p>}
-        <div className="admin-modal-actions">
-          <button
-            type="button"
-            disabled={busy || draft.trim() === ""}
-            onClick={() => onSubmit(draft.trim())}
-          >
-            <FontAwesomeIcon icon={faCheck} /> Submit
-          </button>
-          <button type="button" disabled={busy} onClick={onClose}>
-            <FontAwesomeIcon icon={faXmark} /> Cancel
-          </button>
-        </div>
       </div>
-    </div>,
-    document.querySelector(".admin-layout") || document.body
+      {suggestions && (
+        <dl className="admin-art-suggestions">
+          {Object.entries(suggestions).map(([category, items]) => (
+            <div key={category}>
+              <dt>{category.replace(/_/g, " ")}</dt>
+              <dd>
+                {items.slice(0, SUGGESTIONS_PER_CATEGORY).map((item) => (
+                  <button key={item} type="button" onClick={() => append(item)}>
+                    {item}
+                  </button>
+                ))}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </Modal>
   );
 };
 
@@ -364,26 +334,28 @@ const GenerateControls = ({ onGenerate }) => {
   };
 
   const uploading = progress !== null;
+  const fileRef = useRef(null);
 
   return (
     <div className="admin-art-controls">
-      <button type="button" disabled={uploading} onClick={() => setModalOpen(true)}>
-        <FontAwesomeIcon icon={faPenToSquare} /> New prompt
+      <button type="button" disabled={uploading} title="New image from a prompt" aria-label="New image from a prompt" onClick={() => setModalOpen(true)}>
+        <FontAwesomeIcon icon={faPlus} />
       </button>
-      <label className="admin-art-upload">
-        <FontAwesomeIcon icon={faCloudArrowUp} /> Upload image
-        <input
-          type="file"
-          accept="image/*"
-          disabled={uploading}
-          onChange={(e) => {
-            const file = e.target.files[0];
-            // Allow re-selecting the same filename after a failed upload
-            e.target.value = "";
-            upload(file);
-          }}
-        />
-      </label>
+      <button type="button" disabled={uploading} title="Upload an image" aria-label="Upload an image" onClick={() => fileRef.current?.click()}>
+        <FontAwesomeIcon icon={faCloudArrowUp} />
+      </button>
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={(e) => {
+          const file = e.target.files[0];
+          // Allow re-selecting the same filename after a failed upload
+          e.target.value = "";
+          upload(file);
+        }}
+      />
       {uploading && <progress max="100" value={progress} />}
       {uploadError && <p className="admin-error">{uploadError}</p>}
       {modalOpen && (
@@ -393,19 +365,20 @@ const GenerateControls = ({ onGenerate }) => {
   );
 };
 
-const ArtImage = ({ url, alt }) =>
+const ArtImage = ({ url, alt, emptyLabel }) =>
   url ? (
     <a href={url} target="_blank" rel="noreferrer" title="Open full size">
       <img src={url} alt={alt} />
     </a>
   ) : (
-    <div className="admin-art-empty">None</div>
+    <div className="admin-art-empty admin-art-empty-square">{emptyLabel}</div>
   );
 
-const PendingCard = ({ basePrompt, edits, statusLine }) => (
+const PendingCard = ({ basePrompt, edits, label }) => (
   <figure className="admin-art-card admin-art-pending">
     <div className="admin-art-empty">
-      <MoonLoader color="#c7c8ca" size={28} />
+      <Spinner size={28} />
+      <span>{label}</span>
     </div>
     <figcaption>
       <div className="admin-art-origin">
@@ -416,7 +389,6 @@ const PendingCard = ({ basePrompt, edits, statusLine }) => (
           </p>
         ))}
       </div>
-      <span className="admin-audio-status">{statusLine}</span>
     </figcaption>
   </figure>
 );
@@ -433,29 +405,23 @@ const ArtEditor = ({ runNote }) => {
 
   const currentParts = (art.prompt || "").split(/\s*\|\s*edit:\s*/);
 
-  const updatePendingStatus = (id, statusLine) =>
-    setPendingJobs((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, statusLine } : p))
-    );
   const removePending = (id) =>
     setPendingJobs((prev) => prev.filter((p) => p.id !== id));
   const startPendingEdit = (entry) =>
-    setPendingJobs((prev) => [...prev, { ...entry, statusLine: "Editing..." }]);
+    setPendingJobs((prev) => [...prev, { ...entry, label: "Generating..." }]);
 
   const generate = async (prompt) => {
     const id = `gen-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     setPendingJobs((prev) => [
       ...prev,
-      { id, basePrompt: prompt || art.prompt, edits: [], statusLine: "Queued..." },
+      { id, basePrompt: prompt || art.prompt, edits: [], label: "Generating..." },
     ]);
     try {
       const { job_id: jobId } = await adminPost(
         `/shows/${show.date}/cover_art/generate`,
         prompt ? { prompt } : {}
       );
-      await pollJob(jobId, {
-        onUpdate: (job) => updatePendingStatus(id, jobStatusLine(job)),
-      });
+      await pollJob(jobId);
       await reload();
     } catch (e) {
       setError(e.message);
@@ -472,40 +438,35 @@ const ArtEditor = ({ runNote }) => {
 
       <section className="admin-art-current">
         <div className="admin-art-pair">
-          <ArtImage url={art.current_url} alt="Current cover art" />
-          <ArtImage url={art.album_cover_url} alt="Album cover composite" />
+          <ArtImage url={art.current_url} alt="Current cover art" emptyLabel="No cover art" />
+          <ArtImage url={art.album_cover_url} alt="Album cover composite" emptyLabel="No album cover" />
         </div>
         {art.prompt && <p className="admin-art-snapshot">{art.prompt}</p>}
-        {art.current_blob_key && (
-          <EditControl
-            blobKey={art.current_blob_key}
-            label="Edit"
-            multiline
-            provenance={{
-              basePrompt: currentParts[0] || null,
-              edits: currentParts.slice(1),
-            }}
-            onPendingStart={startPendingEdit}
-            onPendingUpdate={updatePendingStatus}
-            onPendingEnd={removePending}
-          />
-        )}
+        <div className="admin-art-toolbar">
+          {art.current_blob_key && (
+            <EditControl
+              blobKey={art.current_blob_key}
+              label=""
+              provenance={{
+                basePrompt: currentParts[0] || null,
+                edits: currentParts.slice(1),
+              }}
+              onPendingStart={startPendingEdit}
+              onPendingEnd={removePending}
+            />
+          )}
+          <GenerateControls onGenerate={generate} />
+        </div>
       </section>
 
-      <GenerateControls onGenerate={generate} />
-
-      <h3>Candidates</h3>
-      {!showGrid ? (
-        <p>No candidates yet. Generate or upload one.</p>
-      ) : (
+      {showGrid && (
         <div className="admin-art-grid">
           {art.candidates.map((candidate) => (
             <CandidateCard
               key={candidate.blob_key}
               candidate={candidate}
               onPendingStart={startPendingEdit}
-              onPendingUpdate={updatePendingStatus}
-              onPendingEnd={removePending}
+                onPendingEnd={removePending}
             />
           ))}
           {pendingJobs.map((pending) => (
@@ -513,7 +474,7 @@ const ArtEditor = ({ runNote }) => {
               key={pending.id}
               basePrompt={pending.basePrompt}
               edits={pending.edits}
-              statusLine={pending.statusLine}
+              label={pending.label}
             />
           ))}
         </div>
@@ -555,7 +516,7 @@ const ParentArtEditor = ({ parentDate }) => {
       }}
     >
       <ArtEditor
-        runNote={`This show is part of a run that shares cover art. You are editing the run's art (kept on ${parentDate}); applying a candidate updates every show in the run.`}
+        runNote={`This show is part of a run that shares cover art. You are editing the run's art (kept on ${formatDate(parentDate)}); applying a candidate updates every show in the run.`}
       />
     </EditorContext.Provider>
   );

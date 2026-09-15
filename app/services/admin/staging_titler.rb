@@ -29,7 +29,7 @@ class Admin::StagingTitler
   end
 
   def by_position
-    setlist.map { |t| { title: t[:title], set: t[:set].presence || "1", song_id: t[:song_id] } }
+    setlist.map { |t| { title: t[:title], set: t[:set].presence || "1", song_ids: [ t[:song_id] ].compact } }
   end
 
   def by_filename
@@ -37,9 +37,9 @@ class Admin::StagingTitler
     @sources.map do |source|
       hit = matched[as_mp3(source.filename)]
       if hit
-        { title: hit[:title], set: hit[:set].presence || "1", song_id: hit[:song_id] }
+        { title: hit[:title], set: hit[:set].presence || "1", song_ids: [ hit[:song_id] ].compact }
       else
-        { title: File.basename(source.filename, ".*"), set: "1", song_id: nil }
+        { title: File.basename(source.filename, ".*"), set: "1", song_ids: [] }
       end
     end
   end

@@ -10,14 +10,22 @@ module ApiV2::Helpers::AdminHelper
     Show.find_by!(date: params[:date])
   end
 
-  def staged_audio_payload(show)
-    show.staged_audio_attachments.includes(:blob).map do |attachment|
-      {
-        attachment_id: attachment.id,
-        filename: Show.original_filename(attachment.blob),
-        byte_size: attachment.blob.byte_size
-      }
-    end
+  def ensure_draft_without_tracks!(show)
+    error!({ message: "Show #{show.date} is already published" }, 422) if show.published?
+    error!({ message: "Show #{show.date} already has tracks" }, 422) if show.tracks.exists?
+  end
+
+  def find_signed_blob(signed_id)
+    ActiveStorage::Blob.find_signed!(signed_id)
+  rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveRecord::RecordNotFound
+    error!({ message: "Unknown upload: #{signed_id}" }, 422)
+  end
+
+  def enqueue_job(kind, job_class, show:, track: nil, args: [])
+    job = AdminJob.create!(kind:, show:, track:)
+    job_class.perform_async(track&.id || show.id, job.id, *args)
+    status 201
+    { job_id: job.id }
   end
 
   def cover_art_payload(show)
@@ -51,7 +59,6 @@ module ApiV2::Helpers::AdminHelper
       exclude_from_stats: show.performance_gap_value.zero?,
       performance_gap_value: show.performance_gap_value,
       matches_pnet: show.matches_pnet,
-      staged_audio: staged_audio_payload(show),
       staging: staging_payload(show),
       show_tags: show_tags_payload(show),
       tracks: show.tracks.order(:position).map { |track| track_payload(track) }
@@ -63,7 +70,10 @@ module ApiV2::Helpers::AdminHelper
     sources = show.staged_sources.order(:position)
     {
       source_url: show.staging_source_url,
+      commit_job_id: active_job_id(show, "commit_staging"),
       total_s: sources.sum(&:duration_s).to_f,
+      peaks_url: File.exist?(Admin::StagingDir.new(show).peaks) ? "/api/v2/admin/shows/#{show.date}/staging/peaks" : nil,
+      peaks_rate: Admin::StagingPeaks::RATE,
       sources: sources.map do |source|
         {
           id: source.id,
@@ -75,19 +85,34 @@ module ApiV2::Helpers::AdminHelper
           audio_url: "/api/v2/admin/shows/#{show.date}/staging/sources/#{source.id}/audio"
         }
       end,
-      tracks: show.staged_tracks.ordered.includes(:song).map { staged_track_payload(it) }
+      tracks: staged_tracks_payload(show)
     }
   end
 
-  def staged_track_payload(track)
+  def active_job_id(show, kind)
+    AdminJob.active.where(show:, kind:).order(:id).last&.id
+  end
+
+  def staged_tracks_payload(show)
+    tracks = show.staged_tracks.ordered.to_a
+    songs = Song.where(id: tracks.flat_map(&:song_ids)).index_by(&:id)
+    tracks.map do |track|
+      staged_track_payload(track, track.song_ids.filter_map { songs[it] })
+    end
+  end
+
+  def staged_track_payload(track, songs)
     {
       id: track.id,
       position: track.position,
       set: track.set,
       title: track.title,
-      song: track.song && { id: track.song.id, title: track.song.title },
+      songs: songs.map { { id: it.id, title: it.title } },
+      undo_combine: track.combines.last&.dig("following", "title"),
       start_s: track.start_s.to_f,
       end_s: track.end_s.to_f,
+      original_start_s: track.original_start_s&.to_f,
+      original_end_s: track.original_end_s&.to_f,
       fade_in_s: track.fade_in_s.to_f,
       fade_out_s: track.fade_out_s.to_f
     }
@@ -113,9 +138,7 @@ module ApiV2::Helpers::AdminHelper
         notes: track_tag.notes,
         starts_at_second: track_tag.starts_at_second,
         ends_at_second: track_tag.ends_at_second,
-        transcript: track_tag.transcript,
-        orphaned_at: track_tag.orphaned_at,
-        orphan_reason: track_tag.orphan_reason
+        transcript: track_tag.transcript
       }
     end
   end
@@ -146,7 +169,8 @@ module ApiV2::Helpers::AdminHelper
       venue_slug: show.venue&.slug,
       published: show.published,
       audio_status: show.audio_status,
-      staged: show.staged_sources.exists?,
+      staged: show.staging?,
+      ingest_job_id: active_job_id(show, "ingest"),
       tracks_count: show.tracks.count,
       duration: show.duration,
       cover_art_url: show.cover_art_urls[:small],

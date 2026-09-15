@@ -94,8 +94,9 @@ RSpec.describe TeaseSyncService do
   describe "track matching" do
     let(:llm_teases) { [ { "song" => "Tweezer", "tease" => "Cannonball", "artist" => "The Breeders" } ] }
     let(:setlist_notes) { "Tweezer contained a Cannonball tease." }
-    let!(:reprise) { create(:track, show:, title: "Tweezer Reprise", position: 3) }
     let!(:sandwich) { create(:track, show:, title: "Tweezer > Dave's Energy Guide > Tweezer", position: 4) }
+
+    before { create(:track, show:, title: "Tweezer Reprise", position: 3) }
 
     it "places a tease on the sandwich rather than the reprise" do
       service.call

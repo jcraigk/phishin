@@ -10,13 +10,13 @@ class TrackAudioReplacer < ApplicationService
     track.update!(audio_status: "complete")
     track.reload.process_mp3_audio
     track.show.update_audio_status_from_tracks!
-    orphan_timestamps if operation
+    drop_timestamps if operation
     backup_path
   end
 
   private
 
-  def orphan_timestamps
+  def drop_timestamps
     TimestampShifter.call(
       track: track.reload, delta_s: nil, new_duration_s: nil,
       reason: "replace_audio"

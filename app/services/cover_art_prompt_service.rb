@@ -127,9 +127,8 @@ class CoverArtPromptService < ApplicationService
     return @new_prompt if defined?(@new_prompt)
     num = rand < 0.3 ? 1 : 2
     subjects = CATEGORIES.sample(num).map { llm_response[it.to_sym].sample }.join(" and ")
-    @new_prompt =
-      "Create an image featuring #{subjects} " \
-      "in the style of #{style} with a #{hue} hue."
+    article = hue.match?(/\A[aeiou]/i) ? "an" : "a"
+    @new_prompt = "#{subjects.upcase_first} in the style of #{style} with #{article} #{hue} hue."
   end
 
   def print_response_hints

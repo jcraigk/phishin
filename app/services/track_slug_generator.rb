@@ -41,6 +41,7 @@ class TrackSlugGenerator < ApplicationService
            .gsub(/[^a-z0-9]/, " ")
            .strip
            .gsub(/\s+/, "-")
+           .presence || "untitled"
   end
 
   def abbreviate_long_slug(slug)

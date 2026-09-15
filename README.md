@@ -79,7 +79,9 @@ The content import process uses the [Phish.net API](https://docs.phish.net/) for
 
 If running the Rails app natively, you may need to install `ffmpeg`.
 
-To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`). Place this folder in `./content/import` and run the following command (`mise run bash` first if you use Docker):
+The preferred way to import a show is the web admin panel: sign in as an admin and visit `/admin`, then use Import Show to pull audio from archive.org or upload files, review the setlist and boundaries, and publish. The CLI below remains available for batch imports.
+
+To import a new show or replace an existing one via the CLI, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`). Place this folder in `./content/import` and run the following command (`mise run bash` first if you use Docker):
 
 ```bash
 bundle exec rails shows:import

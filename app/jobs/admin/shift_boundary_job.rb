@@ -8,13 +8,11 @@ class Admin::ShiftBoundaryJob
   class NoNextTrackError < StandardError; end
   class MissingAudioError < StandardError; end
   class DeltaOutOfRangeError < StandardError; end
-  class BlankTitleError < StandardError; end
 
-  def perform(track_id, admin_job_id, delta_s, apply, titles = nil)
+  def perform(track_id, admin_job_id, delta_s, apply)
     @first = Track.find(track_id)
     @delta_s = delta_s.to_f
     @apply = apply
-    @titles = normalize_titles(titles)
     admin_job = AdminJob.find(admin_job_id)
 
     @admin_job = admin_job
@@ -22,7 +20,6 @@ class Admin::ShiftBoundaryJob
     admin_job.run! do
       find_second!
       ensure_audio!
-      ensure_titles_present!
       ensure_delta_in_stored_range!
       join
       ensure_delta_in_range!
@@ -36,32 +33,9 @@ class Admin::ShiftBoundaryJob
 
   private
 
-  attr_reader :first, :second, :delta_s, :titles
+  attr_reader :first, :second, :delta_s
 
   def apply? = @apply
-
-  def normalize_titles(raw)
-    return nil if raw.blank?
-    raw.to_h.transform_keys(&:to_s).slice("first", "second")
-       .reject { |_side, title| title.nil? }
-       .transform_values { it.is_a?(String) ? it.strip : it }
-       .presence
-  end
-
-  def ensure_titles_present!
-    return if titles.nil?
-    blank = titles.select { |_side, title| title.blank? }.keys
-    return if blank.empty?
-    raise BlankTitleError,
-          "blank title for #{blank.join(' and ')} track; " \
-          "omit the key to leave a title unchanged"
-  end
-
-  def renames
-    @renames ||= { first => titles&.dig("first"), second => titles&.dig("second") }
-                 .compact
-                 .reject { |track, title| track.title == title }
-  end
 
   def show = first.show
 
@@ -126,11 +100,7 @@ class Admin::ShiftBoundaryJob
 
   def bitrate
     @bitrate ||= begin
-      out, _err, status = Open3.capture3(
-        "ffprobe", "-v", "error", "-show_entries", "format=bit_rate",
-        "-of", "csv=p=0", @joined_path
-      )
-      raw = status.success? ? out.strip : ""
+      raw = Admin::AudioProbe.read(@joined_path, "format=bit_rate").to_s
       /\A\d+\z/.match?(raw) ? "#{(raw.to_i / 1000.0).round}k" : "192k"
     end
   end
@@ -168,7 +138,6 @@ class Admin::ShiftBoundaryJob
 
   def apply!
     @backup_paths = [ back_up(first), back_up(second) ]
-    ActiveRecord::Base.transaction { rename! }
     attach(first, side_paths[0])
     attach(second, side_paths[1])
     shift_timestamps
@@ -190,41 +159,6 @@ class Admin::ShiftBoundaryJob
   def new_durations
     @new_durations ||= [ cut_s, total_duration_s - cut_s ].map { it.round(1) }
   end
-
-  def rename!
-    return if renames.empty?
-    @titles_before = renames.keys.to_h { [ it.id, it.title ] }
-    @titles_changed = renames.map do |track, title|
-      { "track_id" => track.id, "from" => track.title, "to" => title }
-    end
-    renames.each { |track, title| track.update!(title:) }
-    reslug!
-  end
-
-  def slug_frozen? = show.published?
-
-  def reslug!
-    return if slug_frozen?
-    affected = affected_siblings
-    was = affected.to_h { [ it.id, it.slug ] }
-    affected.each_with_index do |track, i|
-      track.update_columns(slug: "tmp-#{first.id}-#{i}-#{SecureRandom.hex(4)}")
-    end
-    affected.each do |track|
-      track.generate_slug(force: true)
-      track.save!
-      next if track.slug == was[track.id]
-      reslugged << { "track_id" => track.id, "from" => was[track.id], "to" => track.slug }
-    end
-  end
-
-  def affected_siblings
-    titles_touched = (renames.values + @titles_before.values).map(&:downcase).uniq
-    show.tracks.reload.order(:position)
-        .select { titles_touched.include?(it.title.downcase) }
-  end
-
-  def reslugged = @reslugged ||= []
 
   def back_up(record)
     AudioBackup.store(record, operation: "shift_boundary")
@@ -251,24 +185,6 @@ class Admin::ShiftBoundaryJob
       "source_durations" => @concat[:source_durations],
       "new_durations" => new_durations,
       "backup_paths" => @backup_paths
-    }.compact.merge(rename_payload)
-  end
-
-  def rename_payload
-    return {} if @titles_changed.blank?
-    {
-      "titles_changed" => @titles_changed,
-      "reslugged" => reslugged,
-      "slug_frozen" => slug_frozen?,
-      "song_drift" => song_drift
-    }
-  end
-
-  def song_drift
-    renames.filter_map do |track, title|
-      next if track.songs.any? { title.casecmp?(it.title) }
-      { "track_id" => track.id, "title" => title,
-        "song_titles" => track.songs.map(&:title) }
-    end
+    }.compact
   end
 end

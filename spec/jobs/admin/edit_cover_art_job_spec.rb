@@ -33,7 +33,7 @@ RSpec.describe Admin::EditCoverArtJob, :openai do
   it "declares an image mimetype for the multipart image part" do
     described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue")
     expect(Typhoeus).to have_received(:post) do |_url, options|
-      expect(options[:headers]["Content-Type"]).to match(%r{multipart/form-data; boundary=})
+      expect(options[:headers]["Content-Type"]).to include('multipart/form-data; boundary=')
       expect(options[:body]).to include("name=\"image\"")
       expect(options[:body]).to include("Content-Type: #{source_blob.reload.content_type}")
       expect(source_blob.reload.content_type).to start_with("image/")
@@ -109,15 +109,9 @@ RSpec.describe Admin::EditCoverArtJob, :openai do
   end
 
   it "records the generation cost on the candidate blob" do
+    usage = { input_tokens: 400, input_tokens_details: { text_tokens: 100, image_tokens: 300 }, output_tokens: 6000 }
     allow(openai_response).to receive(:body).and_return(
-      {
-        data: [ { b64_json: Base64.strict_encode64(image_bytes) } ],
-        usage: {
-          input_tokens: 400,
-          input_tokens_details: { text_tokens: 100, image_tokens: 300 },
-          output_tokens: 6000
-        }
-      }.to_json
+      { data: [ { b64_json: Base64.strict_encode64(image_bytes) } ], usage: }.to_json
     )
     described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue")
     cost = show.reload.cover_art_candidates.first.blob.metadata["cost"]

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-export const secondsToClock = (seconds) => {
+const secondsToClock = (seconds) => {
   if (seconds === null || seconds === undefined) return "";
   const total = Math.max(0, Math.round(Number(seconds)));
   const h = Math.floor(total / 3600);
@@ -11,7 +11,7 @@ export const secondsToClock = (seconds) => {
     : `${m}:${String(s).padStart(2, "0")}`;
 };
 
-export const clockToSeconds = (text) => {
+const clockToSeconds = (text) => {
   const trimmed = text.trim();
   if (trimmed === "") return null;
   return trimmed

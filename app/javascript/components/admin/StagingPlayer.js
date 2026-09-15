@@ -12,11 +12,15 @@ import { locate, gainAt } from "./stagingMath";
 // There is a few milliseconds of silence at that switch in the preview only;
 // the commit renders from the continuous timeline and has no seam.
 export class StagingPlayer {
-  constructor({ getSources, onTime, onStop, onError }) {
+  constructor({ getSources, getFollowing, onTime, onStop, onTrackChange, onError, onLoading }) {
     this.getSources = getSources;
+    this.getFollowing = getFollowing || (() => null);
     this.onTime = onTime || (() => {});
     this.onStop = onStop || (() => {});
+    this.onLoading = onLoading || (() => {});
+    this.onTrackChange = onTrackChange || (() => {});
     this.onError = onError || (() => {});
+    this.chain = false;
     this.ctx = null;
     this.elements = new Map();
     this.loaded = new Map();
@@ -58,6 +62,13 @@ export class StagingPlayer {
       const url = await fetchAdminAudio(source.audio_url);
       this.urls.set(source.id, url);
       audio.src = url;
+      // A currentTime set before the metadata arrives is discarded and the
+      // element plays from zero, so wait for it once here.
+      await new Promise((resolve, reject) => {
+        if (audio.readyState >= 1) return resolve();
+        audio.addEventListener("loadedmetadata", resolve, { once: true });
+        audio.addEventListener("error", () => reject(new Error("audio failed to load")), { once: true });
+      });
       return audio;
     })();
     this.elements.set(source.id, promise);
@@ -65,10 +76,14 @@ export class StagingPlayer {
     return promise;
   }
 
+  // Playing a whole track (no explicit end) keeps going into whatever follows:
+  // straight through a seam, or skipping the dropped audio at a cut. An
+  // explicit span (a seam audition, head, tail) plays just that span.
   async play(track, fromS, toS) {
     this.stop();
     const token = ++this.token;
     this.track = track;
+    this.chain = toS == null;
     const from = fromS ?? Number(track.start_s);
     this.stopAt = toS ?? Number(track.end_s);
     // Resume synchronously, before any await, so Safari still counts this as
@@ -78,10 +93,22 @@ export class StagingPlayer {
     await this.startAt(from, token);
   }
 
+  // Reports loading while a source proxy is still being fetched or the
+  // element is buffering, so the UI can show that sound is on its way.
   async startAt(t, token) {
     const hit = locate(this.getSources(), t);
     if (!hit) return;
-    const audio = await this.element(hit.source);
+    this.onLoading(true);
+    let audio;
+    try {
+      audio = await this.element(hit.source);
+    } catch (e) {
+      if (token === this.token) {
+        this.onLoading(false);
+        this.onError(e);
+      }
+      return;
+    }
     if (token !== this.token) return;
     this.active = hit.source;
     audio.currentTime = hit.localS;
@@ -89,10 +116,14 @@ export class StagingPlayer {
     try {
       await audio.play();
     } catch (e) {
-      if (token === this.token) this.onError(e);
+      if (token === this.token) {
+        this.onLoading(false);
+        this.onError(e);
+      }
       return;
     }
     if (token !== this.token) return;
+    this.onLoading(false);
     this.tick(token);
   }
 
@@ -102,11 +133,29 @@ export class StagingPlayer {
     const token = this.token;
     const next = this.getSources().find((s) => s.position === source.position + 1);
     const at = source.offset_s + source.duration_s;
+    if (at >= this.stopAt && this.reachEnd(token)) return;
     if (!next || at >= this.stopAt) {
       this.stop();
       return;
     }
     this.startAt(at, token);
+  }
+
+  // The track being auditioned has run out. Hands playback to the following
+  // track when chaining, jumping over a cut's dropped audio if there is one.
+  // Returns true when playback continues.
+  reachEnd(token) {
+    if (!this.chain) return false;
+    const follow = this.getFollowing(this.track);
+    if (!follow) return false;
+    this.track = follow.track;
+    this.stopAt = Number(follow.track.end_s);
+    this.onTrackChange(follow.track);
+    if (follow.jumpTo != null) {
+      this.pauseActive();
+      this.startAt(follow.jumpTo, token);
+    }
+    return true;
   }
 
   tick(token) {
@@ -115,8 +164,11 @@ export class StagingPlayer {
       const audio = this.loaded.get(this.active.id);
       const t = this.active.offset_s + audio.currentTime;
       if (t >= this.stopAt) {
-        this.stop();
-        return;
+        if (!this.reachEnd(token)) {
+          this.stop();
+          return;
+        }
+        if (!this.active) return;
       }
       this.applyGain(t);
       this.onTime(t);
@@ -157,6 +209,7 @@ export class StagingPlayer {
     element?.pause();
     this.track = null;
     this.stopAt = null;
+    this.onLoading(false);
     if (wasPlaying) this.onStop();
   }
 

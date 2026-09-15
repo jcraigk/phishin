@@ -43,11 +43,9 @@ class ShowImporter::Orchestrator
     pbar.finish
 
     InteractiveCoverArtService.call(Show.where(id: show.id))
-    DebutTagService.call(show)
-    LoreSyncService.call(date: show.date.to_s)
-    sync_teases
+    enrich_from_phishnet
     save_song_performance_data(show)
-    create_announcement
+    Announcement.announce_show!(show)
     clear_rails_cache
   end
 
@@ -94,30 +92,15 @@ class ShowImporter::Orchestrator
 
   private
 
-  # A failure here must not abort an otherwise successful import.
-  def sync_teases
-    puts "Scanning Phish.net setlist notes for teases..."
-    TeaseSyncService.new(date: show.date.to_s, apply: true).call
-    puts "Checking the Phish.net Tease Chart..."
-    TeaseChartSyncService.new(
-      start_date: show.date.to_s, end_date: show.date.to_s, apply: true
-    ).call
-  rescue StandardError => e
-    puts "⚠️  Tease sync failed (#{e.class}: #{e.message}); continuing import."
+  def enrich_from_phishnet
+    warnings = Admin::PhishnetEnrichment.call(show) { |message| puts "#{message}..." }
+    warnings.each { |warning| puts "⚠️  #{warning}; continuing import." }
   end
 
   def save_song_performance_data(show)
     puts "Calculating song performance data and applying bustout tag..."
     GapService.call(show, update_previous: true)
     BustoutTagService.call(show)
-  end
-
-  def create_announcement
-    show_name = "#{show.date} at #{show.venue_name}"
-    Announcement.create! \
-      title: "New content: #{show_name}",
-      description: "A new show has been added: #{show_name}",
-      url: "#{App.base_url}/#{show.date}"
   end
 
   def analyze_filenames
@@ -177,11 +160,7 @@ class ShowImporter::Orchestrator
     track.show = show
     track.exclude_from_stats = true if @exclude_from_stats
     track.save!
-    track.mp3_audio.attach \
-      io: File.open("#{@fm.dir}/#{track.filename}"),
-      filename: track.friendly_filename,
-      content_type: "audio/mpeg"
-    track.process_mp3_audio
+    File.open("#{@fm.dir}/#{track.filename}") { |io| track.attach_mp3!(io) }
   end
 
   def populate_tracks

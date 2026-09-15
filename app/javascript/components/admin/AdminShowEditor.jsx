@@ -11,6 +11,9 @@ import ShowPanel from "./ShowPanel";
 import VenueControl from "./VenueControl";
 import PublishPanel from "./PublishPanel";
 import StagingEditor from "./StagingEditor";
+import IngestProgress from "./IngestProgress";
+import Modal from "./Modal";
+import { deleteDraftMessage } from "./messages";
 
 export const EditorContext = createContext(null);
 
@@ -59,6 +62,11 @@ const AdminShowEditor = () => {
     );
   }
 
+  // A show is importing while its audio is staged: the commit is what turns
+  // the staged tracks into real ones and clears the staging, so until then
+  // there is nothing to preview or delete.
+  const importing = Boolean(show.staging) || Boolean(show.ingest_job_id);
+
   return (
     <EditorContext.Provider
       value={{
@@ -73,84 +81,97 @@ const AdminShowEditor = () => {
     >
       <div className="admin-show-editor">
         <header>
-          <h1>
-            {formatDate(show.date)}
-            {!show.published && <span className="admin-badge">DRAFT</span>}
-          </h1>
+          <h1>{formatDate(show.date)}</h1>
           <VenueControl />
-          <a
-            className="admin-preview-link"
-            href={`/${show.date}`}
-            target="_blank"
-            rel="noreferrer"
-            title="Preview on the site"
-            aria-label="Preview on the site"
-          >
-            <FontAwesomeIcon icon={faExternalLinkAlt} />
-          </a>
-          <button
-            type="button"
-            className="admin-trash-button"
-            title="Delete show"
-            aria-label="Delete show"
-            onClick={() => setConfirmingDelete(true)}
-          >
-            <FontAwesomeIcon icon={faTrashAlt} />
-          </button>
+          {!importing && (
+            <>
+              <a
+                className="admin-preview-link"
+                href={`/${show.date}`}
+                target="_blank"
+                rel="noreferrer"
+                title="Open this show on the public site"
+                aria-label="Preview on the site"
+              >
+                <FontAwesomeIcon icon={faExternalLinkAlt} />
+              </a>
+              <button
+                type="button"
+                className="admin-trash-button"
+                title="Delete this draft and all its tracks"
+                aria-label="Delete draft"
+                onClick={() => setConfirmingDelete(true)}
+              >
+                <FontAwesomeIcon icon={faTrashAlt} />
+              </button>
+            </>
+          )}
+          {importing && <span className="admin-badge">IMPORT</span>}
+          {!importing && <PublishPanel />}
+          {importing && !show.ingest_job_id && (
+            <button
+              type="button"
+              className="admin-danger admin-header-delete"
+              title="Delete this draft and its staged audio"
+              onClick={() => setConfirmingDelete(true)}
+            >
+              <FontAwesomeIcon icon={faTrashAlt} /> Delete
+            </button>
+          )}
         </header>
         {error && (
-          <div className="admin-modal-overlay">
-            <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-              <h3>Error</h3>
-              <p className="admin-error admin-modal-message">{error}</p>
-              <div className="admin-modal-actions">
-                <button type="button" onClick={() => setError(null)}>
-                  <FontAwesomeIcon icon={faCheck} /> OK
-                </button>
-              </div>
+          <Modal title="Error">
+            <p className="admin-error admin-modal-message">{error}</p>
+            <div className="admin-modal-actions">
+              <button type="button" onClick={() => setError(null)}>
+                <FontAwesomeIcon icon={faCheck} /> OK
+              </button>
             </div>
-          </div>
+          </Modal>
         )}
         {confirmingDelete && (
-          <div className="admin-modal-overlay">
-            <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-              <h3>Delete {show.date}?</h3>
-              <p className="admin-empty">
-                The show, its {show.tracks.length} tracks, audio, tags and likes are
-                removed permanently.
-              </p>
-              <div className="admin-modal-actions">
-                <button
-                  type="button"
-                  className="admin-danger"
-                  disabled={deleting}
-                  onClick={async () => {
-                    setDeleting(true);
-                    try {
-                      await adminDelete(`/shows/${show.date}`);
-                      navigate("/admin");
-                    } catch (err) {
-                      setError(err.message);
-                      setDeleting(false);
-                      setConfirmingDelete(false);
-                    }
-                  }}
-                >
-                  <FontAwesomeIcon icon={faCheck} /> Delete Show
-                </button>
-                <button type="button" onClick={() => setConfirmingDelete(false)}>
-                  <FontAwesomeIcon icon={faXmark} /> Cancel
-                </button>
-              </div>
+          <Modal title={<>Delete the {formatDate(show.date)} draft?</>}>
+            <p className="admin-empty">
+              {deleteDraftMessage(show.tracks.length)}
+            </p>
+            <div className="admin-modal-actions">
+              <button
+                type="button"
+                className="admin-danger"
+                disabled={deleting}
+                onClick={async () => {
+                  setDeleting(true);
+                  try {
+                    await adminDelete(`/shows/${show.date}`);
+                    navigate("/admin");
+                  } catch (err) {
+                    setError(err.message);
+                    setDeleting(false);
+                    setConfirmingDelete(false);
+                  }
+                }}
+              >
+                <FontAwesomeIcon icon={faCheck} /> Delete Draft
+              </button>
+              <button type="button" onClick={() => setConfirmingDelete(false)}>
+                <FontAwesomeIcon icon={faXmark} /> Cancel
+              </button>
             </div>
-          </div>
+          </Modal>
         )}
-        {show.staging && show.tracks.length === 0 ? (
+        {show.ingest_job_id ? (
+          <IngestProgress
+            jobId={show.ingest_job_id}
+            title={formatDate(show.date)}
+            onDone={reload}
+            onCancelled={() => navigate("/admin")}
+            onError={setError}
+          />
+        ) : importing ? (
           <StagingEditor />
         ) : (
           <>
             <ShowPanel />
-            <PublishPanel />
             <nav className="admin-tabs">
               {TABS.map((t) => (
                 <button

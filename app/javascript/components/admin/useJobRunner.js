@@ -22,7 +22,7 @@ const useJobRunner = () => {
     };
   }, []);
 
-  const run = useCallback(async (start, onDone) => {
+  const follow = useCallback(async (getJobId, onDone) => {
     setError(null);
     setStatus(null);
     setProgress(null);
@@ -30,7 +30,7 @@ const useJobRunner = () => {
     const controller = new AbortController();
     controllerRef.current = controller;
     try {
-      const { job_id: jobId } = await start();
+      const jobId = await getJobId();
       const job = await pollJob(jobId, {
         onUpdate: (j) => {
           const raw = j.status || "";
@@ -60,11 +60,15 @@ const useJobRunner = () => {
     }
   }, []);
 
+  const run = useCallback((start, onDone) => follow(async () => (await start()).job_id, onDone), [follow]);
+
+  const resume = useCallback((jobId, onDone) => follow(() => jobId, onDone), [follow]);
+
   const cancel = useCallback(() => {
     if (controllerRef.current) controllerRef.current.abort();
   }, []);
 
-  return { run, cancel, busy, status, progress, error, setError };
+  return { run, resume, cancel, busy, status, progress, error, setError };
 };
 
 export default useJobRunner;

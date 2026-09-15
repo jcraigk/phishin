@@ -44,7 +44,6 @@ RSpec.describe "API v2 Admin Taggings" do
       entry = json[:tags].find { |t| t[:name] == "SBD" }
       expect(entry).to include(id: tag.id, name: "SBD", group: tag.group)
     end
-
   end
 
   describe "POST /api/v2/admin/shows/:date/pnet_tag_check" do

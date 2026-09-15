@@ -2,26 +2,34 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCircleExclamation,
-  faClipboardList,
-  faCompactDisc,
-  faListCheck,
-  faSpinner,
-  faTags,
+  faList,
+  faTrashCan,
+  faCloudArrowUp,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { adminGet } from "./adminApi";
-import OrphanQueue from "./OrphanQueue";
+import { adminGet, adminPost, adminDelete } from "./adminApi";
+import { formatDate } from "../helpers/utils";
+import { plural } from "./format";
+import { STOP_IMPORT_CONFIRM, deleteDraftMessage } from "./messages";
+import ShowStatusPill from "./ShowStatusPill";
 
 const KIND_LABELS = {
-  bulk_replace_audio: "bulk audio",
-  commit_staging: "commit staging",
-  ingest: "ingest",
-  pnet_tag_check: "pnet check",
-  recompute_gaps: "recompute gaps",
-  shift_boundary_apply: "boundary shift",
-  shift_boundary_preview: "boundary preview",
-  split_preview: "split preview",
-  trim_preview: "trim preview",
+  bulk_audio_prepare: "Bulk audio prep",
+  bulk_replace_audio: "Bulk audio",
+  commit_staging: "Commit",
+  cover_art_edit: "Art edit",
+  cover_art_generate: "Art generate",
+  cover_art_prompt: "Art prompt",
+  cover_art_select: "Art select",
+  ingest: "Ingest",
+  pnet_tag_check: "PNet check",
+  publish: "Publish",
+  recompute_gaps: "Recompute gaps",
+  replace_audio: "Replace audio",
+  shift_boundary_apply: "Boundary shift",
+  shift_boundary_preview: "Boundary preview",
+  trim_apply: "Trim",
+  trim_preview: "Trim preview",
 };
 
 const UNITS = [
@@ -42,35 +50,15 @@ const relativeTime = (iso) => {
     label = next;
   }
   const rounded = Math.round(value);
-  return `${rounded} ${label}${rounded === 1 ? "" : "s"} ago`;
+  return `${plural(rounded, label)} ago`;
 };
 
-const kindLabel = (kind) => KIND_LABELS[kind] || kind.replace(/_/g, " ");
+const kindLabel = (kind) => KIND_LABELS[kind] || kind.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
 
-const StatCard = ({ label, value, tone, to, icon }) => {
-  const body = (
-    <>
-      <span className={`admin-stat-icon${tone ? ` is-${tone}` : ""}`}>
-        <FontAwesomeIcon icon={icon} />
-      </span>
-      <span className="admin-stat-text">
-        <span className={`admin-stat-value${tone ? ` is-${tone}` : ""}`}>{value}</span>
-        <span className="admin-stat-label">{label}</span>
-      </span>
-    </>
-  );
-  return to ? (
-    <Link className="admin-stat" to={to}>{body}</Link>
-  ) : (
-    <div className="admin-stat">{body}</div>
-  );
-};
-
-const Card = ({ title, icon, count, action, children }) => (
+const Card = ({ title, count, action, children }) => (
   <section className="admin-card">
     <header className="admin-card-header">
       <h2>
-        {icon && <FontAwesomeIcon icon={icon} className="admin-card-icon" />}
         {title}
         {count != null && count > 0 && <span className="admin-count">{count}</span>}
       </h2>
@@ -82,42 +70,64 @@ const Card = ({ title, icon, count, action, children }) => (
 
 const Empty = ({ children }) => <p className="admin-empty">{children}</p>;
 
-const DraftRow = ({ show }) => {
+const DraftRow = ({ show, onDelete }) => {
   const navigate = useNavigate();
   return (
     <li className="admin-draft-row" onClick={() => navigate(`/admin/shows/${show.date}`)}>
-      <Link className="admin-draft-date" to={`/admin/shows/${show.date}`}>{show.date}</Link>
-      <span className="admin-draft-venue">{show.venue_name || "Venue not set"}</span>
-      {show.staged && show.tracks_count === 0 ? (
-        <span className="admin-pill is-staged">staged</span>
+      <Link className="admin-draft-date" to={`/admin/shows/${show.date}`}>{formatDate(show.date)}</Link>
+      <span className="admin-draft-venue">{show.ingest_job_id ? "" : show.venue_name || "Venue not set"}</span>
+      {show.ingest_job_id ? (
+        <span className="admin-pill is-running">importing</span>
       ) : (
-        <span className={`admin-pill is-${show.audio_status}`}>{show.audio_status}</span>
+        <ShowStatusPill show={show} />
       )}
       <span className="admin-draft-tracks">
-        {show.tracks_count} {show.tracks_count === 1 ? "track" : "tracks"}
+        {show.ingest_job_id ? "" : plural(show.tracks_count, "track")}
       </span>
+      <button
+        type="button"
+        className="admin-trash-button"
+        title="Delete this draft show"
+        aria-label={`Delete ${formatDate(show.date)}`}
+        disabled={Boolean(show.ingest_job_id)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(show);
+        }}
+      >
+        <FontAwesomeIcon icon={faTrashCan} />
+      </button>
     </li>
   );
 };
 
-const ActivityRow = ({ job }) => (
+const ActivityRow = ({ job, onCancel }) => (
   <li className="admin-activity-row">
     <span className={`admin-pill is-${job.status}`}>{job.status}</span>
     <span className="admin-activity-kind">{kindLabel(job.kind)}</span>
     <span className="admin-activity-show">
-      {job.show_date && <Link to={`/admin/shows/${job.show_date}`}>{job.show_date}</Link>}
+      {job.show_date && <Link to={`/admin/shows/${job.show_date}`}>{formatDate(job.show_date)}</Link>}
     </span>
-    <span className="admin-activity-message" title={job.message || ""}>
-      {job.message || ""}
+    <span className="admin-activity-message" title={job.message}>
+      {job.cancel_requested && job.status !== "cancelled" ? "Stopping..." : job.message}
     </span>
     <span className="admin-activity-time">{relativeTime(job.created_at)}</span>
+    {job.cancellable && (
+      <button
+        type="button"
+        title="Stop this job and delete everything it has imported"
+        onClick={() => onCancel(job)}
+      >
+        <FontAwesomeIcon icon={faXmark} /> Cancel
+      </button>
+    )}
   </li>
 );
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [drafts, setDrafts] = useState(null);
   const [jobs, setJobs] = useState(null);
-  const [orphanCount, setOrphanCount] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -127,59 +137,94 @@ const AdminDashboard = () => {
     adminGet("/jobs?limit=20")
       .then((data) => setJobs(data.jobs))
       .catch((e) => setError(e.message));
-    adminGet("/track_tags/orphaned")
-      .then((data) => setOrphanCount(data.orphans.length))
-      .catch(() => setOrphanCount(null));
   }, []);
 
-  const running = (jobs || []).filter((j) => j.status === "running" || j.status === "queued").length;
-  const failed = (jobs || []).filter((j) => j.status === "failed").length;
-  const dash = (value) => (value == null ? "–" : value);
+  const refreshJobs = () => adminGet("/jobs?limit=20").then((data) => setJobs(data.jobs)).catch(() => {});
+  const deleteDraft = async (show) => {
+    if (!window.confirm(`Delete the ${formatDate(show.date)} draft? ${deleteDraftMessage(show.tracks_count)}`)) return;
+    try {
+      await adminDelete(`/shows/${show.date}`);
+      setDrafts((prev) => prev.filter((s) => s.id !== show.id));
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+  const cancelJob = async (job) => {
+    if (!window.confirm(STOP_IMPORT_CONFIRM)) return;
+    try {
+      await adminPost(`/jobs/${job.id}/cancel`);
+      await refreshJobs();
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  const active = (jobs || []).filter((j) => j.status === "running" || j.status === "queued");
+  const finished = (jobs || []).filter((j) => j.status !== "running" && j.status !== "queued");
+
+  // While anything is running the job list refreshes itself so the card
+  // empties out on its own when the work finishes.
+  useEffect(() => {
+    if (active.length === 0) return undefined;
+    const timer = setInterval(refreshJobs, 5000);
+    return () => clearInterval(timer);
+  }, [active.length]);
 
   return (
     <div className="admin-dashboard">
       {error && <p className="admin-error">{error}</p>}
 
-      <div className="admin-stats">
-        <StatCard icon={faCompactDisc} label="Draft shows" value={dash(drafts?.length)} />
-        <StatCard icon={faSpinner} label="Jobs in progress" value={dash(jobs && running)} tone={running ? "warm" : null} />
-        <StatCard icon={faCircleExclamation} label="Failed recently" value={dash(jobs && failed)} tone={failed ? "bad" : null} />
-        <StatCard icon={faTags} label="Tags to review" value={dash(orphanCount)} tone={orphanCount ? "warm" : null} />
-      </div>
-
       <div className="admin-grid">
         <Card
           title="Draft Shows"
-          icon={faCompactDisc}
           count={drafts?.length}
-          action={<Link className="admin-card-action" to="/admin/shows">All shows</Link>}
+          action={
+            <span className="admin-card-actions">
+              <button type="button" title="Stage a new show from archive.org or uploaded files" onClick={() => navigate("/admin/import")}>
+                <FontAwesomeIcon icon={faCloudArrowUp} /> Import show
+              </button>
+              <button type="button" title="Browse every show by date" onClick={() => navigate("/admin/shows")}>
+                <FontAwesomeIcon icon={faList} /> All shows
+              </button>
+            </span>
+          }
         >
           {drafts === null ? (
             <Empty>Loading</Empty>
           ) : drafts.length === 0 ? (
-            <Empty>No drafts. Pick a new date on the Shows page to import one.</Empty>
+            <Empty>No drafts. Import a show to start one.</Empty>
           ) : (
             <ul className="admin-draft-list">
-              {drafts.map((show) => <DraftRow key={show.id} show={show} />)}
+              {drafts.map((show) => <DraftRow key={show.id} show={show} onDelete={deleteDraft} />)}
             </ul>
           )}
         </Card>
 
-        <Card title="Recent Activity" icon={faListCheck}>
+        <div className="admin-grid-column">
+        <Card title="Jobs in Progress" count={active.length}>
           {jobs === null ? (
             <Empty>Loading</Empty>
-          ) : jobs.length === 0 ? (
-            <Empty>No jobs have run yet.</Empty>
+          ) : active.length === 0 ? (
+            <Empty>Nothing running.</Empty>
           ) : (
             <ul className="admin-activity">
-              {jobs.map((job) => <ActivityRow key={job.id} job={job} />)}
+              {active.map((job) => <ActivityRow key={job.id} job={job} onCancel={cancelJob} />)}
             </ul>
           )}
         </Card>
 
-        <Card title="Tags Awaiting Review" icon={faClipboardList} count={orphanCount}>
-          <OrphanQueue />
+        <Card title="Recent Activity" count={finished.length}>
+          {jobs === null ? (
+            <Empty>Loading</Empty>
+          ) : finished.length === 0 ? (
+            <Empty>No jobs have finished yet.</Empty>
+          ) : (
+            <ul className="admin-activity">
+              {finished.map((job) => <ActivityRow key={job.id} job={job} />)}
+            </ul>
+          )}
         </Card>
+        </div>
       </div>
     </div>
   );

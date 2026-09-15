@@ -2,9 +2,6 @@ class Admin::PrepareBulkAudioJob
   include Sidekiq::Job
   include LameEncoding
 
-  AUDIO_EXTENSIONS = %w[flac shn wav aiff mp3].freeze
-  ARCHIVE_EXTENSIONS = %w[zip rar 7z tar tgz].freeze
-
   class Error < StandardError; end
   class NoAudioError < Error; end
 
@@ -14,9 +11,8 @@ class Admin::PrepareBulkAudioJob
 
     @admin_job.run! do
       Dir.mktmpdir("bulk_audio_prepare") do |dir|
-        @dir = dir
-        receive_uploads(signed_ids)
-        files = audio_files
+        @intake = Admin::UploadIntake.new(dir).receive(signed_ids)
+        files = @intake.audio_files
         raise NoAudioError, "no audio files found in the upload" if files.empty?
         titles = titles_for(files)
         ids = files.map.with_index do |path, index|
@@ -36,39 +32,8 @@ class Admin::PrepareBulkAudioJob
 
   private
 
-  def receive_uploads(signed_ids)
-    Array(signed_ids).each do |signed_id|
-      blob = ActiveStorage::Blob.find_signed!(signed_id)
-      dest = File.join(@dir, File.basename(Show.original_filename(blob)))
-      File.open(dest, "wb") { |file| blob.download { |chunk| file.write(chunk) } }
-      blob.purge
-      unpack(dest) if ARCHIVE_EXTENSIONS.include?(extension(dest))
-    end
-  end
-
-  def unpack(archive)
-    system("bsdtar", "-xf", archive, "-C", @dir) or
-      raise Error, "could not unpack #{File.basename(archive)}"
-    FileUtils.rm_f(archive)
-  end
-
-  def extension(path)
-    File.extname(path.to_s).delete(".").downcase
-  end
-
-  def audio_files
-    Dir.glob(File.join(@dir, "**/*")).select do |path|
-      File.file?(path) && !File.symlink?(path) &&
-        AUDIO_EXTENSIONS.include?(extension(path)) &&
-        !path.include?("__MACOSX") && !File.basename(path).start_with?(".")
-    end.sort_by(&:downcase)
-  end
-
   def uploaded_notes
-    @uploaded_notes ||= Dir.glob(File.join(@dir, "**/*.txt")).select do |path|
-      File.file?(path) && !path.include?("__MACOSX") &&
-        !File.basename(path).start_with?(".")
-    end.sort.map { File.read(it).scrub }.join("\n")
+    @uploaded_notes ||= @intake.notes_text
   end
 
   def titles_for(files)
@@ -90,24 +55,11 @@ class Admin::PrepareBulkAudioJob
   end
 
   def upload_as_mp3(path, title)
-    filename = "#{title || embedded_title(path) || File.basename(path, '.*')}.mp3"
-    out = path
-    unless extension(path) == "mp3"
-      out = File.join(@dir, "#{SecureRandom.hex(4)}.mp3")
-      render_via_lame(out, [ "-i", path ])
-    end
-    ActiveStorage::Blob.create_and_upload!(
-      io: File.open(out), filename:, content_type: "audio/mpeg"
-    )
+    mp3_blob_from_path(path, filename: "#{title || embedded_title(path) || File.basename(path, '.*')}.mp3")
   end
 
   def embedded_title(path)
-    out, _err, status = Open3.capture3(
-      "ffprobe", "-v", "error", "-show_entries", "format_tags=title",
-      "-of", "csv=p=0", path
-    )
-    return nil unless status.success?
-    out.strip.tr("/", "-").presence
+    Admin::AudioProbe.read(path, "format_tags=title")&.tr("/", "-").presence
   end
 
   def label

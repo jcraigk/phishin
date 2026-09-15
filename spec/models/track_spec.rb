@@ -115,6 +115,17 @@ RSpec.describe Track do
     expect(track.errors.full_messages).to include("Tracks must include at least one song")
   end
 
+  it 'allows a blank title and no songs while the show is unpublished' do
+    draft = build(:track, show: create(:show, published: false), title: "", songs: [])
+    expect(draft).to be_valid
+  end
+
+  it 'requires a title once the show is published' do
+    track.title = ""
+    track.validate
+    expect(track.errors.attribute_names).to include(:title)
+  end
+
   describe 'scopes' do
     describe '#chronological', :timecop do
       let!(:track1) { create(:track, show: create(:show, date: 1.year.ago)) }

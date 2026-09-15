@@ -3,6 +3,8 @@ import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useRef, useState } from "react";
 
 import { adminGet, adminPost } from "./adminApi";
+import Modal from "./Modal";
+import useClickOutside from "./useClickOutside";
 
 const DEBOUNCE_MS = 300;
 
@@ -38,15 +40,7 @@ const SongPicker = ({ value, onChange }) => {
     };
   }, [query]);
 
-  useEffect(() => {
-    const onDocumentClick = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", onDocumentClick);
-    return () => document.removeEventListener("mousedown", onDocumentClick);
-  }, []);
+  useClickOutside(containerRef, true, () => setOpen(false));
 
   const reset = () => {
     setQuery("");
@@ -156,54 +150,51 @@ const SongPicker = ({ value, onChange }) => {
         </ul>
       )}
       {creating && (
-        <div className="admin-modal-overlay">
-          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>New Song</h3>
+        <Modal title="New Song">
+          <label className="admin-modal-field">
+            <span>Title</span>
+            <input
+              type="text"
+              value={creating.title}
+              onChange={(e) => setCreating({ ...creating, title: e.target.value })}
+            />
+          </label>
+          <label className="admin-modal-check">
+            <input
+              type="checkbox"
+              checked={creating.original}
+              onChange={(e) => setCreating({ ...creating, original: e.target.checked })}
+            />
+            {" "}Phish original
+          </label>
+          {!creating.original && (
             <label className="admin-modal-field">
-              <span>Title</span>
+              <span>Original artist</span>
               <input
                 type="text"
-                value={creating.title}
-                onChange={(e) => setCreating({ ...creating, title: e.target.value })}
+                placeholder="Who wrote it"
+                value={creating.artist}
+                onChange={(e) => setCreating({ ...creating, artist: e.target.value })}
               />
             </label>
-            <label className="admin-modal-check">
-              <input
-                type="checkbox"
-                checked={creating.original}
-                onChange={(e) => setCreating({ ...creating, original: e.target.checked })}
-              />
-              {" "}Phish original
-            </label>
-            {!creating.original && (
-              <label className="admin-modal-field">
-                <span>Original artist</span>
-                <input
-                  type="text"
-                  placeholder="Who wrote it"
-                  value={creating.artist}
-                  onChange={(e) => setCreating({ ...creating, artist: e.target.value })}
-                />
-              </label>
-            )}
-            <div className="admin-modal-actions">
-              <button
-                type="button"
-                disabled={
-                  busy ||
-                  creating.title.trim() === "" ||
-                  (!creating.original && creating.artist.trim() === "")
-                }
-                onClick={createSong}
-              >
-                <FontAwesomeIcon icon={faCheck} /> Create Song
-              </button>
-              <button type="button" onClick={() => setCreating(null)}>
-                <FontAwesomeIcon icon={faXmark} /> Cancel
-              </button>
-            </div>
+          )}
+          <div className="admin-modal-actions">
+            <button
+              type="button"
+              disabled={
+                busy ||
+                creating.title.trim() === "" ||
+                (!creating.original && creating.artist.trim() === "")
+              }
+              onClick={createSong}
+            >
+              <FontAwesomeIcon icon={faCheck} /> Create Song
+            </button>
+            <button type="button" onClick={() => setCreating(null)}>
+              <FontAwesomeIcon icon={faXmark} /> Cancel
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
       {error && <p className="admin-error">{error}</p>}
     </div>

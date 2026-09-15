@@ -2,7 +2,7 @@
 // fade contract with Admin::StagingRender; spec/javascript/staging_fade_parity_spec.rb
 // reads it off this file.
 
-export const clamp = (value, low, high) => Math.min(Math.max(value, low), high);
+const clamp = (value, low, high) => Math.min(Math.max(value, low), high);
 
 export const round1 = (value) => Math.round(value * 10) / 10;
 

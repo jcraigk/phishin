@@ -29,9 +29,9 @@ RSpec.describe TimestampShifter do
       expect(track_tag.reload.ends_at_second).to eq(77)
     end
 
-    it "leaves it unflagged" do
+    it "keeps the row" do
       result
-      expect(track_tag.reload.orphaned_at).to be_nil
+      expect(TrackTag.exists?(track_tag.id)).to be(true)
     end
 
     it "reports the move with the shape TrackEdit records" do
@@ -44,33 +44,13 @@ RSpec.describe TimestampShifter do
   describe "a window whose start falls past the new end" do
     let!(:track_tag) { timestamped_tag(starts: 400, ends: 420) }
 
-    it "orphans it" do
+    it "removes it, since nothing it pointed at survives" do
       result
-      expect(track_tag.reload.orphan_reason).to eq("past_new_end")
+      expect(TrackTag.exists?(track_tag.id)).to be(false)
     end
 
-    it "stamps orphaned_at" do
-      result
-      expect(track_tag.reload.orphaned_at).to be_present
-    end
-
-    it "KEEPS its original start" do
-      result
-      expect(track_tag.reload.starts_at_second).to eq(400)
-    end
-
-    it "KEEPS its original end" do
-      result
-      expect(track_tag.reload.ends_at_second).to eq(420)
-    end
-
-    it "never deletes the row" do
-      result
-      expect(TrackTag.exists?(track_tag.id)).to be(true)
-    end
-
-    it "reports it with the shape TrackEdit records" do
-      expect(result[:orphaned]).to contain_exactly(
+    it "reports the removal with where it used to point" do
+      expect(result[:removed]).to contain_exactly(
         { "type" => "TrackTag", "id" => track_tag.id, "at" => 400,
           "reason" => "past_new_end" }
       )
@@ -81,14 +61,13 @@ RSpec.describe TimestampShifter do
     let(:delta_s) { -30.0 }
     let!(:track_tag) { timestamped_tag(starts: 10, ends: 90) }
 
-    it "orphans it" do
+    it "removes it" do
       result
-      expect(track_tag.reload.orphan_reason).to eq("before_new_start")
+      expect(TrackTag.exists?(track_tag.id)).to be(false)
     end
 
-    it "KEEPS its original numbers" do
-      result
-      expect(track_tag.reload.starts_at_second).to eq(10)
+    it "reports why" do
+      expect(result[:removed].first["reason"]).to eq("before_new_start")
     end
 
     it "is not reported as shifted" do
@@ -109,9 +88,9 @@ RSpec.describe TimestampShifter do
       expect(track_tag.reload.ends_at_second).to eq(300)
     end
 
-    it "is not orphaned - part of it still describes real audio" do
+    it "is kept - part of it still describes real audio" do
       result
-      expect(track_tag.reload.orphaned_at).to be_nil
+      expect(TrackTag.exists?(track_tag.id)).to be(true)
     end
 
     it "is reported as clamped rather than shifted" do
@@ -130,24 +109,17 @@ RSpec.describe TimestampShifter do
 
     before { track.update!(jam_starts_at_second: 120) }
 
-    it "orphans every timestamped tag, even ones inside the new duration" do
+    it "removes every timestamped tag, even ones inside the new duration" do
       result
-      expect(TrackTag.where.not(orphaned_at: nil).pluck(:id))
-        .to contain_exactly(inside.id, later.id)
+      expect(TrackTag.where(id: [ inside.id, later.id ])).to be_empty
     end
 
-    it "gives them a reason that says why the offsets are unmappable" do
-      result
-      expect(inside.reload.orphan_reason).to eq("audio_replaced")
+    it "reports why the offsets were unmappable" do
+      expect(result[:removed].map { it["reason"] }.uniq).to eq([ "audio_replaced" ])
     end
 
-    it "keeps their original numbers" do
-      result
-      expect(inside.reload.starts_at_second).to eq(66)
-    end
-
-    it "orphans the jam start too" do
-      expect(result[:orphaned]).to include(
+    it "clears the jam start too" do
+      expect(result[:removed]).to include(
         hash_including("type" => "Track", "at" => 120, "reason" => "audio_replaced")
       )
     end
@@ -158,7 +130,7 @@ RSpec.describe TimestampShifter do
 
     it "leaves them alone - they describe the recording, not a moment in it" do
       result
-      expect(whole_recording.reload.orphaned_at).to be_nil
+      expect(TrackTag.exists?(whole_recording.id)).to be(true)
     end
 
     it "does not report them" do
@@ -189,7 +161,7 @@ RSpec.describe TimestampShifter do
       end
 
       it "records the original value so it is recoverable from the payload" do
-        expect(result[:orphaned]).to contain_exactly(
+        expect(result[:removed]).to contain_exactly(
           { "type" => "Track", "id" => track.id, "at" => 120,
             "reason" => "past_new_end", "field" => "jam_starts_at_second" }
         )
@@ -211,7 +183,7 @@ RSpec.describe TimestampShifter do
       expect(entry.reload.starts_at_second).to eq(63)
     end
 
-    it "clamps rather than orphans one that runs past the new end" do
+    it "clamps rather than removes one that runs past the new end" do
       entry = excerpt(starts: 200, ends: 400)
       result
       expect(entry.reload.ends_at_second).to eq(300)
@@ -223,9 +195,9 @@ RSpec.describe TimestampShifter do
       expect(entry.reload.starts_at_second).to eq(300)
     end
 
-    it "reports it as clamped, never orphaned" do
+    it "reports it as clamped, never removed" do
       excerpt(starts: 400, ends: 450)
-      expect(result[:orphaned]).to be_empty
+      expect(result[:removed]).to be_empty
     end
 
     it "clamps a negative start to the top of the track" do
@@ -248,9 +220,9 @@ RSpec.describe TimestampShifter do
     context "with a nil delta" do
       let(:delta_s) { nil }
 
-      it "still never orphans a user's excerpt" do
+      it "still never removes a user's excerpt" do
         excerpt(starts: 66, ends: 80)
-        expect(result[:orphaned]).to be_empty
+        expect(result[:removed]).to be_empty
       end
     end
   end
@@ -266,9 +238,9 @@ RSpec.describe TimestampShifter do
       expect(survivor.reload.starts_at_second).to eq(66)
     end
 
-    it "orphans the one that no longer has audio under it" do
+    it "removes the one that no longer has audio under it" do
       result
-      expect(cut_away.reload.orphan_reason).to eq("past_new_end")
+      expect(TrackTag.exists?(cut_away.id)).to be(false)
     end
   end
 

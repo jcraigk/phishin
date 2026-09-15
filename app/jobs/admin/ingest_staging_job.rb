@@ -3,8 +3,6 @@ class Admin::IngestStagingJob
 
   sidekiq_options retry: 0
 
-  AUDIO_EXTENSIONS = StagedSource::FORMATS.freeze
-  ARCHIVE_EXTENSIONS = %w[zip rar 7z tar tgz].freeze
   PROXY_BITRATE = "128k".freeze
 
   class Error < StandardError; end
@@ -17,6 +15,8 @@ class Admin::IngestStagingJob
 
     begin
       run_ingest(signed_ids, archive_item)
+    rescue AdminJob::Cancelled
+      discard_import(discard_show_on_failure)
     rescue StandardError
       discard_empty_draft if discard_show_on_failure
       raise
@@ -28,88 +28,62 @@ class Admin::IngestStagingJob
   def run_ingest(signed_ids, archive_item)
     @admin_job.run! do
       raise Error, "Show #{@show.date} already has tracks" if @show.tracks.exists?
-      @show.staged_tracks.destroy_all
-      @show.staged_sources.destroy_all
+      @show.discard_staging!
       @dir.reset!
 
-      notes = archive_item.present? ? fetch_archive(archive_item) : receive_uploads(signed_ids)
-      files = audio_files
+      intake = Admin::UploadIntake.new(@dir.incoming)
+      notes = archive_item.present? ? fetch_archive(archive_item) : receive_uploads(intake, signed_ids)
+      files = intake.audio_files
       raise NoAudioError, "no audio files found in the upload" if files.empty?
 
       sources = place_sources(files)
       build_timeline(sources)
+      build_peaks
       render_proxies(sources)
       create_tracks(sources)
+      Admin::ShowMatchAssigner.call(@show)
       @show.update!(taper_notes: notes) if notes.present? && @show.taper_notes.blank?
       @admin_job.update!(message: "Staged #{sources.size} files")
     end
+  end
+
+  def discard_import(discard_show)
+    @show.reload.discard_staging!
+    discard_empty_draft if discard_show
   end
 
   def discard_empty_draft
     @show.reload
     return if @show.published? || @show.tracks.exists?
     @admin_job.update!(show_id: nil)
-    @show.staged_tracks.destroy_all
-    @show.staged_sources.destroy_all
     @show.destroy!
   rescue StandardError
     nil
   end
 
   def progress(pct, message)
-    @admin_job.update!(progress: pct, message:)
+    @admin_job.progress!(pct, message)
   end
 
   def fetch_archive(identifier)
-    @admin_job.payload["headline"] = "Downloading #{identifier} from archive.org"
+    @admin_job.payload["headline"] = identifier
     @admin_job.save!
     progress(5, "Fetching file list")
     item = Admin::ArchiveItem.new(identifier)
     item.download_to(@dir.incoming) do |name, index, total|
       pct = 5 + (index.to_f / total * 55).round
-      progress(pct, "Downloading #{index + 1}/#{total}: #{File.basename(name)}")
+      progress(pct, "Downloading #{index + 1} of #{total} · #{File.basename(name)}")
     end
     @show.update!(staging_source_url: item.details_url)
     item.description
   end
 
-  def receive_uploads(signed_ids)
+  def receive_uploads(intake, signed_ids)
     progress(5, "Receiving upload")
-    Array(signed_ids).each do |signed_id|
-      blob = ActiveStorage::Blob.find_signed!(signed_id)
-      dest = @dir.incoming.join(File.basename(Show.original_filename(blob)))
-      File.open(dest, "wb") { |f| blob.download { |chunk| f.write(chunk) } }
-      blob.purge
-      unpack(dest) if ARCHIVE_EXTENSIONS.include?(extension(dest))
-    end
-    notes_text
-  end
-
-  def unpack(archive)
-    progress(10, "Unpacking #{File.basename(archive)}")
-    basename = File.basename(archive)
-    system("bsdtar", "-xf", archive.to_s, "-C", @dir.incoming.to_s) or
-      raise Error, "could not unpack #{basename}"
-    FileUtils.rm_f(archive)
-    if Dir.glob(@dir.incoming.join("**/*")).none? { File.file?(it) }
-      raise Error, "#{basename} unpacked nothing"
-    end
-  end
-
-  def extension(path)
-    File.extname(path.to_s).delete(".").downcase
-  end
-
-  def audio_files
-    Dir.glob(@dir.incoming.join("**/*")).select do |path|
-      File.file?(path) && !File.symlink?(path) && AUDIO_EXTENSIONS.include?(extension(path)) &&
-        !path.include?("__MACOSX") && !File.basename(path).start_with?(".")
-    end.sort_by { |path| path.downcase }
-  end
-
-  def notes_text
-    Dir.glob(@dir.incoming.join("**/*.txt")).sort.map { File.read(it, encoding: "UTF-8", invalid: :replace) }
-       .join("\n\n").strip
+    intake.receive(signed_ids) { |name| progress(10, "Unpacking #{name}") }
+    intake.notes_text
+  rescue Admin::UploadIntake::Error => e
+    raise Error, e.message
   end
 
   def place_sources(files)
@@ -118,7 +92,7 @@ class Admin::IngestStagingJob
       progress(15 + (index * 15 / files.size), "Reading #{File.basename(path)}")
       duration = Admin::AudioProbe.duration_s(path)
       source = @show.staged_sources.create!(
-        position: index + 1, filename: File.basename(path), format: extension(path),
+        position: index + 1, filename: File.basename(path), format: Admin::UploadIntake.extension(path),
         offset_s: offset.round(3), duration_s: duration.round(3)
       )
       FileUtils.mv(path, @dir.source_path(source))
@@ -135,6 +109,11 @@ class Admin::IngestStagingJob
     run_ffmpeg(inputs + [ "-filter_complex", filter, "-map", "[out]", "-c:a", "flac", @dir.timeline.to_s ])
   end
 
+  def build_peaks
+    progress(45, "Building waveform")
+    Admin::StagingPeaks.generate(@dir.timeline, @dir.peaks)
+  end
+
   def render_proxies(sources)
     sources.each_with_index do |source, index|
       next if source.mp3?
@@ -149,9 +128,12 @@ class Admin::IngestStagingJob
     guesses = Admin::StagingTitler.call(show: @show, sources:)
     sources.zip(guesses).each do |source, guess|
       @show.staged_tracks.create!(
-        position: source.position, start_s: source.offset_s, end_s: source.end_s, **guess
+        position: source.position, start_s: source.offset_s, end_s: source.end_s,
+        original_start_s: source.offset_s, original_end_s: source.end_s, **guess
       )
     end
+    StagedTrack.normalize_sets!(@show)
+    StagedTrack.normalize_edge_fades!(@show)
   end
 
   def run_ffmpeg(args)

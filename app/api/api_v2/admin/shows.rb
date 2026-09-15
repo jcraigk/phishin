@@ -5,22 +5,13 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
 
   namespace :admin do
     resource :shows do
-      desc "Every show as id, date and venue", hidden: true
-      get :dates do
-        {
-          shows: Show.order(date: :desc).pluck(:id, :date, :venue_name).map do |id, date, venue_name|
-            { id:, date: date.to_s, venue_name: }
-          end
-        }
-      end
-
       desc "List shows for admin", hidden: true
       params do
         optional :published, type: Boolean, desc: "Filter by published state"
         optional :year, type: Integer, values: 1983..2100, desc: "Only shows in this year"
       end
       get do
-        shows = Show.order(date: :desc).includes(:tags, cover_art_attachment: :blob)
+        shows = Show.order(date: :desc).includes(:tags, :venue, :staged_sources, cover_art_attachment: :blob)
         shows = shows.where(published: params[:published]) unless params[:published].nil?
         shows = shows.during_year(params[:year]) if params[:year]
         {
@@ -28,91 +19,45 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         }
       end
 
-      desc "Create a draft show", hidden: true
-      params do
-        requires :date, type: String, regexp: /\A\d{4}-\d{2}-\d{2}\z/
-      end
-      post do
-        if Show.exists?(date: params[:date])
-          error!({ message: "Show already exists for #{params[:date]}" }, 409)
-        end
-        Show.create!(date: params[:date], published: false, audio_status: "missing")
-        status 201
-        { date: params[:date] }
-      end
-
       desc "Fetch a show for editing", hidden: true
-      get ":date", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+      get ":date", requirements: DATE do
         editor_payload(admin_show)
       end
 
       desc "Publish readiness check", hidden: true
-      get ":date/readiness", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+      get ":date/readiness", requirements: DATE do
         Admin::ShowReadiness.call(admin_show)
       end
 
       desc "Publish a draft show", hidden: true
-      post ":date/publish", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+      post ":date/publish", requirements: DATE do
         show = admin_show
         error!({ message: "Show is already published" }, 422) if show.published?
         readiness = Admin::ShowReadiness.call(show)
         unless readiness[:ready]
           error!({ message: "Not ready to publish", issues: readiness[:issues] }, 422)
         end
-        job = AdminJob.create!(kind: "publish", show:)
-        Admin::PublishShowJob.perform_async(show.id, job.id)
-        status 201
-        { job_id: job.id }
-      end
-
-      desc "Attach staged audio files", hidden: true
-      params do
-        requires :signed_ids, type: Array[String]
-      end
-      post ":date/staged_audio", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
-        show = admin_show
-        show.staged_audio.attach(params[:signed_ids])
-        status 201
-        { staged_audio: staged_audio_payload(show.reload) }
-      end
-
-      desc "Run Phish.net matching against staged audio", hidden: true
-      post ":date/import", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
-        show = admin_show
-        error!({ message: "Show is already published" }, 422) if show.published?
-        error!({ message: "Show already has tracks" }, 422) if show.tracks.exists?
-        job = AdminJob.create!(kind: "import", show:)
-        Admin::ImportShowJob.perform_async(show.id, job.id)
-        status 201
-        { job_id: job.id }
+        enqueue_job("publish", Admin::PublishShowJob, show:)
       end
 
       desc "Recompute gap data for a show", hidden: true
-      post ":date/recompute_gaps", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
-        show = admin_show
-        job = AdminJob.create!(kind: "recompute_gaps", show:)
-        Admin::RecomputeGapsJob.perform_async(show.id, job.id)
-        status 201
-        { job_id: job.id }
+      post ":date/recompute_gaps", requirements: DATE do
+        enqueue_job("recompute_gaps", Admin::RecomputeGapsJob, show: admin_show)
       end
 
       desc "Unpack and transcode uploads into mp3 blobs for a bulk upsert", hidden: true
       params do
         requires :signed_ids, type: Array[String]
       end
-      post ":date/bulk_audio_prepare", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
-        show = admin_show
-        job = AdminJob.create!(kind: "bulk_audio_prepare", show:)
-        Admin::PrepareBulkAudioJob.perform_async(show.id, job.id, params[:signed_ids])
-        status 201
-        { job_id: job.id }
+      post ":date/bulk_audio_prepare", requirements: DATE do
+        enqueue_job("bulk_audio_prepare", Admin::PrepareBulkAudioJob, show: admin_show, args: [ params[:signed_ids] ])
       end
 
       desc "Plan a bulk audio upsert against a show's tracks", hidden: true
       params do
         requires :signed_ids, type: Array[String]
       end
-      post ":date/bulk_audio_match", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+      post ":date/bulk_audio_match", requirements: DATE do
         show = admin_show
         blobs = params[:signed_ids].map { |id| find_signed_blob(id) }
         status 200
@@ -126,16 +71,13 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
           requires :track_id, type: Integer
         end
       end
-      post ":date/bulk_audio_apply", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+      post ":date/bulk_audio_apply", requirements: DATE do
         show = admin_show
         assignments = declared(params)[:assignments].map do |a|
           { "signed_id" => a[:signed_id], "track_id" => a[:track_id] }
         end
         validate_assignments!(show, assignments)
-        job = AdminJob.create!(kind: "bulk_replace_audio", show:)
-        Admin::BulkReplaceAudioJob.perform_async(show.id, job.id, assignments)
-        status 201
-        { job_id: job.id }
+        enqueue_job("bulk_replace_audio", Admin::BulkReplaceAudioJob, show:, args: [ assignments ])
       end
 
       desc "Update show attributes", hidden: true
@@ -149,7 +91,7 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         optional :cover_art_prompt, type: String
         optional :cover_art_parent_show_id, type: Integer
       end
-      patch ":date", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+      patch ":date", requirements: DATE do
         show = admin_show
         show.update!(show_updates)
         editor_payload(show.reload)
@@ -160,7 +102,7 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         requires :track_ids, type: Array[Integer]
         optional :sets, type: Hash, default: {}
       end
-      put ":date/track_order", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+      put ":date/track_order", requirements: DATE do
         show = admin_show
         if params[:track_ids].sort != show.tracks.pluck(:id).sort
           error!({ message: "track_ids must include every track exactly once" }, 422)
@@ -172,12 +114,7 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         end
         ActiveRecord::Base.transaction do
           sets.each { |id, set| show.tracks.find(id).update!(set:) }
-          params[:track_ids].each_with_index do |id, index|
-            Track.where(id:).update_all(position: -(index + 1))
-          end
-          show.tracks.where(position: ...0).each do |track|
-            track.update_columns(position: -track.position)
-          end
+          show.renumber_tracks!(params[:track_ids])
         end
         editor_payload(show.reload)
       end
@@ -190,7 +127,7 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         requires :song_ids, type: Array[Integer]
         optional :signed_id, type: String
       end
-      post ":date/tracks", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+      post ":date/tracks", requirements: DATE do
         show = admin_show
         songs = Song.where(id: params[:song_ids]).to_a
         error!({ message: "at least one song is required" }, 422) if songs.empty?
@@ -209,31 +146,21 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         end
         payload = editor_payload(show.reload)
         if params[:signed_id].present?
-          job = AdminJob.create!(kind: "replace_audio", track:, show:)
-          Admin::ReplaceAudioJob.perform_async(track.id, job.id, params[:signed_id])
-          payload[:job_id] = job.id
+          payload.merge!(enqueue_job("replace_audio", Admin::ReplaceAudioJob, show:, track:, args: [ params[:signed_id] ]))
         end
         status 201
         payload
       end
 
       desc "Delete a show", hidden: true
-      delete ":date", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
-        admin_show.destroy!
+      delete ":date", requirements: DATE do
+        show = admin_show
+        if AdminJob.active.where(show:).exists?
+          error!({ message: "A job is still running for this show; cancel it or wait for it to finish" }, 422)
+        end
+        show.destroy!
         status 204
         body false
-      end
-
-      desc "Remove a staged audio file", hidden: true
-      delete ":date/staged_audio/:attachment_id", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
-        show = admin_show
-        attachment = show.staged_audio_attachments.find(params[:attachment_id])
-        blob_in_use = ActiveStorage::Attachment
-                      .where(blob_id: attachment.blob_id)
-                      .where.not(id: attachment.id)
-                      .exists?
-        blob_in_use ? attachment.destroy : attachment.purge
-        { staged_audio: staged_audio_payload(show.reload) }
       end
     end
   end
@@ -248,12 +175,6 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
 
     def lookup_or_nil(klass, id)
       id.nil? ? nil : klass.find(id)
-    end
-
-    def find_signed_blob(signed_id)
-      ActiveStorage::Blob.find_signed!(signed_id)
-    rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveRecord::RecordNotFound
-      error!({ message: "Unknown upload: #{signed_id}" }, 422)
     end
 
     def validate_assignments!(show, assignments)

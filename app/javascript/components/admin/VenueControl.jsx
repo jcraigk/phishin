@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import { adminGet, adminPost, adminPatch } from "./adminApi";
 import FilterSelect from "./FilterSelect";
+import Modal from "./Modal";
 
 const BLANK_VENUE = {
   name: "",
@@ -86,6 +87,7 @@ const VenueControl = () => {
           })()
         }
         placeholder="Filter venues"
+        emptyLabel="No venue"
         options={venues.map((venue) => ({ id: venue.id, label: venueLabel(venue), venue }))}
         disabled={busy}
         onSelect={(option) => selectVenue(option.venue)}
@@ -100,39 +102,35 @@ const VenueControl = () => {
           </li>
         )}
       />
-      {!show.venue_name && <span className="admin-attention">No venue set</span>}
 
       {newVenue && (
-        <div className="admin-modal-overlay">
-          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>New Venue</h3>
-            {Object.keys(FIELD_LABELS).map((field) => (
-              <label key={field} className="admin-modal-field">
-                <span>{FIELD_LABELS[field]}</span>
-                <input
-                  type="text"
-                  placeholder={field === "latitude" ? "44.0429" : field === "longitude" ? "-72.7089" : ""}
-                  value={newVenue[field]}
-                  onChange={(e) =>
-                    setNewVenue({ ...newVenue, [field]: e.target.value })
-                  }
-                />
-              </label>
-            ))}
-            <div className="admin-modal-actions">
-              <button
-                type="button"
-                disabled={busy || !newVenue.name || !newVenue.city}
-                onClick={createVenue}
-              >
-                <FontAwesomeIcon icon={faCheck} /> Save Venue
-              </button>
-              <button type="button" onClick={() => setNewVenue(null)}>
-                <FontAwesomeIcon icon={faXmark} /> Cancel
-              </button>
-            </div>
+        <Modal title="New Venue">
+          {Object.keys(FIELD_LABELS).map((field) => (
+            <label key={field} className="admin-modal-field">
+              <span>{FIELD_LABELS[field]}</span>
+              <input
+                type="text"
+                placeholder={field === "latitude" ? "44.0429" : field === "longitude" ? "-72.7089" : ""}
+                value={newVenue[field]}
+                onChange={(e) =>
+                  setNewVenue({ ...newVenue, [field]: e.target.value })
+                }
+              />
+            </label>
+          ))}
+          <div className="admin-modal-actions">
+            <button
+              type="button"
+              disabled={busy || !newVenue.name || !newVenue.city}
+              onClick={createVenue}
+            >
+              <FontAwesomeIcon icon={faCheck} /> Save Venue
+            </button>
+            <button type="button" onClick={() => setNewVenue(null)}>
+              <FontAwesomeIcon icon={faXmark} /> Cancel
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

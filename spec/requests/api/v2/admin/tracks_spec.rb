@@ -316,7 +316,7 @@ RSpec.describe "API v2 Admin Tracks" do
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
            params: body, headers: admin_headers
       expect(Admin::ShiftBoundaryJob.jobs.last["args"])
-        .to eq([ track1.id, AdminJob.last.id, 2.0, false, nil ])
+        .to eq([ track1.id, AdminJob.last.id, 2.0, false ])
     end
 
     it "records the preview job kind" do
@@ -330,7 +330,7 @@ RSpec.describe "API v2 Admin Tracks" do
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
            params: body, headers: admin_headers
       expect(Admin::ShiftBoundaryJob.jobs.last["args"])
-        .to eq([ track1.id, AdminJob.last.id, 2.0, true, nil ])
+        .to eq([ track1.id, AdminJob.last.id, 2.0, true ])
     end
 
     it "passes a negative delta through unchanged" do
@@ -374,131 +374,6 @@ RSpec.describe "API v2 Admin Tracks" do
       post "/api/v2/admin/tracks/#{track3.id}/shift_boundary_preview",
            params: body, headers: admin_headers
       expect(response).to have_http_status(:unprocessable_content)
-    end
-
-    it "passes both titles through to the job" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: { delta_s: 2.0, titles: { first: "Tweezer", second: "Mike's Song" } }.to_json,
-           headers: admin_headers
-      expect(Admin::ShiftBoundaryJob.jobs.last["args"].last)
-        .to eq({ "first" => "Tweezer", "second" => "Mike's Song" })
-    end
-
-    it "passes a single side through to the job" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: { delta_s: 2.0, titles: { second: "Tweezer" } }.to_json,
-           headers: admin_headers
-      expect(Admin::ShiftBoundaryJob.jobs.last["args"].last)
-        .to eq({ "second" => "Tweezer" })
-    end
-
-    it "trims whitespace off a title" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: { delta_s: 2.0, titles: { first: "  Tweezer  " } }.to_json,
-           headers: admin_headers
-      expect(Admin::ShiftBoundaryJob.jobs.last["args"].last).to eq({ "first" => "Tweezer" })
-    end
-
-    it "echoes the titles back so the panel can confirm what it sent" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
-           headers: admin_headers
-      expect(json[:titles]).to eq({ first: "Tweezer" })
-    end
-
-    it "accepts titles on a preview without writing them" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
-           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
-           headers: admin_headers
-      expect(response).to have_http_status(:created)
-      expect(track1.reload.title).to eq("Ghost")
-    end
-
-    it "hands the job nil when no titles are given" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: body, headers: admin_headers
-      expect(Admin::ShiftBoundaryJob.jobs.last["args"].last).to be_nil
-    end
-
-    it "omits the titles key from the response when none were given" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: body, headers: admin_headers
-      expect(json).not_to have_key(:titles)
-    end
-
-    it "422s on a blank title" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: { delta_s: 2.0, titles: { first: "" } }.to_json,
-           headers: admin_headers
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(json[:message]).to eq("Title for the first track cannot be blank")
-    end
-
-    it "422s on a whitespace-only title" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: { delta_s: 2.0, titles: { second: "   " } }.to_json,
-           headers: admin_headers
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(json[:message]).to eq("Title for the second track cannot be blank")
-    end
-
-    it "enqueues nothing for a blank title" do
-      expect {
-        post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-             params: { delta_s: 2.0, titles: { first: "" } }.to_json,
-             headers: admin_headers
-      }.not_to change(Admin::ShiftBoundaryJob.jobs, :size)
-    end
-
-    it "changes no title on a blank-title rejection" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: { delta_s: 2.0, titles: { first: "" } }.to_json,
-           headers: admin_headers
-      expect(track1.reload.title).to eq("Ghost")
-    end
-
-    it "enqueues nothing when titles come with an out-of-range delta" do
-      expect {
-        post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-             params: { delta_s: 8.0, titles: { first: "Tweezer" } }.to_json,
-             headers: admin_headers
-      }.not_to change(Admin::ShiftBoundaryJob.jobs, :size)
-    end
-
-    it "returns 401 without a token when titles are sent" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
-           headers: { "CONTENT_TYPE" => "application/json" }
-      expect(response).to have_http_status(:unauthorized)
-    end
-
-    it "returns 403 for a non-admin when titles are sent" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
-           headers: user_headers
-      expect(response).to have_http_status(:forbidden)
-    end
-
-    it "changes no title when an unauthenticated apply with titles is rejected" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
-           headers: { "CONTENT_TYPE" => "application/json" }
-      expect(track1.reload.title).to eq("Ghost")
-    end
-
-    it "changes no title when a non-admin apply with titles is rejected" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
-           headers: user_headers
-      expect(track1.reload.title).to eq("Ghost")
-    end
-
-    it "does not enqueue a job for an unauthorized apply with titles" do
-      expect {
-        post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
-             params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
-             headers: user_headers
-      }.not_to change(Admin::ShiftBoundaryJob.jobs, :size)
     end
 
     it "422s when a side has no audio" do
@@ -702,7 +577,7 @@ RSpec.describe "API v2 Admin Tracks" do
            headers: admin_headers
       opts = JSON.parse(Admin::TrimJob.jobs.last["args"][2])
       expect(opts).to eq(
-        "trim_start" => 3.5, "trim_end" => 100.0, "fade_in" => 0.5, "fade_out" => 4.0
+        "trim_start" => 3.5, "trim_end" => 100.0, "fade_in" => 0.5, "fade_out" => 4.0, "tail_pad" => 2.0
       )
     end
 
@@ -711,7 +586,7 @@ RSpec.describe "API v2 Admin Tracks" do
            params: { trim_end: 100.0 }.to_json, headers: admin_headers
       opts = JSON.parse(Admin::TrimJob.jobs.last["args"][2])
       expect(opts).to eq(
-        "trim_start" => 0.0, "trim_end" => 100.0, "fade_in" => 0.2, "fade_out" => 6.0
+        "trim_start" => 0.0, "trim_end" => 100.0, "fade_in" => 0.2, "fade_out" => 6.0, "tail_pad" => 2.0
       )
     end
 

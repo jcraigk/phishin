@@ -30,10 +30,6 @@ module ApiV2::Helpers::SharedParams
 
   params :shift_boundary_params do
     requires :delta_s, type: Float
-    optional :titles, type: Hash do
-      optional :first, type: String
-      optional :second, type: String
-    end
   end
 
   params :proximity do

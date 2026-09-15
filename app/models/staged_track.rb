@@ -1,9 +1,10 @@
 class StagedTrack < ApplicationRecord
   SETS = %w[S 1 2 3 4 E E2 E3].freeze
   MIN_LENGTH_S = 1.0
+  DEFAULT_FADE_IN_S = 0.2
+  DEFAULT_FADE_OUT_S = 6.0
 
   belongs_to :show
-  belongs_to :song, optional: true
 
   validates :position, :title, :start_s, :end_s, presence: true
   validates :position, uniqueness: { scope: :show_id }
@@ -13,8 +14,9 @@ class StagedTrack < ApplicationRecord
 
   scope :ordered, -> { order(:position) }
 
-  def length_s
-    end_s - start_s
+  def songs
+    by_id = Song.where(id: song_ids).index_by(&:id)
+    song_ids.filter_map { by_id[it] }
   end
 
   def next_track
@@ -23,6 +25,41 @@ class StagedTrack < ApplicationRecord
 
   def previous_track
     show.staged_tracks.find_by(position: position - 1)
+  end
+
+  def self.rank(set)
+    SETS.index(set) || -1
+  end
+
+  def self.normalize_sets!(show)
+    floor = nil
+    show.staged_tracks.order(:position).each do |row|
+      if floor && rank(row.set) < rank(floor)
+        row.update_columns(set: floor)
+      else
+        floor = row.set
+      end
+    end
+  end
+
+  def self.normalize_edge_fades!(show)
+    rows = show.staged_tracks.order(:position).to_a
+    rows.each_with_index do |row, i|
+      prev_row = i.positive? ? rows[i - 1] : nil
+      next_row = rows[i + 1]
+      changes = {}
+      if prev_row && prev_row.set == row.set
+        changes[:fade_in_s] = 0 if row.fade_in_s.positive?
+      elsif row.fade_in_s.zero?
+        changes[:fade_in_s] = DEFAULT_FADE_IN_S
+      end
+      if next_row && next_row.set == row.set
+        changes[:fade_out_s] = 0 if row.fade_out_s.positive?
+      elsif row.fade_out_s.zero?
+        changes[:fade_out_s] = DEFAULT_FADE_OUT_S
+      end
+      row.update_columns(changes) if changes.any?
+    end
   end
 
   def self.renumber!(show)

@@ -18,6 +18,22 @@ RSpec.describe "API v2 Admin Jobs" do
     expect(response).to have_http_status(:unauthorized)
   end
 
+  describe "POST /api/v2/admin/jobs/:id/cancel" do
+    it "flags a running ingest for cancellation" do
+      job = create(:admin_job, kind: "ingest", status: "running")
+      post "/api/v2/admin/jobs/#{job.id}/cancel", headers: admin_headers
+      expect(response).to have_http_status(:created)
+      expect(job.reload.cancel_requested_at).to be_present
+      expect(JSON.parse(response.body)["cancel_requested"]).to be(true)
+    end
+
+    it "422s for a job that is not cancellable" do
+      job = create(:admin_job, kind: "publish", status: "running")
+      post "/api/v2/admin/jobs/#{job.id}/cancel", headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
   describe "GET /api/v2/admin/jobs" do
     it "lists recent jobs newest first" do
       old = create(:admin_job, kind: "import", created_at: 2.days.ago)

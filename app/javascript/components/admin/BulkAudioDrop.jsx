@@ -8,15 +8,16 @@ import {
   faPlay,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import MoonLoader from "react-spinners/MoonLoader";
+import Spinner from "./Spinner";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminPost, pollJob } from "./adminApi";
 import { uploadFile, collectFiles, isMp3, isStagingSource } from "./DirectUploader";
-import { formatDurationTrack } from "../helpers/utils";
+import { formatDate, formatDurationTrack } from "../helpers/utils";
 import { GaplessEngine } from "../player/GaplessEngine";
 import { WebAudioBackend } from "../player/WebAudioBackend";
+import Modal from "./Modal";
 
 const GROUP_LABEL = { replace: "Replace track audio", fill: "Fill empty tracks" };
 
@@ -200,7 +201,7 @@ const BulkAudioDrop = () => {
       }));
     if (
       !window.confirm(
-        `Apply ${assignments.length} files to ${show.date}? Replaced originals are backed up.`
+        `Apply ${assignments.length} files to ${formatDate(show.date)}? Replaced originals are backed up.`
       )
     ) {
       return;
@@ -216,105 +217,100 @@ const BulkAudioDrop = () => {
 
   return (
     <div className="admin-bulk-audio">
-      <button type="button" onClick={() => setOpen(true)}>
+      <button type="button" title="Upload audio files for the whole show" onClick={() => setOpen(true)}>
         <FontAwesomeIcon icon={faCloudArrowUp} /> Audio
       </button>
 
       {open && !plan && (
-        <div className="admin-modal-overlay">
-          <div className="admin-modal admin-modal-wide" onClick={(e) => e.stopPropagation()}>
-            <h3>Update Audio</h3>
-            {!uploading && !preparing && (
-            <div
-              className={`admin-dropzone${dragging ? " is-dragging" : ""}`}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setDragging(true);
-              }}
-              onDragLeave={() => setDragging(false)}
-              onDrop={(e) => {
-                e.preventDefault();
-                setDragging(false);
-                // webkitGetAsEntry must run before the handler returns, which
-                // collectFiles does synchronously ahead of its first await.
-                collectFiles(e.dataTransfer, isStagingSource)
-                  .then(stage)
-                  .catch((err) => setUploadError(err.message));
-              }}
-            >
-              <p>
-                Drop a show folder, zip, or audio files (flac, shn, wav, mp3)
-                here to replace and fill track audio. Include a notes txt to
-                name the tracks.
-              </p>
-              <div className="admin-dropzone-browse">
-                <button type="button" onClick={() => fileInputRef.current.click()}>
-                  <FontAwesomeIcon icon={faFileAudio} /> Browse files
-                </button>
-                <button type="button" onClick={() => folderInputRef.current.click()}>
-                  <FontAwesomeIcon icon={faFolderOpen} /> Browse folder
-                </button>
-              </div>
-            </div>
-            )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              hidden
-              onChange={pickFiles}
-            />
-            <input
-              ref={folderInputRef}
-              type="file"
-              webkitdirectory=""
-              hidden
-              onChange={pickFiles}
-            />
-            {uploading && (
-              <>
-                <p className="admin-progress-line">
-                  {preparing ? (
-                    <>
-                      <FontAwesomeIcon icon={faCheck} /> Upload complete
-                    </>
-                  ) : (
-                    <>
-                      <MoonLoader color="#c7c8ca" size={18} /> Uploading{" "}
-                      {Math.min(uploading.done + 1, uploading.total)} of {uploading.total}:{" "}
-                      {uploading.filename}
-                    </>
-                  )}
-                </p>
-                <progress
-                  className="admin-progress-bar"
-                  max="100"
-                  value={preparing ? 100 : uploading.percent ?? 0}
-                />
-              </>
-            )}
-            {preparing && (
-              <>
-                <p className="admin-progress-line">
-                  <MoonLoader color="#c7c8ca" size={18} /> {preparing.message}
-                </p>
-                <progress className="admin-progress-bar" max="100" value={preparing.percent} />
-              </>
-            )}
-            {uploadError && <p className="admin-error">{uploadError}</p>}
-            <div className="admin-modal-actions">
-              <button type="button" onClick={close}>
-                <FontAwesomeIcon icon={faXmark} /> Cancel
+        <Modal title="Update Audio" wide>
+          {!uploading && !preparing && (
+          <div
+            className={`admin-dropzone${dragging ? " is-dragging" : ""}`}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragging(false);
+              // webkitGetAsEntry must run before the handler returns, which
+              // collectFiles does synchronously ahead of its first await.
+              collectFiles(e.dataTransfer, isStagingSource)
+                .then(stage)
+                .catch((err) => setUploadError(err.message));
+            }}
+          >
+            <p>
+              Drop a show folder, zip, or audio files (flac, shn, wav, mp3)
+              here to replace and fill track audio. Include a notes txt to
+              name the tracks.
+            </p>
+            <div className="admin-dropzone-browse">
+              <button type="button" onClick={() => fileInputRef.current.click()}>
+                <FontAwesomeIcon icon={faFileAudio} /> Browse files
+              </button>
+              <button type="button" onClick={() => folderInputRef.current.click()}>
+                <FontAwesomeIcon icon={faFolderOpen} /> Browse folder
               </button>
             </div>
           </div>
-        </div>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            hidden
+            onChange={pickFiles}
+          />
+          <input
+            ref={folderInputRef}
+            type="file"
+            webkitdirectory=""
+            hidden
+            onChange={pickFiles}
+          />
+          {uploading && (
+            <>
+              <p className="admin-progress-line">
+                {preparing ? (
+                  <>
+                    <FontAwesomeIcon icon={faCheck} /> Upload complete
+                  </>
+                ) : (
+                  <>
+                    <Spinner size={18} /> Uploading{" "}
+                    {Math.min(uploading.done + 1, uploading.total)} of {uploading.total}:{" "}
+                    {uploading.filename}
+                  </>
+                )}
+              </p>
+              <progress
+                className="admin-progress-bar"
+                max="100"
+                value={preparing ? 100 : uploading.percent ?? 0}
+              />
+            </>
+          )}
+          {preparing && (
+            <>
+              <p className="admin-progress-line">
+                <Spinner size={18} /> {preparing.message}
+              </p>
+              <progress className="admin-progress-bar" max="100" value={preparing.percent} />
+            </>
+          )}
+          {uploadError && <p className="admin-error">{uploadError}</p>}
+          <div className="admin-modal-actions">
+            <button type="button" onClick={close}>
+              <FontAwesomeIcon icon={faXmark} /> Cancel
+            </button>
+          </div>
+        </Modal>
       )}
 
       {plan && (
-        <div className="admin-modal-overlay">
-        <div className="admin-modal admin-modal-wide admin-bulk-plan" onClick={(e) => e.stopPropagation()}>
-          <h3>Update Audio</h3>
+        <Modal title="Update Audio" wide className="admin-bulk-plan">
 
           {["replace", "fill"].map((action) => {
             const items = plan.matches.filter((m) => m.action === action);
@@ -412,14 +408,13 @@ const BulkAudioDrop = () => {
           {busy && (
             <>
               <p className="admin-progress-line">
-                <MoonLoader color="#c7c8ca" size={18} /> {status || "Applying files"}
+                <Spinner size={18} /> {status || "Applying files"}
               </p>
               <progress className="admin-progress-bar" max="100" value={progress ?? 0} />
             </>
           )}
           {error && <p className="admin-error">{error}</p>}
-        </div>
-        </div>
+        </Modal>
       )}
 
     </div>

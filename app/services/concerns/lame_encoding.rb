@@ -18,6 +18,15 @@ module LameEncoding
     end
   end
 
+  def mp3_blob_from_path(path, filename:)
+    out = path.to_s
+    unless File.extname(out).casecmp?(".mp3")
+      out = File.join(File.dirname(out), "#{SecureRandom.hex(4)}.mp3")
+      render_via_lame(out, [ "-i", path.to_s ])
+    end
+    File.open(out) { |io| ActiveStorage::Blob.create_and_upload!(io:, filename:, content_type: "audio/mpeg") }
+  end
+
   def run_ffmpeg(args)
     _out, err, status = Open3.capture3("ffmpeg", "-y", "-v", "error", *args)
     raise render_error, "ffmpeg failed for #{label}: #{err}" unless status.success?

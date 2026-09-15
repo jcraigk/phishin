@@ -10,10 +10,14 @@ RSpec.describe Admin::CommitStagingJob do
   let(:setlist) { [ { artistid: 1, position: 1, song: "Ghost", set: "1", venue: "Deer Creek", city: "Noblesville" } ] }
 
   before do
+    create(:tag, name: "Debut")
     allow(Typhoeus).to receive(:get).and_return(
       instance_double(Typhoeus::Response, body: { data: setlist }.to_json)
     )
     allow(WaveformImageService).to receive(:call)
+    allow(LoreSyncService).to receive(:call)
+    allow(TeaseSyncService).to receive(:new).and_return(instance_double(TeaseSyncService, call: nil))
+    allow(TeaseChartSyncService).to receive(:new).and_return(instance_double(TeaseChartSyncService, call: nil))
     dir.reset!
     system("ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i", "sine=frequency=440:duration=10",
            "-c:a", "flac", dir.timeline.to_s, exception: true)
@@ -24,7 +28,7 @@ RSpec.describe Admin::CommitStagingJob do
   context "with a lossless source split into two tracks" do
     before do
       create(:staged_source, show:, position: 1, filename: "d1t01.flac", format: "flac", offset_s: 0, duration_s: 10)
-      create(:staged_track, show:, position: 1, title: "Ghost", set: "1", song:, start_s: 0, end_s: 6, fade_out_s: 1)
+      create(:staged_track, show:, position: 1, title: "Ghost", set: "1", song_ids: [ song.id ], start_s: 0, end_s: 6, fade_out_s: 1)
       create(:staged_track, show:, position: 2, title: "Banter", set: "1", start_s: 6, end_s: 10)
     end
 
@@ -45,6 +49,22 @@ RSpec.describe Admin::CommitStagingJob do
       described_class.new.perform(show.id, admin_job.id)
       expect(show.reload.venue).to eq(venue)
       expect(show.tour).to eq(tour)
+    end
+
+    it "tags debuts, syncs lore, and applies teases so the draft is complete" do
+      described_class.new.perform(show.id, admin_job.id)
+      expect(show.reload.tracks.first.tags.map(&:name)).to include("Debut")
+      expect(LoreSyncService).to have_received(:call).with(date: "2024-07-19")
+      expect(TeaseSyncService).to have_received(:new).with(date: "2024-07-19", apply: true)
+      expect(TeaseChartSyncService).to have_received(:new).with(start_date: "2024-07-19", end_date: "2024-07-19", apply: true)
+    end
+
+    it "finishes the commit even when a Phish.net step fails" do
+      allow(TeaseSyncService).to receive(:new).and_raise("rate limited")
+      described_class.new.perform(show.id, admin_job.id)
+      expect(admin_job.reload.status).to eq("done")
+      expect(admin_job.message).to eq("Committed 2 tracks (1 Phish.net step failed)")
+      expect(admin_job.payload["warnings"]).to eq([ "Tagging teases from setlist notes failed: rate limited" ])
     end
 
     it "removes the staging rows and directory" do
@@ -77,7 +97,7 @@ RSpec.describe Admin::CommitStagingJob do
              "-b:a", "128k", mp3.to_s, exception: true)
       source = create(:staged_source, show:, position: 1, filename: "a.mp3", format: "mp3", offset_s: 0, duration_s: 4)
       FileUtils.cp(mp3, dir.source_path(source))
-      create(:staged_track, show:, position: 1, title: "Ghost", set: "1", song:, start_s: 0, end_s: 4)
+      create(:staged_track, show:, position: 1, title: "Ghost", set: "1", song_ids: [ song.id ], start_s: 0, end_s: 4)
     end
 
     it "copies the file through without re-encoding" do
@@ -108,7 +128,7 @@ RSpec.describe Admin::CommitStagingJob do
     before do
       create(:track, show:, position: 1, title: "Leftover")
       create(:staged_source, show:, position: 1, filename: "d1t01.flac", format: "flac", offset_s: 0, duration_s: 10)
-      create(:staged_track, show:, position: 1, title: "Ghost", set: "1", song:, start_s: 0, end_s: 6, fade_out_s: 1)
+      create(:staged_track, show:, position: 1, title: "Ghost", set: "1", song_ids: [ song.id ], start_s: 0, end_s: 6, fade_out_s: 1)
       create(:staged_track, show:, position: 2, title: "Banter", set: "1", start_s: 6, end_s: 10)
     end
 

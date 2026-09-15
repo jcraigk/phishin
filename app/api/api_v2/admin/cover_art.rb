@@ -5,15 +5,11 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
 
   namespace :admin do
     resource :shows do
-      route_param :date, requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+      route_param :date, requirements: DATE do
         namespace :cover_art do
           desc "Regenerate the cover art prompt", hidden: true
           post :regenerate_prompt do
-            show = admin_show
-            job = AdminJob.create!(kind: "cover_art_prompt", show:)
-            Admin::RegenerateCoverArtPromptJob.perform_async(show.id, job.id)
-            status 201
-            { job_id: job.id }
+            enqueue_job("cover_art_prompt", Admin::RegenerateCoverArtPromptJob, show: admin_show)
           end
 
           desc "Generate a cover art candidate", hidden: true
@@ -26,10 +22,7 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
                show.cover_art_parent_show_id.blank?
               error!({ message: "Set a cover art prompt first" }, 422)
             end
-            job = AdminJob.create!(kind: "cover_art_generate", show:)
-            Admin::GenerateCoverArtJob.perform_async(show.id, job.id, params[:prompt].presence)
-            status 201
-            { job_id: job.id }
+            enqueue_job("cover_art_generate", Admin::GenerateCoverArtJob, show:, args: [ params[:prompt].presence ])
           end
 
           desc "Upload a cover art candidate", hidden: true
@@ -51,12 +44,8 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
           post :ai_edit do
             show = admin_show
             validate_source_blob_key!(show, params[:source_blob_key])
-            job = AdminJob.create!(kind: "cover_art_edit", show:)
-            Admin::EditCoverArtJob.perform_async(
-              show.id, job.id, params[:source_blob_key], params[:edit_prompt]
-            )
-            status 201
-            { job_id: job.id }
+            enqueue_job("cover_art_edit", Admin::EditCoverArtJob, show:,
+                        args: [ params[:source_blob_key], params[:edit_prompt] ])
           end
 
           desc "Apply a candidate as the show's cover art", hidden: true
@@ -67,12 +56,7 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
           post :select do
             show = admin_show
             validate_candidate_blob_key!(show, params[:blob_key])
-            job = AdminJob.create!(kind: "cover_art_select", show:)
-            Admin::SelectCoverArtJob.perform_async(
-              show.id, job.id, params[:blob_key], params[:zoom]
-            )
-            status 201
-            { job_id: job.id }
+            enqueue_job("cover_art_select", Admin::SelectCoverArtJob, show:, args: [ params[:blob_key], params[:zoom] ])
           end
 
           desc "Remove a candidate", hidden: true
@@ -84,13 +68,7 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
             validate_candidate_blob_key!(show, params[:blob_key])
             attachments = show.cover_art_candidates_attachments.includes(:blob)
                               .select { |a| a.blob.key == params[:blob_key] }
-            attachments.each do |attachment|
-              blob_in_use = ActiveStorage::Attachment
-                            .where(blob_id: attachment.blob_id)
-                            .where.not(id: attachment.id)
-                            .exists?
-              blob_in_use ? attachment.destroy : attachment.purge
-            end
+            attachments.each { |attachment| Admin::Blobs.detach(attachment) }
             status 204
             body false
           end
@@ -100,12 +78,6 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
   end
 
   helpers do
-    def find_signed_blob(signed_id)
-      ActiveStorage::Blob.find_signed!(signed_id)
-    rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveRecord::RecordNotFound
-      error!({ message: "Unknown upload: #{signed_id}" }, 422)
-    end
-
     def validate_source_blob_key!(show, key)
       return if candidate_blob_key?(show, key)
       return if show.cover_art.attached? && show.cover_art.blob.key == key

@@ -7,20 +7,19 @@ import {
   faPlay,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import MoonLoader from "react-spinners/MoonLoader";
+import Spinner from "./Spinner";
 import { GaplessEngine } from "../player/GaplessEngine";
 import { WebAudioBackend } from "../player/WebAudioBackend";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
 import { adminPost, fetchJobAudio } from "./adminApi";
+import { round1 } from "./stagingMath";
 
 // Mirrors Admin::ShiftBoundaryJob::MIN_PART_S: both sides must keep real audio,
 // so the allowed range shown here is the same one the API enforces.
 const MIN_PART_S = 1.0;
 
-const round = (value) => Math.round(value * 10) / 10;
-
-const seconds = (ms) => round((ms || 0) / 1000);
+const seconds = (ms) => round1((ms || 0) / 1000);
 
 const BoundaryPanel = ({ track, next, onClose }) => {
   const { show, reload, setGapsStale } = useContext(EditorContext);
@@ -46,8 +45,8 @@ const BoundaryPanel = ({ track, next, onClose }) => {
   const firstSeconds = seconds(track.duration);
   const secondSeconds = seconds(next.duration);
   const total = firstSeconds + secondSeconds;
-  const low = round(MIN_PART_S - firstSeconds);
-  const high = round(secondSeconds - MIN_PART_S);
+  const low = round1(MIN_PART_S - firstSeconds);
+  const high = round1(secondSeconds - MIN_PART_S);
   const delta = Number.isFinite(deltaS) ? deltaS : 0;
   const inRange = delta >= low && delta <= high;
   const previewCurrent = previewedAt === delta;
@@ -58,7 +57,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
   };
 
   const changeDelta = (value) => {
-    setDeltaS(round(value));
+    setDeltaS(round1(value));
     setError(null);
     cancelledRef.current = false;
     setPreviewedAt(null);
@@ -387,7 +386,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
         )}
         {status && (
           <span className="admin-audio-status">
-            <MoonLoader color="#c7c8ca" size={14} />{" "}
+            <Spinner />{" "}
             {modeRef.current === "apply" ? "Applying..." : "Rendering..."}
           </span>
         )}

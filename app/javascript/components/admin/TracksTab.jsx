@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -7,6 +7,9 @@ import {
   faTrashCan,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import AddSetMenu from "./AddSetMenu";
+import { SETS, setName, groupBySet, withPendingSets, addableSets as computeAddableSets } from "./sets";
+import { plural } from "./format";
 import { EditorContext } from "./AdminShowEditor";
 import { AdminPlayerContext } from "./AdminLayout";
 import TrackRow from "./TrackRow";
@@ -17,6 +20,7 @@ import { adminGet, adminPost, adminPut, pollJob } from "./adminApi";
 import { uploadFile } from "./DirectUploader";
 import SongPicker from "./SongPicker";
 import { formatDurationShow } from "../helpers/utils";
+import Modal from "./Modal";
 
 const GapBanner = () => {
   const { show, setGapsStale } = useContext(EditorContext);
@@ -43,62 +47,6 @@ const GapBanner = () => {
   );
 };
 
-const SETS = ["S", "1", "2", "3", "4", "E", "E2", "E3"];
-
-const SET_NAMES = {
-  P: "Pre-Show",
-  S: "Soundcheck",
-  1: "Set 1",
-  2: "Set 2",
-  3: "Set 3",
-  4: "Set 4",
-  E: "Encore",
-  E2: "Encore 2",
-  E3: "Encore 3",
-};
-
-const setName = (set) => SET_NAMES[set] || "Unknown Set";
-
-// Groups consecutive runs by position rather than sorting by set, so a track
-// filed under the wrong set stays visible where it actually sits.
-const groupBySet = (tracks) =>
-  tracks.reduce((groups, track, index) => {
-    const last = groups[groups.length - 1];
-    if (last && last.set === track.set) {
-      last.tracks.push({ track, index });
-    } else {
-      groups.push({ set: track.set, tracks: [{ track, index }] });
-    }
-    return groups;
-  }, []);
-
-// Pending sets are empty groups the admin just added; they exist only in the
-// browser until a track is dropped in, because a set is nothing but the value
-// on its tracks. Each is slotted where its set ranks canonically.
-const withPendingSets = (groups, pendingSets) => {
-  const merged = [...groups];
-  for (const set of pendingSets) {
-    if (merged.some((group) => group.set === set)) continue;
-    const rank = SETS.indexOf(set);
-    let at = merged.length;
-    for (let i = 0; i < merged.length; i += 1) {
-      if (SETS.indexOf(merged[i].set) > rank) {
-        at = i;
-        break;
-      }
-    }
-    merged.splice(at, 0, { set, tracks: [], pending: true });
-  }
-  // A drop on an empty group must land where the group sits, not at the end
-  // of the show, so each pending group points at the first track below it.
-  for (let i = 0; i < merged.length; i += 1) {
-    if (!merged[i].pending) continue;
-    const next = merged.slice(i + 1).find((group) => group.tracks.length > 0);
-    merged[i].dropIndex = next ? next.tracks[0].index : null;
-  }
-  return merged;
-};
-
 const TracksTab = () => {
   const { show, setShow, setError, gapsStale, reload } = useContext(EditorContext);
   const [busy, setBusy] = useState(false);
@@ -108,9 +56,7 @@ const TracksTab = () => {
   const [targetSet, setTargetSet] = useState("1");
   const [actionsSlot, setActionsSlot] = useState(null);
   const [allTags, setAllTags] = useState([]);
-  const [addSetOpen, setAddSetOpen] = useState(false);
   const [audioTool, setAudioTool] = useState(null);
-  const addSetMenuRef = useRef(null);
 
   const toggleAudioTool = (trackId, name) =>
     setAudioTool((prev) =>
@@ -128,17 +74,6 @@ const TracksTab = () => {
   useEffect(() => {
     setActionsSlot(document.getElementById("admin-tab-actions"));
   }, []);
-
-  useEffect(() => {
-    if (!addSetOpen) return undefined;
-    const onDocumentClick = (e) => {
-      if (addSetMenuRef.current && !addSetMenuRef.current.contains(e.target)) {
-        setAddSetOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", onDocumentClick);
-    return () => document.removeEventListener("mousedown", onDocumentClick);
-  }, [addSetOpen]);
 
   useEffect(() => {
     adminGet("/tags")
@@ -280,7 +215,7 @@ const TracksTab = () => {
       setInserting(false);
       setShow(data);
       if (data.job_id) {
-        await pollJob(data.job_id, { onUpdate: () => {} });
+        await pollJob(data.job_id);
         await reload();
       }
     } catch (e) {
@@ -291,15 +226,14 @@ const TracksTab = () => {
     }
   };
 
-  const addableSets = SETS.filter(
-    (set) => !tracks.some((t) => t.set === set) && !pendingSets.includes(set)
-  );
+  const addableSets = computeAddableSets(tracks, pendingSets);
 
   const tabActions = (
     <>
       <button
         type="button"
         disabled={busy}
+        title="Add a track to the setlist"
         onClick={() => {
           setInsertTitle("");
           setInsertPosition(tracks.length + 1);
@@ -310,32 +244,12 @@ const TracksTab = () => {
       >
         <FontAwesomeIcon icon={faPlus} /> Track
       </button>
-      <div className="admin-row-menu" ref={addSetMenuRef}>
-        <button
-          type="button"
-          disabled={busy || addableSets.length === 0}
-          onClick={() => setAddSetOpen(!addSetOpen)}
-        >
-          <FontAwesomeIcon icon={faPlus} /> Set
-        </button>
-        {addSetOpen && (
-          <ul className="admin-row-menu-list">
-            {addableSets.map((set) => (
-              <li key={set}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAddSetOpen(false);
-                    setPendingSets((prev) => [...prev, set]);
-                  }}
-                >
-                  {setName(set)}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <AddSetMenu
+        options={addableSets}
+        disabled={busy}
+        title="Add a set to the show"
+        onAdd={(set) => setPendingSets((prev) => [...prev, set])}
+      />
       <BulkAudioDrop />
     </>
   );
@@ -344,21 +258,13 @@ const TracksTab = () => {
     <div className="admin-tracks-tab">
       {gapsStale && <GapBanner />}
       {actionsSlot && createPortal(tabActions, actionsSlot)}
-      <div className="admin-tracks-toolbar">
-        {(show.staged_audio.length > 0 || missingAudioCount > 0) && (
+      {missingAudioCount > 0 && (
+        <div className="admin-tracks-toolbar">
           <span className="admin-staged-summary">
-            {show.staged_audio.length > 0 &&
-              `${show.staged_audio.length} staged file${
-                show.staged_audio.length === 1 ? "" : "s"
-              }`}
-            {show.staged_audio.length > 0 && missingAudioCount > 0 && ", "}
-            {missingAudioCount > 0 &&
-              `${missingAudioCount} track${
-                missingAudioCount === 1 ? "" : "s"
-              } awaiting audio`}
+            {`${plural(missingAudioCount, "track")} awaiting audio`}
           </span>
-        )}
-      </div>
+        </div>
+      )}
 
       {tracks.length === 0 ? (
         <p>This show has no tracks yet.</p>
@@ -371,7 +277,7 @@ const TracksTab = () => {
             return (
               <tbody key={headerKey} className="admin-set-group">
                 <tr className="admin-set-header">
-                  <th colSpan={8}>
+                  <th colSpan={7}>
                     {setName(group.set)}
                     {group.tracks.length === 0 && (
                       <button
@@ -402,7 +308,6 @@ const TracksTab = () => {
                     track={track}
                     next={tracks[index + 1] || null}
                     tags={allTags}
-                    stagedOptions={show.staged_audio}
                     onReposition={() => openReposition(track)}
                     isActive={activeTrack?.id === track.id}
                     isPlaying={activeTrack?.id === track.id && isPlaying}
@@ -420,101 +325,95 @@ const TracksTab = () => {
       <PnetCheckPanel />
 
       {inserting && (
-        <div className="admin-modal-overlay">
-          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Add Track</h3>
-            <label className="admin-modal-field">
-              <span>Title</span>
-              <input
-                type="text"
-                value={insertTitle}
-                onChange={(e) => setInsertTitle(e.target.value)}
-              />
-            </label>
-            <label className="admin-modal-field">
-              <span>Position</span>
-              <select
-                value={insertPosition}
-                onChange={(e) => setInsertPosition(Number(e.target.value))}
-              >
-                {tracks.map((t, i) => (
-                  <option key={t.id} value={i + 1}>
-                    {i + 1}. before {t.title}
-                  </option>
-                ))}
-                <option value={tracks.length + 1}>
-                  {tracks.length + 1}. (end of show)
+        <Modal title="Add Track">
+          <label className="admin-modal-field">
+            <span>Title</span>
+            <input
+              type="text"
+              value={insertTitle}
+              onChange={(e) => setInsertTitle(e.target.value)}
+            />
+          </label>
+          <label className="admin-modal-field">
+            <span>Position</span>
+            <select
+              value={insertPosition}
+              onChange={(e) => setInsertPosition(Number(e.target.value))}
+            >
+              {tracks.map((t, i) => (
+                <option key={t.id} value={i + 1}>
+                  {i + 1}. before {t.title}
                 </option>
-              </select>
-            </label>
-            <label className="admin-modal-field">
-              <span>Songs</span>
-              <SongPicker value={insertSongs} onChange={setInsertSongs} />
-            </label>
-            <label className="admin-modal-field">
-              <span>Audio file</span>
-              <input
-                type="file"
-                accept=".mp3,.flac,.shn,.wav,.aiff"
-                disabled={busy}
-                onChange={(e) => setInsertFile(e.target.files[0] || null)}
-              />
-            </label>
-            {insertProgress !== null && (
-              <progress className="admin-progress-bar" max="100" value={insertProgress} />
-            )}
-            <div className="admin-modal-actions">
-              <button
-                type="button"
-                disabled={busy || insertTitle.trim() === "" || insertSongs.length === 0}
-                onClick={addTrack}
-              >
-                <FontAwesomeIcon icon={faCheck} /> Add Track
-              </button>
-              <button type="button" onClick={() => setInserting(false)}>
-                <FontAwesomeIcon icon={faXmark} /> Cancel
-              </button>
-            </div>
+              ))}
+              <option value={tracks.length + 1}>
+                {tracks.length + 1}. (end of show)
+              </option>
+            </select>
+          </label>
+          <label className="admin-modal-field">
+            <span>Songs</span>
+            <SongPicker value={insertSongs} onChange={setInsertSongs} />
+          </label>
+          <label className="admin-modal-field">
+            <span>Audio file</span>
+            <input
+              type="file"
+              accept=".mp3,.flac,.shn,.wav,.aiff"
+              disabled={busy}
+              onChange={(e) => setInsertFile(e.target.files[0] || null)}
+            />
+          </label>
+          {insertProgress !== null && (
+            <progress className="admin-progress-bar" max="100" value={insertProgress} />
+          )}
+          <div className="admin-modal-actions">
+            <button
+              type="button"
+              disabled={busy || insertTitle.trim() === "" || insertSongs.length === 0}
+              onClick={addTrack}
+            >
+              <FontAwesomeIcon icon={faCheck} /> Add Track
+            </button>
+            <button type="button" onClick={() => setInserting(false)}>
+              <FontAwesomeIcon icon={faXmark} /> Cancel
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
 
       {repositioning && (
-        <div className="admin-modal-overlay">
-          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Reposition &quot;{repositioning.title}&quot;</h3>
-            <label className="admin-modal-field">
-              <span>Position</span>
-              <select
-                value={targetPosition}
-                onChange={(e) => chooseTargetPosition(Number(e.target.value))}
-              >
-                {tracks.map((t, i) => (
-                  <option key={t.id} value={i + 1}>
-                    {i + 1}
-                    {t.id === repositioning.id ? ". (current)" : `. ${t.title}`}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="admin-modal-field">
-              <span>Set</span>
-              <select value={targetSet} onChange={(e) => setTargetSet(e.target.value)}>
-                {setChoicesFor(repositioning, targetPosition).map((set) => (
-                  <option key={set} value={set}>{setName(set)}</option>
-                ))}
-              </select>
-            </label>
-            <div className="admin-modal-actions">
-              <button type="button" disabled={busy} onClick={applyReposition}>
-                <FontAwesomeIcon icon={faCheck} /> Apply
-              </button>
-              <button type="button" onClick={() => setRepositioning(null)}>
-                <FontAwesomeIcon icon={faXmark} /> Cancel
-              </button>
-            </div>
+        <Modal title={<>Reposition &quot;{repositioning.title}&quot;</>}>
+          <label className="admin-modal-field">
+            <span>Position</span>
+            <select
+              value={targetPosition}
+              onChange={(e) => chooseTargetPosition(Number(e.target.value))}
+            >
+              {tracks.map((t, i) => (
+                <option key={t.id} value={i + 1}>
+                  {i + 1}
+                  {t.id === repositioning.id ? ". (current)" : `. ${t.title}`}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="admin-modal-field">
+            <span>Set</span>
+            <select value={targetSet} onChange={(e) => setTargetSet(e.target.value)}>
+              {setChoicesFor(repositioning, targetPosition).map((set) => (
+                <option key={set} value={set}>{setName(set)}</option>
+              ))}
+            </select>
+          </label>
+          <div className="admin-modal-actions">
+            <button type="button" disabled={busy} onClick={applyReposition}>
+              <FontAwesomeIcon icon={faCheck} /> Apply
+            </button>
+            <button type="button" onClick={() => setRepositioning(null)}>
+              <FontAwesomeIcon icon={faXmark} /> Cancel
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

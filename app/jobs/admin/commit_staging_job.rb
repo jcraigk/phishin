@@ -21,9 +21,10 @@ class Admin::CommitStagingJob
         @admin_job.update!(message: "Removed tracks left by an earlier commit")
       end
 
-      assign_venue_and_tour
+      Admin::ShowMatchAssigner.call(@show)
       create_tracks
       record_source
+      enrich
       finalize
     end
   end
@@ -34,30 +35,20 @@ class Admin::CommitStagingJob
     @staged ||= @show.staged_tracks.ordered.to_a
   end
 
-  def assign_venue_and_tour
-    match = ShowImporter::Matcher.call(date: @show.date.to_s, filenames: [])
-    @show.venue = match.venue if match.venue
-    @show.tour = match.tour if match.tour
-    @show.save!
-  rescue ShowImporter::ShowInfo::NotFoundError
-    nil
-  end
-
   def create_tracks
     staged.each_with_index do |staged_track, index|
       @admin_job.update!(
         progress: (index * TRACK_PROGRESS_CEILING / staged.size).round,
-        message: "Rendering #{staged_track.title}"
+        message: "Rendering #{index + 1} of #{staged.size} · #{staged_track.title}"
       )
       path = render(staged_track)
       track = Track.new(
         show: @show, position: index + 1, title: staged_track.title,
         set: staged_track.set, audio_status: "complete"
       )
-      track.songs << staged_track.song if staged_track.song
+      track.songs = staged_track.songs
       track.save!
-      track.mp3_audio.attach(io: File.open(path), filename: track.friendly_filename, content_type: "audio/mpeg")
-      track.process_mp3_audio
+      File.open(path) { |io| track.attach_mp3!(io) }
     end
   end
 
@@ -89,13 +80,20 @@ class Admin::CommitStagingJob
     @show.update!(taper_notes: notes, staging_source_url: nil)
   end
 
+  def enrich
+    @warnings = Admin::PhishnetEnrichment.call(@show.reload) do |message|
+      @admin_job.update!(progress: TRACK_PROGRESS_CEILING.round, message:)
+    end
+  end
+
   def finalize
-    @show.staged_tracks.destroy_all
-    @show.staged_sources.destroy_all
-    @dir.remove!
+    @show.discard_staging!
     @show.reload
     @show.update_audio_status_from_tracks!
     @show.save_duration
-    @admin_job.update!(message: "Committed #{staged.size} tracks")
+    @admin_job.payload["warnings"] = @warnings
+    @admin_job.save!
+    suffix = @warnings.any? ? " (#{@warnings.size} Phish.net step#{'s' unless @warnings.one?} failed)" : ""
+    @admin_job.update!(message: "Committed #{staged.size} tracks#{suffix}")
   end
 end

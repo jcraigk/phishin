@@ -5,7 +5,6 @@ RSpec.describe TeaseChartSyncService do
 
   let!(:tease_tag) { create(:tag, name: "Tease") }
   let!(:show) { create(:show, date: "2025-12-31") }
-  let!(:yem) { create(:track, show:, title: "You Enjoy Myself", position: 1) }
   let!(:hood) { create(:track, show:, title: "Harry Hood", position: 2) }
 
   let(:chart_rows) do
@@ -25,6 +24,7 @@ RSpec.describe TeaseChartSyncService do
   end
 
   before do
+    create(:track, show:, title: "You Enjoy Myself", position: 1)
     allow(ENV).to receive(:fetch).and_call_original
     allow(ENV).to receive(:fetch).with("PNET_API_KEY").and_return("pnet-key")
     allow(Typhoeus).to receive(:get) do |url|
@@ -91,8 +91,9 @@ RSpec.describe TeaseChartSyncService do
 
   context "when the show has a Tweezer sandwich and a Tweezer Reprise" do
     let(:chart_rows) { [ [ "I Feel the Earth Move", "Carole King", "1", "2025-12-31 Tweezer" ] ] }
-    let!(:reprise) { create(:track, show:, title: "Tweezer Reprise", position: 3) }
     let!(:sandwich) { create(:track, show:, title: "Tweezer > Manteca > Tweezer", position: 4) }
+
+    before { create(:track, show:, title: "Tweezer Reprise", position: 3) }
 
     it "places the tease on the sandwich" do
       service.call

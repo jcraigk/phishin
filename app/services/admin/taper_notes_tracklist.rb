@@ -1,6 +1,5 @@
 module Admin::TaperNotesTracklist
   DISC_HEADER = /\A\s*(?:disc|cd)\s*#?(\d+)\b/i
-  EXPLICIT = /\Ad(\d+)t(\d+)\z/i
   EXPLICIT_LINE = /\A\s*d(\d+)\s*t(\d+)[\s.):-]+(.+)\z/i
   NUMBERED_LINE = /\A\s*t?(\d{1,2})[\s.):-]+(.+)\z/
 

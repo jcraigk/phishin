@@ -7,7 +7,7 @@ import {
   faPlay,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import MoonLoader from "react-spinners/MoonLoader";
+import Spinner from "./Spinner";
 import { EditorContext } from "./AdminShowEditor";
 import WaveformScrubber from "./WaveformScrubber";
 import useJobRunner from "./useJobRunner";
@@ -366,7 +366,7 @@ const TrimPanel = ({ track, onClose }) => {
         </button>
         {status && (
           <span className="admin-audio-status">
-            <MoonLoader color="#c7c8ca" size={14} />{" "}
+            <Spinner />{" "}
             {modeRef.current === "apply" ? "Applying..." : "Rendering..."}
           </span>
         )}

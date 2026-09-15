@@ -20,36 +20,36 @@ class Admin::PnetTagCheckJob
       notes.call
 
       admin_job.payload["report"] = build_report(setlist_lines, chart, notes)
+      admin_job.payload["checked"] = CHECKS
       admin_job.save!
     end
   end
 
   private
 
+  CHECKS = [
+    "Setlist against Phish.net",
+    "Tease Chart suggestions",
+    "Setlist note tease suggestions",
+    "Tagged teases against setlist notes"
+  ].freeze
+
   def build_report(setlist_lines, chart, notes)
-    sections = []
-    sections << section("Setlist conflicts with Phish.net", setlist_lines)
-    sections << section(
-      "Suggested additions from the Tease Chart",
-      chart.proposed_rows.map { |p| "#{p[:track].title}: #{p[:note]}" }
-    )
-    sections << section(
-      "Suggested additions from setlist notes",
-      notes.proposed_rows.map { |p| "#{p[:track].title}: #{p[:note]}" }
-    )
-    sections << section(
-      "Tagged teases not found in setlist notes (review for removal)",
-      notes.unconfirmed
-    )
     unmatched = chart.unmatched.map { |e| "#{e[:song]}: #{e[:note]} (#{e[:reason]})" } +
                 notes.unmatched.map { |e| "#{e[:song]}: #{e[:tease]} (no track matched)" }
-    sections << section("Mentioned but no track matched", unmatched)
-    sections.join("\n\n")
+    sections = [
+      section("Setlist conflicts with Phish.net", setlist_lines),
+      section("Suggested additions from the Tease Chart", chart.proposed_rows.map { |p| "#{p[:track].title}: #{p[:note]}" }),
+      section("Suggested additions from setlist notes", notes.proposed_rows.map { |p| "#{p[:track].title}: #{p[:note]}" }),
+      section("Tagged teases not found in setlist notes (review for removal)", notes.unconfirmed),
+      section("Mentioned but no track matched", unmatched)
+    ].compact
+    sections.any? ? sections.join("\n\n") : "No conflicts."
   end
 
   def section(title, lines)
-    body = lines.any? ? lines.map { |line| "  #{line}" }.join("\n") : "  (none)"
-    "#{title}:\n#{body}"
+    return nil if lines.empty?
+    "#{title}:\n#{lines.map { |line| "  #{line}" }.join("\n")}"
   end
 
   def setlist_conflicts(show)

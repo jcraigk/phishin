@@ -201,7 +201,7 @@ class ApiV2::Playlists < ApiV2::Base
         starts_at, ends_at = sanitize_track_times(
           starts_at: params[:starts_at_second][idx],
           ends_at: params[:ends_at_second][idx],
-          track_duration: Track.find(track_id).duration / 1000
+          track_duration: Track.joins(:show).merge(Show.published).find(track_id).duration / 1000
         )
 
         {

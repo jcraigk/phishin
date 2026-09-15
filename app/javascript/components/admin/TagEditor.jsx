@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { EditorContext } from "./AdminShowEditor";
 import { adminDelete, adminPatch, adminPost } from "./adminApi";
-import { reasonText } from "./orphanReasons";
 import TimeInput from "./TimeInput";
 
 const TrackTagRow = ({ track, trackTag, onSaved, onError }) => {
@@ -36,16 +35,7 @@ const TrackTagRow = ({ track, trackTag, onSaved, onError }) => {
     save({ transcript });
   };
 
-  const saveSecond = (field, seconds) => {
-    // Editing a timestamp is the admin saying where the tag really points, so
-    // an orphaned tag resolves in the same request rather than needing a second
-    // click to clear a flag the edit already answered.
-    const body = { [field]: seconds };
-    if (trackTag.orphaned_at) body.orphaned = false;
-    save(body);
-  };
-
-  const clearOrphan = () => save({ orphaned: false });
+  const saveSecond = (field, seconds) => save({ [field]: seconds });
 
   const remove = async () => {
     if (!window.confirm(`Remove the ${trackTag.tag_name} tag from ${track.title}?`)) return;
@@ -96,19 +86,6 @@ const TrackTagRow = ({ track, trackTag, onSaved, onError }) => {
           <FontAwesomeIcon icon={faTrashCan} />
         </button>
       </div>
-      {trackTag.orphaned_at && (
-        <div className="admin-tag-orphaned">
-          <p>{reasonText(trackTag.orphan_reason)}</p>
-          <p className="admin-audio-note">
-            The numbers above are where it pointed before the audio changed, not
-            where it points now. Correct them and clear the flag, or resolve it
-            from the dashboard review queue.
-          </p>
-          <button type="button" disabled={busy} onClick={clearOrphan}>
-            Clear Flag
-          </button>
-        </div>
-      )}
       <textarea
         className="admin-tag-transcript"
         rows={2}

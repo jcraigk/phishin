@@ -3,7 +3,7 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
 
   before { authenticate_admin! }
 
-  DATE = { date: /\d{4}-\d{2}-\d{2}/ }.freeze
+  EDGE_TOLERANCE_S = 0.002
 
   namespace :admin do
     resource :shows do
@@ -13,50 +13,32 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
       end
       post "archive_import" do
         item = Admin::ArchiveItem.new(params[:url])
-        date = item.date
-        error!({ message: "Could not find a date on that archive.org item" }, 422) if date.blank?
-        show = Show.find_by(date:)
-        created = show.nil?
-        show ||= Show.create!(date:, published: false, audio_status: "missing")
-        error!({ message: "Show #{date} is already published" }, 422) if show.published?
-        error!({ message: "Show #{date} already has tracks" }, 422) if show.tracks.exists?
-        job = AdminJob.create!(kind: "ingest", show:)
-        Admin::IngestStagingJob.perform_async(show.id, job.id, [], item.identifier, created)
-        status 201
-        { job_id: job.id, date: }
+        error!({ message: "Could not find a date on that archive.org item" }, 422) if item.date.blank?
+        start_ingest(item.date, archive_item: item.identifier)
       rescue Admin::ArchiveItem::NotFoundError, ArgumentError => e
         error!({ message: e.message }, 422)
       end
 
-      desc "Ingest a show into lossless staging", hidden: true
+      desc "Ingest uploaded files, deriving the show date from them", hidden: true
       params do
-        optional :signed_ids, type: Array[String], default: []
-        optional :archive_item, type: String
+        requires :signed_ids, type: Array[String]
       end
-      post ":date/ingest", requirements: DATE do
-        show = admin_show
-        error!({ message: "Show is already published" }, 422) if show.published?
-        error!({ message: "Show already has tracks" }, 422) if show.tracks.exists?
-        if params[:signed_ids].empty? && params[:archive_item].blank?
-          error!({ message: "Upload files or give an archive.org item" }, 422)
+      post "upload_import" do
+        error!({ message: "Upload at least one file" }, 422) if params[:signed_ids].empty?
+        blobs = params[:signed_ids].map { find_signed_blob(it) }
+        date = Admin::UploadDateSniffer.call(blobs)
+        if date.blank?
+          error!({ message: "Could not find a show date in the upload; include taper notes with the date" }, 422)
         end
-        job = AdminJob.create!(kind: "ingest", show:)
-        Admin::IngestStagingJob.perform_async(show.id, job.id, params[:signed_ids], params[:archive_item].presence)
-        status 201
-        { job_id: job.id }
+        start_ingest(date, signed_ids: params[:signed_ids])
       end
 
       namespace ":date/staging", requirements: DATE do
-        desc "Fetch the staging state", hidden: true
-        get do
-          staging_payload(admin_show) || error!({ message: "Nothing staged" }, 404)
-        end
-
         desc "Update a staged track", hidden: true
         params do
           optional :title, type: String
           optional :set, type: String, values: StagedTrack::SETS
-          optional :song_id, type: Integer
+          optional :song_ids, type: Array[Integer]
           optional :start_s, type: Float
           optional :end_s, type: Float
           optional :fade_in_s, type: Float
@@ -65,11 +47,13 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
         patch "tracks/:id" do
           track = staged_track
           updates = declared(params, include_missing: false).except(:date, :id).to_h.symbolize_keys
-          updates[:song] = lookup_or_nil(Song, updates.delete(:song_id)) if updates.key?(:song_id)
+          updates[:song_ids] = existing_song_ids(updates[:song_ids]) if updates.key?(:song_ids)
           track.assign_attributes(updates)
-          ensure_in_bounds!(track)
+          ensure_in_bounds!(track) if updates.key?(:start_s) || updates.key?(:end_s)
+          ensure_sets_in_order!(track.show, { track.id => track.set }) if updates.key?(:set)
           save_or_422!(track)
           StagedTrack.renumber!(track.show) if updates.key?(:start_s)
+          StagedTrack.normalize_edge_fades!(track.show) if updates.key?(:set)
           staging_payload(track.show.reload)
         end
 
@@ -86,10 +70,11 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
           ActiveRecord::Base.transaction do
             second = track.show.staged_tracks.new(
               position: track.show.staged_tracks.maximum(:position) + 1, set: track.set,
-              title: "#{track.title} (2)", song: track.song,
-              start_s: at, end_s: track.end_s, fade_in_s: 0, fade_out_s: track.fade_out_s
+              title: "#{track.title} (2)", song_ids: track.song_ids,
+              start_s: at, end_s: track.end_s, fade_in_s: 0, fade_out_s: track.fade_out_s,
+              original_start_s: at, original_end_s: track.original_end_s
             )
-            track.update!(end_s: at, fade_out_s: 0)
+            track.update!(end_s: at, fade_out_s: 0, original_end_s: at, combines: [])
             second.save!
             StagedTrack.renumber!(track.show)
           end
@@ -101,8 +86,39 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
           track = staged_track
           following = track.next_track || error!({ message: "No track below to combine with" }, 422)
           ActiveRecord::Base.transaction do
-            track.update!(end_s: following.end_s, fade_out_s: following.fade_out_s)
+            track.update!(
+              title: "#{track.title} > #{following.title}", song_ids: (track.song_ids + following.song_ids).uniq,
+              end_s: following.end_s, fade_out_s: following.fade_out_s, original_end_s: following.original_end_s,
+              combines: track.combines + [ combine_record(track, following) ]
+            )
             following.destroy!
+            StagedTrack.renumber!(track.show)
+          end
+          staging_payload(track.show.reload)
+        end
+
+        desc "Undo the last combine on a staged track", hidden: true
+        post "tracks/:id/uncombine" do
+          track = staged_track
+          record = track.combines.last || error!({ message: "Nothing to undo" }, 422)
+          seam = record["end_s"]
+          unless seam >= track.start_s + StagedTrack::MIN_LENGTH_S && seam <= track.end_s - StagedTrack::MIN_LENGTH_S
+            error!({ message: "The old seam is no longer inside this track" }, 422)
+          end
+          restored = record["following"]
+          ActiveRecord::Base.transaction do
+            following = track.show.staged_tracks.new(
+              position: track.show.staged_tracks.maximum(:position) + 1, set: track.set,
+              title: restored["title"], song_ids: restored["song_ids"],
+              start_s: seam, end_s: track.end_s, fade_out_s: track.fade_out_s,
+              original_start_s: restored["original_start_s"], original_end_s: track.original_end_s,
+              combines: restored["combines"]
+            )
+            track.update!(
+              title: record["title"], song_ids: record["song_ids"], end_s: seam, fade_out_s: 0,
+              original_end_s: record["original_end_s"], combines: track.combines[0...-1]
+            )
+            following.save!
             StagedTrack.renumber!(track.show)
           end
           staging_payload(track.show.reload)
@@ -136,6 +152,17 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
           staging_payload(track.show.reload)
         end
 
+        desc "Waveform peaks for the whole staged timeline", hidden: true
+        get "peaks" do
+          path = Admin::StagingDir.new(admin_show).peaks
+          error!({ message: "No waveform" }, 404) unless File.exist?(path)
+          content_type "application/octet-stream"
+          header "Content-Length", File.size(path).to_s
+          header "X-Peaks-Rate", Admin::StagingPeaks::RATE.to_s
+          env["api.format"] = :binary
+          body File.binread(path)
+        end
+
         desc "Stream a source's preview audio", hidden: true
         get "sources/:id/audio" do
           show = admin_show
@@ -154,20 +181,19 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
           show = admin_show
           error!({ message: "Nothing staged" }, 422) unless show.staged_tracks.exists?
           error!({ message: "Show is already published" }, 422) if show.published?
-          job = AdminJob.create!(kind: "commit_staging", show:)
-          Admin::CommitStagingJob.perform_async(show.id, job.id)
-          status 201
-          { job_id: job.id }
+          error!({ message: "Choose a venue before committing" }, 422) if show.venue.nil?
+          songless = show.staged_tracks.ordered.select { it.song_ids.empty? }
+          if songless.any?
+            error!({ message: "Every track needs a song: #{songless.map(&:title).join(', ')}" }, 422)
+          end
+          enqueue_job("commit_staging", Admin::CommitStagingJob, show:)
         end
 
         desc "Discard staging", hidden: true
         delete do
           show = admin_show
           show.tracks.destroy_all unless show.published?
-          show.staged_tracks.destroy_all
-          show.staged_sources.destroy_all
-          show.update!(staging_source_url: nil)
-          Admin::StagingDir.new(show).remove!
+          show.discard_staging!
           status 204
           body false
         end
@@ -176,24 +202,50 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
   end
 
   helpers do
+    def start_ingest(date, signed_ids: [], archive_item: nil)
+      show = Show.find_by(date:)
+      created = show.nil?
+      show ||= Show.create_draft!(date)
+      ensure_draft_without_tracks!(show)
+      enqueue_job("ingest", Admin::IngestStagingJob, show:, args: [ signed_ids, archive_item, created ])
+        .merge(date: show.date.iso8601)
+    end
+
     def staged_track
       admin_show.staged_tracks.find(params[:id])
     end
 
-    def lookup_or_nil(klass, id)
-      id.nil? ? nil : klass.find(id)
+    def combine_record(track, following)
+      {
+        title: track.title, song_ids: track.song_ids, end_s: track.end_s.to_f, original_end_s: track.original_end_s&.to_f,
+        following: {
+          title: following.title, song_ids: following.song_ids,
+          original_start_s: following.original_start_s&.to_f, combines: following.combines
+        }
+      }
+    end
+
+    def existing_song_ids(ids)
+      found = Song.where(id: ids).pluck(:id)
+      ids.select { found.include?(it) }
     end
 
     def ensure_in_bounds!(track)
       total = track.show.staged_sources.sum(:duration_s)
       error!({ message: "start must not be before the timeline" }, 422) if track.start_s.negative?
       error!({ message: "end must not be past the timeline (#{total}s)" }, 422) if track.end_s > total
-      if (prev = track.previous_track) && track.start_s < prev.end_s
+      if (prev = track.previous_track) && track.start_s < prev.end_s - EDGE_TOLERANCE_S
         error!({ message: "start would overlap #{prev.title}" }, 422)
       end
-      if (following = track.next_track) && track.end_s > following.start_s
+      if (following = track.next_track) && track.end_s > following.start_s + EDGE_TOLERANCE_S
         error!({ message: "end would overlap #{following.title}" }, 422)
       end
+    end
+
+    def ensure_sets_in_order!(show, overrides)
+      sets = show.staged_tracks.order(:position).map { |t| overrides.fetch(t.id, t.set) }
+      return if sets.each_cons(2).all? { |a, b| StagedTrack.rank(a) <= StagedTrack.rank(b) }
+      error!({ message: "Sets must stay in order along the show" }, 422)
     end
 
     def save_or_422!(record)

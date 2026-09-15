@@ -19,13 +19,8 @@ import TrimPanel from "./TrimPanel";
 import ReplacePanel from "./ReplacePanel";
 import BoundaryPanel from "./BoundaryPanel";
 import { adminPatch, adminDelete } from "./adminApi";
-
-const formatDuration = (ms) => {
-  if (!ms) return "";
-  const total = Math.round(ms / 1000);
-  const minutes = Math.floor(total / 60);
-  return `${minutes}:${String(total % 60).padStart(2, "0")}`;
-};
+import { formatDurationTrack } from "../helpers/utils";
+import useClickOutside from "./useClickOutside";
 
 const problemsFor = (track) => {
   const problems = [];
@@ -41,7 +36,6 @@ const TrackRow = ({
   track,
   next,
   tags,
-  stagedOptions,
   onReposition,
   isActive,
   isPlaying,
@@ -56,16 +50,7 @@ const TrackRow = ({
   const [tool, setTool] = useState(null);
   const menuRef = useRef(null);
 
-  useEffect(() => {
-    if (!menuOpen) return undefined;
-    const onDocumentClick = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", onDocumentClick);
-    return () => document.removeEventListener("mousedown", onDocumentClick);
-  }, [menuOpen]);
+  useClickOutside(menuRef, menuOpen, () => setMenuOpen(false));
 
   useEffect(() => setTitle(track.title || ""), [track.title]);
 
@@ -152,7 +137,10 @@ const TrackRow = ({
 
   return (
     <>
-    <tr className="admin-track-row">
+    <tr
+      className={`admin-track-row${problems.length > 0 ? " has-problems" : ""}`}
+      title={problems.length > 0 ? `Missing: ${problems.join(", ")}` : undefined}
+    >
       <td className="admin-track-position">{track.position}</td>
       <td className="admin-track-play">
         {hasAudio && (
@@ -160,20 +148,11 @@ const TrackRow = ({
             type="button"
             className="admin-preview-toggle"
             aria-label={isPlaying ? "Pause" : "Play"}
+            title={isPlaying ? "Pause" : "Play this track"}
             onClick={onPlay}
           >
             <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
           </button>
-        )}
-      </td>
-      <td className="admin-track-validity">
-        {problems.length > 0 && (
-          <span
-            className="admin-invalid"
-            title={`Missing: ${problems.join(", ")}`}
-          >
-            *
-          </span>
         )}
       </td>
       <td className="admin-track-title">
@@ -200,24 +179,30 @@ const TrackRow = ({
             className="tag-badges-container"
             role="button"
             tabIndex={0}
-            title="Edit tags"
             onClick={toggleTags}
             onKeyDown={(e) => {
               if (e.key === "Enter") toggleTags();
             }}
           >
-            {Object.entries(groupedTags).map(([name, group]) => (
-              <div key={name} className="tag-badge">
-                {name}
-                {group.length > 1 ? ` (${group.length})` : ""}
-              </div>
-            ))}
+            {Object.entries(groupedTags).map(([name, group]) => {
+              const notes = group.map((t) => t.notes).filter((n) => n && n.trim());
+              return (
+                <div
+                  key={name}
+                  className={`tag-badge${notes.length ? " has-tip" : ""}`}
+                  data-tip={notes.length ? notes.join("\n") : undefined}
+                >
+                  {name}
+                  {group.length > 1 ? ` (${group.length})` : ""}
+                </div>
+              );
+            })}
           </div>
         ) : (
           <button
             type="button"
             className="admin-tag-add-button"
-            title="Add tags"
+            title="Add tags to this track"
             aria-label={`Add tags to ${track.title}`}
             onClick={toggleTags}
           >
@@ -227,26 +212,10 @@ const TrackRow = ({
       </td>
       <td className="admin-track-audio">
         {track.audio_status === "missing" ? (
-          <select
-            value=""
-            aria-label="Assign audio file"
-            disabled={busy || stagedOptions.length === 0}
-            onChange={(e) =>
-              patchTrack({ staged_attachment_id: Number(e.target.value) })
-            }
-          >
-            <option value="">
-              {stagedOptions.length === 0 ? "No staged files" : "Assign file"}
-            </option>
-            {stagedOptions.map((file) => (
-              <option key={file.attachment_id} value={file.attachment_id}>
-                {file.filename}
-              </option>
-            ))}
-          </select>
+          <span className="admin-track-duration is-missing">No audio</span>
         ) : (
           <span className={`admin-track-duration${isActive ? " is-active" : ""}`}>
-            {formatDuration(track.duration)}
+            {track.duration ? formatDurationTrack(track.duration) : ""}
           </span>
         )}
       </td>
@@ -293,7 +262,7 @@ const TrackRow = ({
     )}
     {audioName && (
       <tr className="admin-track-tool-row">
-        <td colSpan={8}>
+        <td colSpan={7}>
           {audioName === "trim" && (
             <TrimPanel
               key={`trim-${track.id}`}

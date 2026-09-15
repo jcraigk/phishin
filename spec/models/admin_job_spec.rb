@@ -15,6 +15,22 @@ RSpec.describe AdminJob do
     expect(job.message).to eq("boom")
   end
 
+  it "marks cancelled and re-raises when the block sees a cancel request" do
+    job = create(:admin_job, kind: "ingest")
+    expect {
+      job.run! { |j| j.request_cancel!; j.check_cancel! }
+    }.to raise_error(AdminJob::Cancelled)
+    expect(job.reload.status).to eq("cancelled")
+  end
+
+  it "is cancellable only while an ingest is active and not yet asked to stop" do
+    expect(create(:admin_job, kind: "ingest", status: "running")).to be_cancellable
+    expect(create(:admin_job, kind: "ingest", status: "done")).not_to be_cancellable
+    expect(create(:admin_job, kind: "publish", status: "running")).not_to be_cancellable
+    asked = create(:admin_job, kind: "ingest", status: "running", cancel_requested_at: Time.current)
+    expect(asked).not_to be_cancellable
+  end
+
   it "rejects unknown statuses" do
     expect(build(:admin_job, status: "bogus")).not_to be_valid
   end

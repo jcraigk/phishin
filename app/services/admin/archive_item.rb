@@ -42,7 +42,8 @@ class Admin::ArchiveItem
     html = metadata.dig("metadata", "description")
     html = html.join("\n") if html.is_a?(Array)
     return "" if html.blank?
-    html.gsub(%r{<br\s*/?>|</p>}i, "\n").gsub(/<[^>]+>/, "").gsub(/\n{2,}/, "\n").strip
+    text = html.gsub(%r{<br\s*/?>|</p>}i, "\n").gsub(/<[^>]+>/, "")
+    CGI.unescapeHTML(text).gsub(/[ \t]*\n/, "\n").gsub(/\n{3,}/, "\n\n").strip
   end
 
   def details_url

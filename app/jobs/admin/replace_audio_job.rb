@@ -22,18 +22,12 @@ class Admin::ReplaceAudioJob
 
   def mp3_blob(blob)
     filename = Show.original_filename(blob).to_s
-    return blob if File.extname(filename).downcase == ".mp3"
+    return blob if File.extname(filename).casecmp?(".mp3")
 
     Dir.mktmpdir("replace_audio") do |dir|
       src = File.join(dir, File.basename(filename))
       File.open(src, "wb") { |file| blob.download { |chunk| file.write(chunk) } }
-      out = File.join(dir, "#{SecureRandom.hex(4)}.mp3")
-      render_via_lame(out, [ "-i", src ])
-      converted = ActiveStorage::Blob.create_and_upload!(
-        io: File.open(out),
-        filename: "#{File.basename(filename, '.*')}.mp3",
-        content_type: "audio/mpeg"
-      )
+      converted = mp3_blob_from_path(src, filename: "#{File.basename(filename, '.*')}.mp3")
       blob.purge
       converted
     end

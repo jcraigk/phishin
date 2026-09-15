@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import useClickOutside from "./useClickOutside";
 
 // A select that opens prepopulated and filters as you type. The input shows
 // the current selection while closed; focusing it opens the full list, and
@@ -11,6 +12,7 @@ const FilterSelect = ({
   id,
   value,
   placeholder,
+  emptyLabel,
   options,
   onSelect,
   footer,
@@ -30,16 +32,10 @@ const FilterSelect = ({
 
   useEffect(() => setHighlight(0), [query, open]);
 
-  useEffect(() => {
-    const onDocumentClick = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setOpen(false);
-        setQuery("");
-      }
-    };
-    document.addEventListener("mousedown", onDocumentClick);
-    return () => document.removeEventListener("mousedown", onDocumentClick);
-  }, []);
+  useClickOutside(containerRef, true, () => {
+    setOpen(false);
+    setQuery("");
+  });
 
   useEffect(() => {
     if (!open || !listRef.current) return;
@@ -79,8 +75,9 @@ const FilterSelect = ({
         <input
           id={id}
           type="text"
+          className={!open && !value && emptyLabel ? "is-empty" : undefined}
           placeholder={open ? placeholder : ""}
-          value={open ? query : value || ""}
+          value={open ? query : value || emptyLabel || ""}
           disabled={disabled}
           onFocus={() => setOpen(true)}
           onChange={(e) => {

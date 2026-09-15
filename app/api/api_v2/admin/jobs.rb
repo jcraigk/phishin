@@ -24,6 +24,17 @@ class ApiV2::Admin::Jobs < ApiV2::Admin::Base
         job_payload(AdminJob.find(params[:id]))
       end
 
+      desc "Ask a running job to stop and undo its work", hidden: true
+      params do
+        requires :id, type: Integer
+      end
+      post ":id/cancel" do
+        job = AdminJob.find(params[:id])
+        error!({ message: "That job cannot be cancelled" }, 422) unless job.cancellable?
+        job.request_cancel!
+        job_payload(job)
+      end
+
       desc "Stream rendered audio from a job", hidden: true
       params do
         requires :id, type: Integer
@@ -55,6 +66,8 @@ class ApiV2::Admin::Jobs < ApiV2::Admin::Base
         show_id: job.show_id,
         show_date: job.show&.date&.to_s,
         track_id: job.track_id,
+        cancellable: job.cancellable?,
+        cancel_requested: job.cancel_requested_at.present?,
         created_at: job.created_at,
         updated_at: job.updated_at
       }

@@ -50,16 +50,10 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(track_tag.reload.starts_at_second).to eq(4)
     end
 
-    it "orphans a tag that fell into the audio handed to the first track" do
+    it "removes a tag that fell into the audio handed to the first track" do
       track_tag = create(:track_tag, track: second, tag:, starts_at_second: 1)
       described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect(track_tag.reload.orphan_reason).to eq("before_new_start")
-    end
-
-    it "keeps that orphaned tag's original numbers" do
-      track_tag = create(:track_tag, track: second, tag:, starts_at_second: 1)
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect(track_tag.reload.starts_at_second).to eq(1)
+      expect(TrackTag.exists?(track_tag.id)).to be(false)
     end
   end
 
@@ -72,10 +66,10 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect(track_tag.reload.starts_at_second).to eq(5)
     end
 
-    it "orphans a tag left past the first track's new end" do
+    it "removes a tag left past the first track's new end" do
       track_tag = create(:track_tag, track: first, tag:, starts_at_second: 9)
       described_class.new.perform(first.id, admin_job.id, delta_s, true)
-      expect(track_tag.reload.orphan_reason).to eq("past_new_end")
+      expect(TrackTag.exists?(track_tag.id)).to be(false)
     end
 
     it "keeps a tag inside the first track's surviving audio" do

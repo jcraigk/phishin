@@ -20,6 +20,16 @@ RSpec.describe TrackSlugGenerator do
     end
   end
 
+  context 'when the title is blank' do
+    let(:show) { create(:show, published: false) }
+    let(:title) { '' }
+
+    it 'falls back to untitled so draft tracks still get a slug' do
+      create(:track, show:, title: '', slug: 'untitled')
+      expect(service.call).to eq('untitled-2')
+    end
+  end
+
   context 'when title is Hold Your Head Up' do
     let(:title) { 'Hold Your Head Up' }
 

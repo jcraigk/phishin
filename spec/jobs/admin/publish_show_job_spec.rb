@@ -29,6 +29,8 @@ RSpec.describe Admin::PublishShowJob do
 
   before do
     allow(LoreSyncService).to receive(:call)
+    allow(TeaseSyncService).to receive(:new).and_return(instance_double(TeaseSyncService, call: nil))
+    allow(TeaseChartSyncService).to receive(:new).and_return(instance_double(TeaseChartSyncService, call: nil))
     allow(Rails.cache).to receive(:clear)
     ready_show
   end
@@ -59,7 +61,20 @@ RSpec.describe Admin::PublishShowJob do
 
       described_class.new.perform(show.id, admin_job.id)
 
-      expect(order).to eq([ :gap, :debut, :bustout, :lore, :publish ])
+      expect(order).to eq([ :gap, :bustout, :debut, :lore, :publish ])
+    end
+
+    it "applies teases from Phish.net setlist notes and the Tease Chart" do
+      described_class.new.perform(show.id, admin_job.id)
+      expect(TeaseSyncService).to have_received(:new).with(date: "2025-08-01", apply: true)
+      expect(TeaseChartSyncService).to have_received(:new).with(start_date: "2025-08-01", end_date: "2025-08-01", apply: true)
+    end
+
+    it "records a Phish.net failure as a warning without blocking publish" do
+      allow(LoreSyncService).to receive(:call).and_raise("phish.net down")
+      described_class.new.perform(show.id, admin_job.id)
+      expect(show.reload.published).to be(true)
+      expect(admin_job.reload.payload["warnings"]).to eq([ "Syncing lore failed: phish.net down" ])
     end
 
     it "computes gaps including the previous performances of each song" do
@@ -189,28 +204,6 @@ RSpec.describe Admin::PublishShowJob do
         described_class.new.perform(show.id, admin_job.id)
       }.to raise_error("gap blew up")
       expect(Announcement.count).to eq(0)
-    end
-  end
-
-  describe "staged audio cleanup" do
-    def audio_blob(name)
-      ActiveStorage::Blob.create_and_upload!(
-        io: StringIO.new(name), filename: "#{name}.mp3", content_type: "audio/mpeg"
-      )
-    end
-
-    it "clears staged audio without purging a blob a track still uses" do
-      shared = audio_blob("shared")
-      orphan = audio_blob("orphan")
-      show.staged_audio.attach(shared)
-      show.staged_audio.attach(orphan)
-      show.tracks.first.mp3_audio.attach(shared)
-
-      described_class.new.perform(show.id, admin_job.id)
-
-      expect(show.reload.staged_audio.count).to eq(0)
-      expect(ActiveStorage::Blob.exists?(shared.id)).to be(true)
-      expect(ActiveStorage::Blob.exists?(orphan.id)).to be(false)
     end
   end
 

@@ -1,21 +1,18 @@
 import React, { createContext, useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router";
+import { Outlet } from "react-router";
 import Player from "../controls/Player";
+import AdminTooltip from "./AdminTooltip";
 
 export const AdminPlayerContext = createContext(null);
 
-// Only the admin gate remains here; navigation lives in the site's own menu.
+// The admin gate lives in the route loader, which 404s non-admins before this
+// component mounts; navigation lives in the site's own menu.
 const AdminLayout = () => {
-  const navigate = useNavigate();
   const isAdmin = typeof window !== "undefined" && localStorage.getItem("admin") === "true";
   const [activePlaylist, setActivePlaylist] = useState([]);
   const [activeTrack, setActiveTrack] = useState(null);
   const [shouldAutoplay, setShouldAutoplay] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
-
-  useEffect(() => {
-    if (!isAdmin) navigate("/login");
-  }, [isAdmin, navigate]);
 
   // Only one thing plays at a time: an audio element starting pauses every
   // other element and the bottom Player, which listens for the custom event.
@@ -51,6 +48,7 @@ const AdminLayout = () => {
   return (
     <AdminPlayerContext.Provider value={{ playTrack, activeTrack, isPlaying }}>
       <div className="admin-layout">
+        <AdminTooltip />
         <main className="admin-content">
           <Outlet />
         </main>

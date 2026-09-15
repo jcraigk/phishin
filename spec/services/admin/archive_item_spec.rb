@@ -4,7 +4,7 @@ RSpec.describe Admin::ArchiveItem do
   let(:identifier) { "ph2024-07-19.flac16" }
   let(:metadata) do
     {
-      metadata: { description: "<p>Source: Schoeps MK4</p><br>Taper: X" },
+      metadata: { description: "<p>Source: Schoeps MK4 &gt; SD</p><br><br /><br />Taper: X<br />Set I:<br />01. Ghost &gt;" },
       files: [
         { name: "ph2024-07-19d1t02.flac", format: "Flac" },
         { name: "ph2024-07-19d1t01.flac", format: "Flac" },
@@ -47,8 +47,9 @@ RSpec.describe Admin::ArchiveItem do
     expect { described_class.new("nope").files }.to raise_error(described_class::NotFoundError)
   end
 
-  it "strips html from the description" do
-    expect(described_class.new(identifier).description).to eq("Source: Schoeps MK4\nTaper: X")
+  it "turns the description into plain text, keeping paragraph breaks and decoding entities" do
+    expect(described_class.new(identifier).description)
+      .to eq("Source: Schoeps MK4 > SD\n\nTaper: X\nSet I:\n01. Ghost >")
   end
 
   it "links to the details page" do
@@ -70,7 +71,7 @@ RSpec.describe Admin::ArchiveItem do
       expect(paths.map { File.basename(it) }).to eq([ "ph2024-07-19d1t01.flac", "ph2024-07-19d1t02.flac" ])
       expect(File.read(paths.first)).to eq("flac bytes")
       expect(item).to have_received(:system).with(
-        "curl", "-sfL", "--retry", "2", "-o", anything,
+        "curl", "-sfL", "--globoff", "--retry", "2", "-o", anything,
         "https://archive.org/download/ph2024-07-19.flac16/ph2024-07-19d1t01.flac"
       )
     end
@@ -98,7 +99,7 @@ RSpec.describe Admin::ArchiveItem do
       paths = item.download_to(dir)
       expect(paths).to eq([ dir.join("escape.flac").to_s ])
       expect(item).to have_received(:system).with(
-        "curl", "-sfL", "--retry", "2", "-o", anything,
+        "curl", "-sfL", "--globoff", "--retry", "2", "-o", anything,
         "https://archive.org/download/#{identifier}/../../escape.flac"
       )
     end

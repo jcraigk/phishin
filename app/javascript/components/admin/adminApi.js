@@ -33,16 +33,8 @@ export const adminDelete = (path) => request("DELETE", path);
 
 // An <audio> tag cannot send the admin auth header, so rendered previews are
 // fetched here and handed to the player as an object URL. Callers own the URL
-// and must revoke it once the player is done with it.
-export const fetchJobAudio = async (jobId, index = 0) => {
-  const response = await authFetch(`${BASE}/jobs/${jobId}/audio?index=${index}`);
-  if (!response.ok) throw new Error(`Audio fetch failed (${response.status})`);
-  const blob = await response.blob();
-  return URL.createObjectURL(blob);
-};
-
-// Same reason as fetchJobAudio: an <audio> tag cannot send the auth header.
-// Takes a full API path (the staging payload carries one per source).
+// and must revoke it once the player is done with it. Takes a full API path
+// (the staging payload carries one per source).
 export const fetchAdminAudio = async (path) => {
   const response = await authFetch(path);
   if (!response.ok) throw new Error(`Audio fetch failed (${response.status})`);
@@ -50,11 +42,14 @@ export const fetchAdminAudio = async (path) => {
   return URL.createObjectURL(blob);
 };
 
-export const POLL_TIMEOUT_MS = 15 * 60 * 1000;
-export const POLL_INTERVAL_MS = 1500;
+export const fetchJobAudio = (jobId, index = 0) =>
+  fetchAdminAudio(`${BASE}/jobs/${jobId}/audio?index=${index}`);
+
+const POLL_TIMEOUT_MS = 15 * 60 * 1000;
+const POLL_INTERVAL_MS = 1500;
 const MAX_CONSECUTIVE_POLL_ERRORS = 3;
 
-export class PollAbortError extends Error {
+class PollAbortError extends Error {
   constructor(jobId) {
     super(`Polling for job ${jobId} was aborted`);
     this.name = "PollAbortError";
@@ -63,6 +58,17 @@ export class PollAbortError extends Error {
 }
 
 export const isPollAbort = (error) => Boolean(error && error.aborted);
+
+class JobCancelledError extends Error {
+  constructor(job) {
+    super("Cancelled");
+    this.name = "JobCancelledError";
+    this.cancelled = true;
+    this.job = job;
+  }
+}
+
+export const isJobCancelled = (error) => Boolean(error && error.cancelled);
 
 const formatElapsed = (ms) => {
   const seconds = Math.round(ms / 1000);
@@ -119,6 +125,7 @@ export const pollJob = (
       if (onUpdate) onUpdate(job);
       if (settled) return;
       if (job.status === "done") return finish(resolve, job);
+      if (job.status === "cancelled") return finish(reject, new JobCancelledError(job));
       if (job.status === "failed") {
         return finish(reject, new Error(job.message || "Job failed"));
       }

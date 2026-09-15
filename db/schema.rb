@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_02_055949) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_12_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -44,6 +44,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_055949) do
   end
 
   create_table "admin_jobs", force: :cascade do |t|
+    t.datetime "cancel_requested_at"
     t.datetime "created_at", null: false
     t.string "kind", null: false
     t.text "message"
@@ -230,14 +231,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_055949) do
   end
 
   create_table "staged_tracks", force: :cascade do |t|
+    t.jsonb "combines", default: [], null: false
     t.datetime "created_at", null: false
     t.decimal "end_s", precision: 10, scale: 3, null: false
     t.decimal "fade_in_s", precision: 6, scale: 2, default: "0.0", null: false
     t.decimal "fade_out_s", precision: 6, scale: 2, default: "0.0", null: false
+    t.decimal "original_end_s", precision: 10, scale: 3
+    t.decimal "original_start_s", precision: 10, scale: 3
     t.integer "position", null: false
     t.string "set", default: "1", null: false
     t.integer "show_id", null: false
-    t.integer "song_id"
+    t.integer "song_ids", default: [], null: false, array: true
     t.decimal "start_s", precision: 10, scale: 3, null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
@@ -281,14 +285,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_055949) do
     t.datetime "created_at", precision: nil
     t.integer "ends_at_second"
     t.text "notes"
-    t.string "orphan_reason"
-    t.datetime "orphaned_at"
     t.integer "starts_at_second"
     t.integer "tag_id"
     t.integer "track_id"
     t.text "transcript"
     t.index ["notes"], name: "index_track_tags_on_notes"
-    t.index ["orphaned_at"], name: "index_track_tags_on_orphaned_at", where: "(orphaned_at IS NOT NULL)"
     t.index ["tag_id"], name: "index_track_tags_on_tag_id"
     t.index ["track_id"], name: "index_track_tags_on_track_id"
   end

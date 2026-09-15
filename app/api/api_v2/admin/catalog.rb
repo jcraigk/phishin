@@ -13,13 +13,8 @@ class ApiV2::Admin::Catalog < ApiV2::Admin::Base
         optional :q, type: String
       end
       get do
-        songs =
-          if params[:q].present?
-            Song.where("title ILIKE :term", term: "%#{params[:q]}%")
-                .order(:title).limit(SEARCH_LIMIT)
-          else
-            Song.order(:title).limit(SEARCH_LIMIT)
-          end
+        songs = Song.order(:title).limit(SEARCH_LIMIT)
+        songs = songs.where("title ILIKE :term", term: "%#{params[:q]}%") if params[:q].present?
         { songs: songs.map { |song| song_payload(song) } }
       end
 
