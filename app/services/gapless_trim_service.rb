@@ -128,11 +128,11 @@ class GaplessTrimService < ApplicationService
   end
 
   def sample_rate
-    @sample_rate ||= stream_probe("sample_rate").to_i
+    @sample_rate ||= stream_probe("stream=sample_rate").to_i
   end
 
   def channels
-    @channels ||= stream_probe("channels").to_i
+    @channels ||= stream_probe("stream=channels").to_i
   end
 
   def kept_s
@@ -140,22 +140,8 @@ class GaplessTrimService < ApplicationService
   end
 
 
-  def probe(entry)
-    out, err, status = Open3.capture3(
-      "ffprobe", "-v", "error", "-show_entries", "format=#{entry}",
-      "-of", "csv=p=0", @original.path
-    )
-    raise Error, "ffprobe failed for #{label}: #{err}" unless status.success?
-    out.strip
-  end
-
   def stream_probe(entry)
-    out, err, status = Open3.capture3(
-      "ffprobe", "-v", "error", "-select_streams", "a:0",
-      "-show_entries", "stream=#{entry}", "-of", "csv=p=0", @original.path
-    )
-    raise Error, "ffprobe failed for #{label}: #{err}" unless status.success?
-    out.strip.split("\n").first.to_s.split(",").first.to_s
+    Admin::AudioProbe.read_audio_stream(@original.path, entry) or raise Error, "ffprobe failed for #{label}"
   end
 
   def download_original

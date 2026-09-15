@@ -68,6 +68,28 @@
         89
       ],
       "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "b19a2544a94610141281b852a75c651795088af1a9965f907d7eb960e499d9d4",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/jobs/admin/replace_audio_job.rb",
+      "line": 29,
+      "confidence": "Weak",
+      "note": "File.basename strips any directory parts and the file lands in a per-job temp directory; only admins can upload"
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "f1d2a02286844decdf52ad57953af816f98994bbac92f4252615d7aa118c06d4",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/services/admin/upload_intake.rb",
+      "line": 19,
+      "confidence": "Weak",
+      "note": "File.basename strips any directory parts and the file lands in a per-import staging directory; only admins can upload"
     }
   ],
   "brakeman_version": "7.1.2"

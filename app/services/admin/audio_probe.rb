@@ -12,9 +12,14 @@ module Admin::AudioProbe
     ok ? out.presence : nil
   end
 
-  def self.capture(path, entry)
+  def self.read_audio_stream(path, entry)
+    out, _err, ok = capture(path, entry, "-select_streams", "a:0")
+    ok ? out.lines.first.to_s.strip.split(",").first.presence : nil
+  end
+
+  def self.capture(path, entry, *options)
     out, err, status = Open3.capture3(
-      "ffprobe", "-v", "error", "-show_entries", entry, "-of", "csv=p=0", path.to_s
+      "ffprobe", "-v", "error", *options, "-show_entries", entry, "-of", "csv=p=0", path.to_s
     )
     [ out.strip, err, status.success? ]
   end

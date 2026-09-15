@@ -75,16 +75,11 @@ class AudioEdgeTrimService < ApplicationService
   end
 
   def duration_s
-    @duration_s ||= probe(@original.path, "duration").to_f
+    @duration_s ||= probe(@original.path, "format=duration").to_f
   end
 
   def probe(path, entry)
-    out, err, status = Open3.capture3(
-      "ffprobe", "-v", "error", "-show_entries", "format=#{entry}",
-      "-of", "csv=p=0", path
-    )
-    raise Error, "ffprobe failed for #{label}: #{err}" unless status.success?
-    out.strip
+    Admin::AudioProbe.read(path, entry) or raise Error, "ffprobe failed for #{label}"
   end
 
   def kept_end
