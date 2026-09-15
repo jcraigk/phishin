@@ -1,14 +1,7 @@
-// Pure helpers for the staging editor. gainAt is the browser's half of the
-// fade contract with Admin::StagingRender; spec/javascript/staging_fade_parity_spec.rb
-// reads it off this file.
-
 const clamp = (value, low, high) => Math.min(Math.max(value, low), high);
 
 export const round1 = (value) => Math.round(value * 10) / 10;
 
-// Which proxy plays a moment on the timeline, and where in that proxy. Sources
-// are contiguous, so the one whose span holds t is the answer; the very end of
-// the timeline belongs to the last source.
 export const locate = (sources, t) => {
   if (!sources || sources.length === 0) return null;
   const source =
@@ -18,9 +11,6 @@ export const locate = (sources, t) => {
   return { source, localS: clamp(t - source.offset_s, 0, source.duration_s) };
 };
 
-// Linear, to match ffmpeg afade's default triangular curve. 0 outside the
-// track; a fade-out longer than the track is clipped to the track, as
-// Admin::StagingRender does.
 export const gainAt = (track, t) => {
   const start = Number(track.start_s);
   const end = Number(track.end_s);
@@ -31,8 +21,6 @@ export const gainAt = (track, t) => {
   const length = end - start;
   const fadeOut = Math.min(Number(track.fade_out_s) || 0, length);
   if (fadeOut > 0 && t > end - fadeOut) gain = Math.min(gain, (end - t) / fadeOut);
-  // A seam audition: the first track's fade-out runs up to the boundary and
-  // the second's fade-in runs from it.
   if (track.seam) {
     const { at, out, in: fadeIn2 } = track.seam;
     if (out > 0 && t <= at && t > at - out) gain = Math.min(gain, (at - t) / out);

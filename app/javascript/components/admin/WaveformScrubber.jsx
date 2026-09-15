@@ -18,10 +18,6 @@ const WaveformScrubber = ({
 
   const span = duration > 0 ? duration : 1;
 
-  // With peak data the waveform is drawn here for whatever window the caller
-  // shows: `peaks.data` is one byte per 1/rate seconds over the whole
-  // timeline and `peaks.offset` is where this window starts in it. Each pixel
-  // column takes the loudest peak it covers, so nothing brief disappears.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !peaks?.data) return;
@@ -50,9 +46,6 @@ const WaveformScrubber = ({
     return (x / rect.width) * span;
   };
 
-  // A drag follows the mouse anywhere on the page, so leaving the (short)
-  // scrubber strip mid-drag neither drops the marker nor ends the drag early.
-  // The release is remembered so the click it also produces does not seek.
   useEffect(() => {
     if (!dragging) return undefined;
     const onMove = (e) => {

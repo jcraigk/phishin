@@ -5,10 +5,6 @@ const DIRECT_UPLOAD_URL = "/admin/direct_uploads";
 export const isMp3 = (file) =>
   file.name.toLowerCase().endsWith(".mp3") || file.type === "audio/mpeg";
 
-// What an ingest can take: the audio formats ffmpeg decodes for the timeline,
-// the archives bsdtar unpacks, and text files that become taper notes. The
-// server applies the same list (Admin::IngestStagingJob), so this only saves a
-// pointless upload.
 const STAGING_EXTENSIONS = [
   "flac", "shn", "wav", "aiff", "mp3", "zip", "rar", "7z", "tar", "tgz", "txt",
 ];
@@ -18,8 +14,6 @@ export const isStagingSource = (file) => {
   return STAGING_EXTENSIONS.includes(ext);
 };
 
-// Dotfiles cover .DS_Store; __MACOSX is the resource-fork folder a zip made on a
-// Mac unpacks alongside the real one, and it mirrors every filename inside it.
 const isJunk = (name) => name.startsWith(".") || name === "__MACOSX";
 
 const fileFromEntry = (entry) =>
@@ -58,18 +52,12 @@ const collectFromEntry = async (entry, out, accept) => {
 
   if (entry.isDirectory) {
     const children = await readAllEntries(entry.createReader());
-    // Sequential rather than parallel: recursing every subdirectory at once can
-    // exhaust the browser's file handles on a deep archive, and the ordering
-    // keeps the upload list in the order the admin sees in Finder.
     for (const child of children) {
       await collectFromEntry(child, out, accept);
     }
   }
 };
 
-// Returns a flat File[] from a drop that may contain directories. A dropped
-// folder arrives as a DataTransferItem entry, not a File, so dataTransfer.files
-// is empty for it and only webkitGetAsEntry can see inside.
 export const collectFiles = async (dataTransfer, accept = isMp3) => {
   const items = Array.from(dataTransfer.items || []);
   const entries = items

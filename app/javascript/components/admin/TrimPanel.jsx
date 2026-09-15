@@ -162,9 +162,6 @@ const TrimPanel = ({ track, onClose }) => {
     return () => window.removeEventListener("keydown", onKeyDown, true);
   }, []);
 
-  // The end marker is where the music stops; the committed audio keeps `delay`
-  // seconds beyond it and then fades for `fadeOut`, so the real trim point
-  // sent to the server sits delay + fadeOut past the marker.
   const fadeTail = delay + fadeOut;
   const trimEndParam = round(Math.min(trimEnd + fadeTail, duration));
   const values = {
@@ -183,8 +180,6 @@ const TrimPanel = ({ track, onClose }) => {
     setPreviewedAt(null);
   };
 
-  // Stale clips stay visible and playable while a replacement renders; only
-  // previewedAt resets so Apply stays disabled until the new render lands.
   const setValue = (setter, side) => (value) => {
     setter(value);
     if (side) lastEditedRef.current = side;

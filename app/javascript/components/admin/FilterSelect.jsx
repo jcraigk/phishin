@@ -3,11 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import useClickOutside from "./useClickOutside";
 
-// A select that opens prepopulated and filters as you type. The input shows
-// the current selection while closed; focusing it opens the full list, and
-// typing narrows it. Options are matched case-insensitively on their label.
-// `footer` renders one extra row at the bottom (used for "Create venue"),
-// handed the current query.
 const FilterSelect = ({
   id,
   value,

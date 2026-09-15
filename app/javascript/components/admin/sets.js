@@ -14,8 +14,6 @@ export const SET_NAMES = {
 
 export const setName = (set) => SET_NAMES[set] || "Unknown Set";
 
-// Groups consecutive runs by position rather than sorting by set, so a track
-// filed under the wrong set stays visible where it actually sits.
 export const groupBySet = (tracks) =>
   tracks.reduce((groups, track, index) => {
     const last = groups[groups.length - 1];
@@ -27,9 +25,6 @@ export const groupBySet = (tracks) =>
     return groups;
   }, []);
 
-// Pending sets are empty groups the admin just added; they exist only in the
-// browser until a track is dropped in, because a set is nothing but the value
-// on its tracks. Each is slotted where its set ranks canonically.
 export const withPendingSets = (groups, pendingSets) => {
   const merged = [...groups];
   for (const set of pendingSets) {
@@ -44,8 +39,6 @@ export const withPendingSets = (groups, pendingSets) => {
     }
     merged.splice(at, 0, { set, tracks: [], pending: true });
   }
-  // A drop on an empty group must land where the group sits, not at the end
-  // of the show, so each pending group points at the first track below it.
   for (let i = 0; i < merged.length; i += 1) {
     if (!merged[i].pending) continue;
     const next = merged.slice(i + 1).find((group) => group.tracks.length > 0);

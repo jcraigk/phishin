@@ -5,9 +5,6 @@ import Spinner from "./Spinner";
 import { STOP_IMPORT_CONFIRM } from "./messages";
 import { adminPost, pollJob, isPollAbort, isJobCancelled } from "./adminApi";
 
-// Follows an ingest job: the progress card shown on the import page and on a
-// draft that is still being imported. Archive downloads can run far past the
-// default poll cap, so the job gets two hours before it is declared lost.
 const IngestProgress = ({ jobId, title, onDone, onCancelled, onError }) => {
   const [status, setStatus] = useState(null);
 

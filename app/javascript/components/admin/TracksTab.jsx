@@ -112,9 +112,6 @@ const TracksTab = () => {
     }
   };
 
-  // The payload does not say which staged file backs an attached track, so the
-  // summary reports tracks still awaiting audio rather than claiming which files
-  // are unused.
   const missingAudioCount = tracks.filter(
     (t) => t.audio_status === "missing"
   ).length;
@@ -143,10 +140,6 @@ const TracksTab = () => {
     setRepositioning(track);
   };
 
-  // A position determines its set except at a boundary, where the slot at the
-  // end of one set is the same slot as the start of the next. The choices are
-  // the sets of the neighboring tracks (plus any just-added empty set), and
-  // the earlier one is the default.
   const slotNeighbors = (track, position) => {
     const ordered = tracks.filter((t) => t.id !== track.id);
     ordered.splice(position - 1, 0, track);
@@ -154,9 +147,6 @@ const TracksTab = () => {
     return { above: ordered[at - 1], below: ordered[at + 1] };
   };
 
-  // Only the sets touching the slot are valid: mid-set there is exactly one,
-  // at a boundary there are two. A just-added empty set is offered only at a
-  // boundary or an edge, which is the only place it can sit.
   const setChoicesFor = (track, position) => {
     const { above, below } = slotNeighbors(track, position);
     const atBoundary = !above || !below || above.set !== below.set;
@@ -192,8 +182,6 @@ const TracksTab = () => {
     commitOrder(ordered, sets);
   };
 
-  // The new track takes the set of the track above its slot, since position
-  // inside a set is what determines set membership now.
   const addTrack = async () => {
     const position = insertPosition;
     const set = tracks[position - 2]?.set || tracks[0]?.set || "1";

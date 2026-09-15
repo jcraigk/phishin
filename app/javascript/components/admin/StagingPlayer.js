@@ -1,16 +1,6 @@
 import { fetchAdminAudio } from "./adminApi";
 import { locate, gainAt } from "./stagingMath";
 
-// One player for the whole staged show. Each source proxy is an <audio>
-// element created on first use and routed through its own GainNode, so a fade
-// is heard without re-rendering anything: every animation frame the gain is set
-// from gainAt for the track being auditioned. Elements are never decoded into
-// buffers; a twenty minute proxy would be hundreds of megabytes as float PCM.
-//
-// A track that spans two sources (a boundary moved into the next file) is
-// followed across the seam by switching elements when the first one ends.
-// There is a few milliseconds of silence at that switch in the preview only;
-// the commit renders from the continuous timeline and has no seam.
 export class StagingPlayer {
   constructor({ getSources, getFollowing, onTime, onStop, onTrackChange, onError, onLoading }) {
     this.getSources = getSources;
@@ -42,8 +32,6 @@ export class StagingPlayer {
   }
 
   async element(source) {
-    // Cache in-flight promises by source ID so concurrent plays await the
-    // same fetch and element construction instead of racing.
     if (this.elements.has(source.id)) return this.elements.get(source.id);
     const promise = (async () => {
       // Build the element, MediaElementSource and GainNode synchronously,
@@ -76,9 +64,6 @@ export class StagingPlayer {
     return promise;
   }
 
-  // Playing a whole track (no explicit end) keeps going into whatever follows:
-  // straight through a seam, or skipping the dropped audio at a cut. An
-  // explicit span (a seam audition, head, tail) plays just that span.
   async play(track, fromS, toS) {
     this.stop();
     const token = ++this.token;
@@ -93,8 +78,6 @@ export class StagingPlayer {
     await this.startAt(from, token);
   }
 
-  // Reports loading while a source proxy is still being fetched or the
-  // element is buffering, so the UI can show that sound is on its way.
   async startAt(t, token) {
     const hit = locate(this.getSources(), t);
     if (!hit) return;
@@ -127,7 +110,6 @@ export class StagingPlayer {
     this.tick(token);
   }
 
-  // Called when a source element runs out while a track still has time left.
   advance(source) {
     if (this.active?.id !== source.id || !this.track) return;
     const token = this.token;
@@ -141,9 +123,6 @@ export class StagingPlayer {
     this.startAt(at, token);
   }
 
-  // The track being auditioned has run out. Hands playback to the following
-  // track when chaining, jumping over a cut's dropped audio if there is one.
-  // Returns true when playback continues.
   reachEnd(token) {
     if (!this.chain) return false;
     const follow = this.getFollowing(this.track);

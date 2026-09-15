@@ -162,8 +162,6 @@ const AdminDashboard = () => {
   const active = (jobs || []).filter((j) => j.status === "running" || j.status === "queued");
   const finished = (jobs || []).filter((j) => j.status !== "running" && j.status !== "queued");
 
-  // While anything is running the job list refreshes itself so the card
-  // empties out on its own when the work finishes.
   useEffect(() => {
     if (active.length === 0) return undefined;
     const timer = setInterval(refreshJobs, 5000);

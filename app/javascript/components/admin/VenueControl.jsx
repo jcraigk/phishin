@@ -30,8 +30,6 @@ const venueLabel = (venue) => {
   return `${venue.name} - ${place}${country}`;
 };
 
-// The venue picker that sits in the editor's title row. Selecting a venue
-// saves immediately, like every other metadata control.
 const VenueControl = () => {
   const { show, setShow, setError } = useContext(EditorContext);
   const [venues, setVenues] = useState([]);

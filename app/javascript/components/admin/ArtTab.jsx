@@ -20,8 +20,6 @@ import Modal from "./Modal";
 const SELECT_CONFIRM =
   "Sets cover art, composites the album cover, and re-embeds ID3 tags on all tracks. Continue?";
 
-// Candidate and cover art images come from the public /blob/:key and cover art
-// variant routes, so a plain img tag works: no auth header, no object URLs.
 const ImageCard = ({ url, alt, imgStyle, children }) => (
   <figure className="admin-art-card">
     {url ? (
@@ -152,8 +150,6 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingEnd }) => {
     );
   };
 
-  // Older candidates carry the whole trail as one "base | edit: x" string,
-  // newer ones a base prompt plus an edits array.
   const trailParts = (candidate.prompt || "").split(/\s*\|\s*edit:\s*/);
   const basePrompt = trailParts[0] || null;
   const edits =
@@ -234,8 +230,6 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingEnd }) => {
   );
 };
 
-// The service asks for ten ideas per category; half that is plenty to
-// pick from without pushing the modal off the screen.
 const SUGGESTIONS_PER_CATEGORY = 5;
 
 const NewPromptModal = ({ onClose, onSubmit }) => {
@@ -351,7 +345,6 @@ const GenerateControls = ({ onGenerate }) => {
         hidden
         onChange={(e) => {
           const file = e.target.files[0];
-          // Allow re-selecting the same filename after a failed upload
           e.target.value = "";
           upload(file);
         }}
@@ -483,8 +476,6 @@ const ArtEditor = ({ runNote }) => {
   );
 };
 
-// A show in a run defers its art to the run's first show, so the tab edits the
-// parent's art in place; selecting a candidate there propagates to all children.
 const ParentArtEditor = ({ parentDate }) => {
   const outer = useContext(EditorContext);
   const [parentShow, setParentShow] = useState(null);

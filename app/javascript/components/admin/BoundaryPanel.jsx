@@ -15,8 +15,6 @@ import useJobRunner from "./useJobRunner";
 import { adminPost, fetchJobAudio } from "./adminApi";
 import { round1 } from "./stagingMath";
 
-// Mirrors Admin::ShiftBoundaryJob::MIN_PART_S: both sides must keep real audio,
-// so the allowed range shown here is the same one the API enforces.
 const MIN_PART_S = 1.0;
 
 const seconds = (ms) => round1((ms || 0) / 1000);
@@ -129,8 +127,6 @@ const BoundaryPanel = ({ track, next, onClose }) => {
     );
   };
 
-  // The two rendered sides play through the site's gapless engine so the
-  // boundary crossing is sample-accurate instead of two chained elements.
   useEffect(() => {
     if (!previewUrls[0] || !previewUrls[1]) return undefined;
     let disposed = false;
@@ -190,7 +186,6 @@ const BoundaryPanel = ({ track, next, onClose }) => {
     engine.seek(fraction * duration);
   };
 
-  // Any audio element starting elsewhere pauses the engine preview.
   useEffect(() => {
     const onPlay = (e) => {
       if (e.target instanceof HTMLMediaElement && engineRef.current) engineRef.current.pause();

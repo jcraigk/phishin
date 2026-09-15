@@ -14,9 +14,6 @@ const PUBLISH_STEPS =
   "discards leftover staged audio, posts an announcement, and makes the show " +
   "public. There is no unpublish.";
 
-// A Publish button for the show header. Pressing it opens a modal: the list
-// of what still blocks publishing, or the typed confirmation when nothing
-// does, and then the job's progress until the show is public.
 const PublishPanel = () => {
   const { show, reload, gapsStale, setError } = useContext(EditorContext);
   const [readiness, setReadiness] = useState(null);

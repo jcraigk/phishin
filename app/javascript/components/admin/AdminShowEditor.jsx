@@ -41,8 +41,6 @@ const AdminShowEditor = () => {
     reload();
   }, [reload]);
 
-  // PATCH /tracks/:id answers with a single track rather than the editor payload,
-  // so it is merged in place instead of replacing show state.
   const setTrack = useCallback((track) => {
     setShow((prev) =>
       prev === null
@@ -62,9 +60,6 @@ const AdminShowEditor = () => {
     );
   }
 
-  // A show is importing while its audio is staged: the commit is what turns
-  // the staged tracks into real ones and clears the staging, so until then
-  // there is nothing to preview or delete.
   const importing = Boolean(show.staging) || Boolean(show.ingest_job_id);
 
   return (

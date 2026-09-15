@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { pollJob, isPollAbort } from "./adminApi";
 
-// Every audio tool follows the same shape: kick off a job, poll it with a
-// status line, then act on the finished job. The AbortController lives here so
-// no call site can forget to hand pollJob a signal or to abort on unmount.
 const useJobRunner = () => {
   const controllerRef = useRef(null);
   const mountedRef = useRef(true);

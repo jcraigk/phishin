@@ -15,7 +15,6 @@ const request = async (method, path, body) => {
       const data = await response.json();
       if (data.message) message = data.message;
     } catch {
-      // Non-JSON error bodies fall back to the status-only message above
     }
     const error = new Error(message);
     error.status = response.status;
@@ -31,10 +30,6 @@ export const adminPatch = (path, body = {}) => request("PATCH", path, body);
 export const adminPut = (path, body = {}) => request("PUT", path, body);
 export const adminDelete = (path) => request("DELETE", path);
 
-// An <audio> tag cannot send the admin auth header, so rendered previews are
-// fetched here and handed to the player as an object URL. Callers own the URL
-// and must revoke it once the player is done with it. Takes a full API path
-// (the staging payload carries one per source).
 export const fetchAdminAudio = async (path) => {
   const response = await authFetch(path);
   if (!response.ok) throw new Error(`Audio fetch failed (${response.status})`);

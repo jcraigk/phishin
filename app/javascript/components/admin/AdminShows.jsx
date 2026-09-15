@@ -10,8 +10,6 @@ const FIRST_YEAR = 1983;
 const YEARS = [];
 for (let y = new Date().getFullYear(); y >= FIRST_YEAR; y -= 1) YEARS.push(y);
 
-// Every show for a year, with a date filter that jumps straight to a show's
-// editor. Importing new audio lives on its own page (/admin/import).
 const AdminShows = () => {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();

@@ -19,9 +19,6 @@ const EDGE_PAD_S = 30;
 const MIN_TRACK_S = 1;
 const SEAM_COLOR = "#d8b24a";
 
-// The show editor while a show is staged. Every write answers with the full
-// staging payload, which replaces show.staging; the rows re-render from that
-// rather than from local guesses about who moved after a split or combine.
 const StagingEditor = () => {
   const { show, setShow, reload } = useContext(EditorContext);
   const navigate = useNavigate();
@@ -34,8 +31,6 @@ const StagingEditor = () => {
   const [peakData, setPeakData] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  // One fetch of the whole timeline's peaks (about 100KB for a long show);
-  // every track's window is drawn from it client-side.
   useEffect(() => {
     if (!staging.peaks_url) {
       setPeakData(null);
@@ -74,9 +69,6 @@ const StagingEditor = () => {
   useEffect(() => {
     const player = new StagingPlayer({
       getSources: () => sourcesRef.current,
-      // Whole-track playback runs on into the next track: continuously across
-      // a seam, or jumping over the dropped audio when the two are cut apart.
-      // The selection stays put; editing is one track at a time.
       getFollowing: (track) => {
         const list = tracksRef.current;
         const index = list.findIndex((t) => t.id === track.id);
@@ -103,9 +95,6 @@ const StagingEditor = () => {
   const selectedIndex = selected ? tracks.indexOf(selected) : -1;
   const nextOf = (index) => tracks[index + 1] || null;
 
-  // Each side of a track is a seam (continuous with the neighbor) or a trim
-  // (its own edge). Adjacent tracks in the same set share a seam; a set or
-  // encore boundary, like the show's first start and last end, is a trim.
   const isSeam = (a, b) => Boolean(a && b && a.set === b.set);
   const kindsAt = (index) => {
     const t = tracks[index];
@@ -150,9 +139,6 @@ const StagingEditor = () => {
     );
   };
 
-  // A seam audition spans two tracks; the fade envelope applied is the first
-  // track's until the boundary and the next track's after it, so the player
-  // is handed a merged span with both fades in place.
   const play = (track, fromS, toS, next) => {
     setSelectedId(track.id);
     const envelope = next ? seamEnvelope(track, next) : track;
@@ -162,9 +148,6 @@ const StagingEditor = () => {
 
   const stop = () => playerRef.current.stop();
 
-  // Play resumes from wherever the playhead sits, even in the neighbor room
-  // around the track; the track under the playhead supplies the fade
-  // envelope, and the selection stays put.
   const playFromPlayhead = () => {
     if (!selected) return;
     const t = playhead ?? selected.start_s;
@@ -175,8 +158,6 @@ const StagingEditor = () => {
     setPlaying(true);
   };
 
-  // Starts at the seam and runs on, so the opening of the next track is heard
-  // exactly as it will be exported. The selection stays on the current track.
   const playFromSeam = (track) => {
     const following = tracks[tracks.indexOf(track) + 1];
     if (!following) return;
@@ -184,8 +165,6 @@ const StagingEditor = () => {
     setPlaying(true);
   };
 
-  // Space toggles playback of the selected track, unless the user is typing
-  // in a field (where space is a character) or on a button (where it clicks).
   useEffect(() => {
     const onKeyDown = (e) => {
       if (e.code !== "Space" || !selected) return;
@@ -202,8 +181,6 @@ const StagingEditor = () => {
     return () => document.removeEventListener("keydown", onKeyDown);
   });
 
-  // What the commit refuses: the server checks the same things, but the
-  // reasons are only shown when someone reaches for the button.
   const commitIssues = [
     ...(show.venue_id ? [] : ["Choose a venue"]),
     ...tracks.filter((t) => t.songs.length === 0).map((t) => `${t.title} has no song`),
@@ -223,8 +200,6 @@ const StagingEditor = () => {
     run(() => adminPost(`${base}/commit`), () => reload());
   };
 
-  // A page loaded while a commit is running picks the job back up rather
-  // than showing an editor for tracks that are being rendered.
   useEffect(() => {
     if (staging.commit_job_id && !jobBusy) {
       resume(staging.commit_job_id, () => reload());
@@ -242,15 +217,7 @@ const StagingEditor = () => {
     }
   };
 
-  // The scrubber shows the selected track with some room on either side so
-  // its start and end markers can be dragged outward; a drag is held locally
-  // and PATCHed once the mouse goes up.
   const edges = dragEdges || (selected && { start_s: selected.start_s, end_s: selected.end_s });
-  // The window is fixed when a track is selected and stays put while its
-  // edges move, so the waveform does not re-scale under a drag; picking a
-  // track again re-centers it. Room is left only beyond a seam, and never
-  // past the neighbor on that side, so at most one track shows on each side;
-  // a trim (set break or show edge) sits flush against the window's edge.
   const windowFor = (track) => {
     if (!track) return { start: 0, end: staging.total_s };
     const list = tracksRef.current;
@@ -258,8 +225,6 @@ const StagingEditor = () => {
     const prev = list[index - 1];
     const following = list[index + 1];
     const pad = Math.max(EDGE_PAD_S, (track.end_s - track.start_s) / 2);
-    // A trim side reaches out to where the ingest put the edge, so audio
-    // trimmed away stays in view as the shaded band it became.
     return {
       start: prev && prev.set === track.set
         ? Math.max(track.start_s - pad, prev.start_s)
@@ -270,18 +235,12 @@ const StagingEditor = () => {
     };
   };
   const [viewSpan, setViewSpan] = useState(() => windowFor(selected));
-  // Selecting a track parks the playhead at its start (its seam or trim), so
-  // play begins there until the playhead is moved.
   useEffect(() => {
     const track = tracksRef.current.find((t) => t.id === selectedId) || tracksRef.current[0] || null;
     if (track && !playing) setPlayhead(track.start_s);
   }, [selectedId]);
 
-  // A set change turns a seam into a trim or back, which changes how much
-  // room the window leaves on that side.
   const setKey = tracks.map((t) => t.set).join(",");
-  // A trim edge dragged out past its ingest position (which no seam can do)
-  // would leave the window; the window follows it once the move settles.
   const reachKey = selected
     ? `${Math.min(selected.start_s, selected.original_start_s ?? selected.start_s)}:${Math.max(selected.end_s, selected.original_end_s ?? selected.end_s)}`
     : "";
@@ -290,16 +249,10 @@ const StagingEditor = () => {
   }, [selectedId, setKey, reachKey]);
   const span = viewSpan;
 
-  // Where the ingest put this track's edges (its source file boundaries).
-  // Deltas, ghost lines, highlight bands and the reset button all measure
-  // from here, so any amount of nudging reads as one move from the original.
   const originEdges = selected && {
     start_s: selected.original_start_s ?? selected.start_s,
     end_s: selected.original_end_s ?? selected.end_s,
   };
-  // The shaded room on either side is the neighbors' audio: each side is
-  // labeled with that track, with a dashed guide where it begins or ends if
-  // that edge is in view.
   const selectedKinds = selected ? kindsAt(selectedIndex) : null;
 
   const neighborRange = (() => {
@@ -308,9 +261,6 @@ const StagingEditor = () => {
     const following = nextOf(selectedIndex);
     const guides = [];
     const cuts = [];
-    // Every other track that falls inside the window is shaded and labeled,
-    // clipped to the window, so a short neighbor does not leave the track
-    // beyond it anonymous.
     const segments = tracks
       .filter((t) => t.id !== selected.id && t.end_s > span.start && t.start_s < span.end)
       .map((t) => ({
@@ -321,17 +271,12 @@ const StagingEditor = () => {
         side: t.start_s < selected.start_s ? "before" : "after",
         boundary: t.start_s > span.start && t.id !== following?.id,
       }));
-    // A seam's neighbor moves with it, so the space opened by dragging a seam
-    // is not a cut; only trim sides can have dropped audio next to them.
     if (prev && selectedKinds.startKind === "trim" && edges.start_s - prev.end_s > 0.0005) {
       cuts.push({ name: "before", start: prev.end_s - span.start, end: edges.start_s - span.start });
     }
     if (following && selectedKinds.endKind === "trim" && following.start_s - edges.end_s > 0.0005) {
       cuts.push({ name: "after", start: edges.end_s - span.start, end: following.start_s - span.start });
     }
-    // Everything an edge has moved across since the track was picked is
-    // highlighted, with a ghost line fixed where the edge started, so the
-    // total change stays visible in the audio whether dragging or settled.
     const shifts = [];
     if (originEdges) {
       ["start_s", "end_s"].forEach((key) => {
@@ -379,10 +324,6 @@ const StagingEditor = () => {
       ]
     : [];
 
-  // Dragging a seam moves the boundary, so the neighbor gives up or takes on
-  // that audio and nothing is dropped; the seam can travel anywhere inside the
-  // two tracks. Dragging a trim moves only this track's edge, and can go as
-  // far as the neighbor's edge (or the timeline's end).
   const moveEdge = (name, seconds) => {
     if (!selected) return;
     const t = span.start + seconds;
@@ -400,8 +341,6 @@ const StagingEditor = () => {
     });
   };
 
-  // The dragged position stays on screen until the server answers, so the
-  // marker does not flash back to its old spot while the request is in flight.
   const commitEdge = (name) => {
     if (!dragEdges || !selected) return;
     const key = name === "start" ? "start_s" : "end_s";
@@ -424,8 +363,6 @@ const StagingEditor = () => {
     request.finally(() => setDragEdges(null));
   };
 
-  // Puts both edges back where the ingest placed them, using the same
-  // seam-or-trim rules as a drag so neighbors follow a seam.
   const edgesDirty = originEdges && selected &&
     (Math.abs(selected.start_s - originEdges.start_s) > 0.001 || Math.abs(selected.end_s - originEdges.end_s) > 0.001);
   const resetEdges = async () => {
@@ -443,8 +380,6 @@ const StagingEditor = () => {
     }
   };
 
-  // The scrubber and transport live inside whichever track is expanded, so
-  // the page reads as a track list rather than a player with a list under it.
   const transport = selected && (
     <div className="admin-staging-transport">
       <WaveformScrubber
@@ -512,9 +447,6 @@ const StagingEditor = () => {
     </div>
   );
 
-  // While the commit renders, the editor gives way to a progress card like
-  // the import page's: the tracks are no longer editable and the job reports
-  // which one it is on.
   if (jobBusy) {
     return (
       <div className="admin-staging">
@@ -624,9 +556,6 @@ const StagingEditor = () => {
   );
 };
 
-// gainAt takes one track; a seam audition covers two. Represent the pair as a
-// single span whose fade-out is the first track's and whose fade-in belongs to
-// the second, by stitching the two envelopes at the boundary.
 const seamEnvelope = (first, second) => ({
   start_s: first.start_s,
   end_s: second.end_s,

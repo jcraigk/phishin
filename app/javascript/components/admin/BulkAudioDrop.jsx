@@ -148,8 +148,6 @@ const BulkAudioDrop = () => {
           percent: Math.round((doneBytes / totalBytes) * 100),
         }));
       }
-      // Anything beyond bare mp3s takes a server-side pass to unpack archives
-      // and transcode lossless sources before the filename matching runs.
       if (files.some((file) => !isMp3(file))) {
         setPreparing({ message: "Preparing files", percent: 0 });
         const { job_id: jobId } = await adminPost(

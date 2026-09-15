@@ -45,7 +45,6 @@ const ReplacePanel = ({ track, onClose }) => {
         disabled={working}
         onChange={(e) => {
           const file = e.target.files[0];
-          // Allow re-selecting the same filename after a failed upload
           e.target.value = "";
           replace(file);
         }}

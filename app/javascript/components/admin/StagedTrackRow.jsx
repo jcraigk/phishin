@@ -8,13 +8,6 @@ const DEFAULT_FADE_IN = 0.2;
 const DEFAULT_FADE_OUT = 6.0;
 const EDGE_CONTEXT_S = 2;
 
-// One staged track: metadata fields that PATCH as they settle, and the tools
-// that reshape it. Each side of the track is either a seam (shared with the
-// next track in the same set; moving it moves both tracks, no fades) or a
-// trim (a set boundary or the show's edge; audio past it is dropped, fades
-// apply).
-// Every field here (text and number) commits on blur or Enter rather than
-// keystroke, so an edit in progress is one request, not one per keystroke.
 const StagedTrackRow = ({
   track, prev, next, startKind, endKind, selected, onSelect, onPlay, onPatch,
   onSplit, onCombine, onUncombine, onBoundary, onPlayFromSeam, onRemove, playhead, transport, busy,
@@ -62,10 +55,6 @@ const StagedTrackRow = ({
     </label>
   );
 
-  // A fade is off until ticked; ticking applies the site's usual length and
-  // the number then edits it. The play button auditions that edge: the fade
-  // plus a couple of seconds beyond it, with the live fade envelope applied,
-  // which is the same linear ramp the commit renders.
   const fadeField = (label, key, defaultValue) => {
     const on = fields[key] > 0;
     const apply = (value) => {

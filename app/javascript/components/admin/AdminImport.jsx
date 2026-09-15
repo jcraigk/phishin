@@ -8,12 +8,6 @@ import { uploadFile, collectFiles, isStagingSource } from "./DirectUploader";
 
 let nextFileId = 0;
 
-// Brings new audio into the catalog: paste an archive.org URL, or drop a
-// folder of files. The show date comes from the item metadata or the taper
-// notes in the upload, never from a picker. Audio is staged in the background
-// and the show editor opens when staging lands.
-// The archive.org item name, taken from the pasted URL so the progress card
-// can be titled before the job reports anything.
 const archiveItemName = (url) => {
   const match = url.trim().match(/archive\.org\/(?:details|download)\/([^/?#]+)/);
   return match ? match[1] : url.trim();
@@ -32,9 +26,6 @@ const AdminImport = () => {
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
 
-  // One paste does everything: the server reads the show date off the item,
-  // creates the draft if needed, and stages the lossless files in the
-  // background with the item description as taper notes.
   const importFromArchive = async () => {
     setError(null);
     setStarting(true);
@@ -51,8 +42,6 @@ const AdminImport = () => {
     }
   };
 
-  // Same idea for a dropped folder: the server reads the date out of the
-  // taper notes (or the filenames) and stages from there.
   const importFromUpload = async () => {
     setError(null);
     setStarting(true);
@@ -173,7 +162,6 @@ const AdminImport = () => {
                 multiple
                 onChange={(e) => {
                   addFiles(e.target.files);
-                  // Allow re-selecting the same filename after a failed upload
                   if (fileInputRef.current) fileInputRef.current.value = "";
                 }}
               />
