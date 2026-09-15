@@ -5,7 +5,6 @@ import MobileApps from "./MobileApps";
 import DiscordButton from "./DiscordButton";
 import GitHubButton from "./GitHubButton";
 import EmailButton from "./EmailButton";
-import { Tooltip } from "react-tooltip";
 import helpingFriendlyIcon from "../../images/icon-helping-friendly.png";
 import inphiniteIcon from "../../images/icon-inphinite.png";
 import kodiIcon from "../../images/icon-kodi.png";
@@ -36,10 +35,8 @@ const Faq = () => {
           <img
             src={helpingFriendlyIcon}
             alt="The Helping Friendly App"
-            data-tooltip-id="tooltip-thfa"
-            data-tooltip-content="The Helping Friendly App"
+            data-tip="The Helping Friendly App"
           />
-          <Tooltip id="tooltip-thfa" className="custom-tooltip" />
         </a>
         <a
           href="https://inphinite.sammarshall.us"
@@ -49,10 +46,8 @@ const Faq = () => {
           <img
             src={inphiniteIcon}
             alt="Inphinite"
-            data-tooltip-id="tooltip-inphinite"
-            data-tooltip-content="Inphinite (setlist generator)"
+            data-tip="Inphinite (setlist generator)"
           />
-          <Tooltip id="tooltip-inphinite" className="custom-tooltip" />
         </a>
         <a
           href="https://kodi.wiki/view/Add-on:Phish.in"
@@ -62,10 +57,8 @@ const Faq = () => {
           <img
             src={kodiIcon}
             alt="Phish.in add-on for Kodi"
-            data-tooltip-id="tooltip-kodi"
-            data-tooltip-content="Phish.in add-on for Kodi"
+            data-tip="Phish.in add-on for Kodi"
           />
-          <Tooltip id="tooltip-kodi" className="custom-tooltip" />
         </a>
         <a
           href="https://github.com/lostmyshape/volumio-phishin"
@@ -74,10 +67,8 @@ const Faq = () => {
           <img
             src={volumioIcon}
             alt="Volumio plugin"
-            data-tooltip-id="tooltip-volumio"
-            data-tooltip-content="Volumio plugin"
+            data-tip="Volumio plugin"
           />
-          <Tooltip id="tooltip-volumio" className="custom-tooltip" />
         </a>
       </div>
 

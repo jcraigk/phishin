@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useNavigation, ScrollRestoration } from "react-rou
 import Navbar from "./Navbar";
 import Loader from "../controls/Loader";
 import Player from "../controls/Player";
+import Tooltip from "../controls/Tooltip";
 import AppModal from "../modals/AppModal";
 import DraftPlaylistModal from "../modals/DraftPlaylistModal";
 import { useFeedback } from "../contexts/FeedbackContext";
@@ -133,6 +134,7 @@ const LayoutContent = ({ props, navigate }) => {
   return (
     <>
       <ScrollRestoration />
+      <Tooltip />
       {(navigation.state === "loading" || isFilterLoading) && <Loader />}
       <Navbar user={user} handleLogout={handleLogout} />
       <main className={activeTrack ? "with-player" : ""}>

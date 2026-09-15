@@ -1,7 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVolumeUp, faVolumeMute, faVolumeDown } from '@fortawesome/free-solid-svg-icons';
-import { Tooltip } from "react-tooltip";
 
 const AudioStatusBadge = ({ audioStatus, size = 'small' }) => {
   const getBadgeConfig = () => {
@@ -43,22 +42,17 @@ const AudioStatusBadge = ({ audioStatus, size = 'small' }) => {
 
   const sizeClass = size === 'large' ? 'is-medium' : 'is-small';
   const showLabel = size === 'large';
-  const tooltipId = `audio-status-tooltip-${audioStatus}-${Math.random().toString(36).substr(2, 9)}`;
 
   return (
-    <>
-      <span
-        className={`tag ${sizeClass} ${config.color} ${config.textColor} audio-status-badge`}
-        data-tooltip-id={tooltipId}
-        data-tooltip-content={config.tooltip}
-      >
-        <span className="icon is-small">
-          <FontAwesomeIcon icon={config.icon} />
-        </span>
-        {showLabel && <span className="ml-1">{config.shortLabel}</span>}
+    <span
+      className={`tag ${sizeClass} ${config.color} ${config.textColor} audio-status-badge`}
+      data-tip={config.tooltip}
+    >
+      <span className="icon is-small">
+        <FontAwesomeIcon icon={config.icon} />
       </span>
-      <Tooltip id={tooltipId} className="custom-tooltip" />
-    </>
+      {showLabel && <span className="ml-1">{config.shortLabel}</span>}
+    </span>
   );
 };
 

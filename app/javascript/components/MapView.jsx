@@ -14,7 +14,10 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
   useEffect(() => {
     if (!coordinates || !mapboxToken || map) return;
 
-    import("mapbox-gl").then((mapboxglModule) => {
+    Promise.all([
+      import("mapbox-gl"),
+      import("mapbox-gl/dist/mapbox-gl.css"),
+    ]).then(([mapboxglModule]) => {
       const mapboxglInstance = mapboxglModule.default;
       setMapboxgl(mapboxglInstance);
 

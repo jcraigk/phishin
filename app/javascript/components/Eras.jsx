@@ -57,7 +57,6 @@ import LayoutWrapper from "./layout/LayoutWrapper";
 import chatgptIcon from "../images/icon-chatgpt.svg";
 import relistenIcon from "../images/icon-relisten.png";
 import liveMusicArchiveIcon from "../images/icon-live-music-archive.png";
-import { Tooltip } from "react-tooltip";
 import GitHubButton from "./pages/GitHubButton";
 import DiscordButton from "./pages/DiscordButton";
 import CoverArt from "./CoverArt";
@@ -204,10 +203,8 @@ const Eras = () => {
           <img
             src={relistenIcon}
             alt="Relisten"
-            data-tooltip-id="tooltip-relisten"
-            data-tooltip-content="Relisten (iOS / Android)"
+            data-tip="Relisten (iOS / Android)"
           />
-          <Tooltip id="tooltip-relisten" className="custom-tooltip" />
         </a>
         <a
           href="https://apps.apple.com/us/app/live-music-archive/id1453343128"
@@ -217,10 +214,8 @@ const Eras = () => {
           <img
             src={liveMusicArchiveIcon}
             alt="Live Music Archive"
-            data-tooltip-id="tooltip-lma"
-            data-tooltip-content="Live Music Archive (iOS)"
+            data-tip="Live Music Archive (iOS)"
           />
-          <Tooltip id="tooltip-lma" className="custom-tooltip" />
         </a>
         <a
           href="https://chatgpt.com/apps/phish-in/asdk_app_6951d356aaec819184a53d81982be134"
@@ -229,10 +224,8 @@ const Eras = () => {
           <img
             src={chatgptIcon}
             alt="ChatGPT app"
-            data-tooltip-id="tooltip-chatgpt"
-            data-tooltip-content="Phish.in on ChatGPT"
+            data-tip="Phish.in on ChatGPT"
           />
-          <Tooltip id="tooltip-chatgpt" className="custom-tooltip" />
         </a>
       </div>
     </div>
