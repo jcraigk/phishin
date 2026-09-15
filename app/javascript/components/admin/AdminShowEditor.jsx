@@ -111,11 +111,12 @@ const AdminShowEditor = () => {
           {importing && !show.ingest_job_id && (
             <button
               type="button"
-              className="admin-danger admin-header-delete"
+              className="admin-trash-button admin-header-delete"
               title="Delete this draft and its staged audio"
+              aria-label="Delete draft"
               onClick={() => setConfirmingDelete(true)}
             >
-              <FontAwesomeIcon icon={faTrashAlt} /> Delete
+              <FontAwesomeIcon icon={faTrashAlt} />
             </button>
           )}
         </header>
