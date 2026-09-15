@@ -51,6 +51,14 @@ jobs:
         ffmpeg-version: release
     - name: Setup uv
       uses: astral-sh/setup-uv@v5
+    - name: Tool versions
+      run: |
+        ffmpeg -version | head -1
+        ffprobe -version | head -1
+        lame --version | head -1
+        bsdtar --version
+        convert -version | head -1
+        uv --version
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
