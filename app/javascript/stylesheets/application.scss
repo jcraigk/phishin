@@ -1,6 +1,5 @@
 @use "./variables" as *;
 
-@use "./admin";
 @use "./bulma-custom";
 @use "./content";
 @use "./eras";
@@ -19,10 +18,9 @@
 @use "./timeline";
 @use "./tooltips";
 
-@import "~@fontsource/marck-script/400.css";
-@import "~@fontsource/open-sans-condensed/300.css";
-@import "~@fontsource/open-sans-condensed/700.css";
-@import "~mapbox-gl/dist/mapbox-gl.css";
+@import "~@fontsource/marck-script/latin-400.css";
+@import "~@fontsource/open-sans-condensed/latin-300.css";
+@import "~@fontsource/open-sans-condensed/latin-700.css";
 
 html, body {
   margin: 0;

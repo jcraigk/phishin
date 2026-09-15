@@ -1,41 +1,16 @@
 import React from "react";
 
-// Content pages with sidebar
-import DraftPlaylist from "../DraftPlaylist";
 import DynamicRoute, { dynamicLoader } from "../routes/DynamicRoute";
-import Eras, { erasLoader } from '../Eras';
+import Eras, { erasLoader } from "../Eras";
 import Layout from "../layout/Layout";
-import MapSearch from "../MapSearch";
-import MissingContentReport, { missingContentLoader } from "../MissingContentReport";
-import MyShows, { myShowsLoader } from "../MyShows";
-import MyTracks, { myTracksLoader } from "../MyTracks";
-import Playlist, { playlistLoader } from "../Playlist";
-import PlaylistIndex, { playlistIndexLoader } from "../PlaylistIndex";
-import Search from "../Search";
-import SongIndex, { songIndexLoader } from "../SongIndex";
-import SongTracks, { songTracksLoader } from "../SongTracks";
-import TagIndex, { tagIndexLoader } from "../TagIndex";
-import TagShows, { tagShowsLoader } from "../TagShows";
-import TagTracks, { tagTracksLoader } from "../TagTracks";
-import TodayShows, { todayShowsLoader } from "../TodayShows";
-import TopShows, { topShowsLoader } from "../TopShows";
-import TopTracks, { topTracksLoader } from "../TopTracks";
-import VenueIndex, { venueIndexLoader } from "../VenueIndex";
-import VenueShows, { venueShowsLoader } from "../VenueShows";
-import CoverArtInspector, { coverArtInspectorLoader } from "../CoverArtInspector";
-
-// Simple pages with no sidebar
-import ApiDocs from "../pages/ApiDocs";
-import ContactInfo from "../pages/ContactInfo";
 import ErrorPage from "../pages/ErrorPage";
-import Faq from "../pages/Faq";
-import Login from "../pages/Login";
-import PrivacyPolicy from "../pages/PrivacyPolicy";
-import RequestPasswordReset from "../pages/RequestPasswordReset";
-import ResetPassword from "../pages/ResetPassword";
-import Signup from "../pages/Signup";
-import TermsOfService from "../pages/TermsOfService";
-import Settings from "../pages/Settings";
+
+const lazyRoute = (importer, loaderName) => async () => {
+  const page = await importer();
+  const route = { Component: page.default };
+  if (loaderName) route.loader = page[loaderName];
+  return route;
+};
 
 const routes = (props) => [
   {
@@ -50,128 +25,113 @@ const routes = (props) => [
       },
       {
         path: "/missing-content",
-        element: <MissingContentReport />,
-        loader: missingContentLoader,
+        lazy: lazyRoute(() => import("../MissingContentReport"), "missingContentLoader"),
       },
       {
         path: "/login",
-        element: <Login />
+        lazy: lazyRoute(() => import("../pages/Login")),
       },
       {
         path: "/signup",
-        element: <Signup />
+        lazy: lazyRoute(() => import("../pages/Signup")),
       },
       {
-      path: "/request-password-reset",
-        element: <RequestPasswordReset />
+        path: "/request-password-reset",
+        lazy: lazyRoute(() => import("../pages/RequestPasswordReset")),
       },
       {
         path: "/reset-password/:token",
-        element: <ResetPassword />
+        lazy: lazyRoute(() => import("../pages/ResetPassword")),
       },
       // Static pages
       {
         path: "/api-docs",
-        element: <ApiDocs />
+        lazy: lazyRoute(() => import("../pages/ApiDocs")),
       },
       {
         path: "/contact-info",
-        element: <ContactInfo />
+        lazy: lazyRoute(() => import("../pages/ContactInfo")),
       },
       {
         path: "/faq",
-        element: <Faq />
+        lazy: lazyRoute(() => import("../pages/Faq")),
       },
       {
         path: "/privacy",
-        element: <PrivacyPolicy />
+        lazy: lazyRoute(() => import("../pages/PrivacyPolicy")),
       },
       {
         path: "/terms",
-        element: <TermsOfService />
+        lazy: lazyRoute(() => import("../pages/TermsOfService")),
       },
       // Content pages
       {
         path: "/venues",
-        element: <VenueIndex />,
-        loader: venueIndexLoader,
+        lazy: lazyRoute(() => import("../VenueIndex"), "venueIndexLoader"),
       },
       {
         path: "/venues/:venueSlug",
-        element: <VenueShows />,
-        loader: venueShowsLoader,
+        lazy: lazyRoute(() => import("../VenueShows"), "venueShowsLoader"),
       },
       {
         path: "/songs",
-        element: <SongIndex />,
-        loader: songIndexLoader,
+        lazy: lazyRoute(() => import("../SongIndex"), "songIndexLoader"),
       },
       {
         path: "/tags",
-        element: <TagIndex />,
-        loader: tagIndexLoader,
+        lazy: lazyRoute(() => import("../TagIndex"), "tagIndexLoader"),
       },
       {
         path: "/show-tags/:tagSlug",
-        element: <TagShows />,
-        loader: tagShowsLoader,
+        lazy: lazyRoute(() => import("../TagShows"), "tagShowsLoader"),
       },
       {
         path: "/track-tags/:tagSlug",
-        element: <TagTracks />,
-        loader: tagTracksLoader,
+        lazy: lazyRoute(() => import("../TagTracks"), "tagTracksLoader"),
       },
       {
         path: "/songs/:songSlug",
-        element: <SongTracks />,
-        loader: songTracksLoader,
+        lazy: lazyRoute(() => import("../SongTracks"), "songTracksLoader"),
       },
       {
         path: "/map",
-        element: <MapSearch />,
+        lazy: lazyRoute(() => import("../MapSearch")),
       },
       {
         path: "/top-shows",
-        element: <TopShows />,
-        loader: topShowsLoader,
+        lazy: lazyRoute(() => import("../TopShows"), "topShowsLoader"),
       },
       {
         path: "/top-tracks",
-        element: <TopTracks />,
-        loader: topTracksLoader,
+        lazy: lazyRoute(() => import("../TopTracks"), "topTracksLoader"),
       },
       {
         path: "/my-shows",
-        element: <MyShows />,
-        loader: myShowsLoader,
+        lazy: lazyRoute(() => import("../MyShows"), "myShowsLoader"),
       },
       {
         path: "/my-tracks",
-        element: <MyTracks />,
-        loader: myTracksLoader,
+        lazy: lazyRoute(() => import("../MyTracks"), "myTracksLoader"),
       },
       {
         path: "/draft-playlist",
-        element: <DraftPlaylist />,
+        lazy: lazyRoute(() => import("../DraftPlaylist")),
       },
       {
         path: "/playlists",
-        element: <PlaylistIndex />,
-        loader: playlistIndexLoader,
+        lazy: lazyRoute(() => import("../PlaylistIndex"), "playlistIndexLoader"),
       },
       {
         path: "/play/:playlistSlug",
-        element: <Playlist />,
-        loader: playlistLoader,
+        lazy: lazyRoute(() => import("../Playlist"), "playlistLoader"),
       },
       {
         path: "/today",
-        element: <TodayShows />,
-        loader: todayShowsLoader,
+        lazy: lazyRoute(() => import("../TodayShows"), "todayShowsLoader"),
       },
       {
         path: "/search",
-        element: <Search />,
+        lazy: lazyRoute(() => import("../Search")),
       },
       {
         path: "/random",
@@ -187,12 +147,11 @@ const routes = (props) => [
       },
       {
         path: "/settings",
-        element: <Settings />,
+        lazy: lazyRoute(() => import("../pages/Settings")),
       },
       {
         path: "/cover-art",
-        element: <CoverArtInspector />,
-        loader: coverArtInspectorLoader,
+        lazy: lazyRoute(() => import("../CoverArtInspector"), "coverArtInspectorLoader"),
       },
       {
         path: "/admin",

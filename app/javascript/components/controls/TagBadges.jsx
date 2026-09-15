@@ -1,6 +1,5 @@
 import React from "react";
 import { useOutletContext } from "react-router";
-import { Tooltip } from "react-tooltip";
 
 const TagBadges = ({ tags, parentId, highlight }) => {
   const { openAppModal } = useOutletContext();
@@ -99,18 +98,15 @@ const TagBadges = ({ tags, parentId, highlight }) => {
       {Object.entries(groupedTags).map(([tagName, tagGroup]) => {
         const count = tagGroup.length;
         const title = `${tagName} ${count > 1 ? `(${count})` : ""}`;
-        const tooltipId = `tooltip-${parentId}-${tagName}`;
 
         return (
           <div
-            key={tooltipId}
+            key={`${parentId}-${tagName}`}
             className={`tag-badge ${isHighlighted(tagGroup) ? "hilite-badge" : ""}`}
             onClick={handleClick}
-            data-tooltip-id={tooltipId}
-            data-tooltip-content={tooltipForTagStack(tagGroup)}
+            data-tip={tooltipForTagStack(tagGroup)}
           >
             {title}
-            <Tooltip id={tooltipId} className="custom-tooltip" />
           </div>
         );
       })}

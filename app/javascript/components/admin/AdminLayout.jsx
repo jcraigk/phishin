@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import { Outlet } from "react-router";
 import Player from "../controls/Player";
 import AdminTooltip from "./AdminTooltip";
+import "../../stylesheets/_admin.scss";
 
 export const AdminPlayerContext = createContext(null);
 

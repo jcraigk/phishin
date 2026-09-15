@@ -1,31 +1,23 @@
 @use "./variables" as *;
 
 .custom-tooltip {
+  position: fixed;
+  z-index: 9999;
+  transform: translateY(calc(-100% - 0.4rem));
   max-width: 25rem;
-  white-space: normal;
-  padding: 0.5rem 1rem !important;
-  text-align: left;
-  z-index: 9999 !important;
-  font-size: 1rem !important;
-  line-height: 1.5rem !important;
+  padding: 0.5rem 1rem;
   border-radius: $radius;
-  background-color: var(--tooltip-bg) !important;
-  opacity: 0.9 !important;
+  background-color: var(--tooltip-bg);
+  color: #fff;
+  opacity: 0.9;
+  font-size: 1rem;
   font-weight: normal;
-  overflow: visible !important;
-}
+  line-height: 1.5rem;
+  text-align: left;
+  white-space: normal;
+  pointer-events: none;
 
-// Allow tooltips to overflow from list items on hover
-.list-item:hover {
-  .rightside-primary,
-  .rightside-secondary,
-  .rightside-group {
-    overflow: visible !important;
+  &.is-below {
+    transform: translateY(0.4rem);
   }
-}
-
-// Ensure audio status badges can show tooltips
-.audio-status-badge {
-  position: relative;
-  z-index: 10;
 }
