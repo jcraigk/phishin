@@ -5,7 +5,7 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
 
   namespace :admin do
     resource :shows do
-      route_param :date, requirements: DATE do
+      route_param :date, requirements: DATE[:date] do
         namespace :cover_art do
           desc "Regenerate the cover art prompt", hidden: true
           post :regenerate_prompt do
