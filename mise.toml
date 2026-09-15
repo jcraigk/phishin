@@ -1,6 +1,6 @@
 [tools]
 ruby = "4.0.4"
-node = "20.20.2"
+node = "22.23.2"
 lefthook = "latest"
 
 [tasks.default]

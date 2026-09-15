@@ -1,6 +1,7 @@
 import React from "react";
 import { HelmetProvider } from "react-helmet-async";
-import { RouterProvider, createBrowserRouter } from "react-router";
+import { createBrowserRouter } from "react-router";
+import { RouterProvider } from "react-router/dom";
 import routes from "./routes/routes";
 import { FeedbackProvider } from "./contexts/FeedbackContext";
 

@@ -41,7 +41,7 @@ RUN curl -fsSL -o /tmp/ffmpeg.tar.xz \
     ffmpeg -version | head -1
 
 # Install Node and Yarn
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs
 RUN npm install -g yarn
 
