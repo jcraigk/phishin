@@ -27,7 +27,7 @@ RSpec.describe Admin::RegenerateCoverArtPromptJob, :openai do
 
   it "records a suggested prompt on the job payload" do
     described_class.new.perform(show.id, admin_job.id)
-    expect(admin_job.reload.payload["prompt"]).to include("a pigeon")
+    expect(admin_job.reload.payload["prompt"]).to include("A pigeon")
   end
 
   it "records the category suggestions on the job payload" do

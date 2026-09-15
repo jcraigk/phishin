@@ -44,7 +44,13 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsndfile1-dev pkg-config google-chrome-stable ffmpeg lame libarchive-tools imagemagick
+        sudo apt-get install -y libsndfile1-dev pkg-config google-chrome-stable lame libarchive-tools imagemagick
+    - name: Setup ffmpeg
+      uses: FedericoCarboni/setup-ffmpeg@v3
+      with:
+        ffmpeg-version: release
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v5
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
