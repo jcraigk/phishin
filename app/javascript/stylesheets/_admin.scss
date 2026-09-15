@@ -464,17 +464,6 @@
     min-width: 18rem;
   }
 
-  .admin-icon-button {
-    padding: 0.3rem 0.5rem;
-    background: none;
-    border: none !important;
-    font-size: 1.05rem;
-
-    &:hover:not(:disabled) {
-      background-color: var(--bg-red);
-    }
-  }
-
   input[type="text"],
   input[type="number"],
   textarea {
@@ -1435,10 +1424,6 @@
     .admin-count {
       margin-left: 0.5rem;
     }
-  }
-
-  .admin-tag-track-header .admin-count {
-    margin-left: 0.5rem;
   }
 }
 
