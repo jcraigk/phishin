@@ -200,7 +200,7 @@ RSpec.describe "API v2 Admin Jobs" do
 
     it "serves different audio for each half" do
       job = create(:admin_job, kind: "shift_boundary_preview", track:, show:)
-      Admin::ShiftBoundaryJob.new.perform(track.id, job.id, -2.0, false)
+      Admin::ShiftBoundaryJob.new.perform(track.id, job.id, -57.0, false)
 
       get "/api/v2/admin/jobs/#{job.id}/audio", params: { index: 0 }, headers: admin_headers
       first = response.body
