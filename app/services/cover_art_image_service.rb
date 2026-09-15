@@ -5,6 +5,8 @@ class CoverArtImageService < ApplicationService
   option :edit_prompt, default: -> { nil }
   option :prompt_override, default: -> { nil }
 
+  MODEL = "gpt-image-2.5-sunburst"
+  QUALITY = "max"
   TEXT_INPUT_RATE = 5.0 / 1_000_000
   IMAGE_INPUT_RATE = 8.0 / 1_000_000
   IMAGE_OUTPUT_RATE = 30.0 / 1_000_000
@@ -78,11 +80,11 @@ class CoverArtImageService < ApplicationService
         "Content-Type" => "application/json"
       },
       body: {
-        model: "gpt-image-2",
+        model: MODEL,
         prompt: generation_prompt,
         n: 1,
         size: "1024x1024",
-        quality: "high"
+        quality: QUALITY
       }.to_json
     )
   end
@@ -102,11 +104,11 @@ class CoverArtImageService < ApplicationService
 
   def edit_request_body(blob, boundary)
     fields = {
-      "model" => "gpt-image-2",
+      "model" => MODEL,
       "prompt" => edit_prompt,
       "n" => "1",
       "size" => "1024x1024",
-      "quality" => "high"
+      "quality" => QUALITY
     }
     content_type =
       blob.content_type.to_s.start_with?("image/") ? blob.content_type : "image/png"
