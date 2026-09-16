@@ -164,7 +164,7 @@ class MetaTagService < ApplicationService
         description: "A custom Phish playlist, free to stream.",
         type: "music.playlist",
         audio: track&.mp3_url,
-        image: track&.show&.cover_art_urls&.dig(:medium)
+        image: playlist.cover_art_urls&.dig(:medium)
       },
       status: :ok
     }

@@ -15,6 +15,7 @@ const initialDraftPlaylistMeta = {
   slug: "",
   description: "",
   published: false,
+  cover_art_track_id: null,
 };
 
 const LayoutContent = ({ props, navigate }) => {

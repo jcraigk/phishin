@@ -39,6 +39,16 @@ RSpec.describe "API v2 Playlists" do
         expect(json[:playlists]).to be_an(Array)
         expect(json[:playlists].size).to eq(3)
       end
+
+      it "includes cover art for each playlist" do
+        get_api_authed(user, "/playlists")
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        summer = json[:playlists].find { it[:slug] == "summer-jams" }
+
+        expect(summer[:cover_art_track_id]).to eq(track1.id)
+        expect(summer[:cover_art_urls]).to eq(track1.show.cover_art_urls.transform_keys(&:to_sym))
+      end
     end
 
     context "when filtering by liked playlists" do
@@ -159,8 +169,54 @@ RSpec.describe "API v2 Playlists" do
 
         expect(json[:name]).to eq("Road Trip")
         expect(json[:slug]).to eq("road-trip")
+        expect(json[:description]).to eq("Road trip playlist")
+        expect(json[:published]).to be(true)
+        expect(json[:cover_art_track_id]).to eq(track1.id)
         expect(json[:entries].size).to eq(2)
         expect(json[:entries].map { it[:track][:id] }).to contain_exactly(track1.id, track2.id)
+      end
+
+      it "uses the selected track for cover art" do
+        post_api_authed(
+          user,
+          "/playlists",
+          params: {
+            name: "Road Trip",
+            slug: "road-trip",
+            description: "Road trip playlist",
+            published: true,
+            cover_art_track_id: track2.id,
+            track_ids: [ track1.id, track2.id ],
+            starts_at_second: [ 0, 0 ],
+            ends_at_second: [ 0, 0 ]
+          }
+        )
+
+        expect(response).to have_http_status(:created)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:cover_art_track_id]).to eq(track2.id)
+        expect(json[:cover_art_urls]).to eq(track2.show.cover_art_urls.transform_keys(&:to_sym))
+      end
+
+      it "rejects a cover art track that is not in the playlist" do
+        post_api_authed(
+          user,
+          "/playlists",
+          params: {
+            name: "Road Trip",
+            slug: "road-trip",
+            description: "Road trip playlist",
+            published: true,
+            cover_art_track_id: track3.id,
+            track_ids: [ track1.id, track2.id ],
+            starts_at_second: [ 0, 0 ],
+            ends_at_second: [ 0, 0 ]
+          }
+        )
+
+        expect(response).to have_http_status(:unprocessable_content)
+        json = JSON.parse(response.body)
+        expect(json["message"]).to include("Cover art track must be a track in the playlist")
       end
 
       it "rejects tracks from unpublished shows" do
@@ -232,6 +288,70 @@ RSpec.describe "API v2 Playlists" do
         expect(json[:entries].size).to eq(2)
         expect(json[:entries].map { it[:track][:id] }).to eq([ track2.id, track3.id ])
         expect(json[:entries].map { it[:starts_at_second] }).to eq([ nil, 15 ])
+      end
+
+      it "updates the cover art track" do
+        put_api_authed(
+          user,
+          "/playlists/#{playlist.id}",
+          params: {
+            name: "Summer Jams",
+            description: "The best summer jams",
+            slug: "summer-jams",
+            published: true,
+            cover_art_track_id: track3.id,
+            track_ids: [ track2.id, track3.id ],
+            starts_at_second: [ 0, 0 ],
+            ends_at_second: [ 0, 0 ]
+          }
+        )
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:cover_art_track_id]).to eq(track3.id)
+        expect(playlist.reload.cover_art_track).to eq(track3)
+      end
+
+      it "preserves the cover art track when the param is omitted" do
+        playlist.update!(cover_art_track_id: track2.id)
+        put_api_authed(
+          user,
+          "/playlists/#{playlist.id}",
+          params: {
+            name: "Summer Jams",
+            description: "The best summer jams",
+            slug: "summer-jams",
+            published: true,
+            track_ids: [ track1.id, track2.id ],
+            starts_at_second: [ 0, 0 ],
+            ends_at_second: [ 0, 0 ]
+          }
+        )
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:cover_art_track_id]).to eq(track2.id)
+      end
+
+      it "falls back to the first track when the cover art track is removed" do
+        playlist.update!(cover_art_track_id: track1.id)
+        put_api_authed(
+          user,
+          "/playlists/#{playlist.id}",
+          params: {
+            name: "Summer Jams",
+            description: "The best summer jams",
+            slug: "summer-jams",
+            published: true,
+            track_ids: [ track2.id, track3.id ],
+            starts_at_second: [ 0, 0 ],
+            ends_at_second: [ 0, 0 ]
+          }
+        )
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:cover_art_track_id]).to eq(track2.id)
       end
 
       it "returns a 422 error if the update is invalid" do

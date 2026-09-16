@@ -78,6 +78,18 @@ RSpec.describe MetaTagService do
       expect(service[:og][:audio]).to eq(playlist.tracks.first.mp3_url)
       expect(service[:status]).to eq(:ok)
     end
+
+    it "uses the playlist cover art track for the og image" do
+      second_track = playlist.playlist_tracks.order(:position).second.track
+      second_track.show.cover_art.attach(
+        io: file_fixture("cover-art-large.jpg").open,
+        filename: "cover-art-large.jpg",
+        content_type: "image/jpeg"
+      )
+      playlist.update!(cover_art_track_id: second_track.id)
+      expect(service[:og][:image]).to eq(second_track.show.cover_art_urls[:medium])
+      expect(service[:og][:image]).not_to include("placeholders")
+    end
   end
 
   context "when the path is a playlist with an invalid slug" do

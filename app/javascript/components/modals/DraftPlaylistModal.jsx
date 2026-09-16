@@ -75,6 +75,22 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, draftPlayli
     }));
   };
 
+  const coverArtOptions = draftPlaylist.filter(
+    (track, idx) => draftPlaylist.findIndex((t) => t.show_date === track.show_date) === idx
+  );
+  const coverArtTrackIdInDraft = draftPlaylist.some((track) => track.id === draftPlaylistMeta.cover_art_track_id)
+    ? draftPlaylistMeta.cover_art_track_id
+    : undefined;
+  const selectedCoverArtTrack = draftPlaylist.find((track) => track.id === coverArtTrackIdInDraft) ?? draftPlaylist[0];
+
+  const handleCoverArtSelect = (track) => {
+    setDraftPlaylistMeta((prev) => ({
+      ...prev,
+      cover_art_track_id: track.id,
+    }));
+    setIsDraftPlaylistSaved(false);
+  };
+
   const handleSavePlaylist = async () => {
     if (draftPlaylist.length < 2) {
       setAlert("Add at least 2 tracks and try again");
@@ -89,6 +105,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, draftPlayli
     try {
       const body = JSON.stringify({
         ...draftPlaylistMeta,
+        cover_art_track_id: coverArtTrackIdInDraft,
         track_ids: draftPlaylist.map((track) => track.id),
         starts_at_second: draftPlaylist.map((track) => track.starts_at_second ?? 0),
         ends_at_second: draftPlaylist.map((track) => track.ends_at_second ?? 0),
@@ -199,6 +216,24 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, draftPlayli
           )}
         </div>
       </div>
+
+      {coverArtOptions.length > 0 && (
+        <div className="field">
+          <label className="label">Cover Art</label>
+          <div className="control cover-art-picker">
+            {coverArtOptions.map((track) => (
+              <img
+                key={track.show_date}
+                src={track.show_cover_art_urls?.medium}
+                alt={`Cover art from ${track.show_date}`}
+                title={track.show_date}
+                className={track.show_date === selectedCoverArtTrack?.show_date ? "selected" : ""}
+                onClick={() => handleCoverArtSelect(track)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="field">
         <div className="control">

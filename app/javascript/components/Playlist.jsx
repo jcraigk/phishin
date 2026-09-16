@@ -17,6 +17,7 @@ import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
 import LikeButton from "./controls/LikeButton";
+import CoverArt from "./CoverArt";
 import { formatDate, formatDurationShow } from "./helpers/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCircleXmark, faInfoCircle, faCalendar, faFileImport, faCompactDisc } from "@fortawesome/free-solid-svg-icons";
@@ -24,7 +25,7 @@ import { faClock, faCircleXmark, faInfoCircle, faCalendar, faFileImport, faCompa
 const Playlist = () => {
   const playlist = useLoaderData();
   const [showNotification, setShowNotification] = useState(true);
-  const { playTrack, customPlaylist, setCustomPlaylist, user, setDraftPlaylist, setDraftPlaylistMeta } = useOutletContext();
+  const { playTrack, customPlaylist, setCustomPlaylist, user, setDraftPlaylist, setDraftPlaylistMeta, openAppModal, closeAppModal } = useOutletContext();
   const navigate = useNavigate();
   const [tracks] = useState(
     playlist.entries.map(entry => ({
@@ -66,6 +67,7 @@ const Playlist = () => {
       slug: `${slugPrefix}${playlist.slug}`,
       description: playlist.description,
       published: isOwner ? playlist.published : false,
+      cover_art_track_id: playlist.cover_art_track_id,
     });
 
     navigate("/draft-playlist");
@@ -73,6 +75,14 @@ const Playlist = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
+      <div className="mb-4 hidden-mobile">
+        <CoverArt
+          coverArtUrls={playlist.cover_art_urls}
+          openAppModal={openAppModal}
+          closeAppModal={closeAppModal}
+          size="medium"
+        />
+      </div>
       <h1 className="sidebar-title">{playlist.name}</h1>
       <p className="sidebar-info hidden-mobile mb-3">By {playlist.username}</p>
       <div className="mr-1 hidden-phone">

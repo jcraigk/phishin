@@ -37,6 +37,20 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
     }
 
   expose \
+    :cover_art_track_id,
+    documentation: {
+      type: "Integer",
+      desc: "ID of the track whose show cover art represents the playlist"
+    }
+
+  expose \
+    :cover_art_urls,
+    documentation: {
+      type: "Object",
+      desc: "Object containing named URLs of cover art images (large, medium, small)"
+    }
+
+  expose \
     :entries,
     using: ApiV2::Entities::PlaylistTrack,
     unless: ->(_, opts) { opts[:exclude_tracks] },
