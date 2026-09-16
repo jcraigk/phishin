@@ -29,7 +29,7 @@ import LayoutWrapper from "./layout/LayoutWrapper";
 import Playlists from "./Playlists";
 import Pagination from "./controls/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { paginationHelper } from "./helpers/pagination";
 
 const PlaylistIndex = () => {
@@ -44,7 +44,7 @@ const PlaylistIndex = () => {
   } = useLoaderData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const { user } = useOutletContext();
+  const { user, draftPlaylist, draftPlaylistMeta, isDraftPlaylistSaved, resetDraftPlaylist } = useOutletContext();
   const {
     tempPerPage,
     handlePageClick,
@@ -54,9 +54,28 @@ const PlaylistIndex = () => {
   } = paginationHelper(page, sortOption, perPage, "", filter);
 
   const handleFilterChange = (event) => {
-    setFilter(event.target.value);
     navigate(`?page=1&sort=${sortOption}&filter=${event.target.value}&per_page=${perPage}`);
   };
+
+  const handleNewPlaylist = () => {
+    const draftHasContent = draftPlaylist.length > 0 || draftPlaylistMeta.id || draftPlaylistMeta.name;
+    if (draftHasContent && !isDraftPlaylistSaved) {
+      const confirmed = window.confirm("Your draft playlist has unsaved changes. Discard them and start a new playlist?");
+      if (!confirmed) return;
+    }
+    resetDraftPlaylist();
+    navigate("/draft-playlist");
+  };
+
+  const isLoggedIn = user && user !== "anonymous";
+  const isMineEmpty = filter === "mine" && playlists.length === 0;
+
+  const newPlaylistButton = (
+    <button className="button" onClick={handleNewPlaylist}>
+      <FontAwesomeIcon icon={faPlus} className="mr-1" />
+      New Playlist
+    </button>
+  );
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -95,7 +114,7 @@ const PlaylistIndex = () => {
           </select>
         </div>
 
-        {user && (
+        {isLoggedIn && (
           <div className="select">
             <select id="playlist-filter" value={filter} onChange={handleFilterChange}>
               <option value="all">All Published Playlists</option>
@@ -105,6 +124,12 @@ const PlaylistIndex = () => {
           </div>
         )}
       </div>
+
+      {isLoggedIn && (
+        <div className="mt-4 hidden-mobile">
+          {newPlaylistButton}
+        </div>
+      )}
 
       <div className="mt-6 hidden-mobile">
         <hr />
@@ -131,7 +156,14 @@ const PlaylistIndex = () => {
         <title>Playlists - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <Playlists playlists={playlists} />
+        {isMineEmpty ? (
+          <div className="notification">
+            <p className="mb-3">You haven't made any playlists yet</p>
+            {newPlaylistButton}
+          </div>
+        ) : (
+          <Playlists playlists={playlists} />
+        )}
         {totalPages > 1 && (
           <Pagination
             totalPages={totalPages}

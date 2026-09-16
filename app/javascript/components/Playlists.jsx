@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { formatNumber, formatDurationShow, formatDate } from "./helpers/utils";
 import LikeButton from "./controls/LikeButton";
 import HighlightedText from "./controls/HighlightedText";
+import CoverArt from "./CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCalendar, faInfoCircle, faCompactDisc } from "@fortawesome/free-solid-svg-icons";
 
@@ -27,6 +28,7 @@ const Playlists = ({ playlists, highlight }) => {
         >
           <div className="main-row">
             <span className="leftside-primary">
+              <CoverArt coverArtUrls={playlist.cover_art_urls} css="cover-art-small" />
               <span className="text">
                 <HighlightedText
                   text={playlist.name}

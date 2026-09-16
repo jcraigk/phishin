@@ -5,6 +5,7 @@ class Playlist < ApplicationRecord
   has_many :tracks, through: :playlist_tracks
   has_many :likes, as: :likable, dependent: :destroy
   belongs_to :user
+  belongs_to :cover_art_track, class_name: "Track", optional: true
 
   accepts_nested_attributes_for :playlist_tracks, allow_destroy: true
 
@@ -21,7 +22,9 @@ class Playlist < ApplicationRecord
               message: "must be between 5 and 50 lowercase letters, numbers, or dashes"
             },
             uniqueness: true
+  before_validation :default_cover_art_track
   validate :validate_tracks_count
+  validate :validate_cover_art_track
 
   scope :published, -> { where(published: true) }
 
@@ -33,6 +36,15 @@ class Playlist < ApplicationRecord
 
   def save_duration
     update_column(:duration, playlist_tracks.sum(:duration)) if self.persisted?
+  end
+
+  def cover_art_urls
+    cover_art_track&.show&.cover_art_urls
+  end
+
+  def reset_cover_art_track
+    playlist_tracks.reset
+    update_column(:cover_art_track_id, first_track_id) if cover_art_track_missing?
   end
 
   def as_json_api
@@ -58,6 +70,23 @@ class Playlist < ApplicationRecord
   end
 
   private
+
+  def default_cover_art_track
+    self.cover_art_track_id = first_track_id if cover_art_track_id.nil?
+  end
+
+  def validate_cover_art_track
+    return unless cover_art_track_missing?
+    errors.add(:cover_art_track_id, "must be a track in the playlist")
+  end
+
+  def cover_art_track_missing?
+    playlist_tracks.none? { |pt| pt.track_id == cover_art_track_id }
+  end
+
+  def first_track_id
+    playlist_tracks.reject(&:marked_for_destruction?).min_by(&:position)&.track_id
+  end
 
   def validate_tracks_count
     if playlist_tracks.size > MAX_TRACKS

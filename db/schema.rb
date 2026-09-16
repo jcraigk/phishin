@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_12_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_16_011357) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -114,6 +114,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_12_130000) do
   end
 
   create_table "playlists", id: :serial, force: :cascade do |t|
+    t.integer "cover_art_track_id"
     t.datetime "created_at", precision: nil, null: false
     t.text "description"
     t.integer "duration", default: 0

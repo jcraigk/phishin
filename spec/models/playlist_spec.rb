@@ -84,6 +84,41 @@ RSpec.describe Playlist do
     end
   end
 
+  describe '#cover_art_track' do
+    let!(:playlist) { create(:playlist, tracks_count: 3) }
+    let(:first_track) { playlist.playlist_tracks.order(:position).first.track }
+    let(:second_track) { playlist.playlist_tracks.order(:position).second.track }
+
+    it 'defaults to the first track by position' do
+      expect(playlist.cover_art_track).to eq(first_track)
+    end
+
+    it 'returns the selected track' do
+      playlist.update!(cover_art_track_id: second_track.id)
+      expect(playlist.cover_art_track).to eq(second_track)
+    end
+
+    it 'falls back to the first track when the selected track is removed' do
+      playlist.update!(cover_art_track_id: second_track.id)
+      playlist.playlist_tracks.find_by(track: second_track).destroy
+      expect(playlist.reload.cover_art_track).to eq(first_track)
+    end
+
+    it 'rejects a track that is not in the playlist' do
+      playlist.cover_art_track_id = create(:track).id
+      expect(playlist).not_to be_valid
+      expect(playlist.errors[:cover_art_track_id]).to include('must be a track in the playlist')
+    end
+  end
+
+  describe '#cover_art_urls' do
+    let!(:playlist) { create(:playlist) }
+
+    it "delegates to the cover art track's show" do
+      expect(playlist.cover_art_urls).to eq(playlist.cover_art_track.show.cover_art_urls)
+    end
+  end
+
   describe 'serialization' do
     let(:playlist) { create(:playlist) }
     let(:expected_as_json_api_basic) do

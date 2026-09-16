@@ -1,5 +1,6 @@
 class ApiV2::Playlists < ApiV2::Base
   SORT_COLS = %w[name likes_count tracks_count duration updated_at]
+  COVER_ART_PRELOAD = { cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } } }
 
   helpers do
     params :playlist_params do
@@ -17,6 +18,9 @@ class ApiV2::Playlists < ApiV2::Base
                desc: \
                 "Published flag (true to make browseable/searchable " \
                 "by public users, false to make private)"
+      optional :cover_art_track_id,
+               type: Integer,
+               desc: "ID of the track whose show cover art represents the playlist (defaults to first track)"
       requires :track_ids,
                type: Array[Integer],
                desc: "Array of track IDs that make up the playlist"
@@ -80,7 +84,8 @@ class ApiV2::Playlists < ApiV2::Base
       requires :slug, type: String, desc: "Slug of the playlist"
     end
     get ":slug" do
-      playlist = Playlist.includes(:tracks).find_by!(slug: params[:slug])
+      playlist = Playlist.includes(:tracks, cover_art_track: { show: COVER_ART_PRELOAD })
+                         .find_by!(slug: params[:slug])
       present \
         playlist,
         with: ApiV2::Entities::Playlist,
@@ -107,6 +112,9 @@ class ApiV2::Playlists < ApiV2::Base
           user: current_user,
           name: params[:name],
           slug: params[:slug],
+          description: params[:description],
+          published: params[:published],
+          cover_art_track_id: params[:cover_art_track_id],
           playlist_tracks_attributes: track_attrs_from_params
         )
         present playlist, with: ApiV2::Entities::Playlist
@@ -171,7 +179,7 @@ class ApiV2::Playlists < ApiV2::Base
     end
 
     def fetch_playlists
-      Playlist.includes(:user)
+      Playlist.includes(:user, cover_art_track: { show: COVER_ART_PRELOAD })
               .then { |p| apply_filter(p) }
               .then { |p| apply_sort(p, :name, :asc) }
               .then { |p| paginate_relation(p) }
@@ -232,6 +240,7 @@ class ApiV2::Playlists < ApiV2::Base
     end
 
     def update_playlist_data(playlist)
+      cover_art_track_id = resolved_cover_art_track_id(playlist)
       ActiveRecord::Base.transaction do
         playlist.playlist_tracks.destroy_all
         playlist.update! \
@@ -239,8 +248,14 @@ class ApiV2::Playlists < ApiV2::Base
           description: params[:description],
           slug: params[:slug],
           published: params[:published],
+          cover_art_track_id:,
           playlist_tracks_attributes: track_attrs_from_params
       end
+    end
+
+    def resolved_cover_art_track_id(playlist)
+      return params[:cover_art_track_id] if params.key?(:cover_art_track_id)
+      playlist.cover_art_track_id if playlist.cover_art_track_id.in?(params[:track_ids])
     end
   end
 end

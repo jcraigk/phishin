@@ -10,6 +10,7 @@ class PlaylistTrack < ApplicationRecord
   after_create :save_playlist_duration
   after_update :save_playlist_duration
   after_destroy :save_playlist_duration
+  after_destroy :reset_playlist_cover_art_track
 
   private
 
@@ -39,5 +40,9 @@ class PlaylistTrack < ApplicationRecord
 
   def save_playlist_duration
     playlist.save_duration
+  end
+
+  def reset_playlist_cover_art_track
+    playlist.reset_cover_art_track
   end
 end
