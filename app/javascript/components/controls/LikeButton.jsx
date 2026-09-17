@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useOutletContext } from "react-router";
 import { toggleLike } from "../helpers/utils";
 import { useFeedback } from "../contexts/FeedbackContext";
@@ -10,6 +10,11 @@ const LikeButton = ({ likable, type }) => {
   const [likedByUser, setLikedByUser] = useState(likable.liked_by_user);
   const [likesCount, setLikesCount] = useState(likable.likes_count);
   const { user } = useOutletContext();
+
+  useEffect(() => {
+    setLikedByUser(likable.liked_by_user);
+    setLikesCount(likable.likes_count);
+  }, [likable.id, likable.liked_by_user, likable.likes_count]);
 
   const handleLikeToggle = async (e) => {
     e.stopPropagation();
