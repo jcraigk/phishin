@@ -27,7 +27,7 @@ class SearchService < ApplicationService
 
     if results[:track_tags].present?
       ids = results[:track_tags].map(&:track_id) + (results[:tracks]&.map(&:id) || [])
-      results[:tracks] = Track.joins(:show).merge(Show.published).includes(:show).where(id: ids)
+      results[:tracks] = Track.joins(:show).merge(Show.published).includes(:show).where(id: ids).order(:title, :position)
     end
   end
 

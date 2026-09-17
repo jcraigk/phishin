@@ -44,3 +44,350 @@
     }
   }
 }
+
+.draft-details {
+  .draft-cover-art {
+    margin-bottom: 0.8rem;
+
+    .cover-art {
+      cursor: pointer;
+    }
+
+    .cover-art-picker {
+      margin-top: 0.5rem;
+    }
+  }
+
+  .draft-name-input {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+  }
+
+  .draft-slug {
+    font-size: 0.8rem;
+    color: var(--text-gray);
+    margin-bottom: 0.6rem;
+    cursor: pointer;
+    word-break: break-all;
+
+    &:hover {
+      color: var(--blue);
+    }
+  }
+
+  .draft-description {
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+    min-height: 4rem;
+  }
+
+  .draft-visibility {
+    margin-bottom: 0.6rem;
+
+    .button.is-selected {
+      background-color: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+  }
+
+  .draft-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    color: var(--text-gray);
+  }
+
+  .draft-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .draft-hint {
+    font-size: 0.8rem;
+    color: var(--text-gray);
+    margin-top: 0.5rem;
+  }
+}
+
+.playlist-builder {
+  background-color: var(--card-bg);
+  border-radius: $radius;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  margin-bottom: 1rem;
+
+  .builder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--title-gray);
+
+    .builder-title {
+      font-size: 1.1rem;
+    }
+  }
+
+  .builder-body {
+    padding: 0 1rem 1rem 1rem;
+    max-height: 32rem;
+    overflow-y: auto;
+  }
+
+  .builder-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .builder-breadcrumb {
+    font-size: 0.95rem;
+    color: var(--text-gray);
+
+    a {
+      color: var(--blue);
+      cursor: pointer;
+    }
+  }
+
+  .builder-date-input {
+    max-width: 11rem;
+  }
+
+  .builder-recent {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.7rem;
+
+    .builder-recent-label {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+    }
+  }
+
+  .builder-loading {
+    display: flex;
+    align-items: center;
+    color: var(--text-gray);
+  }
+
+  .builder-years {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+
+    .builder-year {
+      font-weight: bold;
+
+      .builder-count {
+        margin-left: 0.4rem;
+        font-size: 0.75rem;
+        font-weight: normal;
+        color: var(--text-gray);
+      }
+    }
+  }
+
+  .builder-shows {
+    .cover-art, .cover-art::before, .loading-shimmer::before {
+      pointer-events: none;
+    }
+
+    .builder-show-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.3rem 0.5rem;
+      border-radius: $radius;
+      cursor: pointer;
+
+      &:hover:not(.no-audio) {
+        background-color: var(--inactive-gray);
+      }
+
+      &.no-audio {
+        opacity: 0.4;
+        cursor: default;
+      }
+
+      .builder-show-date {
+        font-weight: bold;
+        min-width: 7rem;
+      }
+
+      .builder-show-venue {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .builder-show-location {
+        color: var(--text-gray);
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .builder-tracks {
+    .builder-set-group .section-title {
+      margin-bottom: 0.4rem;
+
+      &:not(:first-of-type) {
+        margin-top: 1rem;
+      }
+
+      .title-left {
+        font-size: 1.2rem;
+      }
+
+      .detail-right {
+        font-size: 0.9rem;
+        color: var(--text-gray);
+      }
+    }
+
+    .builder-set-group + .builder-set-group {
+      margin-top: 1rem;
+    }
+
+    .builder-show-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+
+      .builder-show-date {
+        font-weight: bold;
+      }
+
+      .builder-show-venue {
+        font-size: 0.9rem;
+        color: var(--text-gray);
+      }
+
+      .builder-add-all {
+        margin-left: auto;
+      }
+    }
+
+    .builder-track-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: $radius;
+
+      &:hover:not(.no-audio) {
+        background-color: var(--inactive-gray);
+      }
+
+      &.active-item {
+        background-color: var(--bg-blue);
+      }
+
+      &.no-audio {
+        opacity: 0.4;
+      }
+
+      .builder-track-title {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .builder-track-duration {
+        font-size: 0.85rem;
+        color: var(--text-gray);
+        min-width: 3rem;
+        text-align: right;
+      }
+
+      .builder-track-actions {
+        display: flex;
+        gap: 0.3rem;
+
+        .is-added {
+          background-color: var(--bg-blue);
+        }
+      }
+    }
+  }
+}
+
+.draft-track-list {
+  .rightside-group {
+    width: auto;
+  }
+
+  .rightside-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-right: 0.3rem;
+
+    .draft-reposition select {
+      max-width: 9rem;
+    }
+  }
+
+  .draft-empty {
+    color: var(--text-gray);
+  }
+}
+
+@media (max-width: 1023px) {
+  .playlist-builder {
+    .builder-track-row .builder-track-tags,
+    .builder-show-row .builder-show-location {
+      display: none;
+    }
+  }
+
+  .draft-track-list .rightside-controls .draft-reposition select {
+    max-width: 4.5rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .draft-track-list .rightside-controls .draft-reposition select {
+    max-width: 3.4rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .draft-page #layout-container #sidebar {
+    display: block !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .draft-page #sidebar .sidebar-content {
+    display: block;
+  }
+}
+
+.inline-spinner {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-right: 0.5rem;
+  border: 2px solid color-mix(in srgb, var(--blue) 35%, transparent);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  flex-shrink: 0;
+  vertical-align: middle;
+  animation: track-loading-spin 0.6s linear infinite;
+}

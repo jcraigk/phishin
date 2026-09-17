@@ -16,6 +16,21 @@ module FeatureHelpers
     expect(jwt).to be_present
   end
 
+  # Signs in without submitting the login form. After a password form submits,
+  # headless Chrome stops delivering synthetic mouse input after the next click
+  # for the rest of the example, so specs that click more than once after
+  # signing in should use this instead of sign_in.
+  def sign_in_via_jwt(user)
+    visit "/"
+    page.execute_script(<<~JS)
+      localStorage.setItem("jwt", #{UserJwtService.call(user).to_json});
+      localStorage.setItem("username", #{user.username.to_json});
+      localStorage.setItem("email", #{user.email.to_json});
+      localStorage.setItem("usernameUpdatedAt", "");
+      localStorage.setItem("admin", #{user.admin?.to_json});
+    JS
+  end
+
   def format_duration_show(milliseconds)
     total_minutes = (milliseconds / 60000).floor
     hours = (total_minutes / 60).floor

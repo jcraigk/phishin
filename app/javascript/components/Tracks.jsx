@@ -23,14 +23,15 @@ const PlaybackIndicator = ({ isLoading }) => (
   )
 );
 
-const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, highlight, trackRefs, trackSlug }) => {
+const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, highlight, trackRefs, trackSlug, renderRowControls }) => {
   const { playTrack, activeTrack, setCustomPlaylist, isPlaying, isLoading } = useOutletContext();
+  const isPlaylistView = viewStyle === "playlist" || viewStyle === "draft";
 
   const handleTrackClick = (track) => {
     if (track.audio_status === 'missing') return;
 
     playTrack(tracks, track);
-    if (viewStyle !== "playlist") {
+    if (!isPlaylistView) {
       setCustomPlaylist(null);
     }
     // Don't reset customPlaylist when viewStyle === "playlist"
@@ -108,7 +109,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
             )}
             <>
               <HighlightedText text={truncate(track.title, 50)} highlight={highlight} />
-              {viewStyle === "playlist" && (
+              {isPlaylistView && (
                 <span className="text date-link">
                   <Link to={`/${track.show_date}/${track.slug}`} onClick={(e) => e.stopPropagation()}>
                     {formatDate(track.show_date)}
@@ -139,11 +140,17 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                 <LikeButton likable={track} type="Track" />
               )}
             </span>
+            {renderRowControls && (
+              <span className="rightside-controls" onClick={(e) => e.stopPropagation()}>
+                {renderRowControls(track, index)}
+              </span>
+            )}
             <span className="rightside-menu">
               <TrackContextMenu
                 track={track}
                 indexInPlaylist={index}
                 highlight={highlight}
+                viewStyle={viewStyle}
               />
             </span>
           </div>
@@ -155,7 +162,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
   return (
     <>
       {tracks.length === 0 ? (
-        <h2 className="title">{viewStyle === "playlist" ? "No tracks added" : "No tracks found"}</h2>
+        <h2 className="title">{isPlaylistView ? "No tracks added" : "No tracks found"}</h2>
       ) : (
         <ul>
           {viewStyle === "show"

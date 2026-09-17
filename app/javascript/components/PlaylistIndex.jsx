@@ -60,7 +60,7 @@ const PlaylistIndex = () => {
   const handleNewPlaylist = () => {
     const draftHasContent = draftPlaylist.length > 0 || draftPlaylistMeta.id || draftPlaylistMeta.name;
     if (draftHasContent && !isDraftPlaylistSaved) {
-      const confirmed = window.confirm("Your draft playlist has unsaved changes. Discard them and start a new playlist?");
+      const confirmed = window.confirm("The playlist editor has unsaved changes. Discard them and start a new playlist?");
       if (!confirmed) return;
     }
     resetDraftPlaylist();

@@ -8,7 +8,7 @@ import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faCirclePlus, faDownload, faMusic, faCircleChevronLeft, faCircleChevronRight, faTrashAlt, faClock } from "@fortawesome/free-solid-svg-icons";
 
-const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
+const TrackContextMenu = ({ track, indexInPlaylist = null, highlight, viewStyle }) => {
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
   const { hideMissingAudio } = useAudioFilter();
@@ -40,17 +40,22 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
       return;
     }
     setDraftPlaylist([...draftPlaylist, track]);
-    setNotice("Track added to draft playlist");
+    setNotice("Track added to playlist editor");
     hideDropdown();
     setIsDraftPlaylistSaved(false);
   };
 
+  const isInDraft = draftPlaylist.some((t) => t.id === track.id);
+
   const handleRemoveFromPlaylist = (e) => {
     e.stopPropagation();
     const updatedPlaylist = [...draftPlaylist];
-    updatedPlaylist.splice(indexInPlaylist, 1);
+    const removeAt = viewStyle === "draft"
+      ? indexInPlaylist
+      : updatedPlaylist.findIndex((t) => t.id === track.id);
+    updatedPlaylist.splice(removeAt, 1);
     setDraftPlaylist(updatedPlaylist);
-    setNotice("Track removed from draft playlist");
+    setNotice("Track removed from playlist editor");
     hideDropdown();
     setIsDraftPlaylistSaved(false);
   };
@@ -190,20 +195,20 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
 
                 <a className="dropdown-item" onClick={handleAddToPlaylist}>
                   <FontAwesomeIcon icon={faCirclePlus} className="icon" />
-                  Add to Draft Playlist
+                  Add to Playlist Editor
                 </a>
 
-                {draftPlaylist.includes(track) && (
+                {isInDraft && (
                   <a className="dropdown-item" onClick={handleRemoveFromPlaylist}>
                     <FontAwesomeIcon icon={faTrashAlt} className="icon" />
-                    Remove from Draft Playlist
+                    Remove from Playlist Editor
                   </a>
                 )}
 
-                {draftPlaylist.includes(track) && (
+                {isInDraft && viewStyle === "draft" && (
                   <a className="dropdown-item" onClick={handlePlaylistEntry}>
                     <FontAwesomeIcon icon={faClock} className="icon" />
-                    Edit Draft Playlist Entry
+                    Edit Playlist Entry
                   </a>
                 )}
               </>
@@ -212,7 +217,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
         </div>
       </div>
 
-      {draftPlaylist.includes(track) && (
+      {isInDraft && viewStyle === "draft" && (
         <DraftPlaylistTrackModal
           isOpen={isEditModalOpen}
           onRequestClose={() => setIsEditModalOpen(false)}

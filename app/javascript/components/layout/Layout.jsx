@@ -5,7 +5,6 @@ import Loader from "../controls/Loader";
 import Player from "../controls/Player";
 import Tooltip from "../controls/Tooltip";
 import AppModal from "../modals/AppModal";
-import DraftPlaylistModal from "../modals/DraftPlaylistModal";
 import { useFeedback } from "../contexts/FeedbackContext";
 import { AudioFilterProvider, useAudioFilter } from "../contexts/AudioFilterContext";
 
@@ -18,18 +17,50 @@ const initialDraftPlaylistMeta = {
   cover_art_track_id: null,
 };
 
+const DRAFT_STORAGE_KEY = "draftPlaylistState";
+
+const readStoredDraft = () => {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeStoredDraft = (state) => {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Storage unavailable or full; the in-memory draft still works
+  }
+};
+
+const clearStoredDraft = () => {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(DRAFT_STORAGE_KEY);
+  } catch {
+    // Ignore
+  }
+};
+
 const LayoutContent = ({ props, navigate }) => {
   const navigation = useNavigation();
   const [user, setUser] = useState(null);
   const [isAppModalOpen, setIsAppModalOpen] = useState(false);
   const [appModalContent, setAppModalContent] = useState(null);
-  const [isDraftPlaylistModalOpen, setIsDraftPlaylistModalOpen] = useState(false);
   const [activePlaylist, setActivePlaylist] = useState([]);
   const [activeTrack, setActiveTrack] = useState(null);
   const [customPlaylist, setCustomPlaylist] = useState(null);
-  const [draftPlaylist, setDraftPlaylist] = useState([]);
-  const [draftPlaylistMeta, setDraftPlaylistMeta] = useState(initialDraftPlaylistMeta);
-  const [isDraftPlaylistSaved, setIsDraftPlaylistSaved] = useState(false);
+  const [draftPlaylist, setDraftPlaylist] = useState(() => readStoredDraft()?.tracks ?? []);
+  const [draftPlaylistMeta, setDraftPlaylistMeta] = useState(() => ({
+    ...initialDraftPlaylistMeta,
+    ...(readStoredDraft()?.meta ?? {})
+  }));
+  const [isDraftPlaylistSaved, setIsDraftPlaylistSaved] = useState(() => readStoredDraft()?.saved ?? false);
   const [viewMode, setViewMode] = useState("grid");
   const [sortOption, setSortOption] = useState("desc");
   const [shouldAutoplay, setShouldAutoplay] = useState(false);
@@ -103,9 +134,15 @@ const LayoutContent = ({ props, navigate }) => {
     setNotice("Logged out successfully");
   };
 
+  useEffect(() => {
+    writeStoredDraft({ tracks: draftPlaylist, meta: draftPlaylistMeta, saved: isDraftPlaylistSaved });
+  }, [draftPlaylist, draftPlaylistMeta, isDraftPlaylistSaved]);
+
   const resetDraftPlaylist = () => {
     setDraftPlaylist([]);
     setDraftPlaylistMeta(initialDraftPlaylistMeta);
+    setIsDraftPlaylistSaved(false);
+    clearStoredDraft();
   };
 
   const playTrack = (playlist, track, shouldAutoplay = true) => {
@@ -122,14 +159,6 @@ const LayoutContent = ({ props, navigate }) => {
   const closeAppModal = () => {
     setIsAppModalOpen(false);
     setAppModalContent(null);
-  };
-
-  const openDraftPlaylistModal = () => {
-    setIsDraftPlaylistModalOpen(true);
-  };
-
-  const closeDraftPlaylistModal = () => {
-    setIsDraftPlaylistModalOpen(false);
   };
 
   return (
@@ -161,8 +190,6 @@ const LayoutContent = ({ props, navigate }) => {
             playTrack,
             openAppModal,
             closeAppModal,
-            openDraftPlaylistModal,
-            closeDraftPlaylistModal,
             viewMode,
             setViewMode,
             sortOption,
@@ -187,17 +214,6 @@ const LayoutContent = ({ props, navigate }) => {
         isOpen={isAppModalOpen}
         onRequestClose={closeAppModal}
         modalContent={appModalContent}
-      />
-      <DraftPlaylistModal
-        isOpen={isDraftPlaylistModalOpen}
-        onRequestClose={closeDraftPlaylistModal}
-        draftPlaylist={draftPlaylist}
-        setDraftPlaylist={setDraftPlaylist}
-        draftPlaylistMeta={draftPlaylistMeta}
-        setDraftPlaylistMeta={setDraftPlaylistMeta}
-        isDraftPlaylistSaved={isDraftPlaylistSaved}
-        setIsDraftPlaylistSaved={setIsDraftPlaylistSaved}
-        resetDraftPlaylist={resetDraftPlaylist}
       />
     </>
   );

@@ -111,7 +111,7 @@ RSpec.describe SearchService do
         tags: [ tag2, tag1 ],
         show_tags: [ show_tag ],
         track_tags: [ track_tag ],
-        tracks: Track.where(id: [ track, track_tag.track ].map(&:id)),
+        tracks: Track.where(id: [ track, track_tag.track ].map(&:id)).order(:title, :position),
         playlists: [],
         tours: []
       }

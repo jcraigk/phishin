@@ -20,7 +20,7 @@ import LikeButton from "./controls/LikeButton";
 import CoverArt from "./CoverArt";
 import { formatDate, formatDurationShow } from "./helpers/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faCircleXmark, faInfoCircle, faCalendar, faFileImport, faCompactDisc } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faCircleXmark, faInfoCircle, faCalendar, faEdit, faCopy, faCompactDisc } from "@fortawesome/free-solid-svg-icons";
 
 const Playlist = () => {
   const playlist = useLoaderData();
@@ -47,6 +47,8 @@ const Playlist = () => {
     setShowNotification(false);
   };
 
+  const isOwner = user !== "anonymous" && playlist.username === user?.username;
+
   const handleSetAsDraft = () => {
     setDraftPlaylist(
       playlist.entries.map(entry => ({
@@ -56,7 +58,6 @@ const Playlist = () => {
       }))
     );
 
-    const isOwner = playlist.username === user.username;
     const id = isOwner ? playlist.id : null;
     const namePrefix = isOwner ? "" : "Copy of ";
     const slugPrefix = isOwner ? "" : "copy-of-";
@@ -100,8 +101,8 @@ const Playlist = () => {
         </div>
 
         <button className="button" onClick={handleSetAsDraft}>
-          <FontAwesomeIcon icon={faFileImport} className="mr-1" />
-          Set as Draft
+          <FontAwesomeIcon icon={isOwner ? faEdit : faCopy} className="mr-1" />
+          {isOwner ? "Edit Playlist" : "Edit a Copy"}
         </button>
       </div>
     </div>

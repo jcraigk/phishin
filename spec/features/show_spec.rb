@@ -95,7 +95,7 @@ RSpec.describe "Shows", :js do
     within(".context-dropdown-content") do
       expect(page).to have_css("a.dropdown-item", text: "Share")
       expect(page).to have_css("a.dropdown-item", text: "Download MP3")
-      expect(page).to have_css("a.dropdown-item", text: "Add to Draft Playlist")
+      expect(page).to have_css("a.dropdown-item", text: "Add to Playlist Editor")
     end
   end
 end
