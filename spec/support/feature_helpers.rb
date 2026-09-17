@@ -43,6 +43,14 @@ module FeatureHelpers
     end
   end
 
+  def emulate_touch_device
+    page.driver.browser.execute_cdp("Emulation.setTouchEmulationEnabled", enabled: true, maxTouchPoints: 1)
+  end
+
+  def reset_touch_emulation
+    page.driver.browser.execute_cdp("Emulation.setTouchEmulationEnabled", enabled: false)
+  end
+
   def format_date_long(date_string)
     Date.parse(date_string.to_s).strftime("%B %-d, %Y")
   end
