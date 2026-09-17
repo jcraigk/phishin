@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Draft Playlist", :js do
+RSpec.describe "Playlist editor", :js do
   let(:user) { create(:user) }
   let!(:show) { create(:show, date: "1995-12-31", audio_status: "complete") }
 
@@ -8,7 +8,7 @@ RSpec.describe "Draft Playlist", :js do
     create(:track, show:, title: "Wilson", position: 1)
     create(:track, show:, title: "Reba", position: 2)
     create(:track, show:, title: "Weekapaug", position: 3)
-sign_in_via_jwt(user)
+    sign_in_via_jwt(user)
   end
 
 

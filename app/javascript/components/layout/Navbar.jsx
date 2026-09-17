@@ -78,7 +78,7 @@ const Navbar = ({ user, handleLogout }) => {
   const userLinks = [
     { path: "/my-shows", label: "My Shows", icon: faGuitar },
     { path: "/my-tracks", label: "My Tracks", icon: faRecordVinyl },
-    { path: "/draft-playlist", label: "Draft Playlist", icon: faListCheck },
+    { path: "/draft-playlist", label: "Playlist Editor", icon: faListCheck },
     { path: "/playlists?filter=mine", label: "My Playlists", icon: faListOl },
   ];
 

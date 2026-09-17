@@ -21,7 +21,7 @@ class MetaTagService < ApplicationService
   TITLES = {
     "/api-docs" => "API Docs",
     "/contact-info" => "Contact Info",
-    "/draft-playlist" => "Draft Playlist",
+    "/draft-playlist" => "Playlist Editor",
     "/playlists" => "Playlists",
     "/faq" => "FAQ",
     "/login" => "Login",

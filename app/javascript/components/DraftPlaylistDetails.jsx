@@ -8,7 +8,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCloudArrowUp,
   faShareFromSquare,
-  faFileImport,
   faTrash,
   faCircleCheck,
   faExclamationCircle,
@@ -34,8 +33,6 @@ const slugify = (value) =>
 
 const DraftPlaylistDetails = () => {
   const {
-    activePlaylist,
-    setDraftPlaylist,
     draftPlaylist,
     draftPlaylistMeta,
     setDraftPlaylistMeta,
@@ -47,6 +44,8 @@ const DraftPlaylistDetails = () => {
   const navigate = useNavigate();
   const [slugEditable, setSlugEditable] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const { id, name, slug, description, published, cover_art_track_id } = draftPlaylistMeta;
 
@@ -81,6 +80,7 @@ const DraftPlaylistDetails = () => {
     const url = id ? `/api/v2/playlists/${id}` : "/api/v2/playlists";
     const method = id ? "PUT" : "POST";
 
+    setSaving(true);
     try {
       const response = await authFetch(url, {
         method,
@@ -104,6 +104,8 @@ const DraftPlaylistDetails = () => {
       } else {
         setAlert("Error saving playlist");
       }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -113,13 +115,14 @@ const DraftPlaylistDetails = () => {
   };
 
   const handleClear = () => {
-    if (window.confirm("Reset the draft playlist? Any unsaved changes will be lost.")) {
+    if (window.confirm("Reset the playlist editor? Any unsaved changes will be lost.")) {
       resetDraftPlaylist();
     }
   };
 
   const handleDelete = async () => {
     if (!window.confirm("Delete this playlist? This cannot be undone.")) return;
+    setDeleting(true);
     try {
       const response = await authFetch(`/api/v2/playlists/${id}`, { method: "DELETE" });
       if (!response.ok) throw response;
@@ -128,12 +131,9 @@ const DraftPlaylistDetails = () => {
       navigate("/playlists?filter=mine");
     } catch {
       setAlert("Error deleting playlist");
+    } finally {
+      setDeleting(false);
     }
-  };
-
-  const handleImportActive = () => {
-    setDraftPlaylist(activePlaylist);
-    setIsDraftPlaylistSaved(false);
   };
 
   return (
@@ -239,11 +239,20 @@ const DraftPlaylistDetails = () => {
         <button
           className="button"
           onClick={handleSave}
-          disabled={draftPlaylist.length < 2}
+          disabled={draftPlaylist.length < 2 || saving}
           title={draftPlaylist.length < 2 ? "Add at least 2 tracks to save" : ""}
         >
-          <FontAwesomeIcon icon={faCloudArrowUp} className="mr-1" />
-          Save
+          {saving ? (
+            <>
+              <span className="inline-spinner" aria-hidden="true" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <FontAwesomeIcon icon={faCloudArrowUp} className="mr-1" />
+              Save
+            </>
+          )}
         </button>
         {id && (
           <button className="button" onClick={handleShare}>
@@ -251,20 +260,23 @@ const DraftPlaylistDetails = () => {
             Share
           </button>
         )}
-        {activePlaylist.length > 0 && (
-          <button className="button" onClick={handleImportActive}>
-            <FontAwesomeIcon icon={faFileImport} className="mr-1" />
-            Import Active Playlist
-          </button>
-        )}
         <button className="button" onClick={handleClear}>
           <FontAwesomeIcon icon={faTrash} className="mr-1" />
           Clear
         </button>
         {id && (
-          <button className="button" onClick={handleDelete}>
-            <FontAwesomeIcon icon={faTrash} className="mr-1" />
-            Delete
+          <button className="button" onClick={handleDelete} disabled={deleting}>
+            {deleting ? (
+              <>
+                <span className="inline-spinner" aria-hidden="true" />
+                Deleting...
+              </>
+            ) : (
+              <>
+                <FontAwesomeIcon icon={faTrash} className="mr-1" />
+                Delete
+              </>
+            )}
           </button>
         )}
       </div>

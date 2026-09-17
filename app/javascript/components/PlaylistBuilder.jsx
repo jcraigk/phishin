@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useOutletContext } from "react-router";
-import { authFetch, formatDate, formatDurationTrack } from "./helpers/utils";
+import { authFetch, formatDate, formatDurationTrack, formatDurationShow } from "./helpers/utils";
 import { useFeedback } from "./contexts/FeedbackContext";
 import CoverArt from "./CoverArt";
 import TagBadges from "./controls/TagBadges";
@@ -55,7 +55,7 @@ const PlaylistBuilder = () => {
   const [period, setPeriod] = useState(null);
   const [shows, setShows] = useState(null);
   const [show, setShow] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(null);
   const [dateInput, setDateInput] = useState("");
   const [recentShows, setRecentShows] = useState(() => readLocal(RECENT_KEY, []));
 
@@ -65,19 +65,19 @@ const PlaylistBuilder = () => {
 
   useEffect(() => {
     if (collapsed || years) return;
-    setLoading(true);
+    setLoading("years");
     authFetch("/api/v2/years")
       .then((response) => (response.ok ? response.json() : []))
       .then((data) => setYears(data))
       .catch(() => setAlert("Error loading years"))
-      .finally(() => setLoading(false));
+      .finally(() => setLoading(null));
   }, [collapsed, years]);
 
   const loadShows = async (selectedPeriod) => {
     setPeriod(selectedPeriod);
     setShow(null);
     setShows(null);
-    setLoading(true);
+    setLoading("shows");
     const filter = selectedPeriod.includes("-") ? `year_range=${selectedPeriod}` : `year=${selectedPeriod}`;
     try {
       const response = await authFetch(`/api/v2/shows?${filter}&sort=date:asc&per_page=1000`);
@@ -87,12 +87,12 @@ const PlaylistBuilder = () => {
     } catch {
       setAlert("Error loading shows");
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
 
   const loadShow = async (date) => {
-    setLoading(true);
+    setLoading("tracks");
     try {
       const response = await authFetch(`/api/v2/shows/${date}`);
       if (!response.ok) throw response;
@@ -102,7 +102,7 @@ const PlaylistBuilder = () => {
     } catch {
       setAlert(`No show found for ${date}`);
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
 
@@ -135,7 +135,7 @@ const PlaylistBuilder = () => {
     setDraftPlaylist([...draftPlaylist, ...additions]);
     setIsDraftPlaylistSaved(false);
     rememberShow(show);
-    setNotice(additions.length === 1 ? "Track added to draft playlist" : `${additions.length} tracks added to draft playlist`);
+    setNotice(additions.length === 1 ? "Track added to playlist editor" : `${additions.length} tracks added to playlist editor`);
   };
 
   const removeTrack = (track) => {
@@ -145,7 +145,7 @@ const PlaylistBuilder = () => {
     updated.splice(idx, 1);
     setDraftPlaylist(updated);
     setIsDraftPlaylistSaved(false);
-    setNotice("Track removed from draft playlist");
+    setNotice("Track removed from playlist editor");
   };
 
   const tracksWithAudio = show?.tracks?.filter((t) => t.audio_status !== "missing") ?? [];
@@ -195,7 +195,7 @@ const PlaylistBuilder = () => {
             className={`builder-show-row ${missing ? "no-audio" : ""}`}
             onClick={() => !missing && loadShow(s.date)}
           >
-            <CoverArt coverArtUrls={s.cover_art_urls} css="cover-art-small" />
+            <CoverArt coverArtUrls={s.cover_art_urls} css="cover-art-small" size="medium" />
             <span className="builder-show-date">{formatDate(s.date)}</span>
             <span className="builder-show-venue">{s.venue_name}</span>
             <span className="builder-show-location">{s.venue?.location}</span>
@@ -205,10 +205,39 @@ const PlaylistBuilder = () => {
     </ul>
   );
 
+  const renderTrackRow = (track) => {
+    const missing = track.audio_status === "missing";
+    const added = isInDraft(track);
+    const isActive = track.id === activeTrack?.id;
+    return (
+      <li key={track.id} className={`builder-track-row ${missing ? "no-audio" : ""} ${isActive ? "active-item" : ""}`}>
+        <span className="builder-track-title">{track.title}</span>
+        <span className="builder-track-tags"><TagBadges tags={track.tags} parentId={`builder-${track.id}`} /></span>
+        <span className="builder-track-duration">{formatDurationTrack(track.duration)}</span>
+        <span className="builder-track-actions">
+          <button className="button is-small" onClick={() => previewTrack(track)} disabled={missing} title="Preview">
+            <FontAwesomeIcon icon={faPlay} />
+          </button>
+          {added ? (
+            <button className="button is-small is-added" onClick={() => removeTrack(track)} title="Remove from draft">
+              <FontAwesomeIcon icon={faCheck} className="mr-1" />
+              Added
+            </button>
+          ) : (
+            <button className="button is-small" onClick={() => addTracks([track])} disabled={missing}>
+              <FontAwesomeIcon icon={faPlus} className="mr-1" />
+              Add
+            </button>
+          )}
+        </span>
+      </li>
+    );
+  };
+
   const renderTracks = () => (
     <div className="builder-tracks">
       <div className="builder-show-header">
-        <CoverArt coverArtUrls={show.cover_art_urls} css="cover-art-small" />
+        <CoverArt coverArtUrls={show.cover_art_urls} css="cover-art-small" size="medium" />
         <div>
           <div className="builder-show-date">{formatDate(show.date)}</div>
           <div className="builder-show-venue">{show.venue_name}, {show.venue?.location}</div>
@@ -218,37 +247,24 @@ const PlaylistBuilder = () => {
           {allAdded ? "All added" : "Add all"}
         </button>
       </div>
-      <ul>
-        {show.tracks.map((track) => {
-          const missing = track.audio_status === "missing";
-          const added = isInDraft(track);
-          const isActive = track.id === activeTrack?.id;
-          return (
-            <li key={track.id} className={`builder-track-row ${missing ? "no-audio" : ""} ${isActive ? "active-item" : ""}`}>
-              <span className="builder-track-set">{track.set_name}</span>
-              <span className="builder-track-title">{track.title}</span>
-              <span className="builder-track-tags"><TagBadges tags={track.tags} parentId={`builder-${track.id}`} /></span>
-              <span className="builder-track-duration">{formatDurationTrack(track.duration)}</span>
-              <span className="builder-track-actions">
-                <button className="button is-small" onClick={() => previewTrack(track)} disabled={missing} title="Preview">
-                  <FontAwesomeIcon icon={faPlay} />
-                </button>
-                {added ? (
-                  <button className="button is-small is-added" onClick={() => removeTrack(track)} title="Remove from draft">
-                    <FontAwesomeIcon icon={faCheck} className="mr-1" />
-                    Added
-                  </button>
-                ) : (
-                  <button className="button is-small" onClick={() => addTracks([track])} disabled={missing}>
-                    <FontAwesomeIcon icon={faPlus} className="mr-1" />
-                    Add
-                  </button>
-                )}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
+      {Object.entries(
+        show.tracks.reduce((groups, track) => {
+          (groups[track.set_name] = groups[track.set_name] || []).push(track);
+          return groups;
+        }, {})
+      ).map(([setName, setTracks]) => (
+        <div key={setName} className="set-group builder-set-group">
+          <div className="section-title">
+            <div className="title-left">{setName}</div>
+            <span className="detail-right">
+              {formatDurationShow(setTracks.reduce((total, t) => t.audio_status === "missing" ? total : total + t.duration, 0))}
+            </span>
+          </div>
+          <ul>
+            {setTracks.map((track) => renderTrackRow(track))}
+          </ul>
+        </div>
+      ))}
     </div>
   );
 
@@ -294,7 +310,12 @@ const PlaylistBuilder = () => {
             </div>
           )}
 
-          {loading ? <p className="builder-loading">Loading...</p> : renderBody()}
+          {loading ? (
+            <p className="builder-loading">
+              <span className="inline-spinner" aria-hidden="true" />
+              Loading {loading}...
+            </p>
+          ) : renderBody()}
         </div>
       )}
     </div>

@@ -10,6 +10,7 @@ import { useFeedback } from "./contexts/FeedbackContext";
 
 const DraftPlaylist = () => {
   const { draftPlaylist, draftPlaylistMeta, user } = useOutletContext();
+  const heading = draftPlaylistMeta.id ? `Editing: ${draftPlaylistMeta.name}` : "New Playlist";
   const { setAlert } = useFeedback();
   const navigate = useNavigate();
 
@@ -22,7 +23,7 @@ const DraftPlaylist = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="sidebar-title">Draft Playlist</h1>
+      <h1 className="sidebar-title">{heading}</h1>
       <DraftPlaylistDetails />
     </div>
   );
@@ -30,7 +31,7 @@ const DraftPlaylist = () => {
   return (
     <>
       <Helmet>
-        <title>{`${draftPlaylistMeta.name || "Draft Playlist"} - Phish.in`}</title>
+        <title>{`${heading} - Phish.in`}</title>
       </Helmet>
       <div className="draft-page">
       <LayoutWrapper sidebarContent={sidebarContent}>

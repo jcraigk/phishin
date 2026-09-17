@@ -56,7 +56,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
     }
     e.stopPropagation();
     setDraftPlaylist([...draftPlaylist, ...show.tracks]);
-    setNotice("Show added to draft playlist");
+    setNotice("Show added to playlist editor");
     hideDropdown();
     setIsDraftPlaylistSaved(false);
   };

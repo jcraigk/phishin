@@ -15,7 +15,7 @@ const TrackInfo = ({ activeTrack, customPlaylist }) => (
     <div className="track-info">
       {customPlaylist ? (
         <Link to={customPlaylist.name ? `/play/${customPlaylist.slug}` : '/draft-playlist'}>
-          {customPlaylist.name || 'Draft Playlist'}
+          {customPlaylist.name || 'Playlist Editor'}
         </Link>
       ) : (
         <>

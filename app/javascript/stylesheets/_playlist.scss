@@ -177,6 +177,8 @@
   }
 
   .builder-loading {
+    display: flex;
+    align-items: center;
     color: var(--text-gray);
   }
 
@@ -239,6 +241,27 @@
   }
 
   .builder-tracks {
+    .builder-set-group .section-title {
+      margin-bottom: 0.4rem;
+
+      &:not(:first-of-type) {
+        margin-top: 1rem;
+      }
+
+      .title-left {
+        font-size: 1.2rem;
+      }
+
+      .detail-right {
+        font-size: 0.9rem;
+        color: var(--text-gray);
+      }
+    }
+
+    .builder-set-group + .builder-set-group {
+      margin-top: 1rem;
+    }
+
     .builder-show-header {
       display: flex;
       align-items: center;
@@ -276,12 +299,6 @@
 
       &.no-audio {
         opacity: 0.4;
-      }
-
-      .builder-track-set {
-        font-size: 0.75rem;
-        color: var(--text-gray);
-        min-width: 2.5rem;
       }
 
       .builder-track-title {
@@ -360,4 +377,17 @@
   .draft-page #sidebar .sidebar-content {
     display: block;
   }
+}
+
+.inline-spinner {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-right: 0.5rem;
+  border: 2px solid color-mix(in srgb, var(--blue) 35%, transparent);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  flex-shrink: 0;
+  vertical-align: middle;
+  animation: track-loading-spin 0.6s linear infinite;
 }

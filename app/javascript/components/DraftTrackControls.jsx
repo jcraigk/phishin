@@ -25,7 +25,7 @@ const DraftTrackControls = ({ track, index }) => {
     updated.splice(index, 1);
     setDraftPlaylist(updated);
     setIsDraftPlaylistSaved(false);
-    setNotice("Track removed from draft playlist");
+    setNotice("Track removed from playlist editor");
   };
 
   return (

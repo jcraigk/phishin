@@ -40,7 +40,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight, viewStyle 
       return;
     }
     setDraftPlaylist([...draftPlaylist, track]);
-    setNotice("Track added to draft playlist");
+    setNotice("Track added to playlist editor");
     hideDropdown();
     setIsDraftPlaylistSaved(false);
   };
@@ -55,7 +55,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight, viewStyle 
       : updatedPlaylist.findIndex((t) => t.id === track.id);
     updatedPlaylist.splice(removeAt, 1);
     setDraftPlaylist(updatedPlaylist);
-    setNotice("Track removed from draft playlist");
+    setNotice("Track removed from playlist editor");
     hideDropdown();
     setIsDraftPlaylistSaved(false);
   };
@@ -195,20 +195,20 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight, viewStyle 
 
                 <a className="dropdown-item" onClick={handleAddToPlaylist}>
                   <FontAwesomeIcon icon={faCirclePlus} className="icon" />
-                  Add to Draft Playlist
+                  Add to Playlist Editor
                 </a>
 
                 {isInDraft && (
                   <a className="dropdown-item" onClick={handleRemoveFromPlaylist}>
                     <FontAwesomeIcon icon={faTrashAlt} className="icon" />
-                    Remove from Draft Playlist
+                    Remove from Playlist Editor
                   </a>
                 )}
 
                 {isInDraft && viewStyle === "draft" && (
                   <a className="dropdown-item" onClick={handlePlaylistEntry}>
                     <FontAwesomeIcon icon={faClock} className="icon" />
-                    Edit Draft Playlist Entry
+                    Edit Playlist Entry
                   </a>
                 )}
               </>
