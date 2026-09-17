@@ -65,6 +65,30 @@ RSpec.describe "Shows", :js do
     end
   end
 
+  context "when navigating to the next show after liking" do
+    before do
+      create(:show, venue:, date: "2023-08-02")
+      sign_in_via_jwt(user)
+      visit "/2023-08-01"
+    end
+
+    it "shows the next show's like state instead of the previous show's" do
+      within(".sidebar-content .like-container") do
+        find(".heart-icon").click
+        expect(page).to have_css(".heart-icon.liked")
+        expect(page).to have_text("4")
+      end
+
+      click_link "Next show"
+
+      expect(page).to have_text("Aug 2, 2023")
+      within(".sidebar-content .like-container") do
+        expect(page).to have_text("0")
+        expect(page).to have_no_css(".heart-icon.liked")
+      end
+    end
+  end
+
   it "displays the track context menu for the first track" do
     first(".list-item .context-dropdown .button").click
 
