@@ -14,6 +14,6 @@ module ApiV2::Helpers::TrafficHelper
   private
 
   def remote_ip
-    (env["action_dispatch.remote_ip"] || request.ip).to_s
+    request.get_header("HTTP_CF_CONNECTING_IP").presence || (env["action_dispatch.remote_ip"] || request.ip).to_s
   end
 end

@@ -27,6 +27,12 @@ RSpec.describe "API v2 traffic tracking" do
     expect(buffered.keys.first[:ip]).to eq("203.0.113.5")
   end
 
+  it "prefers the cloudflare connecting ip over the proxy chain" do
+    get_api "/shows/1997-11-22", headers: { "CF-Connecting-IP" => "198.51.100.9", "X-Forwarded-For" => "203.0.113.5" }
+
+    expect(buffered.keys.first[:ip]).to eq("198.51.100.9")
+  end
+
   it "records not found responses on matched routes" do
     get_api "/shows/1997-11-23"
 
