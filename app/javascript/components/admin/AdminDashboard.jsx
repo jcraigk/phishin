@@ -6,12 +6,14 @@ import {
   faTrashCan,
   faCloudArrowUp,
   faXmark,
+  faChartSimple,
 } from "@fortawesome/free-solid-svg-icons";
 import { adminGet, adminPost, adminDelete } from "./adminApi";
 import { formatDate } from "../helpers/utils";
 import { plural } from "./format";
 import { STOP_IMPORT_CONFIRM, deleteDraftMessage } from "./messages";
 import ShowStatusPill from "./ShowStatusPill";
+import { trafficStats } from "./AdminTraffic";
 
 const KIND_LABELS = {
   bulk_audio_prepare: "Bulk audio prep",
@@ -60,7 +62,7 @@ const Card = ({ title, count, action, children }) => (
     <header className="admin-card-header">
       <h2>
         {title}
-        {count != null && count > 0 && <span className="admin-count">{count}</span>}
+        {count != null && count > 0 && <span className="admin-count">{count.toLocaleString()}</span>}
       </h2>
       {action}
     </header>
@@ -128,6 +130,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [drafts, setDrafts] = useState(null);
   const [jobs, setJobs] = useState(null);
+  const [usage, setUsage] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -136,6 +139,9 @@ const AdminDashboard = () => {
       .catch((e) => setError(e.message));
     adminGet("/jobs?limit=20")
       .then((data) => setJobs(data.jobs))
+      .catch((e) => setError(e.message));
+    adminGet("/traffic?window=7d")
+      .then(setUsage)
       .catch((e) => setError(e.message));
   }, []);
 
@@ -173,6 +179,7 @@ const AdminDashboard = () => {
       {error && <p className="admin-error">{error}</p>}
 
       <div className="admin-grid">
+        <div className="admin-grid-column">
         <Card
           title="Draft Shows"
           count={drafts?.length}
@@ -198,6 +205,42 @@ const AdminDashboard = () => {
           )}
         </Card>
 
+        <Card
+          title="Traffic"
+          count={usage?.total}
+          action={
+            <button type="button" title="Requests by route, IP and user agent" onClick={() => navigate("/admin/traffic")}>
+              <FontAwesomeIcon icon={faChartSimple} /> Details
+            </button>
+          }
+        >
+          {usage === null ? (
+            <Empty>Loading</Empty>
+          ) : usage.total === 0 ? (
+            <Empty>No requests in the last 7 days.</Empty>
+          ) : (
+            <>
+              <dl className="admin-traffic-summary-stats">
+                {trafficStats(usage).map(([label, value]) => (
+                  <div key={label}>
+                    <dt>{label}</dt>
+                    <dd>{value}</dd>
+                  </div>
+                ))}
+              </dl>
+              <ul className="admin-traffic-summary">
+                {usage.user_agents.slice(0, 5).map((row) => (
+                  <li key={row.value}>
+                    <span className="admin-traffic-value" title={row.value}>{row.value}</span>
+                    <span className="admin-traffic-count">{row.count.toLocaleString()}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </Card>
+        </div>
+
         <div className="admin-grid-column">
         <Card title="Jobs in Progress" count={active.length}>
           {jobs === null ? (
@@ -222,6 +265,7 @@ const AdminDashboard = () => {
             </ul>
           )}
         </Card>
+
         </div>
       </div>
     </div>
