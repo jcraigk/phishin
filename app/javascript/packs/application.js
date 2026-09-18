@@ -6,4 +6,6 @@ import "../stylesheets/application.scss";
 // React on Rails app
 import ReactOnRails from "react-on-rails";
 import App from "../components/App";
+import { tagApiRequests } from "../components/helpers/tagApiRequests";
+tagApiRequests();
 ReactOnRails.register({ App });

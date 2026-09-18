@@ -5,9 +5,11 @@ class ApiV2::Base < Grape::API
   # helpers ApiV2::Helpers::AuthHelper
   helpers ApiV2::Helpers::SharedHelpers
   helpers ApiV2::Helpers::SharedParams
+  helpers ApiV2::Helpers::TrafficHelper
 
   # Endpoints
   # before { authenticate_api_key! unless swagger_endpoint? }
+  finally { track_traffic }
 
   # Error handling
   rescue_from ActiveRecord::RecordNotFound do |e|

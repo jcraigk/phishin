@@ -24,3 +24,7 @@
     jamcharts:
       cron: "0 4 * * 1 America/Los_Angeles" # Weekly on Monday at 4 AM Pacific Time
       class: JamchartsJob
+
+    traffic_flush:
+      every: "1m"
+      class: TrafficFlushJob

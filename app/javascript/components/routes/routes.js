@@ -206,6 +206,13 @@ const routes = (props) => [
               return { Component };
             },
           },
+          {
+            path: "traffic",
+            lazy: async () => {
+              const { default: Component } = await import("../admin/AdminTraffic");
+              return { Component };
+            },
+          },
         ],
       },
       {

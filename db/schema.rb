@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_16_011357) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_16_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -317,6 +317,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_16_011357) do
     t.index ["show_id", "set", "exclude_from_stats", "position"], name: "index_tracks_on_show_set_exclude_position"
     t.index ["show_id", "slug"], name: "index_tracks_on_show_id_and_slug", unique: true
     t.index ["slug"], name: "index_tracks_on_slug"
+  end
+
+  create_table "traffic_counts", force: :cascade do |t|
+    t.string "client", null: false
+    t.integer "count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "hour", null: false
+    t.string "ip", default: "", null: false
+    t.boolean "logged_in", default: false, null: false
+    t.string "route", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_agent", default: "", null: false
+    t.index ["hour", "client", "logged_in", "route", "ip", "user_agent"], name: "index_traffic_counts_on_key", unique: true
+    t.index ["ip"], name: "index_traffic_counts_on_ip"
+    t.index ["user_agent"], name: "index_traffic_counts_on_user_agent"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
