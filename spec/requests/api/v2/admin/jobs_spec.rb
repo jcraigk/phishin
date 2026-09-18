@@ -34,6 +34,24 @@ RSpec.describe "API v2 Admin Jobs" do
     end
   end
 
+  describe "POST /api/v2/admin/jobs/sidekiq_session" do
+    it "sets a signed cookie scoped to the sidekiq path" do
+      post "/api/v2/admin/jobs/sidekiq_session", headers: admin_headers
+
+      expect(response).to have_http_status(:created)
+      expect(JSON.parse(response.body)).to eq({ "url" => "/sidekiq" })
+      set_cookie = response.headers["Set-Cookie"].to_s
+      expect(set_cookie).to include("sidekiq_admin=", "path=/sidekiq", "httponly", "samesite=lax")
+      token = cookies[SidekiqAdminConstraint::COOKIE]
+      expect(SidekiqAdminConstraint.user_from(token)).to eq(admin)
+    end
+
+    it "requires admin" do
+      post "/api/v2/admin/jobs/sidekiq_session"
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
   describe "GET /api/v2/admin/jobs" do
     it "lists recent jobs newest first" do
       old = create(:admin_job, kind: "import", created_at: 2.days.ago)

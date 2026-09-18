@@ -7,6 +7,7 @@ import {
   faCloudArrowUp,
   faXmark,
   faChartSimple,
+  faGears,
 } from "@fortawesome/free-solid-svg-icons";
 import { adminGet, adminPost, adminDelete } from "./adminApi";
 import { formatDate } from "../helpers/utils";
@@ -155,6 +156,14 @@ const AdminDashboard = () => {
       setError(e.message);
     }
   };
+  const openSidekiq = async () => {
+    try {
+      const { url } = await adminPost("/jobs/sidekiq_session");
+      window.location.assign(url);
+    } catch (e) {
+      setError(e.message);
+    }
+  };
   const cancelJob = async (job) => {
     if (!window.confirm(STOP_IMPORT_CONFIRM)) return;
     try {
@@ -242,7 +251,15 @@ const AdminDashboard = () => {
         </div>
 
         <div className="admin-grid-column">
-        <Card title="Jobs in Progress" count={active.length}>
+        <Card
+          title="Jobs in Progress"
+          count={active.length}
+          action={
+            <button type="button" title="Open the Sidekiq queue dashboard" onClick={openSidekiq}>
+              <FontAwesomeIcon icon={faGears} /> Sidekiq
+            </button>
+          }
+        >
           {jobs === null ? (
             <Empty>Loading</Empty>
           ) : active.length === 0 ? (

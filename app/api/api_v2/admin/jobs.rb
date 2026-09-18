@@ -35,6 +35,19 @@ class ApiV2::Admin::Jobs < ApiV2::Admin::Base
         job_payload(job)
       end
 
+      desc "Issue the cookie that opens the Sidekiq web UI", hidden: true
+      post "sidekiq_session" do
+        cookies[SidekiqAdminConstraint::COOKIE] = {
+          value: SidekiqAdminConstraint.token_for(current_user),
+          expires: SidekiqAdminConstraint::TTL.from_now,
+          path: "/sidekiq",
+          httponly: true,
+          secure: request.ssl?,
+          same_site: :lax
+        }
+        { url: "/sidekiq" }
+      end
+
       desc "Stream rendered audio from a job", hidden: true
       params do
         requires :id, type: Integer

@@ -11,15 +11,11 @@ Rails.application.routes.draw do
   get "/.well-known/agent-card.json", to: "well_known#a2a_agent_card"
   get "/.well-known/agent-skills/index.json", to: "well_known#agent_skills_index"
 
-  # Sidekiq admin
-  Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-    ActiveSupport::SecurityUtils.secure_compare(
-      ::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])
-    ) & ActiveSupport::SecurityUtils.secure_compare(
-      ::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_PASSWORD"])
-    )
+  # Sidekiq admin (cookie issued by POST /api/v2/admin/jobs/sidekiq_session)
+  constraints SidekiqAdminConstraint.new do
+    mount Sidekiq::Web, at: "/sidekiq"
   end
-  mount Sidekiq::Web, at: "/sidekiq"
+  match "/sidekiq(/*path)", to: proc { [ 404, { "Content-Type" => "text/plain" }, [ "Not Found" ] ] }, via: :all
 
   # RSS
   get "feeds/rss", to: "feeds#rss", format: "xml", as: :rss_feed
