@@ -8,6 +8,7 @@ import EmailButton from "./EmailButton";
 import helpingFriendlyIcon from "../../images/icon-helping-friendly.png";
 import inphiniteIcon from "../../images/icon-inphinite.png";
 import kodiIcon from "../../images/icon-kodi.png";
+import phishstatsIcon from "../../images/icon-phishstats.png";
 import volumioIcon from "../../images/icon-volumio.png";
 
 const Faq = () => {
@@ -58,6 +59,17 @@ const Faq = () => {
             src={kodiIcon}
             alt="Phish.in add-on for Kodi"
             data-tip="Phish.in add-on for Kodi"
+          />
+        </a>
+        <a
+          href="https://phishstats.app"
+          target="_blank"
+          className="mr-3"
+        >
+          <img
+            src={phishstatsIcon}
+            alt="Phish Stats"
+            data-tip="Phish Stats (song lookup)"
           />
         </a>
         <a
