@@ -39,6 +39,14 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
   )
 
   expose(
+    :cover_art_model,
+    documentation: {
+      type: "String",
+      desc: "Identifier of the AI model that generated the cover art, if any"
+    }
+  )
+
+  expose(
     :album_zip_url,
     documentation: {
       type: "String",

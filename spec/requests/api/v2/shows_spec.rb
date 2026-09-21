@@ -38,6 +38,13 @@ RSpec.describe "API v2 Shows" do
       end
     end
 
+    it "exposes the cover art model" do
+      show1.update!(cover_art_model: "google/gemini-3-pro-image")
+      get_api_authed(user, "/shows/#{show1.date}")
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json[:cover_art_model]).to eq("google/gemini-3-pro-image")
+    end
+
     it "returns gaps for a song that appears multiple times in the show" do
       # Manually populate some gap data for testing since we're not using real Phish.net API
       show = Show.find_by(date: "2023-01-01")

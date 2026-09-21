@@ -231,6 +231,12 @@ RSpec.describe Admin::SelectCoverArtJob do
       expect(AlbumCoverService).to have_received(:call).with(child)
     end
 
+    it "gives the child the winner's model" do
+      winner.update!(metadata: winner.metadata.merge("model" => "google/gemini-3-pro-image"))
+      described_class.new.perform(show.id, admin_job.id, winner.key, 0)
+      expect(child.reload.cover_art_model).to eq("google/gemini-3-pro-image")
+    end
+
     it "never reaches the billed image service" do
       allow(CoverArtImageService).to receive(:call)
       described_class.new.perform(show.id, admin_job.id, winner.key, 0)

@@ -71,6 +71,7 @@ const CoverArtInspector = () => {
                   key={show.id}
                   coverArtUrls={show.cover_art_urls}
                   albumCoverUrl={show.album_cover_url}
+                  coverArtModel={show.cover_art_model}
                   openAppModal={openAppModal}
                   closeAppModal={closeAppModal}
                   size="medium"

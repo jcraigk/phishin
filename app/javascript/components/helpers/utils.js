@@ -176,3 +176,15 @@ export const getAudioStatusFilter = () => {
   const hideMissingAudio = stored !== null ? JSON.parse(stored) : true;
   return hideMissingAudio ? 'complete_or_partial' : 'any';
 };
+
+const MODEL_WORDS = { gpt: "GPT" };
+
+export const formatModelName = (modelId) => {
+  if (!modelId) return null;
+  return modelId
+    .split("/")
+    .pop()
+    .split("-")
+    .map((word) => MODEL_WORDS[word] || word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};

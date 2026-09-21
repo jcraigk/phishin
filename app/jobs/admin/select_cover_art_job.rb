@@ -91,6 +91,7 @@ class Admin::SelectCoverArtJob
     children = Show.where(cover_art_parent_show_id: @show.id).order(date: :asc)
     children.each do |child|
       child.cover_art.attach(@show.cover_art.blob)
+      child.update!(cover_art_model: @show.cover_art_model)
       AlbumCoverService.call(child)
       child.tracks.order(:position).each { |track| embed_track(track) }
       @admin_job.update!(message: "Propagated cover art to #{child.date}")
