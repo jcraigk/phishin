@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Admin::EditCoverArtJob, :openai do
+RSpec.describe Admin::EditCoverArtJob, :open_router do
   let(:show) { create(:show, date: "2024-07-19", cover_art_prompt: "a red barn") }
   let(:admin_job) { create(:admin_job, kind: "cover_art_edit", show:) }
   let(:image_bytes) { File.binread(Rails.root.join("spec/fixtures/files/cover-art-large.jpg")) }
@@ -9,7 +9,7 @@ RSpec.describe Admin::EditCoverArtJob, :openai do
       io: StringIO.new(image_bytes), filename: "source.png", content_type: "image/png"
     )
   end
-  let(:openai_response) do
+  let(:image_response) do
     instance_double(
       Typhoeus::Response,
       success?: true,
@@ -17,27 +17,36 @@ RSpec.describe Admin::EditCoverArtJob, :openai do
     )
   end
 
-  before { allow(Typhoeus).to receive(:post).and_return(openai_response) }
+  before { allow(Typhoeus).to receive(:post).and_return(image_response) }
 
   it "attaches the edited image as a new candidate" do
     described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue")
     expect(show.reload.cover_art_candidates.count).to eq(1)
   end
 
-  it "sends the request to the image edit endpoint" do
+  it "sends the request to the images endpoint" do
     described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue")
     expect(Typhoeus).to have_received(:post)
-      .with("https://api.openai.com/v1/images/edits", any_args).once
+      .with("https://openrouter.ai/api/v1/images", any_args).once
   end
 
-  it "declares an image mimetype for the multipart image part" do
+  it "passes the source image as a data url input reference" do
     described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue")
     expect(Typhoeus).to have_received(:post) do |_url, options|
-      expect(options[:headers]["Content-Type"]).to include('multipart/form-data; boundary=')
-      expect(options[:body]).to include("name=\"image\"")
-      expect(options[:body]).to include("Content-Type: #{source_blob.reload.content_type}")
-      expect(source_blob.reload.content_type).to start_with("image/")
+      body = JSON.parse(options[:body])
+      expect(body["prompt"]).to eq("make it blue")
+      url = body.dig("input_references", 0, "image_url", "url")
+      expect(url).to start_with("data:#{source_blob.reload.content_type};base64,")
+      expect(Base64.strict_decode64(url.split(",", 2).last)).to eq(image_bytes)
     end
+  end
+
+  it "edits with the requested model" do
+    described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue", "google/gemini-3-pro-image")
+    expect(Typhoeus).to have_received(:post) do |_url, options|
+      expect(JSON.parse(options[:body])["model"]).to eq("google/gemini-3-pro-image")
+    end
+    expect(show.reload.cover_art_candidates.first.blob.metadata["model"]).to eq("google/gemini-3-pro-image")
   end
 
   it "keeps the source blob attached to nothing it did not own" do
@@ -55,7 +64,7 @@ RSpec.describe Admin::EditCoverArtJob, :openai do
     show.update!(cover_art_parent_show_id: parent.id)
     described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue")
     expect(Typhoeus).to have_received(:post)
-      .with("https://api.openai.com/v1/images/edits", any_args)
+      .with("https://openrouter.ai/api/v1/images", any_args)
   end
 
   it "records the new candidate on the job payload" do
@@ -76,14 +85,14 @@ RSpec.describe Admin::EditCoverArtJob, :openai do
   end
 
   it "fails the admin job when the image API errors" do
-    allow(openai_response).to receive_messages(success?: false, body: "boom")
+    allow(image_response).to receive_messages(success?: false, body: "boom")
     expect { described_class.new.perform(show.id, admin_job.id, source_blob.key, "blue") }
       .to raise_error(StandardError, /Failed to generate cover art/)
     expect(admin_job.reload.status).to eq("failed")
   end
 
   it "reports API errors whose body is binary with non-ascii characters" do
-    allow(openai_response).to receive_messages(
+    allow(image_response).to receive_messages(
       success?: false, body: "bad prompt: child’s".b
     )
     expect { described_class.new.perform(show.id, admin_job.id, source_blob.key, "blue") }
@@ -109,12 +118,10 @@ RSpec.describe Admin::EditCoverArtJob, :openai do
   end
 
   it "records the generation cost on the candidate blob" do
-    usage = { input_tokens: 400, input_tokens_details: { text_tokens: 100, image_tokens: 300 }, output_tokens: 6000 }
-    allow(openai_response).to receive(:body).and_return(
-      { data: [ { b64_json: Base64.strict_encode64(image_bytes) } ], usage: }.to_json
+    allow(image_response).to receive(:body).and_return(
+      { data: [ { b64_json: Base64.strict_encode64(image_bytes) } ], usage: { cost: 0.067762 } }.to_json
     )
     described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue")
-    cost = show.reload.cover_art_candidates.first.blob.metadata["cost"]
-    expect(cost).to be_within(0.0001).of(0.1829)
+    expect(show.reload.cover_art_candidates.first.blob.metadata["cost"]).to eq(0.0678)
   end
 end

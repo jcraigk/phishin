@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Admin::RegenerateCoverArtPromptJob, :openai do
+RSpec.describe Admin::RegenerateCoverArtPromptJob, :open_router do
   let(:venue) { create(:venue) }
   let(:show) { create(:show, date: "2024-07-19", venue:) }
   let(:admin_job) { create(:admin_job, kind: "cover_art_prompt", show:) }
@@ -11,9 +11,7 @@ RSpec.describe Admin::RegenerateCoverArtPromptJob, :openai do
     instance_double(
       Typhoeus::Response,
       success?: true,
-      body: {
-        content: [ { type: "text", text: categories.to_json } ]
-      }.to_json
+      body: { choices: [ { message: { content: categories.to_json } } ] }.to_json
     )
   end
 

@@ -12,7 +12,7 @@ end
 
 RSpec.configure do |config|
   # Nothing in the suite should reach the network: a real call is slow, flaky,
-  # can cost money (Anthropic), and can mutate live data (Google Sheets).
+  # can cost money (OpenRouter), and can mutate live data (Google Sheets).
   # Specs stub these explicitly; this is the backstop for anything that forgets.
   config.before do
     allow(Typhoeus).to receive(:get) { |url, *| BlockExternalRequests.blocked!(:get, url) }

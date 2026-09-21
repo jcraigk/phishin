@@ -1,12 +1,12 @@
 class Admin::EditCoverArtJob
   include Sidekiq::Job
 
-  def perform(show_id, admin_job_id, source_blob_key, edit_prompt)
+  def perform(show_id, admin_job_id, source_blob_key, edit_prompt, model = nil)
     show = Show.find(show_id)
     admin_job = AdminJob.find(admin_job_id)
 
     admin_job.run! do
-      url = CoverArtImageService.call(show, dry_run: true, source_blob_key:, edit_prompt:)
+      url = CoverArtImageService.call(show, dry_run: true, source_blob_key:, edit_prompt:, model:)
       blob = CoverArtBlobLocator.call(url)
       show.cover_art_candidates.attach(blob)
       admin_job.payload["blob_key"] = blob.key

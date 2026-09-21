@@ -15,6 +15,7 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
           desc "Generate a cover art candidate", hidden: true
           params do
             optional :prompt, type: String
+            optional :model, type: String, values: CoverArtImageService::MODELS
           end
           post :generate do
             show = admin_show
@@ -22,7 +23,8 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
                show.cover_art_parent_show_id.blank?
               error!({ message: "Set a cover art prompt first" }, 422)
             end
-            enqueue_job("cover_art_generate", Admin::GenerateCoverArtJob, show:, args: [ params[:prompt].presence ])
+            enqueue_job("cover_art_generate", Admin::GenerateCoverArtJob, show:,
+                        args: [ params[:prompt].presence, params[:model].presence ])
           end
 
           desc "Upload a cover art candidate", hidden: true
@@ -40,12 +42,13 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
           params do
             requires :source_blob_key, type: String
             requires :edit_prompt, type: String
+            optional :model, type: String, values: CoverArtImageService::MODELS
           end
           post :ai_edit do
             show = admin_show
             validate_source_blob_key!(show, params[:source_blob_key])
             enqueue_job("cover_art_edit", Admin::EditCoverArtJob, show:,
-                        args: [ params[:source_blob_key], params[:edit_prompt] ])
+                        args: [ params[:source_blob_key], params[:edit_prompt], params[:model].presence ])
           end
 
           desc "Apply a candidate as the show's cover art", hidden: true

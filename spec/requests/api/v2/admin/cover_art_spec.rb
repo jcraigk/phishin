@@ -76,6 +76,19 @@ RSpec.describe "API v2 Admin Cover Art" do
       expect(Admin::GenerateCoverArtJob.jobs.size).to eq(1)
     end
 
+    it "passes the prompt and chosen model to the generate job" do
+      post path, params: { prompt: "a blue barn", model: "google/gemini-3-pro-image" }.to_json,
+           headers: json_headers
+      expect(Admin::GenerateCoverArtJob.jobs.last["args"])
+        .to eq([ show.id, AdminJob.last.id, "a blue barn", "google/gemini-3-pro-image" ])
+    end
+
+    it "400s on a model outside the allowed list" do
+      post path, params: { model: "nope/nope" }.to_json, headers: json_headers
+      expect(response).to have_http_status(:bad_request)
+      expect(Admin::GenerateCoverArtJob.jobs).to be_empty
+    end
+
     it "422s when the show has neither a prompt nor a parent" do
       show.update!(cover_art_prompt: nil)
       post path, headers: admin_headers
@@ -133,6 +146,7 @@ RSpec.describe "API v2 Admin Cover Art" do
           "blob_key" => blob.key,
           "url" => "#{App.base_url}/blob/#{blob.key}.png",
           "cost" => nil,
+          "model" => nil,
           "prompt" => nil,
           "edits" => []
         } ]
@@ -200,7 +214,22 @@ RSpec.describe "API v2 Admin Cover Art" do
     it "enqueues the edit job with the source key and prompt" do
       post path, params: body, headers: json_headers
       expect(Admin::EditCoverArtJob.jobs.last["args"])
-        .to eq([ show.id, AdminJob.last.id, candidate.key, "make it blue" ])
+        .to eq([ show.id, AdminJob.last.id, candidate.key, "make it blue", nil ])
+    end
+
+    it "passes the chosen model to the edit job" do
+      post path,
+           params: { source_blob_key: candidate.key, edit_prompt: "bluer", model: "openai/gpt-5.4-image-2" }.to_json,
+           headers: json_headers
+      expect(Admin::EditCoverArtJob.jobs.last["args"].last).to eq("openai/gpt-5.4-image-2")
+    end
+
+    it "400s on a model outside the allowed list" do
+      post path,
+           params: { source_blob_key: candidate.key, edit_prompt: "bluer", model: "nope/nope" }.to_json,
+           headers: json_headers
+      expect(response).to have_http_status(:bad_request)
+      expect(Admin::EditCoverArtJob.jobs).to be_empty
     end
 
     it "accepts the show's current cover art as the source" do
@@ -312,6 +341,16 @@ RSpec.describe "API v2 Admin Cover Art" do
       get "/api/v2/admin/shows/2025-08-01", headers: admin_headers
       expect(JSON.parse(response.body)["cover_art"]).to include(
         "prompt" => "a red barn", "parent_show_id" => nil, "candidates" => []
+      )
+    end
+
+    it "includes the model, the model choices, and the default" do
+      show.update!(cover_art_model: "google/gemini-3-pro-image")
+      get "/api/v2/admin/shows/2025-08-01", headers: admin_headers
+      expect(JSON.parse(response.body)["cover_art"]).to include(
+        "model" => "google/gemini-3-pro-image",
+        "image_models" => CoverArtImageService::MODELS,
+        "default_image_model" => "google/gemini-3.1-flash-image"
       )
     end
 

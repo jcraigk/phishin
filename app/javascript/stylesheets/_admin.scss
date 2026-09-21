@@ -1365,6 +1365,20 @@
   }
 }
 
+.admin-art-model {
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background-color: rgba(120, 140, 200, 0.2);
+  color: var(--text-gray);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-art-model-select {
+  max-width: 11rem;
+}
+
 .admin-art-cost {
   margin-left: auto;
   padding: 0.1rem 0.5rem;

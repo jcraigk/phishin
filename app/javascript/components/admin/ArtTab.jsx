@@ -20,6 +20,36 @@ import Modal from "./Modal";
 const SELECT_CONFIRM =
   "Sets cover art, composites the album cover, and re-embeds ID3 tags on all tracks. Continue?";
 
+const modelLabel = (id) => (id ? id.split("/").pop() : "");
+
+const ModelSelect = ({ value, onChange, disabled }) => {
+  const { show } = useContext(EditorContext);
+  const models = show.cover_art.image_models || [];
+  return (
+    <select
+      className="admin-art-model-select"
+      aria-label="Image model"
+      title="Image model"
+      value={value}
+      disabled={disabled}
+      onChange={(e) => onChange(e.target.value)}
+    >
+      {models.map((id) => (
+        <option key={id} value={id}>
+          {modelLabel(id)}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+const ModelBadge = ({ model }) =>
+  model ? (
+    <span className="admin-art-model" title={model}>
+      {modelLabel(model)}
+    </span>
+  ) : null;
+
 const ImageCard = ({ url, alt, imgStyle, children }) => (
   <figure className="admin-art-card">
     {url ? (
@@ -49,6 +79,7 @@ const EditControl = ({
   const { show, reload, setError } = useContext(EditorContext);
   const [open, setOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
+  const [model, setModel] = useState(show.cover_art.default_image_model);
 
   const submit = async () => {
     if (prompt.trim() === "") return;
@@ -64,7 +95,7 @@ const EditControl = ({
     try {
       const { job_id: jobId } = await adminPost(
         `/shows/${show.date}/cover_art/ai_edit`,
-        { source_blob_key: blobKey, edit_prompt: text }
+        { source_blob_key: blobKey, edit_prompt: text, model }
       );
       await pollJob(jobId);
       await reload();
@@ -98,6 +129,7 @@ const EditControl = ({
               if (e.key === "Enter") submit();
             }}
           />
+          <ModelSelect value={model} onChange={setModel} />
           <button
             type="button"
             title="Run paid AI edit"
@@ -187,6 +219,7 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingEnd }) => {
             }}
           />
         </label>
+        <ModelBadge model={candidate.model} />
         {candidate.cost != null && (
           <span className="admin-art-cost" title="Generation cost">
             ${Number(candidate.cost).toFixed(2)}
@@ -235,6 +268,7 @@ const SUGGESTIONS_PER_CATEGORY = 5;
 const NewPromptModal = ({ onClose, onSubmit }) => {
   const { show } = useContext(EditorContext);
   const [draft, setDraft] = useState(show.cover_art.prompt || "");
+  const [model, setModel] = useState(show.cover_art.default_image_model);
   const [suggestions, setSuggestions] = useState(null);
   const { run, busy, error } = useJobRunner();
 
@@ -262,10 +296,11 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
       />
       {error && <p className="admin-error">{error}</p>}
       <div className="admin-modal-actions">
+        <ModelSelect value={model} onChange={setModel} disabled={busy} />
         <button
           type="button"
           disabled={busy || draft.trim() === ""}
-          onClick={() => onSubmit(draft.trim())}
+          onClick={() => onSubmit(draft.trim(), model)}
         >
           <FontAwesomeIcon icon={faCheck} /> Submit
         </button>
@@ -307,9 +342,9 @@ const GenerateControls = ({ onGenerate }) => {
   const [progress, setProgress] = useState(null);
   const [uploadError, setUploadError] = useState(null);
 
-  const generate = (prompt) => {
+  const generate = (prompt, model) => {
     setModalOpen(false);
-    onGenerate(prompt);
+    onGenerate(prompt, model);
   };
 
   const upload = async (file) => {
@@ -403,7 +438,7 @@ const ArtEditor = ({ runNote }) => {
   const startPendingEdit = (entry) =>
     setPendingJobs((prev) => [...prev, { ...entry, label: "Generating..." }]);
 
-  const generate = async (prompt) => {
+  const generate = async (prompt, model) => {
     const id = `gen-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     setPendingJobs((prev) => [
       ...prev,
@@ -412,7 +447,7 @@ const ArtEditor = ({ runNote }) => {
     try {
       const { job_id: jobId } = await adminPost(
         `/shows/${show.date}/cover_art/generate`,
-        prompt ? { prompt } : {}
+        { ...(prompt ? { prompt } : {}), ...(model ? { model } : {}) }
       );
       await pollJob(jobId);
       await reload();
@@ -434,7 +469,11 @@ const ArtEditor = ({ runNote }) => {
           <ArtImage url={art.current_url} alt="Current cover art" emptyLabel="No cover art" />
           <ArtImage url={art.album_cover_url} alt="Album cover composite" emptyLabel="No album cover" />
         </div>
-        {art.prompt && <p className="admin-art-snapshot">{art.prompt}</p>}
+        {art.prompt && (
+          <p className="admin-art-snapshot">
+            {art.prompt} <ModelBadge model={art.model} />
+          </p>
+        )}
         <div className="admin-art-toolbar">
           {art.current_blob_key && (
             <EditControl

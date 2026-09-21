@@ -31,6 +31,9 @@ module ApiV2::Helpers::AdminHelper
   def cover_art_payload(show)
     {
       prompt: show.cover_art_prompt,
+      model: show.cover_art_model,
+      image_models: CoverArtImageService::MODELS,
+      default_image_model: CoverArtImageService.default_model,
       parent_show_id: show.cover_art_parent_show_id,
       parent_show_date: Show.find_by(id: show.cover_art_parent_show_id)&.date&.to_s,
       child_dates: Show.where(cover_art_parent_show_id: show.id).order(:date).pluck(:date).map(&:to_s),
@@ -42,6 +45,7 @@ module ApiV2::Helpers::AdminHelper
           blob_key: attachment.blob.key,
           url: "#{App.base_url}/blob/#{attachment.blob.key}.png",
           cost: attachment.blob.metadata["cost"],
+          model: attachment.blob.metadata["model"],
           prompt: attachment.blob.metadata["prompt"],
           edits: attachment.blob.metadata["edits"] || []
         }

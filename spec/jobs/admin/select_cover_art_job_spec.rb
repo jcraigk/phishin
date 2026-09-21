@@ -47,6 +47,18 @@ RSpec.describe Admin::SelectCoverArtJob do
       expect(show.reload.cover_art_prompt).to eq("old snapshot")
     end
 
+    it "commits the winner's model as the show's cover art model" do
+      winner.update!(metadata: winner.metadata.merge("model" => "google/gemini-3-pro-image"))
+      described_class.new.perform(show.id, admin_job.id, winner.key, 0)
+      expect(show.reload.cover_art_model).to eq("google/gemini-3-pro-image")
+    end
+
+    it "clears the cover art model when the winner was not generated" do
+      show.update!(cover_art_model: "google/gemini-3-pro-image")
+      described_class.new.perform(show.id, admin_job.id, winner.key, 0)
+      expect(show.reload.cover_art_model).to be_nil
+    end
+
     it "clears every candidate" do
       described_class.new.perform(show.id, admin_job.id, winner.key, 0)
       expect(show.reload.cover_art_candidates.count).to eq(0)

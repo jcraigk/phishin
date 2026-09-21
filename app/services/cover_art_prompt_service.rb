@@ -22,6 +22,7 @@ class CoverArtPromptService < ApplicationService
     Claymation Felt-Craft Embroidery Wood-Burned
   ]
   CATEGORIES = %w[animals plants foods misc_objects time_concepts phish]
+  MODEL = "anthropic/claude-opus-5".freeze
   BASE_PROMPT = <<~TXT
     I want you to generate a series of objects and ideas in specific categories associated with a venue, time, and city/state I provide below. I want the answer in JSON format. The keys should be animals, plants, foods, misc_objects (miscellaneous objects), time_concepts (concepts related to time, season, social atmosphere, etc), and phish (explained below). I want you to give me ten words or phrases representing those categories. Avoid references that an image generation model might reject as inappropriate. Avoid images of humans, human forms, or faces.
 
@@ -190,31 +191,11 @@ class CoverArtPromptService < ApplicationService
     prompt += "\nThe songs played at this show were: #{song_list}"
     prompt += "\n\nThe time and place is #{show.venue_name}, #{show.venue.location} on #{show.date}"
 
-    response = Typhoeus.post(
-      "https://api.anthropic.com/v1/messages",
-      headers: {
-        "x-api-key" => anthropic_api_token,
-        "anthropic-version" => "2023-06-01",
-        "Content-Type" => "application/json"
-      },
-      body: {
-        model: "claude-opus-5",
-        max_tokens: 4096,
-        system: "You are a generalized expert in knowledge about points of interest.",
-        messages: [ { role: "user", content: prompt } ]
-      }.to_json
+    result = OpenRouter.chat(
+      model: MODEL,
+      system: "You are a generalized expert in knowledge about points of interest.",
+      prompt:
     )
-    raise "Failed to get response from Claude: #{response.body}" unless response.success?
-
-    result = JSON.parse(response.body)
-    text = result["content"].find { |block| block["type"] == "text" }&.dig("text")
-    raise "No text block in Anthropic response: #{result['content'].inspect}" if text.blank?
-
-    json_match = text.match(/```(?:json)?\s*(.*?)\s*```/m)
-    @llm_response = JSON.parse(json_match ? json_match[1] : text, symbolize_names: true)
-  end
-
-  def anthropic_api_token
-    @anthropic_api_token ||= ENV.fetch("ANTHROPIC_API_KEY")
+    @llm_response = OpenRouter.extract_json(result.text, symbolize_names: true)
   end
 end

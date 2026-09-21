@@ -14,10 +14,7 @@ namespace :shows do
       rel = rel.where("date >= ?", start_date) if start_date.present?
     end
 
-    pbar = ProgressBar.create \
-      total: rel.count,
-      format: "%a %B %c/%C %p%% %E"
-    InteractiveCoverArtService.call(rel, pbar)
+    InteractiveCoverArtService.call(rel, image_model: ENV.fetch("MODEL", nil).presence)
   end
 
   desc "Insert a track"

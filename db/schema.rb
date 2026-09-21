@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_16_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -148,6 +148,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_16_180000) do
     t.text "admin_notes"
     t.datetime "album_zip_requested_at"
     t.string "audio_status", default: "complete", null: false
+    t.string "cover_art_model"
     t.integer "cover_art_parent_show_id"
     t.text "cover_art_prompt"
     t.datetime "created_at", precision: nil, null: false
