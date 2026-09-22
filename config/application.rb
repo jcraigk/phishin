@@ -47,6 +47,7 @@ module Phishin
       authentication: :plain
     }
     config.hosts = nil # Rely on dokku/nginx for host checking
+    config.action_dispatch.ip_spoofing_check = false
     config.active_storage.service = :local
     config.active_storage.variant_processor = :mini_magick
   end
