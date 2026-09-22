@@ -9,7 +9,7 @@ class LoreSyncService < ApplicationService
   option :all, default: -> { false }
   option :dry_run, default: -> { false }
   option :verbose, default: -> { false }
-  option :model, default: -> { "claude-opus-4-5-20251101" }
+  option :model, default: -> { "anthropic/claude-opus-5" }
   option :delay, default: -> { 0 }
 
   def call
@@ -33,6 +33,7 @@ class LoreSyncService < ApplicationService
     @skipped = 0
     @input_tokens = 0
     @output_tokens = 0
+    @total_cost = 0.0
 
     shows.each_with_index do |show, index|
       process_show(show)
@@ -45,7 +46,7 @@ class LoreSyncService < ApplicationService
     puts "  Tracks: Tagged: #{@track_tagged}, Updated: #{@track_updated}"
     puts "  Skipped: #{@skipped}"
     puts "  Tokens: #{@input_tokens.to_fs(:delimited)} input, #{@output_tokens.to_fs(:delimited)} output"
-    puts "  Cost:   $#{format_cost(calculate_cost)}"
+    puts "  Cost:   $#{format_cost(@total_cost)}"
   end
 
   private
@@ -230,101 +231,25 @@ class LoreSyncService < ApplicationService
 
   def analyze_with_llm(notes, track_info, existing_tag_notes, show_date)
     prompt = build_prompt(notes, track_info, existing_tag_notes)
-
-    if model.start_with?("claude")
-      analyze_with_claude(prompt, show_date)
-    else
-      analyze_with_openai(prompt, show_date)
-    end
-  end
-
-  def analyze_with_openai(prompt, show_date)
-    response = Typhoeus.post(
-      "https://api.openai.com/v1/chat/completions",
-      headers: {
-        "Authorization" => "Bearer #{openai_api_token}",
-        "Content-Type" => "application/json"
-      },
-      body: {
-        model:,
-        messages: [
-          { role: "system", content: system_prompt },
-          { role: "user", content: prompt }
-        ],
-        temperature: 0,
-        response_format: { type: "json_object" }
-      }.to_json
-    )
-
-    if response.success?
-      result = JSON.parse(response.body)
-      input = result.dig("usage", "prompt_tokens").to_i
-      output = result.dig("usage", "completion_tokens").to_i
-      @input_tokens += input
-      @output_tokens += output
-      cost = (input * 2.5 / 1_000_000) + (output * 10.0 / 1_000_000)
-      @pbar.log "🤖 #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
-      content = JSON.parse(result["choices"].first["message"]["content"])
-      {
-        lore_show: content["lore_show"].presence,
-        lore_tracks: content["lore_tracks"].presence || [],
-        banter_show: content["banter_show"].presence,
-        banter_tracks: content["banter_tracks"].presence || [],
-        alt_rig_tracks: content["alt_rig_tracks"].presence || [],
-        alt_lyric_tracks: content["alt_lyric_tracks"].presence || [],
-        a_cappella_tracks: content["a_cappella_tracks"].presence || [],
-        acoustic_tracks: content["acoustic_tracks"].presence || [],
-        unfinished_tracks: content["unfinished_tracks"].presence || []
-      }
-    else
-      raise "OpenAI API error: #{response.body}"
-    end
-  end
-
-  def analyze_with_claude(prompt, show_date)
-    response = Typhoeus.post(
-      "https://api.anthropic.com/v1/messages",
-      headers: {
-        "x-api-key" => anthropic_api_token,
-        "anthropic-version" => "2023-06-01",
-        "Content-Type" => "application/json"
-      },
-      body: {
-        model:,
-        max_tokens: 4096,
-        system: system_prompt,
-        messages: [
-          { role: "user", content: prompt }
-        ]
-      }.to_json
-    )
-
-    if response.success?
-      result = JSON.parse(response.body)
-      input = result.dig("usage", "input_tokens").to_i
-      output = result.dig("usage", "output_tokens").to_i
-      @input_tokens += input
-      @output_tokens += output
-      cost = (input * 15.0 / 1_000_000) + (output * 75.0 / 1_000_000)
-      @pbar.log "🤖 #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
-      text = result["content"].first["text"]
-      json_match = text.match(/```(?:json)?\s*(.*?)\s*```/m)
-      json_str = json_match ? json_match[1] : text
-      content = JSON.parse(json_str)
-      {
-        lore_show: content["lore_show"].presence,
-        lore_tracks: content["lore_tracks"].presence || [],
-        banter_show: content["banter_show"].presence,
-        banter_tracks: content["banter_tracks"].presence || [],
-        alt_rig_tracks: content["alt_rig_tracks"].presence || [],
-        alt_lyric_tracks: content["alt_lyric_tracks"].presence || [],
-        a_cappella_tracks: content["a_cappella_tracks"].presence || [],
-        acoustic_tracks: content["acoustic_tracks"].presence || [],
-        unfinished_tracks: content["unfinished_tracks"].presence || []
-      }
-    else
-      raise "Anthropic API error: #{response.body}"
-    end
+    result = OpenRouter.chat(model:, system: system_prompt, prompt:)
+    @input_tokens += result.input_tokens
+    @output_tokens += result.output_tokens
+    @total_cost += result.cost.to_f
+    @pbar.log "🤖 #{show_date} [#{result.input_tokens.to_fs(:delimited)} in / " \
+              "#{result.output_tokens.to_fs(:delimited)} out / $#{format_cost(result.cost.to_f)} / " \
+              "total: $#{format_cost(@total_cost)}]"
+    content = OpenRouter.extract_json(result.text)
+    {
+      lore_show: content["lore_show"].presence,
+      lore_tracks: content["lore_tracks"].presence || [],
+      banter_show: content["banter_show"].presence,
+      banter_tracks: content["banter_tracks"].presence || [],
+      alt_rig_tracks: content["alt_rig_tracks"].presence || [],
+      alt_lyric_tracks: content["alt_lyric_tracks"].presence || [],
+      a_cappella_tracks: content["a_cappella_tracks"].presence || [],
+      acoustic_tracks: content["acoustic_tracks"].presence || [],
+      unfinished_tracks: content["unfinished_tracks"].presence || []
+    }
   end
 
   def system_prompt
@@ -595,22 +520,6 @@ class LoreSyncService < ApplicationService
 
   def pnet_api_key
     @pnet_api_key ||= ENV.fetch("PNET_API_KEY")
-  end
-
-  def openai_api_token
-    @openai_api_token ||= ENV.fetch("OPENAI_API_TOKEN")
-  end
-
-  def anthropic_api_token
-    @anthropic_api_token ||= ENV.fetch("ANTHROPIC_API_KEY")
-  end
-
-  def calculate_cost
-    if model.start_with?("claude")
-      (@input_tokens * 15.0 / 1_000_000) + (@output_tokens * 75.0 / 1_000_000)
-    else
-      (@input_tokens * 2.5 / 1_000_000) + (@output_tokens * 10.0 / 1_000_000)
-    end
   end
 
   def format_cost(cost)

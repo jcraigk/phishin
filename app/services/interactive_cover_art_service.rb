@@ -4,6 +4,7 @@ class InteractiveCoverArtService < ApplicationService
   class InterruptError < StandardError; end
 
   param :relation
+  option :image_model, default: -> { nil }
 
   NUM_IMAGES = 1
   def prompt_for_zoom
@@ -183,7 +184,7 @@ class InteractiveCoverArtService < ApplicationService
     puts "Generating #{pluralize(NUM_IMAGES, 'image')}..."
 
     NUM_IMAGES.times do |i|
-      image_url = CoverArtImageService.call(show, dry_run: true)
+      image_url = CoverArtImageService.call(show, dry_run: true, model: image_model)
       record_candidate(image_url)
     end
   end
@@ -202,7 +203,8 @@ class InteractiveCoverArtService < ApplicationService
       show,
       dry_run: true,
       source_blob_key: key,
-      edit_prompt: prompt
+      edit_prompt: prompt,
+      model: image_model
     )
     record_candidate(image_url)
   end

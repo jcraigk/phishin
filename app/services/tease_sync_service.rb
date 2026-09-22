@@ -11,7 +11,7 @@ class TeaseSyncService < ApplicationService
   option :all, default: -> { false }
   option :apply, default: -> { false }
   option :verbose, default: -> { false }
-  option :model, default: -> { "claude-opus-5" }
+  option :model, default: -> { "anthropic/claude-opus-5" }
   option :delay, default: -> { 0 }
 
   attr_reader :proposed_rows, :unmatched, :unconfirmed, :unverified_artists
@@ -26,6 +26,7 @@ class TeaseSyncService < ApplicationService
     @skipped = 0
     @input_tokens = 0
     @output_tokens = 0
+    @total_cost = 0.0
     @existing = load_existing_rows
 
     shows = fetch_shows
@@ -84,7 +85,7 @@ class TeaseSyncService < ApplicationService
     notes = fetch_setlist_notes(show.date)
     return @skipped += 1 if notes.blank? || !notes.match?(/teas|quot/i)
 
-    teases = analyze_with_claude(notes, show)
+    teases = analyze_with_llm(notes, show)
     teases.reject { |tease| tease["already_tagged"] }.each { |tease| evaluate_tease(show, tease) }
     record_unconfirmed(show, teases)
   end
@@ -208,46 +209,20 @@ class TeaseSyncService < ApplicationService
       .then { |t| CGI.unescapeHTML(t) }
   end
 
-  def analyze_with_claude(notes, show)
-    response = Typhoeus.post(
-      "https://api.anthropic.com/v1/messages",
-      headers: {
-        "x-api-key" => anthropic_api_token,
-        "anthropic-version" => "2023-06-01",
-        "Content-Type" => "application/json"
-      },
-      body: {
-        model:,
-        max_tokens: 4096,
-        system: system_prompt,
-        messages: [ { role: "user", content: build_prompt(notes, show) } ]
-      }.to_json
-    )
-    raise "Anthropic API error: #{response.body}" unless response.success?
-
-    parse_response(JSON.parse(response.body), show.date)
+  def analyze_with_llm(notes, show)
+    result = OpenRouter.chat(model:, system: system_prompt, prompt: build_prompt(notes, show))
+    @input_tokens += result.input_tokens
+    @output_tokens += result.output_tokens
+    @total_cost += result.cost.to_f
+    log_usage(show.date, result)
+    OpenRouter.extract_json(result.text)["teases"] || []
   end
 
-  def parse_response(result, show_date)
-    input = result.dig("usage", "input_tokens").to_i
-    output = result.dig("usage", "output_tokens").to_i
-    @input_tokens += input
-    @output_tokens += output
-    log_usage(show_date, input, output)
-
-    # Thinking models emit a thinking block before the text block, so select by type.
-    text = result["content"].find { |block| block["type"] == "text" }&.dig("text")
-    raise "No text block in Anthropic response: #{result['content'].inspect}" if text.blank?
-
-    json_match = text.match(/```(?:json)?\s*(.*?)\s*```/m)
-    JSON.parse(json_match ? json_match[1] : text)["teases"] || []
-  end
-
-  def log_usage(show_date, input, output)
-    cost = token_cost(input, output)
+  def log_usage(show_date, result)
     log(
-      "🤖 #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / " \
-      "$#{format_cost(cost)} / total: $#{format_cost(total_cost)}]"
+      "🤖 #{show_date} [#{result.input_tokens.to_fs(:delimited)} in / " \
+      "#{result.output_tokens.to_fs(:delimited)} out / " \
+      "$#{format_cost(result.cost.to_f)} / total: $#{format_cost(total_cost)}]"
     )
   end
 
@@ -337,12 +312,8 @@ class TeaseSyncService < ApplicationService
     puts "\nDry run. Re-run with APPLY=true to create these tags." if !apply && proposed_rows.any?
   end
 
-  def token_cost(input, output)
-    (input * 5.0 / 1_000_000) + (output * 25.0 / 1_000_000)
-  end
-
   def total_cost
-    token_cost(@input_tokens, @output_tokens)
+    @total_cost
   end
 
   def format_cost(cost)
@@ -356,9 +327,5 @@ class TeaseSyncService < ApplicationService
 
   def pnet_api_key
     @pnet_api_key ||= ENV.fetch("PNET_API_KEY")
-  end
-
-  def anthropic_api_token
-    @anthropic_api_token ||= ENV.fetch("ANTHROPIC_API_KEY")
   end
 end

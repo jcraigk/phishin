@@ -13,7 +13,7 @@ class Admin::SelectCoverArtJob
     @admin_job.run! do
       blob = candidate_blob(blob_key)
       attach_cover_art(blob, zoom.to_i)
-      commit_prompt_snapshot(blob)
+      commit_provenance(blob)
       build_album_cover
       embed_id3_tags
       propagate_to_children
@@ -49,11 +49,14 @@ class Admin::SelectCoverArtJob
     end
   end
 
-  def commit_prompt_snapshot(blob)
+  def commit_provenance(blob)
+    attrs = { cover_art_model: blob.metadata["model"] }
     base = blob.metadata["prompt"]
-    return if base.blank?
-    edits = Array(blob.metadata["edits"]).map { |edit| "edit: #{edit}" }
-    @show.update!(cover_art_prompt: ([ base ] + edits).join(" | "))
+    if base.present?
+      edits = Array(blob.metadata["edits"]).map { |edit| "edit: #{edit}" }
+      attrs[:cover_art_prompt] = ([ base ] + edits).join(" | ")
+    end
+    @show.update!(attrs)
   end
 
   def build_album_cover
@@ -88,6 +91,7 @@ class Admin::SelectCoverArtJob
     children = Show.where(cover_art_parent_show_id: @show.id).order(date: :asc)
     children.each do |child|
       child.cover_art.attach(@show.cover_art.blob)
+      child.update!(cover_art_model: @show.cover_art_model)
       AlbumCoverService.call(child)
       child.tracks.order(:position).each { |track| embed_track(track) }
       @admin_job.update!(message: "Propagated cover art to #{child.date}")

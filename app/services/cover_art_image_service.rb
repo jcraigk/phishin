@@ -4,12 +4,17 @@ class CoverArtImageService < ApplicationService
   option :source_blob_key, default: -> { nil }
   option :edit_prompt, default: -> { nil }
   option :prompt_override, default: -> { nil }
+  option :model, default: -> { nil }
 
-  MODEL = "gpt-image-2.5-sunburst"
-  QUALITY = "max"
-  TEXT_INPUT_RATE = 5.0 / 1_000_000
-  IMAGE_INPUT_RATE = 8.0 / 1_000_000
-  IMAGE_OUTPUT_RATE = 30.0 / 1_000_000
+  MODELS = %w[
+    google/gemini-3.1-flash-image
+    google/gemini-3-pro-image
+    openai/gpt-5.4-image-2
+  ].freeze
+
+  def self.default_model
+    ENV.fetch("COVER_ART_IMAGE_MODEL", MODELS.first)
+  end
 
   def call
     generate_and_save_cover_art
@@ -21,6 +26,10 @@ class CoverArtImageService < ApplicationService
     source_blob_key.present? && edit_prompt.present?
   end
 
+  def image_model
+    @image_model ||= model.presence || self.class.default_model
+  end
+
   def generate_and_save_cover_art
     if show.cover_art_parent_show_id && !editing?
       parent_show = Show.find(show.cover_art_parent_show_id)
@@ -28,38 +37,39 @@ class CoverArtImageService < ApplicationService
       return
     end
 
-    response = editing? ? edit_request : generate_request
-    unless response.success?
-      raise "Failed to generate cover art: #{safe_body(response)}"
-    end
-
-    result = JSON.parse(safe_body(response))
-    url = upload_candidate(result["data"].first["b64_json"], usage_cost(result["usage"]))
+    result = generate_image
+    url = upload_candidate(result.b64, result.cost)
     show.attach_cover_art_by_url(url) unless dry_run
     url
   end
 
-  def usage_cost(usage)
-    return nil if usage.blank?
-    details = usage["input_tokens_details"] || {}
-    text_in = details["text_tokens"] || usage["input_tokens"] || 0
-    image_in = details["image_tokens"] || 0
-    out = usage["output_tokens"] || 0
-    (text_in * TEXT_INPUT_RATE + image_in * IMAGE_INPUT_RATE + out * IMAGE_OUTPUT_RATE)
-      .round(4)
-  end
-
-  def safe_body(response)
-    response.body.to_s.dup.force_encoding(Encoding::UTF_8).scrub
+  def generate_image
+    if editing?
+      OpenRouter.image(model: image_model, prompt: edit_prompt, source_url: source_data_url)
+    else
+      OpenRouter.image(model: image_model, prompt: generation_prompt)
+    end
+  rescue OpenRouter::Error => e
+    raise "Failed to generate cover art: #{e.message}"
   end
 
   def generation_prompt
     prompt_override.presence || show.cover_art_prompt
   end
 
+  def source_blob
+    @source_blob ||= ActiveStorage::Blob.find_by!(key: source_blob_key)
+  end
+
   def source_metadata
-    @source_metadata ||=
-      ActiveStorage::Blob.find_by(key: source_blob_key)&.metadata || {}
+    return {} unless editing?
+    source_blob.metadata
+  end
+
+  def source_data_url
+    content_type =
+      source_blob.content_type.to_s.start_with?("image/") ? source_blob.content_type : "image/png"
+    "data:#{content_type};base64,#{Base64.strict_encode64(source_blob.download)}"
   end
 
   def base_prompt
@@ -72,65 +82,11 @@ class CoverArtImageService < ApplicationService
     Array(source_metadata["edits"]) + [ edit_prompt ]
   end
 
-  def generate_request
-    Typhoeus.post(
-      "https://api.openai.com/v1/images/generations",
-      headers: {
-        "Authorization" => "Bearer #{ENV.fetch("OPENAI_API_TOKEN")}",
-        "Content-Type" => "application/json"
-      },
-      body: {
-        model: MODEL,
-        prompt: generation_prompt,
-        n: 1,
-        size: "1024x1024",
-        quality: QUALITY
-      }.to_json
-    )
-  end
-
-  def edit_request
-    blob = ActiveStorage::Blob.find_by!(key: source_blob_key)
-    boundary = "PhishinCoverArt#{SecureRandom.hex(8)}"
-    Typhoeus.post(
-      "https://api.openai.com/v1/images/edits",
-      headers: {
-        "Authorization" => "Bearer #{ENV.fetch("OPENAI_API_TOKEN")}",
-        "Content-Type" => "multipart/form-data; boundary=#{boundary}"
-      },
-      body: edit_request_body(blob, boundary)
-    )
-  end
-
-  def edit_request_body(blob, boundary)
-    fields = {
-      "model" => MODEL,
-      "prompt" => edit_prompt,
-      "n" => "1",
-      "size" => "1024x1024",
-      "quality" => QUALITY
-    }
-    content_type =
-      blob.content_type.to_s.start_with?("image/") ? blob.content_type : "image/png"
-    body = String.new(encoding: Encoding::BINARY)
-    fields.each do |name, value|
-      body << "--#{boundary}\r\n"
-      body << "Content-Disposition: form-data; name=\"#{name}\"\r\n\r\n"
-      body << value.to_s.b << "\r\n"
-    end
-    body << "--#{boundary}\r\n"
-    body << "Content-Disposition: form-data; name=\"image\"; filename=\"#{blob.filename}\"\r\n"
-    body << "Content-Type: #{content_type}\r\n\r\n"
-    body << blob.download << "\r\n"
-    body << "--#{boundary}--\r\n"
-    body
-  end
-
   def upload_candidate(b64, cost)
-    metadata = {}
+    metadata = { "model" => image_model }
     metadata["prompt"] = base_prompt if base_prompt.present?
     metadata["edits"] = edit_chain if edit_chain.any?
-    metadata["cost"] = cost if cost.present?
+    metadata["cost"] = cost.round(4) if cost.present?
     blob = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new(Base64.decode64(b64)),
       filename: "cover_art_candidate_#{SecureRandom.hex}.png",

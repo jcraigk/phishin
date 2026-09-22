@@ -21,10 +21,12 @@ RSpec.describe TeaseSyncService do
     end
   end
 
-  def stub_claude(teases, leading_blocks: [])
+  def stub_llm(teases, fenced: false)
+    text = { "teases" => teases }.to_json
+    text = "```json\n#{text}\n```" if fenced
     body = {
-      "content" => leading_blocks + [ { "type" => "text", "text" => { "teases" => teases }.to_json } ],
-      "usage" => { "input_tokens" => 100, "output_tokens" => 50 }
+      "choices" => [ { "message" => { "content" => text } } ],
+      "usage" => { "prompt_tokens" => 100, "completion_tokens" => 50, "cost" => 0.01 }
     }.to_json
     allow(Typhoeus).to receive(:post).and_return(instance_double(Typhoeus::Response, success?: true, body:))
   end
@@ -32,9 +34,9 @@ RSpec.describe TeaseSyncService do
   before do
     allow(ENV).to receive(:fetch).and_call_original
     allow(ENV).to receive(:fetch).with("PNET_API_KEY").and_return("pnet-key")
-    allow(ENV).to receive(:fetch).with("ANTHROPIC_API_KEY").and_return("anthropic-key")
+    allow(ENV).to receive(:fetch).with("OPENROUTER_API_KEY").and_return("openrouter-key")
     stub_pnet(setlist_notes)
-    stub_claude(llm_teases)
+    stub_llm(llm_teases)
   end
 
   describe "proposed tags" do
@@ -195,8 +197,8 @@ RSpec.describe TeaseSyncService do
   end
 
   describe "response parsing" do
-    it "reads the text block when the model emits a leading thinking block" do
-      stub_claude(llm_teases, leading_blocks: [ { "type" => "thinking", "thinking" => "hmm", "signature" => "x" } ])
+    it "strips code fences from the reply" do
+      stub_llm(llm_teases, fenced: true)
 
       service.call
 

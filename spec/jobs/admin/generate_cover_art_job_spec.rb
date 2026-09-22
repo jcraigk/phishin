@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Admin::GenerateCoverArtJob, :openai do
+RSpec.describe Admin::GenerateCoverArtJob, :open_router do
   let(:show) { create(:show, date: "2024-07-19", cover_art_prompt: "a red barn") }
   let(:admin_job) { create(:admin_job, kind: "cover_art_generate", show:) }
   let(:image_b64) do
@@ -8,15 +8,15 @@ RSpec.describe Admin::GenerateCoverArtJob, :openai do
       File.binread(Rails.root.join("spec/fixtures/files/cover-art-large.jpg"))
     )
   end
-  let(:openai_response) do
+  let(:image_response) do
     instance_double(
       Typhoeus::Response,
       success?: true,
-      body: { data: [ { b64_json: image_b64 } ] }.to_json
+      body: { data: [ { b64_json: image_b64 } ], usage: { cost: 0.0412 } }.to_json
     )
   end
 
-  before { allow(Typhoeus).to receive(:post).and_return(openai_response) }
+  before { allow(Typhoeus).to receive(:post).and_return(image_response) }
 
   it "attaches a new candidate" do
     described_class.new.perform(show.id, admin_job.id)
@@ -26,7 +26,34 @@ RSpec.describe Admin::GenerateCoverArtJob, :openai do
   it "requests generation from the image API exactly once" do
     described_class.new.perform(show.id, admin_job.id)
     expect(Typhoeus).to have_received(:post)
-      .with("https://api.openai.com/v1/images/generations", any_args).once
+      .with("https://openrouter.ai/api/v1/images", any_args).once
+  end
+
+  it "generates with the default model when none is given" do
+    described_class.new.perform(show.id, admin_job.id)
+    expect(Typhoeus).to have_received(:post) do |_url, options|
+      expect(JSON.parse(options[:body])["model"]).to eq(CoverArtImageService.default_model)
+    end
+  end
+
+  it "generates with the requested model" do
+    described_class.new.perform(show.id, admin_job.id, nil, "openai/gpt-5.4-image-2")
+    expect(Typhoeus).to have_received(:post) do |_url, options|
+      expect(JSON.parse(options[:body])["model"]).to eq("openai/gpt-5.4-image-2")
+    end
+  end
+
+  it "records the model and cost on the candidate blob" do
+    described_class.new.perform(show.id, admin_job.id, nil, "openai/gpt-5.4-image-2")
+    metadata = show.reload.cover_art_candidates.first.blob.metadata
+    expect(metadata).to include("model" => "openai/gpt-5.4-image-2", "cost" => 0.0412)
+  end
+
+  it "sends the prompt override when one is given" do
+    described_class.new.perform(show.id, admin_job.id, "a blue barn")
+    expect(Typhoeus).to have_received(:post) do |_url, options|
+      expect(JSON.parse(options[:body])["prompt"]).to eq("a blue barn")
+    end
   end
 
   it "leaves the show's existing cover art untouched" do
@@ -46,7 +73,7 @@ RSpec.describe Admin::GenerateCoverArtJob, :openai do
   end
 
   it "fails the admin job when the image API errors" do
-    allow(openai_response).to receive_messages(success?: false, body: "boom")
+    allow(image_response).to receive_messages(success?: false, body: "boom")
     expect { described_class.new.perform(show.id, admin_job.id) }
       .to raise_error(StandardError, /Failed to generate cover art/)
     expect(admin_job.reload.status).to eq("failed")
