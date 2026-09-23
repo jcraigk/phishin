@@ -37,6 +37,27 @@ RSpec.describe MetaTagService do
     end
   end
 
+  %w[
+    /login /signup /request-password-reset /reset-password/abc123 /my-shows /my-tracks
+    /settings /draft-playlist /admin /admin/shows
+  ].each do |private_path|
+    context "when the path is the account or admin page #{private_path}" do
+      let(:path) { private_path }
+
+      it "marks it noindex" do
+        expect(service[:robots]).to eq("noindex")
+      end
+    end
+  end
+
+  context "when the path is a public page" do
+    let(:path) { "/top-shows" }
+
+    it "leaves robots unset" do
+      expect(service[:robots]).to be_nil
+    end
+  end
+
   context "when the path is a hardcoded title with a custom description" do
     let(:path) { "/top-shows" }
 

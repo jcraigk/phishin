@@ -20,6 +20,7 @@ class ApplicationController < ActionController::Base
 
     @meta = MetaTagService.call(request.path)
     @structured_data = StructuredDataService.call(request.path)
+    @crawlable_content = CrawlableContentService.call(request.path)
     @react_props = {
       # OAuth login
       jwt: session[:jwt],

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
  <head>
+   <meta charset="UTF-8">
    <title><%= @meta[:title] || App.app_name %></title>
    <link rel="canonical" href="<%= request.base_url %><%= request.path %>">
    <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -17,6 +18,9 @@
  <%= render "analytics/google" %>
  <body>
    <div id="root"><%= react_component("App", props: @react_props) %></div>
+   <% if @crawlable_content %>
+     <noscript><%= render partial: @crawlable_content[:partial], locals: @crawlable_content[:locals] %></noscript>
+   <% end %>
    <%= render "layouts/web_mcp" %>
  </body>
 </html>

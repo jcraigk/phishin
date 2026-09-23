@@ -4,9 +4,11 @@
 <% og_image = @meta.dig(:og, :image).presence || "#{request.base_url}/placeholders/cover-art-medium.jpg" %>
 
 <meta name="description" content="<%= description %>">
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
+<% if @meta[:robots].present? %>
+  <meta name="robots" content="<%= @meta[:robots] %>">
+<% end %>
 
 <meta property="og:type" content="<%= @meta.dig(:og, :type) || "website" %>">
 <meta property="og:url" content="<%= request.original_url %>">

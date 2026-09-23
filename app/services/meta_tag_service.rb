@@ -41,6 +41,11 @@ class MetaTagService < ApplicationService
     "/top-tracks" => "Top Tracks"
   }
 
+  NOINDEX_PATHS = %w[
+    /admin /draft-playlist /login /my-shows /my-tracks /request-password-reset /settings /signup
+  ].freeze
+  NOINDEX_PREFIXES = %w[/admin/ /reset-password/].freeze
+
   SEO_TITLES = {
     "/top-shows" => "Best Phish Shows#{TITLE_SUFFIX}",
     "/top-tracks" => "Best Phish Tracks#{TITLE_SUFFIX}"
@@ -92,10 +97,15 @@ class MetaTagService < ApplicationService
   }
 
   def call
-    meta_tag_data
+    data = meta_tag_data
+    noindex? ? data.merge(robots: "noindex") : data
   end
 
   private
+
+  def noindex?
+    path.in?(NOINDEX_PATHS) || path.start_with?(*NOINDEX_PREFIXES)
+  end
 
   def meta_tag_data
     return home_meta_data if path == "/"

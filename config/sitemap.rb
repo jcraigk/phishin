@@ -8,19 +8,11 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   add "/privacy"
   add "/terms"
 
-  # Auth
-  add "/login"
-  add "/signup"
-  add "/request-password-reset"
-
   # Misc pages
   add "/map"
   add "/missing-content"
-  add "/my-shows"
-  add "/my-tracks"
   add "/playlists"
   add "/search"
-  add "/tags"
   add "/today"
   add "/top-shows"
   add "/top-tracks"
@@ -45,9 +37,9 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   # Tags
   add "/tags"
   Tag.find_each do |tag|
-    add "/show_tags/#{tag.slug}",
+    add "/show-tags/#{tag.slug}",
         lastmod: tag.show_tags.order(created_at: :desc).first&.created_at
-    add "/track_tags/#{tag.slug}",
+    add "/track-tags/#{tag.slug}",
         lastmod: tag.track_tags.order(created_at: :desc).first&.created_at
   end
 
@@ -62,7 +54,6 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   end
 
   # Playlists
-  add "/playlists"
   Playlist.published.find_each do |playlist|
     add "/play/#{playlist.slug}", lastmod: playlist.updated_at
   end
