@@ -52,7 +52,7 @@ RSpec.describe "SEO head tags" do
       get "/2024-01-01"
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Phish at #{show.venue_name}, Jan 1, 2024")
+      expect(response.body).to include("<title>Phish 1/1/24 at #{show.venue_name} - Phish.in</title>")
       expect(response.body).to include(%(property="og:title"))
       expect(response.body).to include(%(property="og:image"))
       expect(response.body).to include(
@@ -87,6 +87,90 @@ RSpec.describe "SEO head tags" do
     it "links the venue and year pages" do
       hrefs = static_content.css("a").map { |a| a["href"] }
       expect(hrefs).to include("/venues/#{venue.slug}", "/2024")
+    end
+  end
+
+  describe "crawlable track content" do
+    let!(:venue) { create(:venue, name: "Madison Square Garden", city: "New York", state: "NY") }
+    let!(:show) { create(:show, :with_tracks, date: "2024-01-01", venue:) }
+    let(:track) { show.tracks.order(:position).first }
+    let(:static_content) { Nokogiri::HTML5(response.body).at_css("body > noscript") }
+
+    before { get "/2024-01-01/#{track.slug}" }
+
+    it "headlines the track with the numeric show date" do
+      expect(static_content.at_css("h1").text).to eq("#{track.title} - Phish 1/1/24")
+    end
+
+    it "links the full show, the venue and each song" do
+      hrefs = static_content.css("a").map { |a| a["href"] }
+      song_hrefs = track.songs.map { |song| "/songs/#{song.slug}" }
+      expect(hrefs).to include("/2024-01-01", "/venues/#{venue.slug}", *song_hrefs)
+    end
+
+    it "includes the rest of the setlist" do
+      hrefs = static_content.css("ol a").map { |a| a["href"] }
+      expect(hrefs).to eq(show.tracks.order(:position).map { |t| "/2024-01-01/#{t.slug}" })
+    end
+  end
+
+  describe "crawlable song content" do
+    let!(:song) { create(:song, title: "Tweezer") }
+    let!(:show) { create(:show, date: "1997-11-17") }
+    let!(:track) { create(:track, show:, songs: [ song ], title: "Tweezer") }
+    let(:static_content) { Nokogiri::HTML5(response.body).at_css("body > noscript") }
+
+    before do
+      create(:track, show: create(:show, date: "1998-01-01", published: false), songs: [ song ])
+      get "/songs/#{song.slug}"
+    end
+
+    it "headlines the song" do
+      expect(static_content.at_css("h1").text).to eq("Tweezer by Phish")
+    end
+
+    it "links only published performances" do
+      hrefs = static_content.css("ol a").map { |a| a["href"] }
+      expect(hrefs).to eq([ "/1997-11-17/#{track.slug}" ])
+    end
+  end
+
+  describe "crawlable venue content" do
+    let!(:venue) { create(:venue, name: "Madison Square Garden", city: "New York", state: "NY") }
+    let(:static_content) { Nokogiri::HTML5(response.body).at_css("body > noscript") }
+
+    before do
+      create(:show, date: "1997-12-31", venue:)
+      create(:show, date: "1995-12-31", venue:)
+      get "/venues/#{venue.slug}"
+    end
+
+    it "headlines the venue" do
+      expect(static_content.at_css("h1").text).to eq("Phish at Madison Square Garden")
+    end
+
+    it "links each show in date order" do
+      hrefs = static_content.css("ol a").map { |a| a["href"] }
+      expect(hrefs).to eq(%w[/1995-12-31 /1997-12-31])
+    end
+  end
+
+  describe "crawlable year content" do
+    let(:static_content) { Nokogiri::HTML5(response.body).at_css("body > noscript") }
+
+    before do
+      create(:show, date: "1997-12-31")
+      create(:show, date: "1997-11-17")
+      get "/1997"
+    end
+
+    it "headlines the year" do
+      expect(static_content.at_css("h1").text).to eq("Phish 1997")
+    end
+
+    it "links each show in date order" do
+      hrefs = static_content.css("ol a").map { |a| a["href"] }
+      expect(hrefs).to eq(%w[/1997-11-17 /1997-12-31])
     end
   end
 

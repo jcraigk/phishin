@@ -128,7 +128,7 @@ RSpec.describe MetaTagService do
     let(:path) { "/2024-01-01" }
 
     it "returns a venue-rich title, description and og tags" do
-      expect(service[:title]).to eq("Phish at #{show.venue_name}, Jan 1, 2024#{title_suffix}")
+      expect(service[:title]).to eq("Phish 1/1/24 at #{show.venue_name}#{title_suffix}")
       expect(service[:description]).to include(show.venue_name)
       expect(service[:description]).to include("January 1, 2024")
       expect(service[:og][:title]).to eq(
@@ -148,7 +148,7 @@ RSpec.describe MetaTagService do
     let(:path) { "/2024-01-01/#{track.slug}" }
 
     it "returns the track title, description and og tags" do
-      expect(service[:title]).to eq("#{track.title} by Phish - Jan 1, 2024#{title_suffix}")
+      expect(service[:title]).to eq("#{track.title} - Phish 1/1/24#{title_suffix}")
       expect(service[:description]).to include(track.title)
       expect(service[:description]).to include("January 1, 2024")
       expect(service[:og][:title]).to eq(
@@ -164,7 +164,7 @@ RSpec.describe MetaTagService do
 
     it "returns the show title without track details and status ok" do
       show
-      expect(service[:title]).to eq("Phish at #{show.venue_name}, Jan 1, 2024#{title_suffix}")
+      expect(service[:title]).to eq("Phish 1/1/24 at #{show.venue_name}#{title_suffix}")
       expect(service[:status]).to eq(:ok)
     end
   end

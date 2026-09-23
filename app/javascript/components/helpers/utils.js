@@ -51,6 +51,12 @@ export const formatDate = (dateString) => {
   return `${parts.monthName} ${parts.day}, ${parts.year}`;
 };
 
+export const formatShortDate = (dateString) => {
+  if (!dateString) return "";
+  const [year, month, day] = dateString.slice(0, 10).split("-").map(Number);
+  return `${month}/${day}/${String(year).slice(-2)}`;
+};
+
 export const formatMonthDay = (dateString) => {
   const parts = parseDateParts(dateString);
   if (!parts) return "";

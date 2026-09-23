@@ -16,7 +16,7 @@ export const showLoader = async ({ params }) => {
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router";
 import { Helmet } from "react-helmet-async";
-import { formatDate, formatMonthDay, parseDateParts } from "./helpers/utils";
+import { formatMonthDay, formatShortDate, parseDateParts } from "./helpers/utils";
 import ShowContextMenu from "./controls/ShowContextMenu";
 import LikeButton from "./controls/LikeButton";
 import Tracks from "./Tracks";
@@ -131,7 +131,7 @@ const Show = ({ trackSlug }) => {
   return (
     <>
       <Helmet>
-        <title>{matchedTrack ? `${matchedTrack.title} by Phish - ${formatDate(show.date)} - Phish.in` : `Phish at ${show.venue_name}, ${formatDate(show.date)} - Phish.in`}</title>
+        <title>{matchedTrack ? `${matchedTrack.title} - Phish ${formatShortDate(show.date)} - Phish.in` : `Phish ${formatShortDate(show.date)} at ${show.venue_name} - Phish.in`}</title>
       </Helmet>
       <div className="background-blur"></div>
       <div id="layout-container">

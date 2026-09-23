@@ -190,7 +190,7 @@ class MetaTagService < ApplicationService
 
   def track_show_meta(show, track)
     {
-      title: "#{track.title} by Phish - #{short_date(show.date)}#{TITLE_SUFFIX}",
+      title: "#{track.title} - Phish #{numeric_date(show.date)}#{TITLE_SUFFIX}",
       description:
         "Phish's live performance of #{track.title} at #{venue_phrase(show)} on " \
         "#{long_date(show.date)}. A free audience recording you can stream or download.",
@@ -207,7 +207,7 @@ class MetaTagService < ApplicationService
 
   def default_show_meta(show)
     {
-      title: "Phish at #{show.venue_name}, #{short_date(show.date)}#{TITLE_SUFFIX}",
+      title: "Phish #{numeric_date(show.date)} at #{show.venue_name}#{TITLE_SUFFIX}",
       description:
         "Stream Phish's full show from #{long_date(show.date)} at #{venue_phrase(show)}. " \
         "A free audience recording with the complete setlist and audio for every track.",
@@ -326,8 +326,8 @@ class MetaTagService < ApplicationService
     Show.published.where("EXTRACT(YEAR FROM date) BETWEEN ? AND ?", start_year, end_year)
   end
 
-  def short_date(date)
-    date.strftime("%b %-d, %Y")
+  def numeric_date(date)
+    date.strftime("%-m/%-d/%y")
   end
 
   def long_date(date)

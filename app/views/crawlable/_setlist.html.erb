@@ -1,0 +1,8 @@
+<% show.tracks.sort_by(&:position).group_by(&:set_name).each do |set_name, tracks| %>
+  <h2><%= set_name %></h2>
+  <ol>
+    <% tracks.each do |track| %>
+      <li><%= link_to track.title, "/#{show.date}/#{track.slug}" %></li>
+    <% end %>
+  </ol>
+<% end %>

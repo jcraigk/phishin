@@ -1,0 +1,13 @@
+<main>
+  <h1><%= song.title %> by Phish</h1>
+  <p>
+    Every live performance of <%= song.title %> by Phish<%= " (originally by #{song.artist})" if song.artist.present? %>,
+    each a free audience recording.
+  </p>
+  <h2>Performances</h2>
+  <ol>
+    <% tracks.each do |track| %>
+      <li><%= link_to "#{track.title} - #{numeric_date(track.show.date)}", "/#{track.show.date}/#{track.slug}" %> at <%= track.show.venue_name %></li>
+    <% end %>
+  </ol>
+</main>

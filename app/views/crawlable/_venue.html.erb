@@ -1,0 +1,10 @@
+<main>
+  <h1>Phish at <%= venue.name %></h1>
+  <p>Every Phish show at <%= venue.name %><%= " in #{venue.location}" if venue.location.present? %>, each a free audience recording.</p>
+  <h2>Shows</h2>
+  <ol>
+    <% shows.each do |show| %>
+      <li><%= link_to "Phish #{numeric_date(show.date)}", "/#{show.date}" %></li>
+    <% end %>
+  </ol>
+</main>

@@ -1,5 +1,5 @@
 <main>
-  <h1>Phish <%= show.date.strftime("%-m/%-d/%y") %> at <%= show.venue_name %><%= ", #{show.venue.location}" if show.venue&.location.present? %></h1>
+  <h1>Phish <%= numeric_date(show.date) %> at <%= show.venue_name %><%= ", #{show.venue.location}" if show.venue&.location.present? %></h1>
   <p>
     A free audience recording of Phish's show on <%= show.date.strftime("%B %-d, %Y") %>
     with the complete setlist.
@@ -13,12 +13,5 @@
     <% end %>
     <li>Year: <%= link_to show.date.year, "/#{show.date.year}" %></li>
   </ul>
-  <% show.tracks.sort_by(&:position).group_by(&:set_name).each do |set_name, tracks| %>
-    <h2><%= set_name %></h2>
-    <ol>
-      <% tracks.each do |track| %>
-        <li><%= link_to track.title, "/#{show.date}/#{track.slug}" %></li>
-      <% end %>
-    </ol>
-  <% end %>
+  <%= render partial: "crawlable/setlist", locals: { show: } %>
 </main>

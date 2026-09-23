@@ -1,4 +1,8 @@
 module ApplicationHelper
+  def numeric_date(date)
+    date.strftime("%-m/%-d/%y")
+  end
+
   def json_ld_tag(graph)
     json = graph.to_json
       .gsub("<") { "\\u003c" }
