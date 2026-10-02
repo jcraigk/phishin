@@ -74,7 +74,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     onNext: handleSkipToNext,
     onPrevious: handleSkipToPrevious,
     onScrub: scrub,
-  }, isPlaying);
+  }, isPlaying, currentTime);
 
   // Keyboard shortcuts
   useEffect(() => {

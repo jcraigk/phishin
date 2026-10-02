@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { formatDate } from "../helpers/utils";
 import { isIOS } from "../helpers/utils";
+import { mediaPositionState } from "../player/mediaPositionState";
 
-export const useMediaSession = (activeTrack, controls, isPlaying = false) => {
+export const useMediaSession = (activeTrack, controls, isPlaying = false, currentTime = 0) => {
   useEffect(() => {
     if ('mediaSession' in navigator && activeTrack) {
       navigator.mediaSession.metadata = new MediaMetadata({
@@ -38,5 +39,11 @@ export const useMediaSession = (activeTrack, controls, isPlaying = false) => {
       navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
     }
   }, [isPlaying]);
+
+  useEffect(() => {
+    if (!('mediaSession' in navigator) || !navigator.mediaSession.setPositionState || !activeTrack) return;
+    const state = mediaPositionState({ durationMs: activeTrack.duration, currentTime });
+    if (state) navigator.mediaSession.setPositionState(state);
+  }, [activeTrack, currentTime]);
 };
 
