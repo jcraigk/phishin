@@ -3,30 +3,20 @@
 // to the background unless a media element is playing, and desktop browsers
 // only route hardware media keys to a page with a playing media element.
 // Must be started synchronously inside the user gesture that starts playback.
-const SAMPLE_RATE = 8000;
-const SECONDS = 1;
+// The loop is an hour long because iOS rereads the lock screen timeline from
+// this element each time it wraps, briefly replacing the media session's
+// position state with the loop's own duration.
+//
+// One self-contained 36 byte MPEG-2 Layer III frame (16 kHz mono, 8 kbps, no
+// bit reservoir) decodes to 36 ms of silence, so repeating it builds an hour
+// of audio in 3.6 MB without encoding anything in the browser.
+const SILENT_FRAME = new Uint8Array([0xff, 0xf3, 0x18, 0xc4, 0, 0, 0, 3, 0x48, ...new Array(27).fill(0)]);
+const FRAME_SECONDS = 0.036;
+const SECONDS = 3600;
 
-const silentWavUrl = () => {
-  const samples = SAMPLE_RATE * SECONDS;
-  const buffer = new ArrayBuffer(44 + samples * 2);
-  const view = new DataView(buffer);
-  const ascii = (offset, text) => {
-    for (let i = 0; i < text.length; i++) view.setUint8(offset + i, text.charCodeAt(i));
-  };
-  ascii(0, "RIFF");
-  view.setUint32(4, 36 + samples * 2, true);
-  ascii(8, "WAVE");
-  ascii(12, "fmt ");
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
-  view.setUint16(22, 1, true);
-  view.setUint32(24, SAMPLE_RATE, true);
-  view.setUint32(28, SAMPLE_RATE * 2, true);
-  view.setUint16(32, 2, true);
-  view.setUint16(34, 16, true);
-  ascii(36, "data");
-  view.setUint32(40, samples * 2, true);
-  return URL.createObjectURL(new Blob([buffer], { type: "audio/wav" }));
+const silentMp3Url = () => {
+  const frames = Math.round(SECONDS / FRAME_SECONDS);
+  return URL.createObjectURL(new Blob(new Array(frames).fill(SILENT_FRAME), { type: "audio/mpeg" }));
 };
 
 export class SessionKeeper {
@@ -36,7 +26,7 @@ export class SessionKeeper {
 
   start() {
     if (!this.element) {
-      this.element = new Audio(silentWavUrl());
+      this.element = new Audio(silentMp3Url());
       this.element.loop = true;
     }
     this.element.play().catch(() => {});
