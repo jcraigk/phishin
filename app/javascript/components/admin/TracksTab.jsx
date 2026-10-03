@@ -93,13 +93,9 @@ const TracksTab = () => {
           venue_name: show.venue_name,
           venue_slug: show.venue_slug,
           waveform_image_url: t.waveform_url,
-          show_cover_art_urls: {
-            small: show.cover_art_url,
-            medium: show.cover_art_url,
-            large: show.cover_art?.current_url,
-          },
+          show_cover_art_urls: show.cover_art_urls,
         })),
-    [tracks, show.date, show.cover_art_url, show.cover_art?.current_url]
+    [tracks, show.date, show.cover_art_urls]
   );
 
   const playRow = (track) => {

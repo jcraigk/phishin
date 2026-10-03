@@ -56,6 +56,7 @@ module ApiV2::Helpers::AdminHelper
   def editor_payload(show)
     show_summary(show).merge(
       cover_art: cover_art_payload(show),
+      cover_art_urls: show.cover_art_urls,
       taper_notes: show.taper_notes,
       admin_notes: show.admin_notes,
       venue_id: show.venue_id,

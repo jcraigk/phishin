@@ -69,6 +69,13 @@ RSpec.describe "API v2 Admin Shows" do
       expect(body["tracks"]).to eq([])
     end
 
+    it "includes cover art at every size so the player can use a sharp one" do
+      create(:show, date: "2025-08-01", published: false)
+      get "/api/v2/admin/shows/2025-08-01", headers: admin_headers
+      urls = JSON.parse(response.body)["cover_art_urls"]
+      expect(urls["medium"]).to end_with("/placeholders/cover-art-medium.jpg")
+    end
+
     it "includes tracks for a show with audio" do
       show = create(:show, date: "2025-08-02")
       track = create(:track, show:, position: 1, set: "1")
