@@ -26,6 +26,17 @@ RSpec.describe BustoutTagService do
       end
     end
 
+    context "when a song has a gap of exactly the minimum" do
+      before do
+        songs_track = SongsTrack.find_by(track_id: track.id, song_id: song.id)
+        songs_track.update!(previous_performance_gap: described_class::MIN_GAP)
+      end
+
+      it "applies the bustout tag" do
+        expect { service }.to change { track.track_tags.count }.by(1)
+      end
+    end
+
     context "when a song has a small performance gap" do
       before do
         songs_track = SongsTrack.find_by(track_id: track.id, song_id: song.id)

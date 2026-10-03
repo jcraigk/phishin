@@ -9,7 +9,7 @@ class BustoutTagService < ApplicationService
     show.tracks.where.not(set: "S").each do |track|
       track.songs_tracks.each do |songs_track|
         prev_perf_gap = songs_track.previous_performance_gap
-        next unless prev_perf_gap && prev_perf_gap > MIN_GAP
+        next unless prev_perf_gap && prev_perf_gap >= MIN_GAP
         apply_bustout_tag(track, songs_track.song, prev_perf_gap)
       end
     end
