@@ -22,14 +22,15 @@ const SELECT_CONFIRM =
 
 const modelLabel = (id) => (id ? id.split("/").pop() : "");
 
-const ModelSelect = ({ value, onChange, disabled }) => {
+const ModelSelect = ({ value, onChange, disabled, kind = "image" }) => {
   const { show } = useContext(EditorContext);
-  const models = show.cover_art.image_models || [];
+  const models = show.cover_art[`${kind}_models`] || [];
+  const label = kind === "prompt" ? "Prompt model" : "Image model";
   return (
     <select
       className="admin-art-model-select"
-      aria-label="Image model"
-      title="Image model"
+      aria-label={label}
+      title={label}
       value={value}
       disabled={disabled}
       onChange={(e) => onChange(e.target.value)}
@@ -269,12 +270,13 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
   const { show } = useContext(EditorContext);
   const [draft, setDraft] = useState(show.cover_art.prompt || "");
   const [model, setModel] = useState(show.cover_art.default_image_model);
+  const [promptModel, setPromptModel] = useState(show.cover_art.default_prompt_model);
   const [suggestions, setSuggestions] = useState(null);
   const { run, busy, error } = useJobRunner();
 
   const suggest = () =>
     run(
-      () => adminPost(`/shows/${show.date}/cover_art/regenerate_prompt`),
+      () => adminPost(`/shows/${show.date}/cover_art/regenerate_prompt`, { model: promptModel }),
       (job) => {
         if (job?.payload?.prompt) setDraft(job.payload.prompt);
         setSuggestions(job?.payload?.suggestions || null);
@@ -296,6 +298,10 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
       />
       {error && <p className="admin-error">{error}</p>}
       <div className="admin-modal-actions">
+        <ModelSelect kind="prompt" value={promptModel} onChange={setPromptModel} disabled={busy} />
+        <button type="button" disabled={busy} onClick={suggest}>
+          <FontAwesomeIcon icon={faSparkles} /> {draft.trim() ? "Regenerate prompt" : "Generate prompt"}
+        </button>
         <ModelSelect value={model} onChange={setModel} disabled={busy} />
         <button
           type="button"
@@ -303,9 +309,6 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
           onClick={() => onSubmit(draft.trim(), model)}
         >
           <FontAwesomeIcon icon={faCheck} /> Submit
-        </button>
-        <button type="button" disabled={busy} onClick={suggest}>
-          <FontAwesomeIcon icon={faSparkles} /> {draft.trim() ? "Regenerate prompt" : "Generate prompt"}
         </button>
         <button type="button" disabled={busy} onClick={onClose}>
           <FontAwesomeIcon icon={faXmark} /> Cancel

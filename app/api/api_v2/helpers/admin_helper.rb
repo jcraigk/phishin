@@ -34,6 +34,8 @@ module ApiV2::Helpers::AdminHelper
       model: show.cover_art_model,
       image_models: CoverArtImageService::MODELS,
       default_image_model: CoverArtImageService.default_model,
+      prompt_models: CoverArtPromptService::MODELS,
+      default_prompt_model: CoverArtPromptService::MODELS.first,
       parent_show_id: show.cover_art_parent_show_id,
       parent_show_date: Show.find_by(id: show.cover_art_parent_show_id)&.date&.to_s,
       child_dates: Show.where(cover_art_parent_show_id: show.id).order(:date).pluck(:date).map(&:to_s),

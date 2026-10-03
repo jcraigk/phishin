@@ -1,6 +1,7 @@
 class CoverArtPromptService < ApplicationService
   param :show
   option :dry_run, default: -> { false }
+  option :model, default: -> { MODELS.first }
 
   HUES = %w[
     Red Orange Yellow Green Blue Purple
@@ -22,7 +23,7 @@ class CoverArtPromptService < ApplicationService
     Claymation Felt-Craft Embroidery Wood-Burned
   ]
   CATEGORIES = %w[animals plants foods misc_objects time_concepts phish]
-  MODEL = "anthropic/claude-opus-5".freeze
+  MODELS = %w[anthropic/claude-opus-5].freeze
   BASE_PROMPT = <<~TXT
     I want you to generate a series of objects and ideas in specific categories associated with a venue, time, and city/state I provide below. I want the answer in JSON format. The keys should be animals, plants, foods, misc_objects (miscellaneous objects), time_concepts (concepts related to time, season, social atmosphere, etc), and phish (explained below). I want you to give me ten words or phrases representing those categories. Avoid references that an image generation model might reject as inappropriate. Avoid images of humans, human forms, or faces.
 
@@ -192,7 +193,7 @@ class CoverArtPromptService < ApplicationService
     prompt += "\n\nThe time and place is #{show.venue_name}, #{show.venue.location} on #{show.date}"
 
     result = OpenRouter.chat(
-      model: MODEL,
+      model:,
       system: "You are a generalized expert in knowledge about points of interest.",
       prompt:
     )

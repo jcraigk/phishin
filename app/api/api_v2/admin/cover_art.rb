@@ -8,8 +8,12 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
       route_param :date, requirements: DATE[:date] do
         namespace :cover_art do
           desc "Regenerate the cover art prompt", hidden: true
+          params do
+            optional :model, type: String, values: CoverArtPromptService::MODELS
+          end
           post :regenerate_prompt do
-            enqueue_job("cover_art_prompt", Admin::RegenerateCoverArtPromptJob, show: admin_show)
+            enqueue_job("cover_art_prompt", Admin::RegenerateCoverArtPromptJob, show: admin_show,
+                        args: [ params[:model].presence ])
           end
 
           desc "Generate a cover art candidate", hidden: true

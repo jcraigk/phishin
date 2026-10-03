@@ -39,6 +39,18 @@ RSpec.describe "API v2 Admin Cover Art" do
       expect(Admin::RegenerateCoverArtPromptJob.jobs.size).to eq(1)
     end
 
+    it "passes the chosen prompt model to the prompt job" do
+      post path, params: { model: CoverArtPromptService::MODELS.first }.to_json, headers: json_headers
+      expect(Admin::RegenerateCoverArtPromptJob.jobs.last["args"])
+        .to eq([ show.id, AdminJob.last.id, CoverArtPromptService::MODELS.first ])
+    end
+
+    it "400s on a prompt model outside the allowed list" do
+      post path, params: { model: "google/gemini-3-pro-image" }.to_json, headers: json_headers
+      expect(response).to have_http_status(:bad_request)
+      expect(Admin::RegenerateCoverArtPromptJob.jobs).to be_empty
+    end
+
     it "returns the job id" do
       post path, headers: admin_headers
       expect(JSON.parse(response.body)["job_id"]).to eq(AdminJob.last.id)
@@ -350,7 +362,9 @@ RSpec.describe "API v2 Admin Cover Art" do
       expect(JSON.parse(response.body)["cover_art"]).to include(
         "model" => "google/gemini-3-pro-image",
         "image_models" => CoverArtImageService::MODELS,
-        "default_image_model" => "google/gemini-3.1-flash-image"
+        "default_image_model" => "google/gemini-3.1-flash-image",
+        "prompt_models" => CoverArtPromptService::MODELS,
+        "default_prompt_model" => CoverArtPromptService::MODELS.first
       )
     end
 

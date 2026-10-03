@@ -35,6 +35,12 @@ RSpec.describe Admin::RegenerateCoverArtPromptJob, :open_router do
     expect(suggestions["animals"]).to eq([ "a pigeon" ])
   end
 
+  it "asks the chosen model for the suggestions" do
+    allow(CoverArtPromptService).to receive(:call).and_call_original
+    described_class.new.perform(show.id, admin_job.id, "anthropic/claude-opus-5")
+    expect(CoverArtPromptService).to have_received(:call).with(show, dry_run: true, model: "anthropic/claude-opus-5")
+  end
+
   it "completes the admin job" do
     described_class.new.perform(show.id, admin_job.id)
     expect(admin_job.reload.status).to eq("done")
