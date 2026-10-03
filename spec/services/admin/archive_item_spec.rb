@@ -31,6 +31,17 @@ RSpec.describe Admin::ArchiveItem do
       .to eq([ "ph2024-07-19d1t01.flac", "ph2024-07-19d1t02.flac" ])
   end
 
+  it "skips lossless files archive.org derived from another lossless file in the item" do
+    metadata[:files] = [
+      { name: "01 Fuego.wav", format: "WAVE", source: "original" },
+      { name: "02 Ghost.wav", format: "WAVE", source: "original" },
+      { name: "02 Ghost.flac", format: "Flac", source: "derivative", original: "02 Ghost.wav" },
+      { name: "02 Ghost.mp3", format: "VBR MP3", source: "derivative", original: "02 Ghost.wav" }
+    ]
+    expect(described_class.new(identifier).files.map { it["name"] })
+      .to eq([ "01 Fuego.wav", "02 Ghost.wav" ])
+  end
+
   it "falls back to mp3 when the item has no lossless audio" do
     metadata[:files].reject! { it[:format] == "Flac" }
     expect(described_class.new(identifier).files.map { it["name"] })

@@ -31,7 +31,7 @@ class Admin::ArchiveItem
 
   def files
     @files ||= begin
-      chosen = LOSSLESS.flat_map { by_format(it) }
+      chosen = without_derivatives(LOSSLESS.flat_map { by_format(it) })
       chosen = LOSSY.flat_map { by_format(it) } if chosen.empty?
       raise NoAudioError, "#{identifier} has no audio files" if chosen.empty?
       chosen.sort_by { it["name"] }
@@ -64,6 +64,11 @@ class Admin::ArchiveItem
 
   def by_format(name)
     metadata.fetch("files", []).select { it["format"] == name }
+  end
+
+  def without_derivatives(files)
+    names = files.map { it["name"] }
+    files.reject { names.include?(it["original"]) }
   end
 
   def metadata
