@@ -8,7 +8,7 @@ import StagedTrackRow from "./StagedTrackRow";
 import useJobRunner from "./useJobRunner";
 import { StagingPlayer } from "./StagingPlayer";
 import { adminPatch, adminPost, adminPut, adminDelete } from "./adminApi";
-import { round1 } from "./stagingMath";
+import { round1, viewWindow } from "./stagingMath";
 import { setName, groupBySet, withPendingSets, addableSets as computeAddableSets } from "./sets";
 import AddSetMenu from "./AddSetMenu";
 import IssueList from "./IssueList";
@@ -221,18 +221,7 @@ const StagingEditor = () => {
   const windowFor = (track) => {
     if (!track) return { start: 0, end: staging.total_s };
     const list = tracksRef.current;
-    const index = list.findIndex((t) => t.id === track.id);
-    const prev = list[index - 1];
-    const following = list[index + 1];
-    const pad = Math.max(EDGE_PAD_S, (track.end_s - track.start_s) / 2);
-    return {
-      start: prev && prev.set === track.set
-        ? Math.max(track.start_s - pad, prev.start_s)
-        : Math.min(track.start_s, track.original_start_s ?? track.start_s),
-      end: following && following.set === track.set
-        ? Math.min(track.end_s + pad, following.end_s)
-        : Math.max(track.end_s, track.original_end_s ?? track.end_s),
-    };
+    return viewWindow(list, list.findIndex((t) => t.id === track.id), EDGE_PAD_S);
   };
   const [viewSpan, setViewSpan] = useState(() => windowFor(selected));
   useEffect(() => {
@@ -241,9 +230,8 @@ const StagingEditor = () => {
   }, [selectedId]);
 
   const setKey = tracks.map((t) => t.set).join(",");
-  const reachKey = selected
-    ? `${Math.min(selected.start_s, selected.original_start_s ?? selected.start_s)}:${Math.max(selected.end_s, selected.original_end_s ?? selected.end_s)}`
-    : "";
+  const reach = selected && windowFor(selected);
+  const reachKey = reach ? `${reach.start}:${reach.end}` : "";
   useEffect(() => {
     setViewSpan(windowFor(tracksRef.current.find((t) => t.id === selectedId) || tracksRef.current[0] || null));
   }, [selectedId, setKey, reachKey]);

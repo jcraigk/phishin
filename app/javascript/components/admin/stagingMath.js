@@ -28,3 +28,18 @@ export const gainAt = (track, t) => {
   }
   return Math.max(0, Math.min(1, gain));
 };
+
+export const viewWindow = (tracks, index, pad) => {
+  const track = tracks[index];
+  const prev = tracks[index - 1];
+  const following = tracks[index + 1];
+  const reach = Math.max(pad, (track.end_s - track.start_s) / 2);
+  return {
+    start: prev && prev.set === track.set
+      ? Math.max(track.start_s - reach, prev.start_s)
+      : Math.min(track.start_s, track.original_start_s ?? track.start_s, prev ? prev.end_s : track.start_s),
+    end: following && following.set === track.set
+      ? Math.min(track.end_s + reach, following.end_s)
+      : Math.max(track.end_s, track.original_end_s ?? track.end_s, following ? following.start_s : track.end_s),
+  };
+};
