@@ -208,6 +208,14 @@ RSpec.describe "API v2 Admin Staging" do
       delete "#{base}/staging/tracks/#{a.id}", headers: admin_headers
       expect(show.staged_tracks.ordered.map { [ it.position, it.title ] }).to eq([ [ 1, "B" ] ])
     end
+
+    it "gives the track left at the end of a set the default fade-out" do
+      a.update!(set: "1", fade_out_s: 0)
+      b.update!(set: "1")
+      create(:staged_track, show:, position: 3, title: "C", set: "E", start_s: 150, end_s: 200)
+      delete "#{base}/staging/tracks/#{b.id}", headers: admin_headers
+      expect(a.reload.fade_out_s).to eq(StagedTrack::DEFAULT_FADE_OUT_S)
+    end
   end
 
   describe "GET source audio" do

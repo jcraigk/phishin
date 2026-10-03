@@ -148,6 +148,7 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
           ActiveRecord::Base.transaction do
             track.destroy!
             StagedTrack.renumber!(track.show)
+            StagedTrack.normalize_edge_fades!(track.show)
           end
           staging_payload(track.show.reload)
         end
