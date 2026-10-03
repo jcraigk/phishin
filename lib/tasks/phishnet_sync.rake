@@ -61,7 +61,11 @@ namespace :phishnet do
 
   # Date-specific tour overrides - maps show date to tour name
   TOUR_DATE_OVERRIDES = {
-    "2025-01-28" => "Mexico Run 2025"
+    "2025-01-28" => "Mexico Run 2025",
+    "2027-01-27" => "Mexico Run 2027",
+    "2027-01-28" => "Mexico Run 2027",
+    "2027-01-29" => "Mexico Run 2027",
+    "2027-01-30" => "Mexico Run 2027"
   }.freeze
 
   # Dates to skip during sync (manually managed)
