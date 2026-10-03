@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDownLong, faArrowUpLong, faClockRotateLeft, faPlay, faScissors, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDownLong, faArrowUpLong, faClockRotateLeft, faLocationCrosshairs, faPlay, faScissors, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import SongPicker from "./SongPicker";
 import { round1 } from "./stagingMath";
 
 const DEFAULT_FADE_IN = 0.2;
 const DEFAULT_FADE_OUT = 6.0;
 const EDGE_CONTEXT_S = 2;
+const MIN_TRACK_S = 1;
 
 const StagedTrackRow = ({
   track, prev, next, startKind, endKind, selected, onSelect, onPlay, onPatch,
@@ -39,9 +40,8 @@ const StagedTrackRow = ({
     if (fields[key] !== track[key]) onPatch(track, { [key]: fields[key] });
   };
 
-  const numberField = (label, key, extra = {}) => (
-    <label className="admin-audio-field">
-      <span>{label}</span>
+  const numberField = (label, key, extra = {}, after = null) => {
+    const input = (
       <input
         type="number"
         step="0.1"
@@ -52,7 +52,36 @@ const StagedTrackRow = ({
         onKeyDown={(e) => { if (e.key === "Enter") commitField(key); }}
         {...extra}
       />
-    </label>
+    );
+    return (
+      <label className="admin-audio-field">
+        <span>{label}</span>
+        {after ? <span className="admin-fade-controls">{input}{after}</span> : input}
+      </label>
+    );
+  };
+
+  const here = playhead == null ? null : round1(playhead);
+  const startHereValid = here != null && (startKind === "seam"
+    ? here >= prev.start_s + MIN_TRACK_S && here <= track.end_s - MIN_TRACK_S
+    : here <= track.end_s - MIN_TRACK_S && (!prev || here >= prev.end_s));
+  const endHereValid = here != null && here >= track.start_s + MIN_TRACK_S && (endKind === "seam"
+    ? here <= next.end_s - MIN_TRACK_S
+    : !next || here <= next.start_s);
+  const startHere = () => (startKind === "seam" ? onBoundary(prev, here) : onPatch(track, { start_s: here }));
+  const endHere = () => (endKind === "seam" ? onBoundary(track, here) : onPatch(track, { end_s: here }));
+
+  const hereButton = (label, valid, action) => (
+    <button
+      type="button"
+      className="admin-trim-play"
+      title={here == null ? label : `${label} (${here}s)`}
+      aria-label={label}
+      disabled={busy || !valid}
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); action(); }}
+    >
+      <FontAwesomeIcon icon={faLocationCrosshairs} />
+    </button>
   );
 
   const fadeField = (label, key, defaultValue) => {
@@ -160,9 +189,9 @@ const StagedTrackRow = ({
           />
 
           <div className="admin-audio-fields">
-            {numberField("Start", "start_s")}
+            {numberField("Start", "start_s", {}, hereButton(startKind === "seam" ? "Move the seam to the playhead" : "Start at the playhead", startHereValid, startHere))}
             {startKind === "trim" && fadeField("Fade in", "fade_in_s", DEFAULT_FADE_IN)}
-            {numberField("End", "end_s")}
+            {numberField("End", "end_s", {}, endKind === "trim" && hereButton("End at the playhead", endHereValid, endHere))}
             {endKind === "trim" && fadeField("Fade out", "fade_out_s", DEFAULT_FADE_OUT)}
           </div>
 
@@ -178,6 +207,7 @@ const StagedTrackRow = ({
                 onChange={(e) => setBoundary(Number(e.target.value))}
                 onBlur={() => { if (Math.abs(boundary - track.end_s) > 0.001) onBoundary(track, boundary); }}
               />
+              {hereButton("Move the seam to the playhead", endHereValid, endHere)}
               <button
                 type="button"
                 disabled={busy || loading}
