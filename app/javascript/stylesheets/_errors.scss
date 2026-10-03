@@ -5,7 +5,13 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  text-align: center;
+  padding: 4rem 1rem;
+
+  &.full-page {
+    height: 100vh;
+    padding: 0 1rem;
+  }
 
   .error-logo {
     margin-bottom: 2.5rem;

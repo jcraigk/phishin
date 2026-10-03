@@ -2,12 +2,12 @@ import React from "react";
 import { useRouteError, Link } from "react-router";
 import logo from "../../images/logo-full.png";
 
-const ErrorPage = () => {
+const ErrorPage = ({ fullPage = false }) => {
   const error = useRouteError();
 
   return (
-    <div className="error-page">
-      <img src={logo} className="error-logo" alt="Site logo" />
+    <div className={`error-page${fullPage ? " full-page" : ""}`}>
+      {fullPage && <img src={logo} className="error-logo" alt="Site logo" />}
       {error?.status === 404 ? (
         <>
           <p className="error-title">404</p>
