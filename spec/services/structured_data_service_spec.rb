@@ -40,6 +40,26 @@ RSpec.describe StructuredDataService do
       expect(event.dig(:location, :address, :addressLocality)).to eq("New York")
       expect(event.dig(:location, :geo, :latitude)).to eq(40.7)
     end
+
+    it "emits a same-day endDate" do
+      show
+      expect(graph_of("MusicEvent")[:endDate]).to eq("2024-01-01")
+    end
+
+    it "emits Phish as the organizer with a url" do
+      show
+      organizer = graph_of("MusicEvent")[:organizer]
+
+      expect(organizer[:name]).to eq("Phish")
+      expect(organizer[:url]).to be_present
+    end
+
+    it "emits a description naming the venue, location, and date" do
+      show
+      description = graph_of("MusicEvent")[:description]
+
+      expect(description).to include(show.venue_name, "New York, NY", "January 1, 2024")
+    end
   end
 
   context "when the path is a show date with no matching show" do

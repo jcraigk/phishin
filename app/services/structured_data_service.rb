@@ -59,14 +59,24 @@ class StructuredDataService < ApplicationService
       "@context": CONTEXT,
       "@type": "MusicEvent",
       name: "Phish at #{show.venue_name} on #{long_date(show.date)}",
+      description: event_description(show),
       startDate: show.date.iso8601,
+      endDate: show.date.iso8601,
       eventStatus: "https://schema.org/EventScheduled",
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       url: show.url,
       performer: PHISH,
+      organizer: PHISH,
       location: music_venue(show.venue, show.venue_name),
       image: show.album_cover_url
     }.compact
+  end
+
+  def event_description(show)
+    location = show.venue&.location
+    venue = location.present? ? "#{show.venue_name} in #{location}" : show.venue_name
+    "Phish performing live at #{venue} on #{long_date(show.date)}. " \
+      "A free audience recording with the complete setlist and audio for every track."
   end
 
   def music_recording(track, show)
