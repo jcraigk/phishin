@@ -189,6 +189,24 @@ RSpec.describe "API v2 Admin Shows" do
       expect(show.reload.venue).to be_nil
     end
 
+    it "links the show to its run's cover art when the venue is set" do
+      parent = create(:show, date: "2025-07-31", venue:)
+      patch_show(venue_id: venue.id)
+      expect(show.reload.cover_art_parent_show_id).to eq(parent.id)
+    end
+
+    it "returns the run's parent date in the payload after a venue change" do
+      create(:show, date: "2025-07-31", venue:)
+      patch_show(venue_id: venue.id)
+      expect(JSON.parse(response.body).dig("cover_art", "parent_show_date")).to eq("2025-07-31")
+    end
+
+    it "leaves the cover art link alone when the venue is unchanged" do
+      create(:show, date: "2025-07-31", venue: show.venue)
+      patch_show(admin_notes: "x")
+      expect(show.reload.cover_art_parent_show_id).to be_nil
+    end
+
     it "rejects unknown venue ids" do
       expect { patch_show(venue_id: 999_999) }.not_to change { show.reload.venue_id }
       expect(response).to have_http_status(:not_found)

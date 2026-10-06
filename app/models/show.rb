@@ -88,6 +88,17 @@ class Show < ApplicationRecord
     create!(date:, published: false, audio_status: "missing")
   end
 
+  def cover_art_run_kickoff
+    kickoff = self
+    loop do
+      prior = Show.where(date: ...kickoff.date).order(date: :desc).first
+      break unless prior && prior.venue_id == kickoff.venue_id
+      break if (kickoff.date - prior.date).to_i > 4
+      kickoff = prior
+    end
+    kickoff
+  end
+
   def staging?
     staged_sources.any?
   end

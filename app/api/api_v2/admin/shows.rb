@@ -94,6 +94,7 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
       patch ":date", requirements: DATE do
         show = admin_show
         show.update!(show_updates)
+        CoverArtRunLinker.call(show) if show.saved_change_to_venue_id?
         editor_payload(show.reload)
       end
 

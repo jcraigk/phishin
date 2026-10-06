@@ -115,7 +115,7 @@ class CoverArtPromptService < ApplicationService
   def call
     if dry_run
       { prompt: new_prompt, suggestions: llm_response }
-    elsif show == run_kickoff_show
+    elsif show == show.cover_art_run_kickoff
       generate_new_prompt
       print_response_hints
     else
@@ -153,28 +153,10 @@ class CoverArtPromptService < ApplicationService
   end
 
   def defer_to_kickoff_show
+    kickoff = show.cover_art_run_kickoff
     show.update! \
-      cover_art_parent_show_id: run_kickoff_show.id,
-      cover_art_prompt: run_kickoff_show.cover_art_prompt
-  end
-
-  def run_kickoff_show
-    kickoff_show = show
-    loop do
-      prior_show =
-        Show.includes(tracks: :songs)
-            .where("date < ?", kickoff_show.date)
-            .order(date: :desc)
-            .first
-
-      # Break if prior show doesn't exist, is at a different venue,
-      # or is more than 4 days apart (early shows at Hunt's / Nectar's)
-      break unless prior_show && prior_show.venue_id == kickoff_show.venue_id
-      break if (kickoff_show.date - prior_show.date).to_i > 4
-
-      kickoff_show = prior_show
-    end
-    kickoff_show
+      cover_art_parent_show_id: kickoff.id,
+      cover_art_prompt: kickoff.cover_art_prompt
   end
 
   def hue

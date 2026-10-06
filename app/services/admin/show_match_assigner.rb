@@ -13,6 +13,7 @@ class Admin::ShowMatchAssigner
     @show.venue ||= match.venue
     @show.tour ||= match.tour
     @show.save!
+    CoverArtRunLinker.call(@show) if @show.saved_change_to_venue_id?
   rescue ShowImporter::ShowInfo::NotFoundError
     nil
   end
