@@ -232,7 +232,7 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
     end
 
     def ensure_in_bounds!(track)
-      total = track.show.staged_sources.sum(:duration_s)
+      total = track.show.staged_sources.map(&:end_s).max.to_f
       error!({ message: "start must not be before the timeline" }, 422) if track.start_s.negative?
       error!({ message: "end must not be past the timeline (#{total}s)" }, 422) if track.end_s > total
       if (prev = track.previous_track) && track.start_s < prev.end_s - EDGE_TOLERANCE_S

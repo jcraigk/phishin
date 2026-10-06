@@ -78,7 +78,7 @@ module ApiV2::Helpers::AdminHelper
     {
       source_url: show.staging_source_url,
       commit_job_id: active_job_id(show, "commit_staging"),
-      total_s: sources.sum(&:duration_s).to_f,
+      total_s: sources.map(&:end_s).max.to_f,
       peaks_url: File.exist?(Admin::StagingDir.new(show).peaks) ? "/api/v2/admin/shows/#{show.date}/staging/peaks" : nil,
       peaks_rate: Admin::StagingPeaks::RATE,
       sources: sources.map do |source|

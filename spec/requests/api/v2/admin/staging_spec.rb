@@ -79,6 +79,14 @@ RSpec.describe "API v2 Admin Staging" do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
+    it "measures the timeline to the end of the last source, not the sum of rounded durations" do
+      show.staged_sources.find_by(position: 2).update!(offset_s: 60.001)
+      b.update!(start_s: 60.001, end_s: 120.001)
+      patch "#{base}/staging/tracks/#{b.id}", params: { start_s: 61 }, headers: admin_headers
+      expect(response).to have_http_status(:ok)
+      expect(body["total_s"]).to eq(120.001)
+    end
+
     it "clears the songs with an empty list" do
       a.update!(song_ids: [ create(:song).id ])
       patch "#{base}/staging/tracks/#{a.id}", params: { song_ids: [] }.to_json,
