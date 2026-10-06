@@ -10,7 +10,7 @@ import { formatDate } from "../helpers/utils";
 import Modal from "./Modal";
 
 const PUBLISH_STEPS =
-  "Publishing computes gaps, applies debut and bustout tags, syncs lore, " +
+  "Publishing computes song performance gaps, applies debut and bustout tags, syncs lore, " +
   "discards leftover staged audio, posts an announcement, and makes the show " +
   "public. There is no unpublish.";
 
@@ -18,7 +18,6 @@ const PublishPanel = () => {
   const { show, reload, gapsStale, setError } = useContext(EditorContext);
   const [readiness, setReadiness] = useState(null);
   const [modal, setModal] = useState(null);
-  const [typed, setTyped] = useState("");
   const publish = useJobRunner();
 
   // `isCurrent` exists because publishing is irreversible: two edits in quick
@@ -59,16 +58,11 @@ const PublishPanel = () => {
   const ready = Boolean(readiness && readiness.ready);
   const issues = (readiness && readiness.issues) || [];
 
-  const close = () => {
-    setModal(null);
-    setTyped("");
-  };
+  const close = () => setModal(null);
 
   const open = () => setModal(ready ? "confirm" : "issues");
 
   const runPublish = () => {
-    if (typed.trim() !== show.date) return;
-    setTyped("");
     setModal("running");
     publish.run(
       () => adminPost(`/shows/${show.date}/publish`),
@@ -112,23 +106,11 @@ const PublishPanel = () => {
               gaps, so this clears itself.
             </p>
           )}
-          <label className="admin-modal-field" htmlFor="admin-publish-confirm">
-            <span>Type {show.date} to confirm. This cannot be undone.</span>
-            <input
-              id="admin-publish-confirm"
-              type="text"
-              autoComplete="off"
-              autoFocus
-              value={typed}
-              onChange={(e) => setTyped(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") runPublish(); }}
-            />
-          </label>
           <div className="admin-modal-actions">
             <button
               type="button"
               className="admin-publish-go"
-              disabled={typed.trim() !== show.date}
+              autoFocus
               onClick={runPublish}
             >
               <FontAwesomeIcon icon={faRocket} /> Publish

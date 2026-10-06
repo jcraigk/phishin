@@ -9,7 +9,7 @@ class Admin::PublishShowJob
 
     admin_job.run! do
       step(admin_job, 5, "Checking readiness") { ensure_ready!(show) }
-      step(admin_job, 20, "Computing gaps") { GapService.call(show, update_previous: true) }
+      step(admin_job, 20, "Computing song performance gaps") { GapService.call(show, update_previous: true) }
       step(admin_job, 30, "Applying bustout tags") { BustoutTagService.call(show) }
       warnings = Admin::PhishnetEnrichment.call(show) { |message| admin_job.update!(progress: 45, message:) }
       admin_job.payload["warnings"] = warnings
