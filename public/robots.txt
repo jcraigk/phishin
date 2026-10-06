@@ -38,7 +38,7 @@ Disallow: /
 User-agent: Bytespider
 Disallow: /
 User-agent: Meta-ExternalAgent
-Allow: /
+Disallow: /
 User-agent: FacebookBot
 Allow: /
 User-agent: cohere-ai
