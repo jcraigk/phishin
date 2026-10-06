@@ -21,6 +21,7 @@ RSpec.describe Admin::IngestStagingJob do
     allow(Typhoeus).to receive(:get).and_return(
       instance_double(Typhoeus::Response, code: 200, body: { data: [] }.to_json)
     )
+    allow(Admin::TaperNotesAiTracklist).to receive(:call).and_return({})
     dir.remove!
   end
 
@@ -138,6 +139,18 @@ RSpec.describe Admin::IngestStagingJob do
       expect(show.reload.staging_source_url).to eq("https://archive.org/details/x")
       expect(show.taper_notes).to eq("From the item")
       expect(show.staged_sources.count).to eq(2)
+    end
+
+    it "titles the tracks from the item description" do
+      item = instance_double(Admin::ArchiveItem, description: "Disc 1\n01. Ghost\n02. Tuning", details_url: "https://archive.org/details/x")
+      allow(Admin::ArchiveItem).to receive(:new).with("x").and_return(item)
+      allow(item).to receive(:download_to) do |incoming|
+        %w[d1t01.flac d1t02.flac].map { FileUtils.cp(fixtures.join(it), incoming); File.join(incoming, it) }
+      end
+
+      described_class.new.perform(show.id, admin_job.id, [], "x")
+
+      expect(show.staged_tracks.order(:position).map(&:title)).to eq([ "Ghost", "Tuning" ])
     end
   end
 

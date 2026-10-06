@@ -40,7 +40,7 @@ class Admin::IngestStagingJob
       build_timeline(sources)
       build_peaks
       render_proxies(sources)
-      create_tracks(sources)
+      create_tracks(sources, notes.presence || @show.taper_notes)
       Admin::ShowMatchAssigner.call(@show)
       @show.update!(taper_notes: notes) if notes.present? && @show.taper_notes.blank?
       @admin_job.update!(message: "Staged #{sources.size} files")
@@ -123,9 +123,9 @@ class Admin::IngestStagingJob
     end
   end
 
-  def create_tracks(sources)
+  def create_tracks(sources, notes)
     progress(92, "Matching titles")
-    guesses = Admin::StagingTitler.call(show: @show, sources:)
+    guesses = Admin::StagingTitler.call(show: @show, sources:, notes:)
     sources.zip(guesses).each do |source, guess|
       @show.staged_tracks.create!(
         position: source.position, start_s: source.offset_s, end_s: source.end_s,

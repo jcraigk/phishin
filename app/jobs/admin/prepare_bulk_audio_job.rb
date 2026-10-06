@@ -39,19 +39,8 @@ class Admin::PrepareBulkAudioJob
   def titles_for(files)
     notes = uploaded_notes.presence || @show.taper_notes.to_s
     @show.update!(taper_notes: notes) if uploaded_notes.present? && @show.taper_notes.blank?
-    parsed = Admin::TaperNotesTracklist.call(notes)
-    titles = files.index_with do |path|
-      key = Admin::TaperNotesTracklist.key_for(path)
-      key && parsed[key]
-    end
-    unresolved = titles.select { |_path, title| title.nil? }.keys
-    if notes.present? && unresolved.any?
-      by_basename = Admin::TaperNotesAiTracklist.call(
-        notes:, filenames: unresolved.map { File.basename(it) }
-      )
-      unresolved.each { |path| titles[path] ||= by_basename[File.basename(path)] }
-    end
-    titles.transform_values { |title| title&.tr("/", "-") }
+    by_name = Admin::TaperNotesTitles.call(notes:, filenames: files.map { File.basename(it) })
+    files.index_with { by_name[File.basename(it)]&.tr("/", "-") }
   end
 
   def upload_as_mp3(path, title)

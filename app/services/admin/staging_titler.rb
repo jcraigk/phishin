@@ -1,11 +1,13 @@
 class Admin::StagingTitler
-  def self.call(show:, sources:)
-    new(show:, sources:).call
+  def self.call(show:, sources:, notes: nil)
+    new(show:, sources:, notes:).call
   end
 
-  def initialize(show:, sources:)
+  def initialize(show:, sources:, notes: nil)
     @show = show
     @sources = sources
+    @notes = notes
+    @used = []
   end
 
   def call
@@ -34,14 +36,35 @@ class Admin::StagingTitler
 
   def by_filename
     matched = (setlist || []).select { it[:filename] }.index_by { it[:filename] }
+    @used.concat(matched.values)
+    set = "1"
     @sources.map do |source|
       hit = matched[as_mp3(source.filename)]
-      if hit
-        { title: hit[:title], set: hit[:set].presence || "1", song_ids: [ hit[:song_id] ].compact }
-      else
-        { title: File.basename(source.filename, ".*"), set: "1", song_ids: [] }
-      end
+      guess = (hit && from_setlist(hit, set)) || from_notes(source, set) ||
+              { title: File.basename(source.filename, ".*"), set:, song_ids: [] }
+      set = guess[:set]
+      guess
     end
+  end
+
+  def from_setlist(entry, set)
+    { title: entry[:title], set: entry[:set].presence || set, song_ids: [ entry[:song_id] ].compact }
+  end
+
+  def from_notes(source, set)
+    title = notes_titles[source.filename]
+    return if title.blank?
+    entry = (setlist || []).find { !@used.include?(it) && it[:title].casecmp?(title) }
+    if entry
+      @used << entry
+      return from_setlist(entry, set)
+    end
+    song = Song.where("lower(title) = ?", title.downcase).first
+    { title: song&.title || title, set:, song_ids: [ song&.id ].compact }
+  end
+
+  def notes_titles
+    @notes_titles ||= Admin::TaperNotesTitles.call(notes: @notes, filenames: @sources.map(&:filename))
   end
 
   def as_mp3(filename)

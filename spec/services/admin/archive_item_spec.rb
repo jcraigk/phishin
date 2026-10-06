@@ -63,6 +63,11 @@ RSpec.describe Admin::ArchiveItem do
       .to eq("Source: Schoeps MK4 > SD\n\nTaper: X\nSet I:\n01. Ghost >")
   end
 
+  it "breaks lines at div boundaries" do
+    metadata[:metadata][:description] = "<div>SET I </div><div>01) Tuning</div><div>02) David Bowie</div><div><br /></div><div>SET II</div>"
+    expect(described_class.new(identifier).description).to eq("SET I\n01) Tuning\n02) David Bowie\n\nSET II")
+  end
+
   it "links to the details page" do
     expect(described_class.new(identifier).details_url).to eq("https://archive.org/details/ph2024-07-19.flac16")
   end
