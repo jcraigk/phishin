@@ -71,6 +71,9 @@ const WaveformScrubber = ({
     <div
       ref={containerRef}
       className="waveform-scrubber"
+      onMouseDown={() => {
+        justDraggedRef.current = false;
+      }}
       onClick={(e) => {
         if (justDraggedRef.current) {
           justDraggedRef.current = false;
