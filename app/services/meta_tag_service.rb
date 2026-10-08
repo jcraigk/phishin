@@ -212,7 +212,7 @@ class MetaTagService < ApplicationService
         "Stream Phish's full show from #{long_date(show.date)} at #{venue_phrase(show)}. " \
         "A free audience recording with the complete setlist and audio for every track.",
       og: {
-        title: "Listen to Phish perform at #{show.venue_name} on #{long_date(show.date)}",
+        title: "Phish – #{short_date(show.date)} – #{show.venue_name}",
         description: "A complete live audience recording, free to stream or download.",
         type: "music.playlist",
         audio: show.tracks.order(:position).first&.mp3_url,
@@ -332,6 +332,10 @@ class MetaTagService < ApplicationService
 
   def long_date(date)
     date.strftime("%B %-d, %Y")
+  end
+
+  def short_date(date)
+    date.strftime("%b %-d, %Y")
   end
 
   def date?

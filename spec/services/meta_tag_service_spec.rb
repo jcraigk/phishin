@@ -131,9 +131,7 @@ RSpec.describe MetaTagService do
       expect(service[:title]).to eq("Phish 1/1/24 at #{show.venue_name}#{title_suffix}")
       expect(service[:description]).to include(show.venue_name)
       expect(service[:description]).to include("January 1, 2024")
-      expect(service[:og][:title]).to eq(
-        "Listen to Phish perform at #{show.venue_name} on January 1, 2024"
-      )
+      expect(service[:og][:title]).to eq("Phish – Jan 1, 2024 – #{show.venue_name}")
       expect(service[:og][:image]).to eq(show.cover_art_urls[:medium])
       expect(service[:og][:description]).to be_present
       expect(service[:og][:description]).not_to include(show.venue_name)
