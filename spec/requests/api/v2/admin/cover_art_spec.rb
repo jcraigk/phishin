@@ -362,7 +362,7 @@ RSpec.describe "API v2 Admin Cover Art" do
       expect(JSON.parse(response.body)["cover_art"]).to include(
         "model" => "google/gemini-3-pro-image",
         "image_models" => CoverArtImageService::MODELS,
-        "default_image_model" => "google/gemini-3.1-flash-image",
+        "default_image_model" => "openai/gpt-5.4-image-2",
         "prompt_models" => CoverArtPromptService::MODELS,
         "default_prompt_model" => CoverArtPromptService::MODELS.first
       )

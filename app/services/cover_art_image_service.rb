@@ -7,9 +7,9 @@ class CoverArtImageService < ApplicationService
   option :model, default: -> { nil }
 
   MODELS = %w[
+    openai/gpt-5.4-image-2
     google/gemini-3.1-flash-image
     google/gemini-3-pro-image
-    openai/gpt-5.4-image-2
   ].freeze
 
   def self.default_model
