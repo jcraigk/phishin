@@ -93,6 +93,7 @@ const EditControl = ({
       id: pendingId,
       basePrompt: provenance?.basePrompt || null,
       edits: [...(provenance?.edits || []), text],
+      model,
     });
     try {
       const { job_id: jobId } = await adminPost(
@@ -136,6 +137,48 @@ const EditControl = ({
             type="button"
             title="Run paid AI edit"
             disabled={prompt.trim() === ""}
+            onClick={submit}
+          >
+            <FontAwesomeIcon icon={faCheck} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const RegenerateControl = ({ initialModel, disabled, onSubmit }) => {
+  const { show } = useContext(EditorContext);
+  const models = show.cover_art.image_models || [];
+  const [open, setOpen] = useState(false);
+  const [model, setModel] = useState(
+    models.includes(initialModel) ? initialModel : show.cover_art.default_image_model
+  );
+
+  const submit = () => {
+    setOpen(false);
+    onSubmit(model);
+  };
+
+  return (
+    <div className="admin-art-edit">
+      <button
+        type="button"
+        className={open ? "active" : ""}
+        title="Regenerate with the same prompt"
+        aria-label="Regenerate with the same prompt"
+        disabled={disabled}
+        onClick={() => setOpen(!open)}
+      >
+        <FontAwesomeIcon icon={faRotateRight} />
+      </button>
+      {open && (
+        <div className="admin-art-edit-form">
+          <ModelSelect value={model} onChange={setModel} />
+          <button
+            type="button"
+            title="Run paid regenerate"
+            aria-label="Run paid regenerate"
             onClick={submit}
           >
             <FontAwesomeIcon icon={faCheck} />
@@ -246,15 +289,11 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingEnd, onRegenerate }
           onPendingEnd={onPendingEnd}
         />
         {basePrompt && edits.length === 0 && (
-          <button
-            type="button"
-            title="Regenerate with the same prompt"
-            aria-label="Regenerate with the same prompt"
+          <RegenerateControl
+            initialModel={candidate.model}
             disabled={busy || removing}
-            onClick={() => onRegenerate(basePrompt, candidate.model)}
-          >
-            <FontAwesomeIcon icon={faRotateRight} />
-          </button>
+            onSubmit={(model) => onRegenerate(basePrompt, model)}
+          />
         )}
         <button
           type="button"
@@ -417,7 +456,7 @@ const ArtImage = ({ url, alt, emptyLabel }) =>
     <div className="admin-art-empty admin-art-empty-square">{emptyLabel}</div>
   );
 
-const PendingCard = ({ basePrompt, edits, label }) => (
+const PendingCard = ({ basePrompt, edits, label, model }) => (
   <figure className="admin-art-card admin-art-pending">
     <div className="admin-art-empty">
       <Spinner size={28} />
@@ -432,6 +471,11 @@ const PendingCard = ({ basePrompt, edits, label }) => (
           </p>
         ))}
       </div>
+      {model && (
+        <div className="admin-art-actions">
+          <ModelBadge model={model} />
+        </div>
+      )}
     </figcaption>
   </figure>
 );
@@ -457,7 +501,7 @@ const ArtEditor = ({ runNote }) => {
     const id = `gen-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     setPendingJobs((prev) => [
       ...prev,
-      { id, basePrompt: prompt || art.prompt, edits: [], label: "Generating..." },
+      { id, basePrompt: prompt || art.prompt, edits: [], label: "Generating...", model },
     ]);
     try {
       const { job_id: jobId } = await adminPost(
@@ -523,6 +567,7 @@ const ArtEditor = ({ runNote }) => {
               basePrompt={pending.basePrompt}
               edits={pending.edits}
               label={pending.label}
+              model={pending.model}
             />
           ))}
         </div>

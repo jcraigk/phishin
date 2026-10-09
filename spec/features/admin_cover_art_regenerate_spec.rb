@@ -20,17 +20,36 @@ RSpec.describe "Admin cover art regenerate", :js do
     click_on "Art"
   end
 
+  def regenerate(model: nil)
+    find("button[aria-label='Regenerate with the same prompt']").click
+    find("select[aria-label='Image model']").select(model) if model
+    find("button[aria-label='Run paid regenerate']").click
+    Timeout.timeout(5) { sleep 0.1 until Admin::GenerateCoverArtJob.jobs.any? }
+  end
+
+  def enqueued_prompt_and_model
+    Admin::GenerateCoverArtJob.jobs.last["args"].last(2)
+  end
+
   context "with a candidate generated from a prompt" do
     before do
       attach_candidate("prompt" => "a box turtle", "model" => "google/gemini-3.1-flash-image")
       open_art_tab
-      find("button[aria-label='Regenerate with the same prompt']").click
-      Timeout.timeout(5) { sleep 0.1 until Admin::GenerateCoverArtJob.jobs.any? }
     end
 
-    it "enqueues a generate job with the candidate's prompt and model" do
-      expect(Admin::GenerateCoverArtJob.jobs.last["args"].last(2))
-        .to eq([ "a box turtle", "google/gemini-3.1-flash-image" ])
+    it "defaults to the candidate's model" do
+      regenerate
+      expect(enqueued_prompt_and_model).to eq([ "a box turtle", "google/gemini-3.1-flash-image" ])
+    end
+
+    it "uses the model chosen in the form" do
+      regenerate(model: "gpt-5.4-image-2")
+      expect(enqueued_prompt_and_model).to eq([ "a box turtle", "openai/gpt-5.4-image-2" ])
+    end
+
+    it "shows the chosen model on the generating card" do
+      regenerate(model: "gpt-5.4-image-2")
+      expect(page).to have_css(".admin-art-pending .admin-art-model", text: "gpt-5.4-image-2")
     end
   end
 
