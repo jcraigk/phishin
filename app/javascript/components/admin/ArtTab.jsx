@@ -6,6 +6,7 @@ import {
   faCloudArrowUp,
   faPencil,
   faPlus,
+  faRotateRight,
   faTrashCan,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
@@ -145,7 +146,7 @@ const EditControl = ({
   );
 };
 
-const CandidateCard = ({ candidate, onPendingStart, onPendingEnd }) => {
+const CandidateCard = ({ candidate, onPendingStart, onPendingEnd, onRegenerate }) => {
   const { show, reload, setError } = useContext(EditorContext);
   const [zoom, setZoom] = useState("0");
   const [removing, setRemoving] = useState(false);
@@ -244,6 +245,17 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingEnd }) => {
           onPendingStart={onPendingStart}
           onPendingEnd={onPendingEnd}
         />
+        {basePrompt && edits.length === 0 && (
+          <button
+            type="button"
+            title="Regenerate with the same prompt"
+            aria-label="Regenerate with the same prompt"
+            disabled={busy || removing}
+            onClick={() => onRegenerate(basePrompt, candidate.model)}
+          >
+            <FontAwesomeIcon icon={faRotateRight} />
+          </button>
+        )}
         <button
           type="button"
           aria-label="Remove candidate"
@@ -501,7 +513,8 @@ const ArtEditor = ({ runNote }) => {
               key={candidate.blob_key}
               candidate={candidate}
               onPendingStart={startPendingEdit}
-                onPendingEnd={removePending}
+              onPendingEnd={removePending}
+              onRegenerate={generate}
             />
           ))}
           {pendingJobs.map((pending) => (
