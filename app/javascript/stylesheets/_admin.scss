@@ -1412,11 +1412,17 @@
 
 .admin-art-edit-form {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.4rem;
   margin-top: 0.4rem;
 
   input[type="text"] {
-    flex: 1;
+    flex: 1 1 10rem;
+    min-width: 0;
+  }
+
+  .admin-art-model-select {
+    flex: 1 1 auto;
     min-width: 0;
   }
 }
