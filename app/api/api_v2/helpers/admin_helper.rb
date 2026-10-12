@@ -75,12 +75,14 @@ module ApiV2::Helpers::AdminHelper
   def staging_payload(show)
     return nil unless show.staging?
     sources = show.staged_sources.order(:position)
+    dir = Admin::StagingDir.new(show)
     {
       source_url: show.staging_source_url,
       commit_job_id: active_job_id(show, "commit_staging"),
       total_s: sources.map(&:end_s).max.to_f,
-      peaks_url: File.exist?(Admin::StagingDir.new(show).peaks) ? "/api/v2/admin/shows/#{show.date}/staging/peaks" : nil,
+      peaks_url: File.exist?(dir.peaks) ? "/api/v2/admin/shows/#{show.date}/staging/peaks" : nil,
       peaks_rate: Admin::StagingPeaks::RATE,
+      preview_url: staging_preview_url(show, dir),
       sources: sources.map do |source|
         {
           id: source.id,
@@ -88,12 +90,16 @@ module ApiV2::Helpers::AdminHelper
           filename: source.filename,
           format: source.format,
           offset_s: source.offset_s.to_f,
-          duration_s: source.duration_s.to_f,
-          audio_url: "/api/v2/admin/shows/#{show.date}/staging/sources/#{source.id}/audio"
+          duration_s: source.duration_s.to_f
         }
       end,
       tracks: staged_tracks_payload(show)
     }
+  end
+
+  def staging_preview_url(show, dir)
+    return nil unless dir.preview.exist?
+    "/admin/staging_preview?token=#{CGI.escape(Admin::StagingPreviewsController.token_for(show))}"
   end
 
   def active_job_id(show, kind)

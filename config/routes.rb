@@ -46,6 +46,7 @@ Rails.application.routes.draw do
   get "/download-track/:id" => "downloads#download_track"
   get "/blob/:key" => "downloads#download_blob"
   post "/admin/direct_uploads", to: "admin/direct_uploads#create"
+  get "/admin/staging_preview", to: "admin/staging_previews#show"
   post "/rails/active_storage/direct_uploads", to: proc { [ 404, {}, [] ] }
 
   # API v1

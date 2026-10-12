@@ -1,24 +1,25 @@
-import { fetchAdminAudio } from "./adminApi";
-import { locate, gainAt } from "./stagingMath";
+import { gainAt } from "./stagingMath";
 
+// Plays the staged show from one continuous preview of the whole timeline, so
+// a track that spans two source files still plays without a gap where they meet.
 export class StagingPlayer {
-  constructor({ getSources, getFollowing, onTime, onStop, onTrackChange, onError, onLoading }) {
-    this.getSources = getSources;
+  constructor({ getPreviewUrl, getTrack, getTrackAt, getFollowing, onTime, onStop, onTrackChange, onError, onLoading }) {
+    this.getPreviewUrl = getPreviewUrl;
+    this.getTrack = getTrack || (() => null);
+    this.getTrackAt = getTrackAt || (() => null);
     this.getFollowing = getFollowing || (() => null);
     this.onTime = onTime || (() => {});
     this.onStop = onStop || (() => {});
     this.onLoading = onLoading || (() => {});
     this.onTrackChange = onTrackChange || (() => {});
     this.onError = onError || (() => {});
-    this.chain = false;
     this.ctx = null;
-    this.elements = new Map();
-    this.loaded = new Map();
-    this.gains = new Map();
-    this.urls = new Map();
+    this.audio = null;
+    this.gain = null;
+    this.ready = null;
+    this.chain = false;
     this.track = null;
-    this.stopAt = null;
-    this.active = null;
+    this.toS = null;
     this.frame = null;
     this.token = 0;
   }
@@ -31,60 +32,65 @@ export class StagingPlayer {
     return this.ctx;
   }
 
-  async element(source) {
-    if (this.elements.has(source.id)) return this.elements.get(source.id);
-    const promise = (async () => {
-      // Build the element, MediaElementSource and GainNode synchronously,
-      // before the fetch resolves: Safari only allows creating audio graph
-      // nodes within the call stack of a user gesture, and the fetch below
-      // yields well past that window.
-      const audio = new Audio();
-      audio.preload = "auto";
-      const ctx = this.context();
-      const gain = ctx.createGain();
-      ctx.createMediaElementSource(audio).connect(gain);
-      gain.connect(ctx.destination);
-      this.loaded.set(source.id, audio);
-      this.gains.set(source.id, gain);
-      audio.addEventListener("ended", () => this.advance(source));
-      const url = await fetchAdminAudio(source.audio_url);
-      this.urls.set(source.id, url);
-      audio.src = url;
-      // A currentTime set before the metadata arrives is discarded and the
-      // element plays from zero, so wait for it once here.
-      await new Promise((resolve, reject) => {
-        if (audio.readyState >= 1) return resolve();
-        audio.addEventListener("loadedmetadata", resolve, { once: true });
-        audio.addEventListener("error", () => reject(new Error("audio failed to load")), { once: true });
-      });
-      return audio;
-    })();
-    this.elements.set(source.id, promise);
-    promise.catch(() => this.elements.delete(source.id));
-    return promise;
+  element() {
+    if (this.ready) return this.ready;
+    const url = this.getPreviewUrl();
+    if (!url) return Promise.reject(new Error("This show has no preview audio yet"));
+    // Build the element, MediaElementSource and GainNode synchronously:
+    // Safari only allows creating audio graph nodes within the call stack of
+    // a user gesture.
+    const audio = new Audio();
+    audio.preload = "auto";
+    const ctx = this.context();
+    const gain = ctx.createGain();
+    ctx.createMediaElementSource(audio).connect(gain);
+    gain.connect(ctx.destination);
+    audio.addEventListener("ended", () => this.stop());
+    audio.src = url;
+    this.audio = audio;
+    this.gain = gain;
+    // A currentTime set before the metadata arrives is discarded and the
+    // element plays from zero, so wait for it once here.
+    this.ready = new Promise((resolve, reject) => {
+      if (audio.readyState >= 1) return resolve(audio);
+      audio.addEventListener("loadedmetadata", () => resolve(audio), { once: true });
+      audio.addEventListener("error", () => reject(new Error("audio failed to load")), { once: true });
+    });
+    this.ready.catch(() => {
+      this.ready = null;
+    });
+    return this.ready;
+  }
+
+  // The editor's copy of the track, so edges moved mid-play take effect
+  // without restarting playback.
+  current() {
+    if (!this.track) return null;
+    return (this.track.id != null && this.getTrack(this.track.id)) || this.track;
+  }
+
+  stopAt() {
+    return this.toS ?? Number(this.current().end_s);
   }
 
   async play(track, fromS, toS) {
     this.stop();
     const token = ++this.token;
     this.track = track;
+    this.toS = toS ?? null;
     this.chain = toS == null;
     const from = fromS ?? Number(track.start_s);
-    this.stopAt = toS ?? Number(track.end_s);
     // Resume synchronously, before any await, so Safari still counts this as
     // within the user gesture that triggered play().
-    const ctx = this.context();
-    ctx.resume();
+    this.context().resume();
     await this.startAt(from, token);
   }
 
   async startAt(t, token) {
-    const hit = locate(this.getSources(), t);
-    if (!hit) return;
     this.onLoading(true);
     let audio;
     try {
-      audio = await this.element(hit.source);
+      audio = await this.element();
     } catch (e) {
       if (token === this.token) {
         this.onLoading(false);
@@ -93,8 +99,7 @@ export class StagingPlayer {
       return;
     }
     if (token !== this.token) return;
-    this.active = hit.source;
-    audio.currentTime = hit.localS;
+    audio.currentTime = t;
     this.applyGain(t);
     try {
       await audio.play();
@@ -110,95 +115,74 @@ export class StagingPlayer {
     this.tick(token);
   }
 
-  advance(source) {
-    if (this.active?.id !== source.id || !this.track) return;
-    const token = this.token;
-    const next = this.getSources().find((s) => s.position === source.position + 1);
-    const at = source.offset_s + source.duration_s;
-    if (at >= this.stopAt && this.reachEnd(token)) return;
-    if (!next || at >= this.stopAt) {
-      this.stop();
-      return;
-    }
-    this.startAt(at, token);
-  }
-
-  reachEnd(token) {
+  reachEnd() {
     if (!this.chain) return false;
-    const follow = this.getFollowing(this.track);
+    const follow = this.getFollowing(this.current());
     if (!follow) return false;
     this.track = follow.track;
-    this.stopAt = Number(follow.track.end_s);
     this.onTrackChange(follow.track);
-    if (follow.jumpTo != null) {
-      this.pauseActive();
-      this.startAt(follow.jumpTo, token);
-    }
+    if (follow.jumpTo != null) this.audio.currentTime = follow.jumpTo;
     return true;
   }
 
   tick(token) {
     const step = () => {
-      if (token !== this.token || !this.active) return;
-      const audio = this.loaded.get(this.active.id);
-      const t = this.active.offset_s + audio.currentTime;
-      if (t >= this.stopAt) {
-        if (!this.reachEnd(token)) {
+      if (token !== this.token || !this.track) return;
+      let t = this.audio.currentTime;
+      this.rewindTrack(t);
+      if (t >= this.stopAt()) {
+        if (!this.reachEnd()) {
           this.stop();
           return;
         }
-        if (!this.active) return;
+        t = this.audio.currentTime;
       }
       this.applyGain(t);
       this.onTime(t);
       this.frame = requestAnimationFrame(step);
     };
+    if (this.frame) cancelAnimationFrame(this.frame);
     this.frame = requestAnimationFrame(step);
   }
 
+  // A seam moved later than the playhead hands the audio back to the
+  // earlier track instead of muting it until the new seam.
+  rewindTrack(t) {
+    if (!this.chain || t >= Number(this.current().start_s)) return;
+    const back = this.getTrackAt(t);
+    if (!back) return;
+    this.track = back;
+    this.onTrackChange(back);
+  }
+
   applyGain(t) {
-    if (!this.active || !this.track) return;
-    const gain = this.gains.get(this.active.id);
-    gain.gain.setValueAtTime(gainAt(this.track, t), this.context().currentTime);
+    if (!this.gain || !this.track) return;
+    this.gain.gain.setValueAtTime(gainAt(this.current(), t), this.context().currentTime);
   }
 
   seek(t) {
     if (!this.track) return;
-    const token = ++this.token;
-    this.pauseActive();
-    this.startAt(t, token);
-  }
-
-  pauseActive() {
-    if (this.frame) cancelAnimationFrame(this.frame);
-    this.frame = null;
-    if (this.active) this.loaded.get(this.active.id)?.pause();
-    this.active = null;
+    this.startAt(t, ++this.token);
   }
 
   stop() {
     const wasPlaying = Boolean(this.track);
-    const element = this.active ? this.loaded.get(this.active.id) : null;
-    // Clear active before bumping the token, so an "ended" listener racing
-    // this stop sees no active source once it checks the bumped token.
-    this.active = null;
     this.token += 1;
     if (this.frame) cancelAnimationFrame(this.frame);
     this.frame = null;
-    element?.pause();
+    this.audio?.pause();
     this.track = null;
-    this.stopAt = null;
+    this.toS = null;
     this.onLoading(false);
     if (wasPlaying) this.onStop();
   }
 
   dispose() {
     this.stop();
-    this.urls.forEach((url) => URL.revokeObjectURL(url));
-    this.urls.clear();
-    this.elements.clear();
-    this.loaded.clear();
-    this.gains.clear();
+    if (this.audio) this.audio.removeAttribute("src");
+    this.audio = null;
+    this.gain = null;
+    this.ready = null;
     if (this.ctx && this.ctx.state !== "closed") this.ctx.close();
     this.ctx = null;
   }

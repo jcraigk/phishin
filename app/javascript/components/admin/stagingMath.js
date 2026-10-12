@@ -1,15 +1,4 @@
-const clamp = (value, low, high) => Math.min(Math.max(value, low), high);
-
 export const round1 = (value) => Math.round(value * 10) / 10;
-
-export const locate = (sources, t) => {
-  if (!sources || sources.length === 0) return null;
-  const source =
-    sources.find((s) => t >= s.offset_s && t < s.offset_s + s.duration_s) ||
-    (t >= sources[sources.length - 1].offset_s ? sources[sources.length - 1] : null);
-  if (!source) return null;
-  return { source, localS: clamp(t - source.offset_s, 0, source.duration_s) };
-};
 
 export const gainAt = (track, t) => {
   const start = Number(track.start_s);

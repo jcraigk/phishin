@@ -30,7 +30,6 @@ RSpec.describe "API v2 Admin Staging" do
       staging = body["staging"]
       expect(staging["total_s"]).to eq(120.0)
       expect(staging["sources"].map { it["filename"] }).to eq(%w[a.flac b.flac])
-      expect(staging["sources"].first["audio_url"]).to end_with("/staging/sources/#{show.staged_sources.first.id}/audio")
       expect(staging["tracks"].map { it["title"] }).to eq(%w[A B])
       expect(staging["tracks"].first).to include("start_s" => 0.0, "end_s" => 60.0, "fade_in_s" => 0.0)
     end
@@ -226,25 +225,25 @@ RSpec.describe "API v2 Admin Staging" do
     end
   end
 
-  describe "GET source audio" do
+  describe "preview url" do
     before do
       stage!
       dir.reset!
-      File.binwrite(dir.proxy_path(show.staged_sources.first), "\xFF\xFBproxy".b)
     end
 
     after { dir.remove! }
 
-    it "streams the proxy" do
-      get "#{base}/staging/sources/#{show.staged_sources.first.id}/audio", headers: admin_headers
-      expect(response).to have_http_status(:ok)
-      expect(response.content_type).to eq("audio/mpeg")
-      expect(response.body).to eq("\xFF\xFBproxy".b)
+    it "is null until the preview is rendered" do
+      get base, headers: admin_headers
+      expect(body["staging"]["preview_url"]).to be_nil
     end
 
-    it "404s when the proxy is missing" do
-      get "#{base}/staging/sources/#{show.staged_sources.last.id}/audio", headers: admin_headers
-      expect(response).to have_http_status(:not_found)
+    it "points at a signed preview stream for this show" do
+      File.binwrite(dir.preview, "\xFF\xFBpreview".b)
+      get base, headers: admin_headers
+      token = Rack::Utils.parse_query(URI(body["staging"]["preview_url"]).query)["token"]
+      expect(body["staging"]["preview_url"]).to start_with("/admin/staging_preview?token=")
+      expect(Admin::StagingPreviewsController.show_from(token)).to eq(show)
     end
   end
 

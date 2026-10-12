@@ -3,8 +3,6 @@ class Admin::IngestStagingJob
 
   sidekiq_options retry: 0
 
-  PROXY_BITRATE = "128k".freeze
-
   class Error < StandardError; end
   class NoAudioError < Error; end
 
@@ -39,7 +37,7 @@ class Admin::IngestStagingJob
       sources = place_sources(files)
       build_timeline(sources)
       build_peaks
-      render_proxies(sources)
+      render_preview
       create_tracks(sources, notes.presence || @show.taper_notes)
       Admin::ShowMatchAssigner.call(@show)
       @show.update!(taper_notes: notes) if notes.present? && @show.taper_notes.blank?
@@ -114,13 +112,9 @@ class Admin::IngestStagingJob
     Admin::StagingPeaks.generate(@dir.timeline, @dir.peaks)
   end
 
-  def render_proxies(sources)
-    sources.each_with_index do |source, index|
-      next if source.mp3?
-      progress(50 + (index * 40 / sources.size), "Rendering preview for #{source.filename}")
-      run_ffmpeg([ "-i", @dir.source_path(source).to_s, "-codec:a", "libmp3lame",
-                   "-b:a", PROXY_BITRATE, @dir.proxy_path(source).to_s ])
-    end
+  def render_preview
+    progress(50, "Rendering preview")
+    Admin::StagingPreview.generate(@dir.timeline, @dir.preview)
   end
 
   def create_tracks(sources, notes)

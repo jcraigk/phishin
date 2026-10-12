@@ -164,19 +164,6 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
           body File.binread(path)
         end
 
-        desc "Stream a source's preview audio", hidden: true
-        get "sources/:id/audio" do
-          show = admin_show
-          source = show.staged_sources.find(params[:id])
-          path = Admin::StagingDir.new(show).proxy_path(source)
-          error!({ message: "No preview audio" }, 404) unless File.exist?(path)
-          content_type "audio/mpeg"
-          header "Content-Length", File.size(path).to_s
-          header "Accept-Ranges", "none"
-          env["api.format"] = :binary
-          body File.binread(path)
-        end
-
         desc "Commit staging to tracks", hidden: true
         post "commit" do
           show = admin_show

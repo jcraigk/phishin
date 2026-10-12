@@ -68,13 +68,15 @@ RSpec.describe Admin::IngestStagingJob do
       expect(second.fade_out_s.to_f).to eq(6.0)
     end
 
-    it "builds the timeline and a proxy per lossless source" do
+    it "builds the timeline" do
       described_class.new.perform(show.id, admin_job.id, [ upload("show.zip", "application/zip") ], nil)
       expect(Admin::AudioProbe.duration_s(dir.timeline)).to be_within(0.1).of(10.0)
-      show.staged_sources.each do |source|
-        expect(File.exist?(dir.proxy_path(source))).to be(true)
-        expect(mp3_frame_sync?(File.binread(dir.proxy_path(source)))).to be(true)
-      end
+    end
+
+    it "renders one mp3 preview spanning the whole timeline" do
+      described_class.new.perform(show.id, admin_job.id, [ upload("show.zip", "application/zip") ], nil)
+      expect(mp3_frame_sync?(File.binread(dir.preview))).to be(true)
+      expect(Admin::AudioProbe.duration_s(dir.preview)).to be_within(0.1).of(10.0)
     end
 
     it "prefills taper notes from a text file" do

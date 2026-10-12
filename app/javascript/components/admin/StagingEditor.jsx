@@ -53,22 +53,25 @@ const StagingEditor = () => {
   const playerRef = useRef(null);
   const { run, resume, busy: jobBusy, status, progress, error: jobError } = useJobRunner();
 
-  // staging.sources is a new array on every mutation response (a title edit,
-  // a boundary nudge), even when the underlying source files have not
-  // changed. The player must survive those: it reads sources through a ref
-  // rather than a closed-over value, and the effect below is keyed on the
-  // sources' identity (their ids), not the array's, so a PATCH response does
-  // not tear down and rebuild the player, revoke its object URLs and close
-  // its AudioContext out from under an in-progress audition.
-  const sourcesRef = useRef(staging.sources);
-  sourcesRef.current = staging.sources;
+  // Every mutation response (a title edit, a boundary nudge) brings new track
+  // objects and a freshly signed preview_url, even when the source files have
+  // not changed. The player must survive those: it reads both through refs
+  // rather than closed-over values, and the effect below is keyed on the
+  // sources' identity (their ids), so a PATCH response does not tear down the
+  // player, reload the preview and close its AudioContext out from under an
+  // in-progress audition. Reading tracks live also means a seam moved during
+  // playback takes effect at the new position.
+  const previewUrlRef = useRef(staging.preview_url);
+  previewUrlRef.current = staging.preview_url;
   const tracksRef = useRef(staging.tracks);
   tracksRef.current = staging.tracks;
   const sourceKey = staging.sources.map((s) => s.id).join(",");
 
   useEffect(() => {
     const player = new StagingPlayer({
-      getSources: () => sourcesRef.current,
+      getPreviewUrl: () => previewUrlRef.current,
+      getTrack: (id) => tracksRef.current.find((t) => t.id === id),
+      getTrackAt: (t) => tracksRef.current.find((tr) => t >= tr.start_s && t < tr.end_s),
       getFollowing: (track) => {
         const list = tracksRef.current;
         const index = list.findIndex((t) => t.id === track.id);
