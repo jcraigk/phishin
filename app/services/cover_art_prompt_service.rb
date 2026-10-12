@@ -2,122 +2,37 @@ class CoverArtPromptService < ApplicationService
   param :show
   option :dry_run, default: -> { false }
   option :model, default: -> { MODELS.first }
+  option :random, default: -> { Random.new }
 
-  HUES = %w[
-    Red Orange Yellow Green Blue Purple
-    Red-Orange Yellow-Orange Yellow-Green
-    Pink Magenta Vermilion Blue-Green Cerulean
-    Scarlet Cyan Teal Turquoise Indigo Lavender
-    Amethyst Lime Mint Crimson Maroon
-    Beige Peach Coral Amber Emerald Violet
-    Apricot Mustard Tangerine Plum Gold
-  ]
-  STYLES = %w[
-    Watercolor Gouache Oil-Painting Ink-Drawing Line-Art Charcoal-Sketch
-    Ukiyo-e Nihonga Art-Deco Art-Nouveau Bauhaus
-    Risograph Linocut Block-Prints Screen-Print
-    Pop-Art Psychedelic-Poster Vintage-Travel-Poster Comic-Book
-    Stained-Glass Mosaic Paper-Collage Papercut
-    Pixel-Art Low-Poly Isometric-Drawing Geometric
-    Cyberpunk Synthwave Photograph Macro-Photography
-    Claymation Felt-Craft Embroidery Wood-Burned
-  ]
-  CATEGORIES = %w[animals plants foods misc_objects time_concepts phish]
+  class Error < StandardError; end
+
   MODELS = %w[anthropic/claude-opus-5].freeze
-  BASE_PROMPT = <<~TXT
-    I want you to generate a series of objects and ideas in specific categories associated with a venue, time, and city/state I provide below. I want the answer in JSON format. The keys should be animals, plants, foods, misc_objects (miscellaneous objects), time_concepts (concepts related to time, season, social atmosphere, etc), and phish (explained below). I want you to give me ten words or phrases representing those categories. Avoid references that an image generation model might reject as inappropriate. Avoid images of humans, human forms, or faces.
+  CANDIDATES = 4
+  SUFFIX = "Square album cover, full-bleed composition filling the frame, " \
+           "no text, letters, numbers, borders or watermarks.".freeze
+  TAPER_NOTES_LIMIT = 600
+  TRANSCRIPT_LIMIT = 300
+  EXAMPLES = [
+    "Poster art of Colorado mountains with a single car driving on an interstate, brown hue",
+    "A baseball hit at high velocity out of a ballpark into blue sky with fluffy clouds, " \
+    "a velocity trail behind the ball, poster art style",
+    "Poster art of a 1990s boom box on a city street with graffiti in the background, overall neon pink color",
+    "A soft-serve ice cream cone in a summer rainstorm, poster art with a consistent color scheme",
+    "An old home by a southern river, illustration with orange highlights over a dark green palette",
+    "The Philadelphia skyline overgrown by trees, illustration style in a green hue",
+    "A confused, intoxicated firefly on a city block, ink drawing with a yellow-orange hue",
+    "Overhead view of a tropical beach with a single colorful umbrella and its shadow, color illustration",
+    "Hazy photograph of a flying saucer, 1950s",
+    "A glass box with a rainstorm over a forest inside it, divided sky"
+  ].freeze
+  SYSTEM = "You are an art director commissioning album covers for live concert recordings.".freeze
 
-    The subjects in every category should reflect the time and place as well as content pulled from song titles. So, for example, if it's winter in New York, you wouldn't mention insects or other animals/plants not found during that time of year in that place. The "foods" key should similary be restricted to items that are commonly found in the area and are associated with the time of year. Take note of Halloween, Christmas, New Year's, and other holiday seasons.
-
-    The "phish" key should include imagery pulled from the list of songs played at the show. This should include titles and your general knowledge of the lyrics. This should include both their originals and covers.
-
-    Be creative and random in your selections, especially when it comes to miscellaneous objects category. Those can incude other creatures from the tree of life, images from science and art, pop culture, etc. Choose not only the most relevant to the time/place given, but some loosely related objects/visuals/concepts. Make sure all of your selections have a visual element to them. Prefix words with "a" or "an" as needed.
-
-    Here is an example if the time and place were Madison Square, New York City on December 31, 2021:
-
-    {
-      "animals": [
-        "a pigeon",
-        "a rat",
-        "a sparrow",
-        "a falcon",
-        "a hawk",
-        "a cockroach",
-        "a squirrel",
-        "a starling",
-        "a house mouse",
-        "a striped skunk"
-      ]
-      "plants": [
-        "ivy creeping over stone",
-        "potted rosemary",
-        "snow-dusted grass",
-        "bamboo stalks",
-        "an aloe plant in window",
-        "a wild dandelion sprout",
-        "urban moss patch",
-        "rooftop garden basil",
-        "a succulent",
-        "a frozen fern"
-      ],
-      "foods": [
-        "a cinnamon pretzel",
-        "a slice of New York pizza",
-        "a churro",
-        "roasted peanuts",
-        "hot cider",
-        "a bag of chestnuts",
-        "a steaming hot dog",
-        "a sesame bagel",
-        "candy apple",
-        "an empanada"
-      ],
-      "misc_objects": [
-        "a frosted window pane",
-        "a subway sign",
-        "a discarded coffee cup",
-        "a streetlight glow",
-        "sparkling confetti",
-        "a bicycle lock",
-        "a neon glow reflection in puddle",
-        "a metal park bench",
-        "a fire hydrant with scarf",
-        "a sidewalk crack with snow"
-      ],
-      "time_concepts": [
-        "a midnight chill",
-        "frozen breath in the air",
-        "the last moments of the year",
-        "a winter night buzz",
-        "a holiday glow",
-        "festive anticipation",
-        "crisp midnight air",
-        "twinkling streetlights",
-        "evening stillness",
-        "a city's breath before midnight"
-      ],
-      "phish": [
-        "an oar",
-        "clouds in the sky",
-        "a cruise ship",
-        "spaghetti",
-        "strawberry goo",
-        "sugar shack",
-        "rock and roll",
-        "a dog",
-        "a cat"
-        "a horse"
-      ]
-    }
-
-    Respond only with the JSON object containing the keys and values for the categories. Do not include any other information or formatting characters in your response such as backticks or the token "json".
-  TXT
   def call
     if dry_run
-      { prompt: new_prompt, suggestions: llm_response }
+      { prompt: prompts.first, prompts:, hue: variety.hue, styles: }
     elsif show == show.cover_art_run_kickoff
-      generate_new_prompt
-      print_response_hints
+      show.update!(cover_art_prompt: prompts.first, cover_art_parent_show_id: nil)
+      print_alternatives
     else
       defer_to_kickoff_show
     end
@@ -125,31 +40,24 @@ class CoverArtPromptService < ApplicationService
 
   private
 
-  def new_prompt
-    return @new_prompt if defined?(@new_prompt)
-    num = rand < 0.3 ? 1 : 2
-    subjects = CATEGORIES.sample(num).map { llm_response[it.to_sym].sample }.join(" and ")
-    article = hue.match?(/\A[aeiou]/i) ? "an" : "a"
-    @new_prompt = "#{subjects.upcase_first} in the style of #{style} with #{article} #{hue} hue."
+  def prompts
+    @prompts ||= begin
+      list = Array(llm_response[:prompts]).map { it.to_s.strip }.compact_blank.first(CANDIDATES)
+      raise Error, "#{model} returned no cover art prompts" if list.empty?
+      list.map { "#{it.delete_suffix('.')}. #{SUFFIX}" }
+    end
   end
 
-  def print_response_hints
-    txt = CATEGORIES.map do |category|
-      "#{category.upcase} " + llm_response[category.to_sym].sample(3).join(", ")
-    end.join(" / ")
-    puts txt
+  def variety
+    @variety ||= CoverArtVariety.new(show, random:)
   end
 
-  def song_list
-    show.tracks.map do
-      "#{it.title} by #{it.songs.first.artist || 'Phish'}"
-    end.join(", ")
+  def styles
+    @styles ||= variety.styles(CANDIDATES)
   end
 
-  def generate_new_prompt
-    show.update! \
-      cover_art_prompt: new_prompt,
-      cover_art_parent_show_id: nil
+  def print_alternatives
+    prompts.drop(1).each { puts "  • #{it}" }
   end
 
   def defer_to_kickoff_show
@@ -159,26 +67,105 @@ class CoverArtPromptService < ApplicationService
       cover_art_prompt: kickoff.cover_art_prompt
   end
 
-  def hue
-    @hue ||= HUES.sample
-  end
-
-  def style
-    @style ||= STYLES.sample
-  end
-
   def llm_response
-    return @llm_response if defined?(@llm_response)
-
-    prompt = BASE_PROMPT.dup
-    prompt += "\nThe songs played at this show were: #{song_list}"
-    prompt += "\n\nThe time and place is #{show.venue_name}, #{show.venue.location} on #{show.date}"
-
-    result = OpenRouter.chat(
-      model:,
-      system: "You are a generalized expert in knowledge about points of interest.",
-      prompt:
+    @llm_response ||= OpenRouter.extract_json(
+      OpenRouter.chat(model:, system: SYSTEM, prompt: brief).text, symbolize_names: true
     )
-    @llm_response = OpenRouter.extract_json(result.text, symbolize_names: true)
+  end
+
+  def brief
+    [ instructions, assignments, show_context, recent_section, examples_section, response_format ].join("\n\n")
+  end
+
+  def instructions
+    <<~TXT.strip
+      Write #{CANDIDATES} image-generation prompts for the cover art of the live Phish show described below. Each prompt is for a different candidate cover; the admin will pick one.
+
+      Each prompt must:
+      - Describe one strong, concrete scene that can be painted or photographed, with at most two main elements composed together naturally. No abstract concepts.
+      - Give the scene a setting that evokes the place or the season, and state the viewpoint or framing (overhead view, close-up, wide landscape and so on).
+      - Draw its idea from a different source than the other prompts: something that happened at this show (setlist notes, banter, tags), a song played (turn titles and lyrics into concrete images), the city, venue and region (landmarks, landscape, wildlife, plants, regional food), or the season and any nearby holiday. Wit and whimsy are welcome.
+      - Contain no people, faces, band members, logos, brand names, text, borders or decorative frames.
+      - Read like the examples: one to three plain sentences, at most 60 words.
+    TXT
+  end
+
+  def assignments
+    lines = styles.each_with_index.map { |style, i| "- Prompt #{i + 1}: #{style.tr('-', ' ').downcase}" }
+    <<~TXT.strip
+      Color: every prompt's palette must be built around #{variety.hue} as the dominant color, described in words with one or two supporting colors, so the cover clearly reads as #{variety.hue} at thumbnail size. Covers are scanned in a list, so this color keeps neighboring shows distinct.
+
+      Style: use exactly this style for each prompt.
+      #{lines.join("\n")}
+    TXT
+  end
+
+  def show_context
+    sections = [
+      "Show: #{show.venue_name}, #{show.venue.location} on #{show.date.strftime('%A, %B %-d, %Y')} (#{season})",
+      ("Tour: #{show.tour.name}" if show.tour),
+      "Setlist (song by artist):\n#{setlist}",
+      ("Phish.net setlist notes: #{setlist_notes}" if setlist_notes.present?),
+      ("Tags:\n#{tag_lines.join("\n")}" if tag_lines.any?),
+      ("Taper notes (mostly recording details; use only what describes the event): " \
+       "#{show.taper_notes.truncate(TAPER_NOTES_LIMIT)}" if show.taper_notes.present?)
+    ]
+    sections.compact.join("\n\n")
+  end
+
+  def season
+    { 12 => "winter", 1 => "winter", 2 => "winter", 3 => "spring", 4 => "spring", 5 => "spring",
+      6 => "summer", 7 => "summer", 8 => "summer" }.fetch(show.date.month, "autumn")
+  end
+
+  def setlist
+    show.tracks.includes(:songs).order(:position).group_by(&:set_name).map do |set_name, tracks|
+      songs = tracks.map { |track| "#{track.title} by #{track.songs.first&.artist.presence || 'Phish'}" }
+      "#{set_name}: #{songs.join(', ')}"
+    end.join("\n")
+  end
+
+  def tag_lines
+    @tag_lines ||= begin
+      show_tags = show.show_tags.includes(:tag).map { [ it.tag.name, it.notes ].compact_blank.join(": ") }
+      track_tags = TrackTag.joins(:track).where(tracks: { show_id: show.id }).includes(:tag, :track)
+                           .order("tracks.position").map { track_tag_line(it) }
+      (show_tags + track_tags).map { "- #{it}" }
+    end
+  end
+
+  def track_tag_line(track_tag)
+    parts = [ "#{track_tag.track.title} (#{track_tag.tag.name})", track_tag.notes.presence,
+              track_tag.transcript.presence&.squish&.truncate(TRANSCRIPT_LIMIT) ]
+    parts.compact.join(": ")
+  end
+
+  def setlist_notes
+    return @setlist_notes if defined?(@setlist_notes)
+    @setlist_notes = fetch_setlist_notes
+  end
+
+  def fetch_setlist_notes
+    url = "https://api.phish.net/v5/shows/showdate/#{show.date}.json?apikey=#{ENV.fetch('PNET_API_KEY', '')}"
+    response = Typhoeus.get(url)
+    return nil unless response.success?
+    notes = JSON.parse(response.body).dig("data", 0, "setlist_notes")
+    notes && ActionController::Base.helpers.strip_tags(notes).squish.presence
+  rescue JSON::ParserError
+    nil
+  end
+
+  def recent_section
+    recent = variety.recent_prompts
+    return nil if recent.empty?
+    "Prompts used for the most recent covers. Don't repeat their subjects:\n#{recent.map { "- #{it}" }.join("\n")}"
+  end
+
+  def examples_section
+    "Examples of prompts the admin likes:\n#{EXAMPLES.map { "- #{it}" }.join("\n")}"
+  end
+
+  def response_format
+    %(Respond with only a JSON object of the form {"prompts": ["...", "...", "...", "..."]}, in the order of the style assignments.)
   end
 end

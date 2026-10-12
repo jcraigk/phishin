@@ -315,14 +315,12 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingEnd, onRegenerate }
   );
 };
 
-const SUGGESTIONS_PER_CATEGORY = 5;
-
 const NewPromptModal = ({ onClose, onSubmit }) => {
   const { show } = useContext(EditorContext);
   const [draft, setDraft] = useState(show.cover_art.prompt || "");
   const [model, setModel] = useState(show.cover_art.default_image_model);
   const [promptModel, setPromptModel] = useState(show.cover_art.default_prompt_model);
-  const [suggestions, setSuggestions] = useState(null);
+  const [options, setOptions] = useState(null);
   const { run, busy, error } = useJobRunner();
 
   const suggest = () =>
@@ -330,19 +328,16 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
       () => adminPost(`/shows/${show.date}/cover_art/regenerate_prompt`, { model: promptModel }),
       (job) => {
         if (job?.payload?.prompt) setDraft(job.payload.prompt);
-        setSuggestions(job?.payload?.suggestions || null);
+        setOptions(job?.payload?.prompts ? { prompts: job.payload.prompts, hue: job.payload.hue } : null);
       }
     );
-
-  const append = (text) =>
-    setDraft((prev) => (prev.trim() === "" ? text : `${prev.trim()} ${text}`));
 
   return (
     <Modal title="New Prompt" wide>
       <textarea
         aria-label="Prompt for a new image"
         placeholder="Prompt for a new image"
-        rows={2}
+        rows={4}
         value={draft}
         disabled={busy}
         onChange={(e) => setDraft(e.target.value)}
@@ -370,21 +365,24 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
           </span>
         )}
       </div>
-      {suggestions && (
-        <dl className="admin-art-suggestions">
-          {Object.entries(suggestions).map(([category, items]) => (
-            <div key={category}>
-              <dt>{category.replace(/_/g, " ")}</dt>
-              <dd>
-                {items.slice(0, SUGGESTIONS_PER_CATEGORY).map((item) => (
-                  <button key={item} type="button" onClick={() => append(item)}>
-                    {item}
-                  </button>
-                ))}
-              </dd>
-            </div>
-          ))}
-        </dl>
+      {options && (
+        <div className="admin-art-prompt-options">
+          {options.hue && <p>Built around {options.hue} so it stands apart from the last few covers.</p>}
+          <ol>
+            {options.prompts.map((option) => (
+              <li key={option}>
+                <button
+                  type="button"
+                  className={option === draft ? "is-chosen" : undefined}
+                  disabled={busy}
+                  onClick={() => setDraft(option)}
+                >
+                  {option}
+                </button>
+              </li>
+            ))}
+          </ol>
+        </div>
       )}
     </Modal>
   );

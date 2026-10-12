@@ -9,7 +9,9 @@ class Admin::RegenerateCoverArtPromptJob
       result = CoverArtPromptService.call(show, dry_run: true, model: model || CoverArtPromptService::MODELS.first)
       admin_job.payload.merge!(
         "prompt" => result[:prompt],
-        "suggestions" => result[:suggestions].transform_keys(&:to_s)
+        "prompts" => result[:prompts],
+        "hue" => result[:hue],
+        "styles" => result[:styles]
       )
       admin_job.save!
     end
