@@ -1286,6 +1286,11 @@
   border-radius: $radius;
   background-color: var(--bg-blue);
   color: var(--blue);
+
+  a {
+    color: inherit;
+    font-weight: 600;
+  }
 }
 
 .admin-art-toolbar {

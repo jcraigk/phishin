@@ -1,9 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
+import { Link } from "react-router";
 import Spinner from "./Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
   faCloudArrowUp,
+  faLock,
   faPencil,
   faPlus,
   faRotateRight,
@@ -13,7 +15,7 @@ import {
 import { faSparkles } from "./sparklesIcon";
 import { EditorContext } from "./AdminShowEditor";
 import useJobRunner from "./useJobRunner";
-import { adminDelete, adminGet, adminPost, pollJob } from "./adminApi";
+import { adminDelete, adminPost, pollJob } from "./adminApi";
 import { uploadFile } from "./DirectUploader";
 import { formatDate } from "../helpers/utils";
 import Modal from "./Modal";
@@ -478,15 +480,14 @@ const PendingCard = ({ basePrompt, edits, label, model }) => (
   </figure>
 );
 
-const ArtEditor = ({ runNote }) => {
+const ArtEditor = () => {
   const { show, reload, setError } = useContext(EditorContext);
   const [pendingJobs, setPendingJobs] = useState([]);
   const art = show.cover_art;
   const note =
-    runNote ||
-    ((art.child_dates || []).length > 0
+    (art.child_dates || []).length > 0
       ? `This art is shared with a run. Applying a candidate also updates ${art.child_dates.join(", ")}.`
-      : null);
+      : null;
 
   const currentParts = (art.prompt || "").split(/\s*\|\s*edit:\s*/);
 
@@ -574,47 +575,19 @@ const ArtEditor = ({ runNote }) => {
   );
 };
 
-const ParentArtEditor = ({ parentDate }) => {
-  const outer = useContext(EditorContext);
-  const [parentShow, setParentShow] = useState(null);
-
-  const load = async () => {
-    try {
-      setParentShow(await adminGet(`/shows/${parentDate}`));
-    } catch (e) {
-      outer.setError(e.message);
-    }
-  };
-
-  useEffect(() => {
-    load();
-  }, [parentDate]);
-
-  if (!parentShow) return null;
-
-  return (
-    <EditorContext.Provider
-      value={{
-        show: parentShow,
-        setShow: setParentShow,
-        setError: outer.setError,
-        reload: async () => {
-          await load();
-          await outer.reload();
-        },
-      }}
-    >
-      <ArtEditor
-        runNote={`This show is part of a run that shares cover art. You are editing the run's art (kept on ${formatDate(parentDate)}); applying a candidate updates every show in the run.`}
-      />
-    </EditorContext.Provider>
-  );
-};
+const RunArtLock = ({ parentDate }) => (
+  <div className="admin-art-tab">
+    <p className="admin-run-note">
+      <FontAwesomeIcon icon={faLock} /> This show shares cover art with its run. Edit it on{" "}
+      <Link to={`/admin/shows/${parentDate}`}>{formatDate(parentDate)}</Link>.
+    </p>
+  </div>
+);
 
 const ArtTab = () => {
   const { show } = useContext(EditorContext);
   const parentDate = show.cover_art.parent_show_date;
-  if (parentDate) return <ParentArtEditor parentDate={parentDate} />;
+  if (parentDate) return <RunArtLock parentDate={parentDate} />;
   return <ArtEditor />;
 };
 

@@ -79,34 +79,6 @@ RSpec.describe Admin::GenerateCoverArtJob, :open_router do
     expect(admin_job.reload.status).to eq("failed")
   end
 
-  describe "when the show is linked to a parent show" do
-    let(:parent) { create(:show, date: "2024-07-18") }
-
-    before do
-      parent.cover_art.attach(
-        io: StringIO.new("png bytes"), filename: "parent.png", content_type: "image/png"
-      )
-      show.update!(cover_art_parent_show_id: parent.id)
-    end
-
-    it "reuses the parent's cover art blob as the candidate" do
-      described_class.new.perform(show.id, admin_job.id)
-      expect(show.reload.cover_art_candidates.first.blob).to eq(parent.cover_art.blob)
-    end
-
-    it "does not call the image API" do
-      described_class.new.perform(show.id, admin_job.id)
-      expect(Typhoeus).not_to have_received(:post)
-    end
-
-    it "fails when the parent has no cover art" do
-      parent.cover_art.attachment.destroy
-      expect { described_class.new.perform(show.id, admin_job.id) }
-        .to raise_error(StandardError, /Parent show has no cover art/)
-      expect(admin_job.reload.status).to eq("failed")
-    end
-  end
-
   it "never retries on its own, so a failed paid AI call is not silently rerun" do
     expect(described_class.get_sidekiq_options["retry"]).to eq(0)
   end

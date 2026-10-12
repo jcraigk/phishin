@@ -101,24 +101,17 @@ RSpec.describe "API v2 Admin Cover Art" do
       expect(Admin::GenerateCoverArtJob.jobs).to be_empty
     end
 
-    it "422s when the show has neither a prompt nor a parent" do
+    it "422s when the show has no prompt" do
       show.update!(cover_art_prompt: nil)
       post path, headers: admin_headers
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it "enqueues nothing when the show has neither a prompt nor a parent" do
+    it "enqueues nothing when the show has no prompt" do
       show.update!(cover_art_prompt: nil)
       post path, headers: admin_headers
       expect(Admin::GenerateCoverArtJob.jobs).to be_empty
       expect(AdminJob.count).to eq(0)
-    end
-
-    it "allows a parent-linked show with no prompt of its own" do
-      parent = create(:show, date: "2025-07-31")
-      show.update!(cover_art_prompt: nil, cover_art_parent_show_id: parent.id)
-      post path, headers: admin_headers
-      expect(response).to have_http_status(:created)
     end
 
     it "returns 401 without a token" do
@@ -345,6 +338,33 @@ RSpec.describe "API v2 Admin Cover Art" do
       show.reload
       expect(show.cover_art).not_to be_attached
       expect(show.cover_art_candidates.count).to eq(1)
+    end
+  end
+
+  describe "on a show whose cover art is managed by its run's kickoff show" do
+    let!(:kickoff) { create(:show, date: "2025-07-31") }
+
+    before { show.update!(cover_art_parent_show_id: kickoff.id) }
+
+    [
+      [ :post, "regenerate_prompt", {} ],
+      [ :post, "generate", {} ],
+      [ :post, "upload", { signed_id: "unused" } ],
+      [ :post, "ai_edit", { source_blob_key: "unused", edit_prompt: "unused" } ],
+      [ :post, "select", { blob_key: "unused" } ],
+      [ :delete, "candidates", { blob_key: "unused" } ]
+    ].each do |verb, action, params|
+      it "rejects #{verb.upcase} #{action} and names the kickoff show" do
+        send(verb, "/api/v2/admin/shows/2025-08-01/cover_art/#{action}", params:, headers: admin_headers)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(JSON.parse(response.body)["message"]).to include("2025-07-31")
+      end
+    end
+
+    it "enqueues nothing" do
+      post "/api/v2/admin/shows/2025-08-01/cover_art/generate", headers: admin_headers
+      expect(Admin::GenerateCoverArtJob.jobs).to be_empty
+      expect(AdminJob.count).to eq(0)
     end
   end
 
