@@ -101,6 +101,35 @@ RSpec.describe OpenRouter, :open_router do
       expect { described_class.image(model: "m", prompt: "p") }
         .to raise_error(OpenRouter::Error, /child’s/)
     end
+
+    describe "when the upstream provider times out" do
+      let(:gateway_timeout) do
+        instance_double(Typhoeus::Response, success?: false,
+                        body: { error: { message: "Upstream provider request failed", code: 504 } }.to_json)
+      end
+      let(:success) { instance_double(Typhoeus::Response, success?: true, body: body.to_json) }
+
+      it "retries once and returns the image" do
+        allow(Typhoeus).to receive(:post).and_return(gateway_timeout, success)
+        expect(described_class.image(model: "m", prompt: "p")).to have_attributes(b64: "aGk=")
+        expect(Typhoeus).to have_received(:post).twice
+      end
+
+      it "gives up after a second timeout" do
+        allow(Typhoeus).to receive(:post).and_return(gateway_timeout)
+        expect { described_class.image(model: "m", prompt: "p") }
+          .to raise_error(OpenRouter::Error, /Upstream provider request failed/)
+        expect(Typhoeus).to have_received(:post).twice
+      end
+
+      it "does not retry other failures" do
+        allow(Typhoeus).to receive(:post).and_return(
+          instance_double(Typhoeus::Response, success?: false, body: { error: { message: "bad prompt", code: 400 } }.to_json)
+        )
+        expect { described_class.image(model: "m", prompt: "p") }.to raise_error(OpenRouter::Error, /bad prompt/)
+        expect(Typhoeus).to have_received(:post).once
+      end
+    end
   end
 
   describe ".extract_json" do

@@ -56,4 +56,8 @@ RSpec.describe Admin::RegenerateCoverArtPromptJob, :open_router do
       .to raise_error(StandardError, "prompt boom")
     expect(admin_job.reload).to have_attributes(status: "failed", message: "prompt boom")
   end
+
+  it "never retries on its own, so a failed paid AI call is not silently rerun" do
+    expect(described_class.get_sidekiq_options["retry"]).to eq(0)
+  end
 end

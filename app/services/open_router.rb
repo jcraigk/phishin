@@ -1,6 +1,8 @@
 module OpenRouter
   BASE_URL = "https://openrouter.ai/api/v1".freeze
   Error = Class.new(StandardError)
+  GatewayError = Class.new(Error)
+  GATEWAY_CODES = [ 502, 503, 504 ].freeze
 
   ChatResult = Struct.new(:text, :input_tokens, :output_tokens, :cost, keyword_init: true)
   ImageResult = Struct.new(:b64, :cost, keyword_init: true)
@@ -26,7 +28,7 @@ module OpenRouter
       model:, prompt:, n: 1, aspect_ratio: "1:1", resolution: "1K", quality: "high", output_format: "png"
     }
     body[:input_references] = [ { type: "image_url", image_url: { url: source_url } } ] if source_url
-    result = request("images", **body)
+    result = retrying_gateway_errors { request("images", **body) }
     b64 = result.dig("data", 0, "b64_json")
     raise Error, "No image in OpenRouter response" if b64.blank?
     ImageResult.new(b64:, cost: result.dig("usage", "cost")&.to_f)
@@ -35,6 +37,12 @@ module OpenRouter
   def self.extract_json(text, symbolize_names: false)
     match = text.match(/```(?:json)?\s*(.*?)\s*```/m)
     JSON.parse(match ? match[1] : text, symbolize_names:)
+  end
+
+  def self.retrying_gateway_errors
+    yield
+  rescue GatewayError
+    yield
   end
 
   def self.request(path, **body)
@@ -46,8 +54,19 @@ module OpenRouter
       },
       body: body.to_json
     )
-    raise Error, "OpenRouter #{path} error: #{safe_body(response)}" unless response.success?
+    unless response.success?
+      error = gateway_failure?(response) ? GatewayError : Error
+      raise error, "OpenRouter #{path} error: #{safe_body(response)}"
+    end
     JSON.parse(safe_body(response))
+  end
+
+  def self.gateway_failure?(response)
+    error = JSON.parse(safe_body(response))
+    error = error["error"] if error.is_a?(Hash)
+    error.is_a?(Hash) && GATEWAY_CODES.include?(error["code"])
+  rescue JSON::ParserError
+    false
   end
 
   def self.safe_body(response)

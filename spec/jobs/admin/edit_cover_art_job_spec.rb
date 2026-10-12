@@ -124,4 +124,8 @@ RSpec.describe Admin::EditCoverArtJob, :open_router do
     described_class.new.perform(show.id, admin_job.id, source_blob.key, "make it blue")
     expect(show.reload.cover_art_candidates.first.blob.metadata["cost"]).to eq(0.0678)
   end
+
+  it "never retries on its own, so a failed paid AI call is not silently rerun" do
+    expect(described_class.get_sidekiq_options["retry"]).to eq(0)
+  end
 end

@@ -1,6 +1,8 @@
 class Admin::EditCoverArtJob
   include Sidekiq::Job
 
+  sidekiq_options retry: 0
+
   def perform(show_id, admin_job_id, source_blob_key, edit_prompt, model = nil)
     show = Show.find(show_id)
     admin_job = AdminJob.find(admin_job_id)

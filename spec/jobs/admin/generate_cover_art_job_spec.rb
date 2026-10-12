@@ -106,4 +106,8 @@ RSpec.describe Admin::GenerateCoverArtJob, :open_router do
       expect(admin_job.reload.status).to eq("failed")
     end
   end
+
+  it "never retries on its own, so a failed paid AI call is not silently rerun" do
+    expect(described_class.get_sidekiq_options["retry"]).to eq(0)
+  end
 end
