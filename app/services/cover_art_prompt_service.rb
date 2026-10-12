@@ -8,8 +8,7 @@ class CoverArtPromptService < ApplicationService
 
   MODELS = %w[anthropic/claude-opus-5].freeze
   CANDIDATES = 4
-  SUFFIX = "Square album cover, illustrated artwork, not photorealistic, full-bleed composition " \
-           "filling the frame, no text, letters, numbers, borders or watermarks.".freeze
+  SUFFIX = "Illustrated square album cover, not photorealistic, full-bleed, no text or borders.".freeze
   TAPER_NOTES_LIMIT = 600
   TRANSCRIPT_LIMIT = 300
   EXAMPLES = [
@@ -80,13 +79,13 @@ class CoverArtPromptService < ApplicationService
     <<~TXT.strip
       Write #{CANDIDATES} image-generation prompts for the cover art of the live Phish show described below. Each prompt is for a different candidate cover; the admin will pick one.
 
-      Each prompt must:
-      - Describe one strong, concrete scene that can be painted or drawn, with at most two main elements composed together naturally. No abstract concepts.
-      - Give the scene a setting that evokes the place or the season, and state the viewpoint or framing (overhead view, close-up, wide landscape and so on).
-      - Draw its idea from a different source than the other prompts: something that happened at this show (setlist notes, banter, tags), a song played (turn titles and lyrics into concrete images), the city, venue and region (landmarks, landscape, wildlife, plants, regional food), or the season and any nearby holiday. Wit and whimsy are welcome.
-      - Describe illustrated or printed artwork, never photography or 3D renders. Leave out camera language such as lens, depth of field, film grain, exposure or bokeh.
-      - Contain no people, faces, band members, logos, brand names, text, borders or decorative frames.
-      - Read like the examples: one to three plain sentences, at most 60 words.
+      Keep each prompt short and simple, like the examples: one, at most two, concrete primary subjects, then the style, then the color, and almost nothing else. The image model fills in the detail on its own, so leave out composition, viewpoint, lighting, texture and scene description. Aim for 10 to 25 words, written as one plain phrase, for example "<subject> in <style> style with a <color> hue".
+
+      Each prompt must also:
+      - Use a subject that can be painted or drawn. No abstract concepts.
+      - Take its idea from a different source than the other prompts: something that happened at this show (setlist notes, banter, tags), a song played (turn titles and lyrics into concrete images), the city, venue and region (landmarks, landscape, wildlife, plants, regional food), or the season and any nearby holiday. Wit and whimsy are welcome.
+      - Be illustrated or printed artwork, never photography or 3D renders, with no camera language.
+      - Contain no people, faces, band members, logos, brand names, text or borders.
     TXT
   end
 
@@ -95,9 +94,9 @@ class CoverArtPromptService < ApplicationService
       "- Prompt #{i + 1}: #{style.tr('-', ' ').downcase} (#{CoverArtVariety::STYLES.fetch(style)})"
     end
     <<~TXT.strip
-      Color: every prompt's palette must be built around #{variety.hue} as the dominant color, described in words with one or two supporting colors, so the cover clearly reads as #{variety.hue} at thumbnail size. Covers are scanned in a list, so this color keeps neighboring shows distinct.
+      Color: every prompt uses #{variety.hue} as its color, so neighboring shows look distinct when covers are scanned in a list. Name it in a few words, such as "with a #{variety.hue.downcase} hue" or "#{variety.hue.downcase} with a touch of one other color".
 
-      Style: use exactly this style for each prompt, and let its description shape how the scene is rendered.
+      Style: use exactly this style for each prompt. The note in parentheses is only to help you picture it; write just the style name in the prompt.
       #{lines.join("\n")}
     TXT
   end

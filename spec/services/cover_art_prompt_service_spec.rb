@@ -35,7 +35,7 @@ RSpec.describe CoverArtPromptService do
     let(:result) { described_class.call(show, dry_run: true) }
 
     it "tells the image model every prompt is illustrated, not photorealistic" do
-      expect(result[:prompts]).to all(include("illustrated artwork, not photorealistic"))
+      expect(result[:prompts]).to all(include("Illustrated", "not photorealistic"))
     end
 
     it "returns one finished prompt per candidate, each ending with the album cover rules" do
@@ -97,7 +97,11 @@ RSpec.describe CoverArtPromptService do
     end
 
     it "rules out photography, 3D renders and camera language" do
-      expect(brief).to include("never photography or 3D renders", "depth of field")
+      expect(brief).to include("never photography or 3D renders", "no camera language")
+    end
+
+    it "asks for short prompts of subject, style and color only" do
+      expect(brief).to include("one, at most two, concrete primary subjects", "10 to 25 words")
     end
 
     it "shows the recent runs' prompts so their subjects aren't repeated" do
