@@ -53,9 +53,18 @@ RSpec.describe CoverArtVariety do
   describe "#styles" do
     it "drops styles named in recent prompts" do
       past_run("2025-08-01", prompt: "poster art of colorado mountains, brown hue")
-      past_run("2025-07-25", prompt: "A rattlesnake in the style of Ink-Drawing with a Blue hue.")
+      past_run("2025-07-25", prompt: "A rattlesnake in the style of Linocut with a Blue hue.")
       styles = described_class.new(show).styles(described_class::STYLES.size - 2)
-      expect(styles).not_to include("Poster-Art", "Ink-Drawing")
+      expect(styles).not_to include("Poster-Art", "Linocut")
+    end
+
+    it "offers only illustrated or printed styles, never photographic or 3D ones" do
+      names = described_class::STYLES.keys.map(&:downcase)
+      expect(names.grep(/photo|exposure|isometric|poly|render/)).to be_empty
+    end
+
+    it "defines every style so the model knows what it looks like" do
+      expect(described_class::STYLES.values).to all(be_present)
     end
 
     it "returns distinct styles" do

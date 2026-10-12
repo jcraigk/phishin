@@ -34,6 +34,10 @@ RSpec.describe CoverArtPromptService do
   describe "a dry run" do
     let(:result) { described_class.call(show, dry_run: true) }
 
+    it "tells the image model every prompt is illustrated, not photorealistic" do
+      expect(result[:prompts]).to all(include("illustrated artwork, not photorealistic"))
+    end
+
     it "returns one finished prompt per candidate, each ending with the album cover rules" do
       expect(result[:prompts].size).to eq(described_class::CANDIDATES)
       expect(result[:prompts]).to all(end_with(described_class::SUFFIX))
@@ -87,7 +91,13 @@ RSpec.describe CoverArtPromptService do
       result = described_class.call(show, dry_run: true)
       sent = sent_prompts.last
       expect(sent).to include(result[:hue])
-      result[:styles].each { expect(sent).to include(it.tr("-", " ").downcase) }
+      result[:styles].each do |style|
+        expect(sent).to include(style.tr("-", " ").downcase, CoverArtVariety::STYLES.fetch(style))
+      end
+    end
+
+    it "rules out photography, 3D renders and camera language" do
+      expect(brief).to include("never photography or 3D renders", "depth of field")
     end
 
     it "shows the recent runs' prompts so their subjects aren't repeated" do

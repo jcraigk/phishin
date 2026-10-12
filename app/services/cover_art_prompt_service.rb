@@ -8,8 +8,8 @@ class CoverArtPromptService < ApplicationService
 
   MODELS = %w[anthropic/claude-opus-5].freeze
   CANDIDATES = 4
-  SUFFIX = "Square album cover, full-bleed composition filling the frame, " \
-           "no text, letters, numbers, borders or watermarks.".freeze
+  SUFFIX = "Square album cover, illustrated artwork, not photorealistic, full-bleed composition " \
+           "filling the frame, no text, letters, numbers, borders or watermarks.".freeze
   TAPER_NOTES_LIMIT = 600
   TRANSCRIPT_LIMIT = 300
   EXAMPLES = [
@@ -22,7 +22,6 @@ class CoverArtPromptService < ApplicationService
     "The Philadelphia skyline overgrown by trees, illustration style in a green hue",
     "A confused, intoxicated firefly on a city block, ink drawing with a yellow-orange hue",
     "Overhead view of a tropical beach with a single colorful umbrella and its shadow, color illustration",
-    "Hazy photograph of a flying saucer, 1950s",
     "A glass box with a rainstorm over a forest inside it, divided sky"
   ].freeze
   SYSTEM = "You are an art director commissioning album covers for live concert recordings.".freeze
@@ -82,20 +81,23 @@ class CoverArtPromptService < ApplicationService
       Write #{CANDIDATES} image-generation prompts for the cover art of the live Phish show described below. Each prompt is for a different candidate cover; the admin will pick one.
 
       Each prompt must:
-      - Describe one strong, concrete scene that can be painted or photographed, with at most two main elements composed together naturally. No abstract concepts.
+      - Describe one strong, concrete scene that can be painted or drawn, with at most two main elements composed together naturally. No abstract concepts.
       - Give the scene a setting that evokes the place or the season, and state the viewpoint or framing (overhead view, close-up, wide landscape and so on).
       - Draw its idea from a different source than the other prompts: something that happened at this show (setlist notes, banter, tags), a song played (turn titles and lyrics into concrete images), the city, venue and region (landmarks, landscape, wildlife, plants, regional food), or the season and any nearby holiday. Wit and whimsy are welcome.
+      - Describe illustrated or printed artwork, never photography or 3D renders. Leave out camera language such as lens, depth of field, film grain, exposure or bokeh.
       - Contain no people, faces, band members, logos, brand names, text, borders or decorative frames.
       - Read like the examples: one to three plain sentences, at most 60 words.
     TXT
   end
 
   def assignments
-    lines = styles.each_with_index.map { |style, i| "- Prompt #{i + 1}: #{style.tr('-', ' ').downcase}" }
+    lines = styles.each_with_index.map do |style, i|
+      "- Prompt #{i + 1}: #{style.tr('-', ' ').downcase} (#{CoverArtVariety::STYLES.fetch(style)})"
+    end
     <<~TXT.strip
       Color: every prompt's palette must be built around #{variety.hue} as the dominant color, described in words with one or two supporting colors, so the cover clearly reads as #{variety.hue} at thumbnail size. Covers are scanned in a list, so this color keeps neighboring shows distinct.
 
-      Style: use exactly this style for each prompt.
+      Style: use exactly this style for each prompt, and let its description shape how the scene is rendered.
       #{lines.join("\n")}
     TXT
   end

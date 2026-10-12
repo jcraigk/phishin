@@ -13,13 +13,26 @@ class CoverArtVariety
     "Magenta" => 312, "Pink" => 330, "Crimson" => 348
   }.freeze
 
-  STYLES = %w[
-    Poster-Art Vintage-Travel-Poster Psychedelic-Poster Screen-Print Risograph
-    Linocut Woodcut Illustration Storybook-Illustration Ink-Drawing Ink-Wash
-    Colored-Pencil Charcoal Watercolor Gouache Oil-Painting Impasto Pastel
-    Art-Deco Art-Nouveau Ukiyo-e Stained-Glass Paper-Collage Papercut
-    Photograph Film-Photograph Double-Exposure Isometric Low-Poly
-  ].freeze
+  STYLES = {
+    "Poster-Art" => "flat bold shapes, strong silhouette, limited palette, gig-poster feel",
+    "Vintage-Travel-Poster" => "1930s-50s lithograph, simplified landscape, flat color planes with soft gradients",
+    "Psychedelic-Poster" => "1960s concert-poster style, flowing organic shapes, saturated color",
+    "Screen-Print" => "three to five flat ink layers, slight misregistration, paper texture",
+    "Risograph" => "grainy two- or three-color overprint with halftone texture",
+    "Linocut" => "bold carved lines, high contrast, one or two inks",
+    "Woodcut" => "chunky carved shapes with visible wood grain",
+    "Ukiyo-e" => "Japanese woodblock print, flat color, bold outlines, stylized waves and clouds",
+    "Art-Deco" => "geometric, symmetrical, streamlined forms",
+    "Art-Nouveau" => "flowing organic linework, no border",
+    "Storybook-Illustration" => "whimsical hand-drawn scene with gouache texture",
+    "Ink-and-Wash" => "brush-ink lines over loose watercolor washes",
+    "Watercolor" => "loose translucent washes with white paper showing through",
+    "Gouache" => "opaque matte paint, simplified forms",
+    "Colored-Pencil" => "visible hand-drawn pencil strokes",
+    "Paper-Collage" => "layered cut-paper shapes with visible edges and soft shadows",
+    "Stained-Glass" => "leaded outlines and jewel-toned glass",
+    "Expressive-Oil-Painting" => "loose visible brushstrokes, simplified forms"
+  }.freeze
 
   attr_reader :show, :random
 
@@ -37,8 +50,8 @@ class CoverArtVariety
   end
 
   def styles(count)
-    fresh = STYLES.reject { used_recently?(it) }
-    (fresh.size >= count ? fresh : STYLES).sample(count, random:)
+    fresh = STYLES.keys.reject { used_recently?(it) }
+    (fresh.size >= count ? fresh : STYLES.keys).sample(count, random:)
   end
 
   def recent_prompts
