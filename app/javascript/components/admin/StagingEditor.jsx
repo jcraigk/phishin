@@ -8,7 +8,7 @@ import StagedTrackRow from "./StagedTrackRow";
 import useJobRunner from "./useJobRunner";
 import { StagingPlayer } from "./StagingPlayer";
 import { adminPatch, adminPost, adminPut, adminDelete } from "./adminApi";
-import { round1, viewWindow } from "./stagingMath";
+import { playbackHost, round1, viewWindow } from "./stagingMath";
 import { setName, groupBySet, withPendingSets, addableSets as computeAddableSets } from "./sets";
 import AddSetMenu from "./AddSetMenu";
 import IssueList from "./IssueList";
@@ -72,6 +72,7 @@ const StagingEditor = () => {
       getPreviewUrl: () => previewUrlRef.current,
       getTrack: (id) => tracksRef.current.find((t) => t.id === id),
       getTrackAt: (t) => tracksRef.current.find((tr) => t >= tr.start_s && t < tr.end_s),
+      isGap: (t) => playbackHost(tracksRef.current, t).gap,
       getFollowing: (track) => {
         const list = tracksRef.current;
         const index = list.findIndex((t) => t.id === track.id);
@@ -151,14 +152,15 @@ const StagingEditor = () => {
 
   const stop = () => playerRef.current.stop();
 
+  const playFrom = (t) => {
+    const host = playbackHost(tracks, t).track || selected;
+    playerRef.current.play(host, t, t > host.end_s ? staging.total_s : undefined);
+    setPlaying(true);
+  };
+
   const playFromPlayhead = () => {
     if (!selected) return;
-    const t = playhead ?? selected.start_s;
-    const host = tracks.find((tr) => t >= tr.start_s && t < tr.end_s)
-      || tracks.find((tr) => t >= tr.start_s && t <= tr.end_s)
-      || selected;
-    playerRef.current.play(host, t);
-    setPlaying(true);
+    playFrom(playhead ?? selected.start_s);
   };
 
   const playFromSeam = (track) => {
@@ -385,7 +387,7 @@ const StagingEditor = () => {
         onSeek={(s) => {
           const t = span.start + s;
           setPlayhead(t);
-          if (playing) playerRef.current.seek(t);
+          if (playing) playFrom(t);
         }}
       />
       <div className="admin-audio-actions">

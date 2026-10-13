@@ -32,3 +32,14 @@ export const viewWindow = (tracks, index, pad) => {
       : Math.max(track.end_s, track.original_end_s ?? track.end_s, following ? following.start_s : track.end_s),
   };
 };
+
+// A moment no track covers is audio the export cuts. It plays at full volume
+// under the track that follows it, so the cut can be heard before moving an
+// edge into it.
+export const playbackHost = (tracks, t) => {
+  const covering = tracks.find((tr) => t >= tr.start_s && t < tr.end_s)
+    || tracks.find((tr) => t >= tr.start_s && t <= tr.end_s);
+  if (covering) return { track: covering, gap: false };
+  const following = tracks.find((tr) => tr.start_s > t);
+  return { track: following || tracks[tracks.length - 1] || null, gap: true };
+};

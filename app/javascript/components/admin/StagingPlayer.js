@@ -3,11 +3,12 @@ import { gainAt } from "./stagingMath";
 // Plays the staged show from one continuous preview of the whole timeline, so
 // a track that spans two source files still plays without a gap where they meet.
 export class StagingPlayer {
-  constructor({ getPreviewUrl, getTrack, getTrackAt, getFollowing, onTime, onStop, onTrackChange, onError, onLoading }) {
+  constructor({ getPreviewUrl, getTrack, getTrackAt, getFollowing, isGap, onTime, onStop, onTrackChange, onError, onLoading }) {
     this.getPreviewUrl = getPreviewUrl;
     this.getTrack = getTrack || (() => null);
     this.getTrackAt = getTrackAt || (() => null);
     this.getFollowing = getFollowing || (() => null);
+    this.isGap = isGap || (() => false);
     this.onTime = onTime || (() => {});
     this.onStop = onStop || (() => {});
     this.onLoading = onLoading || (() => {});
@@ -157,12 +158,8 @@ export class StagingPlayer {
 
   applyGain(t) {
     if (!this.gain || !this.track) return;
-    this.gain.gain.setValueAtTime(gainAt(this.current(), t), this.context().currentTime);
-  }
-
-  seek(t) {
-    if (!this.track) return;
-    this.startAt(t, ++this.token);
+    const gain = this.isGap(t) ? 1 : gainAt(this.current(), t);
+    this.gain.gain.setValueAtTime(gain, this.context().currentTime);
   }
 
   stop() {
