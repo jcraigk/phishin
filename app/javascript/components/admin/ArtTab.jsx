@@ -575,19 +575,29 @@ const ArtEditor = () => {
   );
 };
 
-const RunArtLock = ({ parentDate }) => (
+const RunArtLock = ({ art }) => (
   <div className="admin-art-tab">
     <p className="admin-run-note">
       <FontAwesomeIcon icon={faLock} /> This show shares cover art with its run. Edit it on{" "}
-      <Link to={`/admin/shows/${parentDate}`}>{formatDate(parentDate)}</Link>.
+      <Link to={`/admin/shows/${art.parent_show_date}`}>{formatDate(art.parent_show_date)}</Link>.
     </p>
+    <section className="admin-art-current">
+      <div className="admin-art-pair">
+        <ArtImage url={art.current_url} alt="Current cover art" emptyLabel="No cover art" />
+        <ArtImage url={art.album_cover_url} alt="Album cover composite" emptyLabel="No album cover" />
+      </div>
+      {art.prompt && (
+        <p className="admin-art-snapshot">
+          {art.prompt} <ModelBadge model={art.model} />
+        </p>
+      )}
+    </section>
   </div>
 );
 
 const ArtTab = () => {
   const { show } = useContext(EditorContext);
-  const parentDate = show.cover_art.parent_show_date;
-  if (parentDate) return <RunArtLock parentDate={parentDate} />;
+  if (show.cover_art.parent_show_date) return <RunArtLock art={show.cover_art} />;
   return <ArtEditor />;
 };
 
