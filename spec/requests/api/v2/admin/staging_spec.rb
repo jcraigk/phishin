@@ -327,6 +327,14 @@ RSpec.describe "API v2 Admin Staging" do
       expect(response).to have_http_status(:unprocessable_content)
       expect(body["message"]).to include("already published")
     end
+
+    it "enqueues the commit for a published show whose tracks are all missing audio" do
+      ready!
+      show.update!(venue: create(:venue), tour: create(:tour), published: true)
+      create(:track, show:, position: 1, audio_status: "missing")
+      post "#{base}/staging/commit", headers: admin_headers
+      expect(response).to have_http_status(:created)
+    end
   end
 
   describe "DELETE staging" do
@@ -347,6 +355,47 @@ RSpec.describe "API v2 Admin Staging" do
       delete "#{base}/staging", headers: admin_headers
       expect(response).to have_http_status(:no_content)
       expect(show.reload.tracks).to be_empty
+    end
+
+    it "keeps setlist tracks that are missing audio" do
+      stage!
+      dir.reset!
+      create(:track, show:, position: 1, title: "Setlist", audio_status: "missing")
+      delete "#{base}/staging", headers: admin_headers
+      expect(show.reload.tracks.pluck(:title)).to eq([ "Setlist" ])
+    end
+  end
+
+  describe "POST archive_import" do
+    let(:item) { instance_double(Admin::ArchiveItem, date: Date.new(2025, 8, 1), identifier: "ph2025-08-01") }
+
+    before { allow(Admin::ArchiveItem).to receive(:new).and_return(item) }
+
+    def import!
+      post "/api/v2/admin/shows/archive_import", params: { url: "https://archive.org/details/ph2025-08-01" },
+                                                  headers: admin_headers
+    end
+
+    it "starts an ingest on a published show whose tracks are all missing audio" do
+      show.update!(venue: create(:venue), tour: create(:tour), published: true)
+      create(:track, show:, position: 1, audio_status: "missing")
+      expect { import! }.to change(Admin::IngestStagingJob.jobs, :size).by(1)
+      expect(response).to have_http_status(:created)
+    end
+
+    it "422s for a published show with audio" do
+      show.update!(venue: create(:venue), tour: create(:tour), published: true)
+      create(:track, show:, position: 1)
+      import!
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(body["message"]).to include("already published")
+    end
+
+    it "422s for a draft that already has tracks with audio" do
+      create(:track, show:, position: 1)
+      import!
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(body["message"]).to include("already has tracks")
     end
   end
 end

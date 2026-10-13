@@ -12,9 +12,11 @@ class Admin::CommitStagingJob
     @dir = Admin::StagingDir.new(@show)
 
     @admin_job.run! do
-      raise Error, "Show #{@show.date} is already published" if @show.published?
+      raise Error, "Show #{@show.date} is already published" if @show.published? && !@show.setlist_only?
       raise Error, "Show #{@show.date} has nothing staged" unless @show.staged_tracks.exists?
       raise Error, "timeline missing for #{@show.date}; ingest again" unless File.exist?(@dir.timeline)
+
+      @show.update!(published: false) if @show.published?
 
       if @show.tracks.exists?
         @show.tracks.destroy_all

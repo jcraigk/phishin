@@ -103,6 +103,10 @@ class Show < ApplicationRecord
     staged_sources.any?
   end
 
+  def setlist_only?
+    tracks.exists? && !tracks.where.not(audio_status: "missing").exists?
+  end
+
   def renumber_tracks!(ordered_ids = tracks.order(:position).pluck(:id))
     transaction do
       ordered_ids.each_with_index { |id, index| tracks.where(id:).update_all(position: -(index + 1)) }

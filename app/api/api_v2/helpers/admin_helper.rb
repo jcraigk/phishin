@@ -10,7 +10,8 @@ module ApiV2::Helpers::AdminHelper
     Show.find_by!(date: params[:date])
   end
 
-  def ensure_draft_without_tracks!(show)
+  def ensure_importable!(show)
+    return if show.setlist_only?
     error!({ message: "Show #{show.date} is already published" }, 422) if show.published?
     error!({ message: "Show #{show.date} already has tracks" }, 422) if show.tracks.exists?
   end

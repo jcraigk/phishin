@@ -113,6 +113,17 @@ RSpec.describe Admin::CommitStagingJob do
     end
   end
 
+  it "unpublishes a setlist-only show and replaces its missing-audio tracks" do
+    show.update!(venue:, tour:, published: true)
+    create(:track, show:, position: 1, title: "Placeholder", audio_status: "missing")
+    create(:staged_source, show:, position: 1, filename: "d1t01.flac", format: "flac", offset_s: 0, duration_s: 10)
+    create(:staged_track, show:, position: 1, title: "Ghost", set: "1", song_ids: [ song.id ], start_s: 0, end_s: 10)
+    described_class.new.perform(show.id, admin_job.id)
+    expect(admin_job.reload.status).to eq("done")
+    expect(show.reload.published).to be(false)
+    expect(show.tracks.pluck(:title, :audio_status)).to eq([ [ "Ghost", "complete" ] ])
+  end
+
   it "fails when the show is published" do
     show.update!(venue:, tour:, published: true)
     create(:staged_track, show:)

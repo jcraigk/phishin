@@ -25,7 +25,7 @@ class Admin::IngestStagingJob
 
   def run_ingest(signed_ids, archive_item)
     @admin_job.run! do
-      raise Error, "Show #{@show.date} already has tracks" if @show.tracks.exists?
+      raise Error, "Show #{@show.date} already has tracks" if @show.tracks.exists? && !@show.setlist_only?
       @show.discard_staging!
       @dir.reset!
 

@@ -179,6 +179,14 @@ RSpec.describe Admin::IngestStagingJob do
     expect(admin_job.reload.status).to eq("failed")
   end
 
+  it "stages over a setlist whose tracks are all missing audio, keeping the setlist until commit" do
+    create(:track, show:, position: 1, audio_status: "missing")
+    described_class.new.perform(show.id, admin_job.id, [ upload("show.zip", "application/zip") ], nil)
+    expect(admin_job.reload.status).to eq("done")
+    expect(show.reload.staged_tracks).not_to be_empty
+    expect(show.tracks.count).to eq(1)
+  end
+
   it "fails when nothing in the upload is audio" do
     expect { described_class.new.perform(show.id, admin_job.id, [ upload("notes.txt", "text/plain") ], nil) }
       .to raise_error(Admin::IngestStagingJob::NoAudioError)

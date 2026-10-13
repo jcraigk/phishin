@@ -168,7 +168,7 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
         post "commit" do
           show = admin_show
           error!({ message: "Nothing staged" }, 422) unless show.staged_tracks.exists?
-          error!({ message: "Show is already published" }, 422) if show.published?
+          error!({ message: "Show is already published" }, 422) if show.published? && !show.setlist_only?
           error!({ message: "Choose a venue before committing" }, 422) if show.venue.nil?
           songless = show.staged_tracks.ordered.select { it.song_ids.empty? }
           if songless.any?
@@ -180,7 +180,7 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
         desc "Discard staging", hidden: true
         delete do
           show = admin_show
-          show.tracks.destroy_all unless show.published?
+          show.tracks.where.not(audio_status: "missing").destroy_all unless show.published?
           show.discard_staging!
           status 204
           body false
@@ -194,7 +194,7 @@ class ApiV2::Admin::Staging < ApiV2::Admin::Base
       show = Show.find_by(date:)
       created = show.nil?
       show ||= Show.create_draft!(date)
-      ensure_draft_without_tracks!(show)
+      ensure_importable!(show)
       enqueue_job("ingest", Admin::IngestStagingJob, show:, args: [ signed_ids, archive_item, created ])
         .merge(date: show.date.iso8601)
     end
