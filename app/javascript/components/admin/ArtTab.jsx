@@ -317,12 +317,11 @@ const CandidateCard = ({ candidate, onPendingStart, onPendingEnd, onRegenerate }
   );
 };
 
-const NewPromptModal = ({ onClose, onSubmit }) => {
+const NewPromptModal = ({ onClose, onSubmit, options, setOptions }) => {
   const { show } = useContext(EditorContext);
   const [draft, setDraft] = useState(show.cover_art.prompt || "");
   const [model, setModel] = useState(show.cover_art.default_image_model);
   const [promptModel, setPromptModel] = useState(show.cover_art.default_prompt_model);
-  const [options, setOptions] = useState(null);
   const { run, busy, error } = useJobRunner();
 
   const suggest = () =>
@@ -393,6 +392,7 @@ const NewPromptModal = ({ onClose, onSubmit }) => {
 const GenerateControls = ({ onGenerate }) => {
   const { show, reload } = useContext(EditorContext);
   const [modalOpen, setModalOpen] = useState(false);
+  const [promptOptions, setPromptOptions] = useState(null);
   const [progress, setProgress] = useState(null);
   const [uploadError, setUploadError] = useState(null);
 
@@ -441,7 +441,12 @@ const GenerateControls = ({ onGenerate }) => {
       {uploading && <progress max="100" value={progress} />}
       {uploadError && <p className="admin-error">{uploadError}</p>}
       {modalOpen && (
-        <NewPromptModal onClose={() => setModalOpen(false)} onSubmit={generate} />
+        <NewPromptModal
+          onClose={() => setModalOpen(false)}
+          onSubmit={generate}
+          options={promptOptions}
+          setOptions={setPromptOptions}
+        />
       )}
     </div>
   );
