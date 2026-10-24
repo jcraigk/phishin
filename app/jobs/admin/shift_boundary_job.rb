@@ -29,6 +29,8 @@ class Admin::ShiftBoundaryJob
       admin_job.payload.merge!(payload)
       admin_job.save!
     end
+  ensure
+    remove_working_files
   end
 
   private
@@ -56,7 +58,7 @@ class Admin::ShiftBoundaryJob
   end
 
   def join
-    @concat = TrackConcatService.call(tracks: [ first, second ])
+    @concat = TrackConcatService.call(tracks: [ first, second ], output_name: "#{working_name}_joined.mp3")
     @joined_path = @concat[:output_path]
   end
 
@@ -94,8 +96,14 @@ class Admin::ShiftBoundaryJob
 
   def side_paths
     @side_paths ||= [ 1, 2 ].map do |n|
-      output_dir.join("#{show.date}_#{first.slug}_boundary#{n}.mp3")
+      output_dir.join("#{working_name}_boundary#{n}.mp3")
     end
+  end
+
+  def working_name = "#{show.date}_#{first.slug}_job#{@admin_job.id}"
+
+  def remove_working_files
+    [ @joined_path, *(@side_paths || []) ].compact.each { FileUtils.rm_f(it) }
   end
 
   def bitrate

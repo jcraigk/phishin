@@ -9,10 +9,24 @@ RSpec.describe AdminJobAudio do
     File.binwrite(source, "ID3rendered")
   end
 
+  describe ".dir" do
+    it "lives on the shared content volume in Docker so the web container can serve worker renders" do
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with("IN_DOCKER").and_return("true")
+      expect(described_class.dir).to eq(Pathname.new("/content/admin_job_audio"))
+    end
+
+    it "lives under tmp outside Docker" do
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with("IN_DOCKER").and_return(nil)
+      expect(described_class.dir).to eq(Rails.root.join("tmp/admin_job_audio"))
+    end
+  end
+
   describe ".store" do
     it "copies the render to a job-scoped path" do
       path = described_class.store(admin_job, source.to_s)
-      expect(path).to eq(described_class::DIR.join("#{admin_job.id}_0.mp3").to_s)
+      expect(path).to eq(described_class.dir.join("#{admin_job.id}_0.mp3").to_s)
       expect(File.binread(path)).to eq("ID3rendered")
     end
 

@@ -46,14 +46,17 @@ const useJobRunner = () => {
       return job;
     } catch (e) {
       if (!isPollAbort(e) && mountedRef.current) setError(e.message);
-      if (mountedRef.current) {
+      if (mountedRef.current && controllerRef.current === controller) {
         setStatus(null);
         setProgress(null);
       }
       return null;
     } finally {
-      if (controllerRef.current === controller) controllerRef.current = null;
-      if (mountedRef.current) setBusy(false);
+      // A newer run may have replaced this one; leave its busy state alone.
+      if (controllerRef.current === controller) {
+        controllerRef.current = null;
+        if (mountedRef.current) setBusy(false);
+      }
     }
   }, []);
 

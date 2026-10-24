@@ -82,19 +82,19 @@ const BoundaryPanel = ({ track, next, onClose }) => {
       )
     );
 
-  const seekTo = (combined) => {
+  const seekTo = (combined, { play } = {}) => {
     const first = firstAudioRef.current;
     const second = secondAudioRef.current;
     if (!first || !second) return;
-    const wasPlaying = !first.paused || !second.paused;
+    const shouldPlay = play ?? (!first.paused || !second.paused);
     if (combined < firstSeconds) {
       second.pause();
       first.currentTime = combined;
-      if (wasPlaying) first.play();
+      if (shouldPlay) first.play();
     } else {
       first.pause();
       second.currentTime = combined - firstSeconds;
-      if (wasPlaying) second.play();
+      if (shouldPlay) second.play();
     }
     setPlayhead(combined);
   };
@@ -228,11 +228,13 @@ const BoundaryPanel = ({ track, next, onClose }) => {
       `Move the boundary between "${track.title}" and "${next.title}" by ` +
       `${delta.toFixed(1)}s? Both original audio files are backed up.`;
     if (!window.confirm(message)) return;
+    if (busy) cancel();
     modeRef.current = "apply";
     run(
       () => adminPost(`/tracks/${track.id}/shift_boundary_apply`, { delta_s: delta }),
       async () => {
         clearPreview();
+        setDeltaS(0);
         await reload();
         if (show.published) setGapsStale(true);
       }
@@ -334,6 +336,20 @@ const BoundaryPanel = ({ track, next, onClose }) => {
             >
               <FontAwesomeIcon icon={faLocationCrosshairs} />
             </button>
+            <button
+              type="button"
+              className="admin-trim-play"
+              title={`Play from the new boundary (${(firstSeconds + delta).toFixed(1)}s)`}
+              aria-label="Play from the new boundary"
+              disabled={!inRange}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                seekTo(firstSeconds + delta, { play: true });
+              }}
+            >
+              <FontAwesomeIcon icon={faPlay} />
+            </button>
           </span>
         </label>
       </div>
@@ -417,7 +433,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
         <button
           type="button"
           onClick={applyShift}
-          disabled={busy || !inRange || delta === 0 || !previewCurrent}
+          disabled={(busy && modeRef.current === "apply") || !inRange || delta === 0}
         >
           <FontAwesomeIcon icon={faCheck} /> Apply
         </button>

@@ -173,5 +173,10 @@ RSpec.describe TrackConcatService do
     it "still renders the summed duration" do
       expect(probe_duration(result[:output_path])).to be_within(0.3).of(16.0)
     end
+
+    it "renders to a caller-chosen name so concurrent callers do not share a file" do
+      path = described_class.call(tracks:, output_name: "job_42_joined.mp3")[:output_path]
+      expect(path).to eq(described_class::OUTPUT_DIR.join("job_42_joined.mp3").to_s)
+    end
   end
 end

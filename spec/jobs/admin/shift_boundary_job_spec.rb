@@ -267,6 +267,36 @@ RSpec.describe Admin::ShiftBoundaryJob do
     end
   end
 
+  describe "working files" do
+    before do
+      attach(first, 10)
+      attach(second, 6)
+    end
+
+    def working_files
+      %w[tmp/track_concats tmp/track_boundaries].flat_map do |dir|
+        Dir.glob(Rails.root.join(dir, "*job#{admin_job.id}*"))
+      end
+    end
+
+    it "joins into a file named for its own job so a preview and an apply cannot overwrite each other" do
+      allow(TrackConcatService).to receive(:call).and_call_original
+      described_class.new.perform(first.id, admin_job.id, 2.0, false)
+      expect(TrackConcatService).to have_received(:call)
+        .with(hash_including(output_name: a_string_including("job#{admin_job.id}")))
+    end
+
+    it "leaves no working files behind after a preview" do
+      described_class.new.perform(first.id, admin_job.id, 2.0, false)
+      expect(working_files).to be_empty
+    end
+
+    it "leaves no working files behind after an apply" do
+      described_class.new.perform(first.id, admin_job.id, 2.0, true)
+      expect(working_files).to be_empty
+    end
+  end
+
   describe "out-of-range deltas" do
     before do
       attach(first, 10)

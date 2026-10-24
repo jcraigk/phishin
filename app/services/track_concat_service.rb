@@ -1,6 +1,7 @@
 class TrackConcatService < ApplicationService
   option :tracks
   option :dry_run, default: -> { false }
+  option :output_name, optional: true
 
   OUTPUT_DIR = Rails.root.join("tmp/track_concats")
 
@@ -101,7 +102,7 @@ class TrackConcatService < ApplicationService
         Pathname.new(@output_tempfile.path)
       else
         FileUtils.mkdir_p(OUTPUT_DIR)
-        OUTPUT_DIR.join("#{tracks.first.show.date}_#{tracks.first.slug}_joined.mp3")
+        OUTPUT_DIR.join(output_name || "#{tracks.first.show.date}_#{tracks.first.slug}_joined.mp3")
       end
   end
 
