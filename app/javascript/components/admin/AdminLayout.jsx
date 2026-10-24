@@ -36,6 +36,12 @@ const AdminLayout = () => {
     }
   };
 
+  const closePlayer = () => {
+    setActiveTrack(null);
+    setActivePlaylist([]);
+    setIsPlaying(false);
+  };
+
   const playTrack = (playlist, track, autoplay = true) => {
     setActivePlaylist(playlist);
     setActiveTrack(track);
@@ -43,7 +49,7 @@ const AdminLayout = () => {
   };
 
   return (
-    <AdminPlayerContext.Provider value={{ playTrack, activeTrack, isPlaying }}>
+    <AdminPlayerContext.Provider value={{ playTrack, closePlayer, activeTrack, isPlaying }}>
       <div className="admin-layout">
         <AdminTooltip />
         <main className="admin-content">
@@ -60,11 +66,7 @@ const AdminLayout = () => {
           shouldAutoplay={shouldAutoplay}
           setShouldAutoplay={setShouldAutoplay}
           onPlayingChange={handlePlayingChange}
-          onClose={() => {
-            setActiveTrack(null);
-            setActivePlaylist([]);
-            setIsPlaying(false);
-          }}
+          onClose={closePlayer}
         />
       )}
     </AdminPlayerContext.Provider>

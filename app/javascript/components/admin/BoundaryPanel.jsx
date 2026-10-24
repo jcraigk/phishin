@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRotateLeft,
   faCheck,
+  faLocationCrosshairs,
   faPause,
   faPlay,
   faXmark,
@@ -38,6 +39,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
   const suppressClickRef = useRef(false);
   const cancelledRef = useRef(false);
   const modeRef = useRef("preview");
+  const lastSourceRef = useRef("original");
   const { run, cancel, busy, status, error, setError } = useJobRunner();
 
   const firstSeconds = seconds(track.duration);
@@ -135,6 +137,7 @@ const BoundaryPanel = ({ track, next, onClose }) => {
     engine.onPlayChange = (isPlaying) => {
       setPreviewPlaying(isPlaying);
       if (isPlaying) {
+        lastSourceRef.current = "preview";
         document.querySelectorAll("audio").forEach((el) => {
           if (!el.paused) el.pause();
         });
@@ -187,6 +190,25 @@ const BoundaryPanel = ({ track, next, onClose }) => {
   };
 
   useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key !== " " || e.shiftKey) return;
+      const active = document.activeElement;
+      if (["INPUT", "TEXTAREA", "SELECT"].includes(active?.tagName) || active?.isContentEditable) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const engine = engineRef.current;
+      const first = firstAudioRef.current;
+      const second = secondAudioRef.current;
+      const originalPlaying = (first && !first.paused) || (second && !second.paused);
+      if (engine && engine.playing) engine.pause();
+      else if (originalPlaying || lastSourceRef.current === "original" || !engine) togglePlay();
+      else engine.play();
+    };
+    window.addEventListener("keydown", onKeyDown, true);
+    return () => window.removeEventListener("keydown", onKeyDown, true);
+  });
+
+  useEffect(() => {
     const onPlay = (e) => {
       if (e.target instanceof HTMLMediaElement && engineRef.current) engineRef.current.pause();
     };
@@ -216,6 +238,9 @@ const BoundaryPanel = ({ track, next, onClose }) => {
       }
     );
   };
+
+  const hereDelta = round1(playhead - firstSeconds);
+  const hereValid = hereDelta >= low && hereDelta <= high && hereDelta !== delta;
 
   const boundaryPercent = `${Math.min(Math.max((firstSeconds + delta) / total, 0), 1) * 100}%`;
 
@@ -269,29 +294,58 @@ const BoundaryPanel = ({ track, next, onClose }) => {
         </div>
       </div>
 
-      <div className="admin-audio-fields">
-        <label className="admin-audio-field is-medium">
-          <span>Shift seconds</span>
-          <input
-            type="number"
-            step="0.1"
-            min={low}
-            max={high}
-            value={deltaS}
-            disabled={busy}
-            onChange={(e) => changeDelta(Number(e.target.value))}
-          />
-        </label>
-        <button type="button" className="admin-trim-play" onClick={togglePlay}>
+      <div className="admin-audio-actions admin-audio-transport">
+        <button
+          type="button"
+          className="admin-trim-play"
+          title={playing ? "Pause" : "Play"}
+          aria-label={playing ? "Pause" : "Play"}
+          onClick={togglePlay}
+        >
           <FontAwesomeIcon icon={playing ? faPause : faPlay} />
         </button>
+        <span className="admin-audio-status">{playhead.toFixed(1)}s</span>
+      </div>
+
+      <div className="admin-audio-fields">
+        <label className="admin-audio-field">
+          <span>Shift seconds</span>
+          <span className="admin-fade-controls">
+            <input
+              type="number"
+              step="0.1"
+              min={low}
+              max={high}
+              value={deltaS}
+              disabled={busy}
+              onChange={(e) => changeDelta(Number(e.target.value))}
+            />
+            <button
+              type="button"
+              className="admin-trim-play"
+              title={`Move the boundary to the playhead (${hereDelta.toFixed(1)}s)`}
+              aria-label="Move the boundary to the playhead"
+              disabled={busy || !hereValid}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                changeDelta(hereDelta);
+              }}
+            >
+              <FontAwesomeIcon icon={faLocationCrosshairs} />
+            </button>
+          </span>
+        </label>
       </div>
 
       <audio
         ref={firstAudioRef}
         src={track.mp3_url}
         onTimeUpdate={(e) => setPlayhead(e.target.currentTime)}
-        onPlay={() => setPlaying(true)}
+        onPlay={() => {
+          lastSourceRef.current = "original";
+          setPlaying(true);
+        }}
         onPause={syncPlaying}
         onEnded={() => {
           const second = secondAudioRef.current;
@@ -304,7 +358,10 @@ const BoundaryPanel = ({ track, next, onClose }) => {
         ref={secondAudioRef}
         src={next.mp3_url}
         onTimeUpdate={(e) => setPlayhead(firstSeconds + e.target.currentTime)}
-        onPlay={() => setPlaying(true)}
+        onPlay={() => {
+          lastSourceRef.current = "original";
+          setPlaying(true);
+        }}
         onPause={syncPlaying}
       />
 

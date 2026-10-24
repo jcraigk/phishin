@@ -69,7 +69,12 @@ const TracksTab = () => {
   const [insertFile, setInsertFile] = useState(null);
   const [insertProgress, setInsertProgress] = useState(null);
 
-  const { playTrack, activeTrack, isPlaying } = useContext(AdminPlayerContext);
+  const { playTrack, closePlayer, activeTrack, isPlaying } = useContext(AdminPlayerContext);
+  const editingAudio = audioTool?.name === "trim" || audioTool?.name === "boundary";
+
+  useEffect(() => {
+    if (editingAudio) closePlayer();
+  }, [editingAudio]);
 
   useEffect(() => {
     setActionsSlot(document.getElementById("admin-tab-actions"));

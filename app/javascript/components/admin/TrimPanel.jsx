@@ -288,6 +288,24 @@ const TrimPanel = ({ track, onClose }) => {
         }}
       />
 
+      <div className="admin-audio-actions admin-audio-transport">
+        <button
+          type="button"
+          className="admin-trim-play"
+          title={originalPlaying ? "Pause" : "Play"}
+          aria-label={originalPlaying ? "Pause" : "Play"}
+          onClick={() => {
+            const audio = audioRef.current;
+            if (!audio) return;
+            if (audio.paused) audio.play();
+            else audio.pause();
+          }}
+        >
+          <FontAwesomeIcon icon={originalPlaying ? faPause : faPlay} />
+        </button>
+        <span className="admin-audio-status">{formatTime(playhead)}</span>
+      </div>
+
       <div className="admin-audio-fields">
         <div className="admin-audio-group">
           <TimeField
@@ -316,18 +334,6 @@ const TrimPanel = ({ track, onClose }) => {
           {numberField("Delay", delay, setDelay, "tail")}
           {numberField("Fade out", fadeOut, setFadeOut, "tail")}
         </div>
-        <button
-          type="button"
-          className="admin-trim-play"
-          onClick={() => {
-            const audio = audioRef.current;
-            if (!audio) return;
-            if (audio.paused) audio.play();
-            else audio.pause();
-          }}
-        >
-          <FontAwesomeIcon icon={originalPlaying ? faPause : faPlay} />
-        </button>
       </div>
 
       <audio
