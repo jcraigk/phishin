@@ -3,16 +3,14 @@ class Admin::ShiftBoundaryJob
   include LameEncoding
 
   MIN_PART_S = 1.0
-  PREVIEW_WINDOW_S = 5.0
 
   class NoNextTrackError < StandardError; end
   class MissingAudioError < StandardError; end
   class DeltaOutOfRangeError < StandardError; end
 
-  def perform(track_id, admin_job_id, delta_s, apply)
+  def perform(track_id, admin_job_id, delta_s)
     @first = Track.find(track_id)
     @delta_s = delta_s.to_f
-    @apply = apply
     admin_job = AdminJob.find(admin_job_id)
 
     @admin_job = admin_job
@@ -24,8 +22,7 @@ class Admin::ShiftBoundaryJob
       join
       ensure_delta_in_range!
       render_sides
-      store_renders(admin_job)
-      apply! if apply?
+      apply!
       admin_job.payload.merge!(payload)
       admin_job.save!
     end
@@ -36,8 +33,6 @@ class Admin::ShiftBoundaryJob
   private
 
   attr_reader :first, :second, :delta_s
-
-  def apply? = @apply
 
   def show = first.show
 
@@ -106,42 +101,14 @@ class Admin::ShiftBoundaryJob
     [ @joined_path, *(@side_paths || []) ].compact.each { FileUtils.rm_f(it) }
   end
 
-  def bitrate
-    @bitrate ||= begin
-      raw = Admin::AudioProbe.read(@joined_path, "format=bit_rate").to_s
-      /\A\d+\z/.match?(raw) ? "#{(raw.to_i / 1000.0).round}k" : "192k"
-    end
-  end
-
   def render_sides
     FileUtils.mkdir_p(output_dir)
-    if apply?
-      render_side_via_lame(TrackSplitService.filters(start_s: 0.0, end_s: cut_s), side_paths[0])
-      render_side_via_lame(TrackSplitService.filters(start_s: cut_s), side_paths[1])
-    else
-      render(TrackSplitService.filters(start_s: [ cut_s - PREVIEW_WINDOW_S, 0.0 ].max, end_s: cut_s), side_paths[0])
-      render(TrackSplitService.filters(start_s: cut_s, end_s: [ cut_s + PREVIEW_WINDOW_S, total_duration_s ].min), side_paths[1])
-    end
+    render_side_via_lame(TrackSplitService.filters(start_s: 0.0, end_s: cut_s), side_paths[0])
+    render_side_via_lame(TrackSplitService.filters(start_s: cut_s), side_paths[1])
   end
 
   def render_side_via_lame(filters, out_path)
     render_via_lame(out_path, [ "-i", @joined_path, "-af", filters.join(",") ])
-  end
-
-  def render(filters, out_path)
-    _out, err, status = Open3.capture3(
-      "ffmpeg", "-y", "-v", "error", "-i", @joined_path,
-      "-af", filters.join(","), "-map_metadata", "0", "-id3v2_version", "3",
-      "-b:a", bitrate, out_path.to_s
-    )
-    raise TrackConcatService::Error, "ffmpeg failed for #{show.date}: #{err}" unless status.success?
-  end
-
-  def store_renders(admin_job)
-    admin_job.payload["audio_paths"] = [
-      AdminJobAudio.store(admin_job, side_paths[0].to_s, index: 0),
-      AdminJobAudio.store(admin_job, side_paths[1].to_s, index: 1)
-    ]
   end
 
   def apply!

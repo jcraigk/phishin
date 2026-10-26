@@ -40,19 +40,19 @@ RSpec.describe Admin::ShiftBoundaryJob do
 
     it "pulls a tag on the second track back by the shift" do
       track_tag = create(:track_tag, track: second, tag:, starts_at_second: 5)
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
+      described_class.new.perform(first.id, admin_job.id, delta_s)
       expect(track_tag.reload.starts_at_second).to eq(3)
     end
 
     it "leaves a tag on the first track where it was" do
       track_tag = create(:track_tag, track: first, tag:, starts_at_second: 4)
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
+      described_class.new.perform(first.id, admin_job.id, delta_s)
       expect(track_tag.reload.starts_at_second).to eq(4)
     end
 
     it "removes a tag that fell into the audio handed to the first track" do
       track_tag = create(:track_tag, track: second, tag:, starts_at_second: 1)
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
+      described_class.new.perform(first.id, admin_job.id, delta_s)
       expect(TrackTag.exists?(track_tag.id)).to be(false)
     end
   end
@@ -62,28 +62,20 @@ RSpec.describe Admin::ShiftBoundaryJob do
 
     it "pushes a tag on the second track forward by the shift" do
       track_tag = create(:track_tag, track: second, tag:, starts_at_second: 3)
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
+      described_class.new.perform(first.id, admin_job.id, delta_s)
       expect(track_tag.reload.starts_at_second).to eq(5)
     end
 
     it "removes a tag left past the first track's new end" do
       track_tag = create(:track_tag, track: first, tag:, starts_at_second: 9)
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
+      described_class.new.perform(first.id, admin_job.id, delta_s)
       expect(TrackTag.exists?(track_tag.id)).to be(false)
     end
 
     it "keeps a tag inside the first track's surviving audio" do
       track_tag = create(:track_tag, track: first, tag:, starts_at_second: 4)
-      described_class.new.perform(first.id, admin_job.id, delta_s, true)
+      described_class.new.perform(first.id, admin_job.id, delta_s)
       expect(track_tag.reload.starts_at_second).to eq(4)
-    end
-  end
-
-  describe "a preview" do
-    it "moves no timestamp" do
-      track_tag = create(:track_tag, track: second, tag:, starts_at_second: 5)
-      described_class.new.perform(first.id, admin_job.id, 2.0, false)
-      expect(track_tag.reload.starts_at_second).to eq(5)
     end
   end
 end

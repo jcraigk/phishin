@@ -231,7 +231,7 @@ RSpec.describe "API v2 Admin Tracks" do
     end
   end
 
-  describe "POST /api/v2/admin/tracks/:id/shift_boundary_preview and _apply" do
+  describe "POST /api/v2/admin/tracks/:id/shift_boundary_apply" do
     def tone
       path = Rails.root.join("tmp/spec/boundary_request_tone.mp3")
       FileUtils.mkdir_p(path.dirname)
@@ -259,24 +259,12 @@ RSpec.describe "API v2 Admin Tracks" do
     end
 
     it "returns 401 without a token" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
-           params: body, headers: { "CONTENT_TYPE" => "application/json" }
-      expect(response).to have_http_status(:unauthorized)
-    end
-
-    it "returns 403 for a non-admin user" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
-           params: body, headers: user_headers
-      expect(response).to have_http_status(:forbidden)
-    end
-
-    it "returns 401 without a token on apply" do
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
            params: body, headers: { "CONTENT_TYPE" => "application/json" }
       expect(response).to have_http_status(:unauthorized)
     end
 
-    it "returns 403 for a non-admin user on apply" do
+    it "returns 403 for a non-admin user" do
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
            params: body, headers: user_headers
       expect(response).to have_http_status(:forbidden)
@@ -305,32 +293,25 @@ RSpec.describe "API v2 Admin Tracks" do
       }.not_to change(Admin::ShiftBoundaryJob.jobs, :size)
     end
 
-    it "returns a job id for a preview" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+    it "returns a job id" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
            params: body, headers: admin_headers
       expect(response).to have_http_status(:created)
       expect(json[:job_id]).to eq(AdminJob.last.id)
     end
 
-    it "enqueues the preview without applying" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
-           params: body, headers: admin_headers
-      expect(Admin::ShiftBoundaryJob.jobs.last["args"])
-        .to eq([ track1.id, AdminJob.last.id, 2.0, false ])
-    end
-
-    it "records the preview job kind" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+    it "records the job kind" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
            params: body, headers: admin_headers
       expect(AdminJob.last)
-        .to have_attributes(kind: "shift_boundary_preview", track_id: track1.id)
+        .to have_attributes(kind: "shift_boundary_apply", track_id: track1.id)
     end
 
-    it "enqueues the apply with the apply flag set" do
+    it "enqueues the move with the delta" do
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
            params: body, headers: admin_headers
       expect(Admin::ShiftBoundaryJob.jobs.last["args"])
-        .to eq([ track1.id, AdminJob.last.id, 2.0, true ])
+        .to eq([ track1.id, AdminJob.last.id, 2.0 ])
     end
 
     it "passes a negative delta through unchanged" do
@@ -371,20 +352,20 @@ RSpec.describe "API v2 Admin Tracks" do
     end
 
     it "422s on the last track of the show" do
-      post "/api/v2/admin/tracks/#{track3.id}/shift_boundary_preview",
+      post "/api/v2/admin/tracks/#{track3.id}/shift_boundary_apply",
            params: body, headers: admin_headers
       expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "422s when a side has no audio" do
       track2.mp3_audio.purge
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
            params: body, headers: admin_headers
       expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "requires a delta" do
-      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
            params: {}.to_json, headers: admin_headers
       expect(response).to have_http_status(:bad_request)
     end
@@ -398,7 +379,7 @@ RSpec.describe "API v2 Admin Tracks" do
     end
 
     it "404s for an unknown track" do
-      post "/api/v2/admin/tracks/0/shift_boundary_preview",
+      post "/api/v2/admin/tracks/0/shift_boundary_apply",
            params: body, headers: admin_headers
       expect(response).to have_http_status(:not_found)
     end

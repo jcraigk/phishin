@@ -171,60 +171,48 @@ RSpec.describe "API v2 Admin Jobs" do
     end
   end
 
-  describe "streaming a completed boundary preview" do
-    let(:show) { create(:show, date: "2024-07-19") }
-    let(:track) do
-      create(:track, show:, position: 1, title: "Ghost", slug: "ghost")
-    end
-    let(:following) do
-      create(:track, show:, position: 2, title: "Free", slug: "free")
-    end
-    let(:source) { Rails.root.join("tmp/spec/audio_60s.mp3") }
+  describe "streaming a job with several renders" do
+    let(:job) { create(:admin_job, kind: "trim_preview") }
 
-    before do
-      FileUtils.mkdir_p(source.dirname)
-      unless File.exist?(source)
+    def tone(seconds)
+      path = Rails.root.join("tmp/spec/job_audio_tone_#{seconds}s.mp3")
+      FileUtils.mkdir_p(path.dirname)
+      unless File.exist?(path)
         system(
           "ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i",
-          "sine=frequency=440:duration=60", "-b:a", "128k", source.to_s,
+          "sine=frequency=440:duration=#{seconds}", "-b:a", "128k", path.to_s,
           exception: true
         )
       end
-      [ track, following ].each do |record|
-        record.mp3_audio.attach(
-          io: File.open(source), filename: "audio.mp3", content_type: "audio/mpeg"
-        )
-        record.process_mp3_audio
-      end
+      path
     end
 
-    it "streams each half by index" do
-      job = create(:admin_job, kind: "shift_boundary_preview", track:, show:)
-      Admin::ShiftBoundaryJob.new.perform(track.id, job.id, 2.0, false)
-      expect(job.reload.status).to eq("done")
+    before do
+      job.update!(
+        payload: {
+          "audio_paths" => [
+            AdminJobAudio.store(job, tone(2).to_s, index: 0),
+            AdminJobAudio.store(job, tone(4).to_s, index: 1)
+          ]
+        }
+      )
+    end
 
-      GC.start
+    it "streams each render by index" do
       [ 0, 1 ].each do |index|
-        get "/api/v2/admin/jobs/#{job.id}/audio",
-            params: { index: }, headers: admin_headers
+        get "/api/v2/admin/jobs/#{job.id}/audio", params: { index: }, headers: admin_headers
 
         expect(response).to have_http_status(:ok)
-        expect(response.media_type).to eq("audio/mpeg")
         expect(mp3_frame_sync?(response.body)).to be(true)
-        expect(response.body.bytesize)
-          .to eq(File.size(job.payload["audio_paths"][index]))
+        expect(response.body.bytesize).to eq(File.size(job.payload["audio_paths"][index]))
       end
     end
 
-    it "serves different audio for each half" do
-      job = create(:admin_job, kind: "shift_boundary_preview", track:, show:)
-      Admin::ShiftBoundaryJob.new.perform(track.id, job.id, -57.0, false)
-
+    it "serves different audio for each index" do
       get "/api/v2/admin/jobs/#{job.id}/audio", params: { index: 0 }, headers: admin_headers
       first = response.body
       get "/api/v2/admin/jobs/#{job.id}/audio", params: { index: 1 }, headers: admin_headers
 
-      expect(response.body).not_to eq(first)
       expect(response.body.bytesize).to be > first.bytesize
     end
   end

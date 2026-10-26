@@ -36,17 +36,10 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         track_payload(track.reload)
       end
 
-      desc "Render both sides of a moved boundary without altering either track",
-           hidden: true
-      params { use :shift_boundary_params }
-      post ":id/shift_boundary_preview" do
-        enqueue_shift_boundary("shift_boundary_preview", false)
-      end
-
       desc "Move the boundary between this track and the next", hidden: true
       params { use :shift_boundary_params }
       post ":id/shift_boundary_apply" do
-        enqueue_shift_boundary("shift_boundary_apply", true)
+        enqueue_shift_boundary
       end
 
       desc "Render a trim preview without altering the track", hidden: true
@@ -90,7 +83,7 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       enqueue_job(kind, Admin::TrimJob, show: track.show, track:, args: [ opts, apply ])
     end
 
-    def enqueue_shift_boundary(kind, apply)
+    def enqueue_shift_boundary
       track = Track.find(params[:id])
       following = track.show.tracks.find_by(position: track.position + 1)
       error!({ message: "No following track to share a boundary with" }, 422) if following.nil?
@@ -98,7 +91,7 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         error!({ message: "Both tracks need audio to shift the boundary" }, 422)
       end
       ensure_delta_in_range!(track, following)
-      enqueue_job(kind, Admin::ShiftBoundaryJob, show: track.show, track:, args: [ params[:delta_s], apply ])
+      enqueue_job("shift_boundary_apply", Admin::ShiftBoundaryJob, show: track.show, track:, args: [ params[:delta_s] ])
     end
 
     def ensure_delta_in_range!(track, following)
