@@ -43,13 +43,18 @@ RSpec.describe "Admin cover art regenerate", :js do
     end
 
     it "uses the model chosen in the form" do
-      regenerate(model: "gpt-5.4-image-2")
-      expect(enqueued_prompt_and_model).to eq([ "a box turtle", "openai/gpt-5.4-image-2" ])
+      regenerate(model: "gpt-image-2.6-sunburst")
+      expect(enqueued_prompt_and_model).to eq([ "a box turtle", "openai/gpt-image-2.6-sunburst" ])
     end
 
     it "shows the chosen model on the generating card" do
-      regenerate(model: "gpt-5.4-image-2")
-      expect(page).to have_css(".admin-art-pending .admin-art-model", text: "gpt-5.4-image-2")
+      regenerate(model: "gpt-image-2.6-sunburst")
+      expect(page).to have_css(".admin-art-pending .admin-art-model", text: "gpt-image-2.6-sunburst")
+    end
+
+    it "sends a quality variant chosen in the form" do
+      regenerate(model: "gpt-image-2.6-sunburst (xhigh)")
+      expect(enqueued_prompt_and_model).to eq([ "a box turtle", "openai/gpt-image-2.6-sunburst:xhigh" ])
     end
   end
 

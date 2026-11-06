@@ -71,6 +71,22 @@ RSpec.describe OpenRouter, :open_router do
       expect(Typhoeus).to have_received(:post).with("https://openrouter.ai/api/v1/images", any_args)
     end
 
+    it "requests high quality by default" do
+      stub_post(body)
+      described_class.image(model: "m", prompt: "p")
+      expect(Typhoeus).to have_received(:post) do |_url, options|
+        expect(JSON.parse(options[:body])["quality"]).to eq("high")
+      end
+    end
+
+    it "sends the requested quality" do
+      stub_post(body)
+      described_class.image(model: "m", prompt: "p", quality: "max")
+      expect(Typhoeus).to have_received(:post) do |_url, options|
+        expect(JSON.parse(options[:body])["quality"]).to eq("max")
+      end
+    end
+
     it "omits input references when there is no source image" do
       stub_post(body)
       described_class.image(model: "m", prompt: "p")

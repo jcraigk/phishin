@@ -7,10 +7,14 @@ class CoverArtImageService < ApplicationService
   option :model, default: -> { nil }
 
   MODELS = %w[
-    openai/gpt-5.4-image-2
+    openai/gpt-image-2.6-sunburst
+    openai/gpt-image-2.6-sunburst:xhigh
+    openai/gpt-image-2.6-sunburst:max
+    google/gemini-nano-banana-2.1
     google/gemini-3.1-flash-image
     google/gemini-3-pro-image
   ].freeze
+  DEFAULT_QUALITY = "high".freeze
 
   def self.default_model
     ENV.fetch("COVER_ART_IMAGE_MODEL", MODELS.first)
@@ -30,6 +34,14 @@ class CoverArtImageService < ApplicationService
     @image_model ||= model.presence || self.class.default_model
   end
 
+  def api_model
+    image_model.split(":").first
+  end
+
+  def quality
+    image_model.split(":")[1] || DEFAULT_QUALITY
+  end
+
   def generate_and_save_cover_art
     if show.cover_art_parent_show_id && !editing?
       parent_show = Show.find(show.cover_art_parent_show_id)
@@ -45,9 +57,9 @@ class CoverArtImageService < ApplicationService
 
   def generate_image
     if editing?
-      OpenRouter.image(model: image_model, prompt: edit_prompt, source_url: source_data_url)
+      OpenRouter.image(model: api_model, quality:, prompt: edit_prompt, source_url: source_data_url)
     else
-      OpenRouter.image(model: image_model, prompt: generation_prompt)
+      OpenRouter.image(model: api_model, quality:, prompt: generation_prompt)
     end
   rescue OpenRouter::Error => e
     raise "Failed to generate cover art: #{e.message}"

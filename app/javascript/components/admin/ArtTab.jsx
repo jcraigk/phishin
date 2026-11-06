@@ -23,7 +23,11 @@ import Modal from "./Modal";
 const SELECT_CONFIRM =
   "Sets cover art, composites the album cover, and re-embeds ID3 tags on all tracks. Continue?";
 
-const modelLabel = (id) => (id ? id.split("/").pop() : "");
+const modelLabel = (id) => {
+  if (!id) return "";
+  const [name, quality] = id.split("/").pop().split(":");
+  return quality ? `${name} (${quality})` : name;
+};
 
 const ModelSelect = ({ value, onChange, disabled, kind = "image" }) => {
   const { show } = useContext(EditorContext);

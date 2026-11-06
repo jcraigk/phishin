@@ -23,9 +23,9 @@ module OpenRouter
     )
   end
 
-  def self.image(model:, prompt:, source_url: nil)
+  def self.image(model:, prompt:, source_url: nil, quality: "high")
     body = {
-      model:, prompt:, n: 1, aspect_ratio: "1:1", resolution: "1K", quality: "high", output_format: "png"
+      model:, prompt:, n: 1, aspect_ratio: "1:1", resolution: "1K", quality:, output_format: "png"
     }
     body[:input_references] = [ { type: "image_url", image_url: { url: source_url } } ] if source_url
     result = retrying_gateway_errors { request("images", **body) }

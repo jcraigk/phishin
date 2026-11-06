@@ -224,9 +224,9 @@ RSpec.describe "API v2 Admin Cover Art" do
 
     it "passes the chosen model to the edit job" do
       post path,
-           params: { source_blob_key: candidate.key, edit_prompt: "bluer", model: "openai/gpt-5.4-image-2" }.to_json,
+           params: { source_blob_key: candidate.key, edit_prompt: "bluer", model: "openai/gpt-image-2.6-sunburst" }.to_json,
            headers: json_headers
-      expect(Admin::EditCoverArtJob.jobs.last["args"].last).to eq("openai/gpt-5.4-image-2")
+      expect(Admin::EditCoverArtJob.jobs.last["args"].last).to eq("openai/gpt-image-2.6-sunburst")
     end
 
     it "400s on a model outside the allowed list" do
@@ -382,7 +382,7 @@ RSpec.describe "API v2 Admin Cover Art" do
       expect(JSON.parse(response.body)["cover_art"]).to include(
         "model" => "google/gemini-3-pro-image",
         "image_models" => CoverArtImageService::MODELS,
-        "default_image_model" => "openai/gpt-5.4-image-2",
+        "default_image_model" => "openai/gpt-image-2.6-sunburst",
         "prompt_models" => CoverArtPromptService::MODELS,
         "default_prompt_model" => CoverArtPromptService::MODELS.first
       )

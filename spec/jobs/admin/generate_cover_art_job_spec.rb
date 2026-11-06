@@ -37,16 +37,28 @@ RSpec.describe Admin::GenerateCoverArtJob, :open_router do
   end
 
   it "generates with the requested model" do
-    described_class.new.perform(show.id, admin_job.id, nil, "openai/gpt-5.4-image-2")
+    described_class.new.perform(show.id, admin_job.id, nil, "openai/gpt-image-2.6-sunburst")
     expect(Typhoeus).to have_received(:post) do |_url, options|
-      expect(JSON.parse(options[:body])["model"]).to eq("openai/gpt-5.4-image-2")
+      expect(JSON.parse(options[:body])["model"]).to eq("openai/gpt-image-2.6-sunburst")
     end
   end
 
+  it "sends a quality variant as the base model plus that quality" do
+    described_class.new.perform(show.id, admin_job.id, nil, "openai/gpt-image-2.6-sunburst:xhigh")
+    expect(Typhoeus).to have_received(:post) do |_url, options|
+      expect(JSON.parse(options[:body])).to include("model" => "openai/gpt-image-2.6-sunburst", "quality" => "xhigh")
+    end
+  end
+
+  it "records a quality variant as the candidate model" do
+    described_class.new.perform(show.id, admin_job.id, nil, "openai/gpt-image-2.6-sunburst:max")
+    expect(show.reload.cover_art_candidates.first.blob.metadata["model"]).to eq("openai/gpt-image-2.6-sunburst:max")
+  end
+
   it "records the model and cost on the candidate blob" do
-    described_class.new.perform(show.id, admin_job.id, nil, "openai/gpt-5.4-image-2")
+    described_class.new.perform(show.id, admin_job.id, nil, "openai/gpt-image-2.6-sunburst")
     metadata = show.reload.cover_art_candidates.first.blob.metadata
-    expect(metadata).to include("model" => "openai/gpt-5.4-image-2", "cost" => 0.0412)
+    expect(metadata).to include("model" => "openai/gpt-image-2.6-sunburst", "cost" => 0.0412)
   end
 
   it "sends the prompt override when one is given" do
