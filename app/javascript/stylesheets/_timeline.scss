@@ -1,14 +1,23 @@
 @use "./variables" as *;
 
 .show-timeline {
-  .timeline-set {
+  .timeline-sets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
     margin-top: 1.5rem;
+  }
+
+  .timeline-set {
+    flex: 1 1 12rem;
+    min-width: 0;
   }
 
   .timeline-set-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.3rem;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
     font-size: 1.1rem;
     font-weight: bold;
     color: var(--title-gray);
@@ -19,53 +28,66 @@
     font-weight: normal;
   }
 
-  .timeline-segments {
+  .timeline-set-body {
     display: flex;
-    height: 3rem;
+    align-items: flex-start;
+  }
+
+  .timeline-set-bar {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 2.25rem;
     border-radius: $radius;
     overflow: hidden;
   }
 
   .timeline-segment {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    overflow: hidden;
-    color: #2c2c2e;
-    font-size: 0.95rem;
-    font-weight: bold;
+    flex: 0 0 auto;
 
     & + .timeline-segment {
-      border-left: 1px solid var(--card-bg);
+      border-top: 1px solid var(--card-bg);
     }
   }
 
-  .timeline-segment-title {
-    padding: 0 0.3rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .timeline-durations {
-    display: flex;
-    margin-top: 0.2rem;
-  }
-
-  .timeline-segment-duration {
+  .timeline-labels {
+    position: relative;
+    flex: 1 1 auto;
+    align-self: stretch;
     min-width: 0;
-    overflow: hidden;
-    text-align: center;
+    margin-left: 0.75rem;
+  }
+
+  .timeline-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.1rem 0;
+    font-size: 0.9rem;
+    line-height: 1.2;
+  }
+
+  .timeline-label-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--title-gray);
+    font-weight: bold;
+    overflow-wrap: anywhere;
+  }
+
+  .timeline-label-duration {
+    flex: 0 0 auto;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
-    font-size: 0.85rem;
-    /* Darken the pastel segment colors for legibility on the light card background */
     filter: brightness(0.55) saturate(1.6);
   }
 }
 
 @media (prefers-color-scheme: dark) {
-  .show-timeline .timeline-segment-duration {
+  .show-timeline .timeline-label-duration {
     filter: none;
   }
 }
