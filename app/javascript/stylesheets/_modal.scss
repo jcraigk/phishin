@@ -16,6 +16,14 @@
     outline: none;
   }
 
+  > .close-btn {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--card-bg);
+    border-radius: 50%;
+  }
+
   input, select {
     font-size: 1rem;
     border-radius: $radius;
