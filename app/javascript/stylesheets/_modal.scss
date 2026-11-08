@@ -18,7 +18,8 @@
 
   > .close-btn {
     position: sticky;
-    top: 0;
+    top: 0.5rem;
+    margin: 0.5rem 0.5rem 0 0.5rem;
     z-index: 1;
     background: var(--card-bg);
     border-radius: 50%;
