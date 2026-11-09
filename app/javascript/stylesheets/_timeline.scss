@@ -1,16 +1,20 @@
 @use "./variables" as *;
 
+.modal-content:has(.show-timeline) {
+  width: 800px;
+}
+
 .show-timeline {
   .timeline-sets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
     margin-top: 1.5rem;
+
+    &.is-measuring .timeline-label {
+      visibility: hidden;
+    }
   }
 
   .timeline-set {
-    flex: 1 1 12rem;
-    min-width: 0;
+    margin-bottom: 0.5rem;
   }
 
   .timeline-set-header {
@@ -25,69 +29,46 @@
 
   .timeline-set-duration {
     color: var(--text-gray);
-    font-weight: normal;
-  }
-
-  .timeline-set-body {
-    display: flex;
-    align-items: flex-start;
   }
 
   .timeline-set-bar {
     display: flex;
-    flex-direction: column;
-    flex: 0 0 2.25rem;
+    height: 1.75rem;
     border-radius: $radius;
     overflow: hidden;
   }
 
   .timeline-segment {
-    flex: 0 0 auto;
+    min-width: 0;
 
     & + .timeline-segment {
-      border-top: 1px solid var(--card-bg);
+      border-left: 1px solid var(--card-bg);
     }
   }
 
   .timeline-labels {
     position: relative;
-    flex: 1 1 auto;
-    align-self: stretch;
-    min-width: 0;
-    margin-left: 0.75rem;
   }
 
   .timeline-label {
     position: absolute;
     left: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.1rem 0;
-    font-size: 0.9rem;
+    top: 0;
+    white-space: nowrap;
+    font-size: 0.85rem;
     line-height: 1.2;
+    transform-origin: 0 50%;
+    transform: rotate(45deg);
   }
 
   .timeline-label-title {
-    flex: 1 1 auto;
-    min-width: 0;
     color: var(--title-gray);
     font-weight: bold;
-    overflow-wrap: anywhere;
+    margin-right: 0.35rem;
   }
 
   .timeline-label-duration {
-    flex: 0 0 auto;
-    text-align: right;
+    color: var(--text-gray);
     font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-    filter: brightness(0.55) saturate(1.6);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .show-timeline .timeline-label-duration {
-    filter: none;
   }
 }

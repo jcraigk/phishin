@@ -6,5 +6,5 @@ const [sourcePath, argsJson] = process.argv.slice(2);
 const src = fs.readFileSync(sourcePath, "utf8").replace(/^export /gm, "");
 
 const layoutLabels = eval(src + "\nlayoutLabels");
-const { centers, heights } = JSON.parse(argsJson);
-console.log(JSON.stringify(layoutLabels(centers, heights)));
+const { centers, sizes } = JSON.parse(argsJson);
+console.log(JSON.stringify(layoutLabels(centers, sizes)));

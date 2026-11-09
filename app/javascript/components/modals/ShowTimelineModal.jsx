@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { formatDate, formatDurationTrack } from "../helpers/utils";
-import { layoutLabels } from "../helpers/timelineLabels";
+import { layoutLabels, pullLabelsLeft } from "../helpers/timelineLabels";
 
 const SEGMENT_COLORS = [
   "#8fd6a9",
@@ -12,81 +12,57 @@ const SEGMENT_COLORS = [
   "#d9b98c"
 ];
 
-const LONGEST_SET_HEIGHT = 440;
-const ESTIMATED_LABEL_HEIGHT = 22;
+const LABEL_ANGLE = Math.PI / 4;
+const LABEL_SIN = Math.sin(LABEL_ANGLE);
+const LABEL_COS = Math.cos(LABEL_ANGLE);
+const LABEL_GAP = 10;
+const LABEL_SPACING = 1.2;
 
-const sameHeights = (a, b) => a.length === b.length && a.every((height, i) => height === b[i]);
+const sameMetrics = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
-const TimelineSet = ({ setName, setTracks, setDuration, pixelsPerSecond }) => {
-  const labelsRef = useRef(null);
-  const labelRefs = useRef([]);
-  const [labelHeights, setLabelHeights] = useState(() =>
-    setTracks.map(() => ESTIMATED_LABEL_HEIGHT)
-  );
+const layoutSets = (sets, maxSetDuration, metrics) => {
+  const { width, labelHeight, labelWidths } = metrics;
+  const extentOf = (track) => LABEL_COS * (labelWidths[track.id] + labelHeight / 2);
+  const spacing = (labelHeight * LABEL_SPACING) / LABEL_SIN;
 
-  useLayoutEffect(() => {
-    const measure = () => {
-      const measured = setTracks.map((_, index) => labelRefs.current[index].offsetHeight);
-      setLabelHeights((current) => (sameHeights(current, measured) ? current : measured));
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(labelsRef.current);
-    return () => observer.disconnect();
-  }, [setTracks]);
-
-  let elapsed = 0;
-  const segments = setTracks.map((track, index) => {
-    const top = elapsed * pixelsPerSecond;
-    const height = track.duration * pixelsPerSecond;
-    elapsed += track.duration;
-    return { track, top, height, color: SEGMENT_COLORS[index % SEGMENT_COLORS.length] };
+  const withCenters = sets.map((set) => {
+    let elapsed = 0;
+    const centers = set.setTracks.map((track) => {
+      const center = (elapsed + track.duration / 2) / maxSetDuration;
+      elapsed += track.duration;
+      return center;
+    });
+    return { ...set, centers };
   });
 
-  const segmentCenters = segments.map(({ top, height }) => top + height / 2);
-  const labelTops = layoutLabels(segmentCenters, labelHeights);
-  const barHeight = setDuration * pixelsPerSecond;
-  const lastIndex = labelTops.length - 1;
-  const bodyHeight = Math.max(barHeight, labelTops[lastIndex] + labelHeights[lastIndex]);
+  const longestBarWidth = withCenters.reduce((barWidth, set) =>
+    set.setTracks.reduce((fit, track, index) =>
+      Math.min(fit, (width - extentOf(track)) / set.centers[index]), barWidth), width);
 
-  return (
-    <div className="timeline-set">
-      <div className="timeline-set-header">
-        <span className="timeline-set-name">{setName}</span>
-        <span className="timeline-set-duration">{formatDurationTrack(setDuration)}</span>
-      </div>
-      <div className="timeline-set-body" style={{ height: `${bodyHeight}px` }}>
-        <div className="timeline-set-bar" style={{ height: `${barHeight}px` }}>
-          {segments.map(({ track, height, color }) => (
-            <div
-              key={track.id}
-              className="timeline-segment"
-              style={{ height: `${height}px`, backgroundColor: color }}
-              title={`${track.title} (${formatDurationTrack(track.duration)})`}
-            />
-          ))}
-        </div>
-        <div className="timeline-labels" ref={labelsRef}>
-          {segments.map(({ track, color }, index) => (
-            <div
-              key={track.id}
-              ref={(el) => (labelRefs.current[index] = el)}
-              className="timeline-label"
-              style={{ top: `${labelTops[index]}px` }}
-            >
-              <span className="timeline-label-title">{track.title}</span>
-              <span className="timeline-label-duration" style={{ color }}>
-                {formatDurationTrack(track.duration)}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  return withCenters.map((set) => {
+    const ideal = set.centers.map((center) => center * longestBarWidth);
+    const starts = layoutLabels(ideal, ideal.map(() => spacing));
+    const anchors = pullLabelsLeft(
+      starts.map((start) => start + spacing / 2),
+      spacing,
+      set.setTracks.map((track) => width - extentOf(track))
+    );
+    const labelsHeight = Math.max(...set.setTracks.map((track) =>
+      LABEL_SIN * (labelWidths[track.id] + labelHeight / 2)));
+    return {
+      ...set,
+      barWidth: (set.setDuration / maxSetDuration) * longestBarWidth,
+      anchors,
+      labelsHeight: LABEL_GAP + labelsHeight + labelHeight
+    };
+  });
 };
 
 const ShowTimelineModal = ({ show }) => {
+  const containerRef = useRef(null);
+  const labelRefs = useRef({});
+  const [metrics, setMetrics] = useState(null);
+
   const tracksWithAudio = show.tracks.filter((track) =>
     track.audio_status !== "missing" && track.duration > 0
   );
@@ -103,16 +79,71 @@ const ShowTimelineModal = ({ show }) => {
   }));
 
   const maxSetDuration = Math.max(...sets.map((set) => set.setDuration), 1);
-  const pixelsPerSecond = LONGEST_SET_HEIGHT / maxSetDuration;
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (!containerRef.current) return;
+      const labelWidths = {};
+      let labelHeight = 0;
+      Object.entries(labelRefs.current).forEach(([id, el]) => {
+        if (!el) return;
+        labelWidths[id] = el.offsetWidth;
+        labelHeight = Math.max(labelHeight, el.offsetHeight);
+      });
+      const next = { width: containerRef.current.clientWidth, labelHeight, labelWidths };
+      setMetrics((current) => (sameMetrics(current, next) ? current : next));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(containerRef.current);
+    document.fonts?.ready.then(measure);
+    return () => observer.disconnect();
+  }, []);
+
+  const laidOut = metrics ? layoutSets(sets, maxSetDuration, metrics) : sets;
 
   return (
     <div className="wide-modal show-timeline">
       <h2 className="title">Timeline</h2>
       <h3 className="subtitle">{formatDate(show.date)} • {show.venue_name}</h3>
 
-      <div className="timeline-sets">
-        {sets.map((set) => (
-          <TimelineSet key={set.setName} {...set} pixelsPerSecond={pixelsPerSecond} />
+      <div className={`timeline-sets ${metrics ? "" : "is-measuring"}`} ref={containerRef}>
+        {laidOut.map(({ setName, setTracks, setDuration, barWidth, anchors, labelsHeight }) => (
+          <div className="timeline-set" key={setName}>
+            <div className="timeline-set-header">
+              <span className="timeline-set-name">{setName}</span>
+              <span className="timeline-set-duration">{formatDurationTrack(setDuration)}</span>
+            </div>
+            <div className="timeline-set-bar" style={barWidth ? { width: `${barWidth}px` } : {}}>
+              {setTracks.map((track, index) => (
+                <div
+                  key={track.id}
+                  className="timeline-segment"
+                  style={{
+                    width: `${(track.duration / setDuration) * 100}%`,
+                    backgroundColor: SEGMENT_COLORS[index % SEGMENT_COLORS.length]
+                  }}
+                  title={`${track.title} (${formatDurationTrack(track.duration)})`}
+                />
+              ))}
+            </div>
+            <div className="timeline-labels" style={labelsHeight ? { height: `${labelsHeight}px` } : {}}>
+              {setTracks.map((track, index) => (
+                <div
+                  key={track.id}
+                  ref={(el) => (labelRefs.current[track.id] = el)}
+                  className="timeline-label"
+                  style={anchors ? {
+                    left: `${anchors[index]}px`,
+                    top: `${LABEL_GAP - metrics.labelHeight / 2}px`
+                  } : {}}
+                >
+                  <span className="timeline-label-title">{track.title}</span>
+                  <span className="timeline-label-duration">{formatDurationTrack(track.duration)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </div>
